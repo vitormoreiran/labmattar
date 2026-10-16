@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useState } from "react";
+import { ReactNode, RefObject, useState } from "react";
 import "./editorial.css";
 
 type StateItem={name:string;viewBox:string;contours:string[]};
@@ -9,7 +9,7 @@ type Props={
   render:ReactNode;
   go:(index:number)=>void;seek:(time:number)=>void;
   play:()=>void;previous:()=>void;next:()=>void;
-  addFiles:(files:FileList|null)=>void;
+  addFiles:(files:FileList|null)=>void;inputRef:RefObject<HTMLInputElement|null>;openAdd:()=>void;
   move:(index:number,delta:number)=>void;remove:()=>void;
   replace:()=>void;reset:()=>void;save:()=>void;download:()=>void;
   openTechnical:(mode:string)=>void;
@@ -46,13 +46,14 @@ export default function EditorialAssembly(p:Props){
     </nav>
     <div className="lm-bottom"><p>Os estados formam uma sequência editável. A geometria, as correspondências e o movimento pertencem ao motor original da Matriz Vetorial.</p>
       <button onClick={()=>{setMode("montar");setExpanded(v=>!v)}}>{expanded?"FECHAR MONTAGEM ↑":"ABRIR MONTAGEM ↓"}</button></div>
-    {expanded&&<section className="lm-panel" aria-label="Montagem de estados">
+    <input ref={p.inputRef} hidden type="file" accept=".svg,image/svg+xml" multiple onChange={e=>p.addFiles(e.target.files)}/>
+    {expanded&&<section> className="lm-panel" aria-label="Montagem de estados">
       <div><span className="lm-kicker">01 / MONTAGEM</span><h2>Organização dos estados</h2><p>{p.assets.length} estados · seleção atual {String(p.selected+1).padStart(2,"0")}</p></div>
       <div className="lm-panel-body"><p>Importe desenhos vetoriais e reorganize a sequência. As ações modificam diretamente o projeto original; duração, easing e exportações são mantidos no editor técnico.</p>
         <div className="lm-actions">
-          <label className="lm-chip lm-upload">＋ Importar SVG<input hidden type="file" accept=".svg,image/svg+xml" multiple onChange={e=>{p.addFiles(e.target.files);e.target.value=""}}/></label>
+          <button className="lm-chip" onClick={p.openAdd}>＋ Importar SVG</button>
           <button className="lm-chip" onClick={p.replace}>Substituir seleção</button>
-          <button className="lm-chip" onClick={()=>p.move(p.selected,-1)} disabled={p.selected===0}>← Anterior</button>
+          <button className="lm-chip" onClick={()=>p.move(p.selected,-1)} disabled={p.selected<=1}>← Anterior</button>
           <button className="lm-chip" onClick={()=>p.move(p.selected,1)} disabled={p.selected===p.assets.length-1}>Próximo →</button>
           <button className="lm-chip" onClick={p.remove} disabled={p.assets.length<=2}>Excluir estado</button>
           <button className="lm-chip" onClick={p.reset}>Carregar M + 9 vasos</button>

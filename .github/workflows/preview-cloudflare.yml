@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Integracao montagem React + motor v72; build de validacao 2.
+# Integracao montagem React + motor v72; build de validacao 3.
 
 on:
   workflow_dispatch:

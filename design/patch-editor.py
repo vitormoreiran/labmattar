@@ -58,7 +58,7 @@ content=content.replace(
 content=content.replace('    </section>{notice&&<div className="toast">{notice}</div>}\n  </main>','    </section>{notice&&<div className="toast">{notice}</div>}\n  </main>}</>',1)
 # Keep notification visible while the editorial shell is active.
 content=content.replace('  </main>}</>','  </main>}{editorial&&notice&&<div role="status" className="lm-toast">{notice}</div>}</>',1)
-assert content.count('EditorialAssembly')==2
+assert content.count('EditorialAssembly')==3
 assert '  </main>}{editorial&&notice' in content
 source.write_text(content,encoding="utf-8")
 print("Patched editor to use native v72 states and geometry with editorial montage.")

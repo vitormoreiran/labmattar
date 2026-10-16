@@ -1,0 +1,62 @@
+/* LABMATTAR / interface editorial da Matriz Vetorial — camada de apresentacao
+   Apenas CSS: preserva motor, estado, timeline, importacao e exportadores da v72. */
+:root{--ink:#181818;--paper:#f7f6f2;--line:#c9c8c2;--red:#e22e24;--muted:#676661}
+html,body{background:var(--paper)}
+.app-shell{grid-template-rows:78px minmax(0,1fr);background:var(--paper)}
+.topbar{border-bottom:1px solid var(--line);background:var(--paper);grid-template-columns:minmax(210px,1fr) auto minmax(260px,1fr);padding-inline:clamp(22px,3.5vw,58px);gap:28px}
+.brand{font-size:12px;letter-spacing:.065em;gap:13px}
+.brand-mark{font:300 30px/1 PerpetuaMattar,Georgia,serif;border-radius:0}
+.brand i{font-size:10px;letter-spacing:.12em;color:var(--muted)}
+.manual-link{font-size:11px;text-transform:uppercase;letter-spacing:.085em;border-bottom:0;padding:8px 0}
+.manual-link:hover{text-decoration:underline}
+.panel-tabs{height:auto;gap:clamp(8px,1.2vw,25px)}
+.panel-tabs button{font-size:11px;letter-spacing:.045em;padding:22px 4px;color:#64635d;white-space:nowrap}
+.panel-tabs button.active{color:var(--ink)}
+.panel-tabs button.active:after{height:1px;left:4px;right:4px;background:var(--ink);bottom:14px}
+.top-actions{gap:13px}
+.top-actions button,.top-actions a{white-space:nowrap}
+.quiet,.primary{border:1px solid var(--line);background:transparent;padding:10px 12px;font-size:11px;letter-spacing:.03em}
+.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.workspace{grid-template-columns:clamp(208px,18vw,270px) minmax(0,1fr) clamp(240px,20vw,300px)}
+.left-rail{padding:clamp(16px,2vw,30px);border-right:1px solid var(--line)}
+.rail,.inspector,.timeline,.stage-wrap{background:var(--paper)}
+.inspector{border-left:1px solid var(--line);overflow-y:auto}
+.rail-head,.inspector-title{font-size:11px;letter-spacing:.075em;font-weight:300;border-color:var(--line);height:48px}
+.inspector-title{padding-inline:25px}
+.asset-card{padding:12px 0;min-height:86px;border:0;border-bottom:1px solid var(--line);margin:0;gap:10px}
+.asset-card.selected{border-bottom-color:var(--ink);background:transparent}
+.asset-card b{font-size:12px;font-weight:300;margin-bottom:8px}
+.asset-card small,.asset-card em{font-size:10px}
+.thumb,.thumb-b{width:52px;height:52px;font-size:15px;background:transparent;color:var(--ink);border:1px solid var(--line)}
+.import-card{border:1px solid var(--line);min-height:80px;height:auto;margin:26px 0;background:transparent}
+.import-card strong{font-weight:300;font-size:12px}
+.stage-wrap{grid-template-rows:52px minmax(0,1fr) 66px clamp(120px,17vh,175px)}
+.stage-toolbar{background:transparent;padding:0 26px;letter-spacing:.065em;font-size:10px}
+.stage{margin:clamp(14px,2.6vw,38px);border:0;box-shadow:none;background:var(--paper);background-image:none}
+.coordinates{font-size:10px;color:var(--muted)}
+.stage-note{background:var(--paper);border:1px solid var(--line);padding:12px 16px}
+.transport{background:var(--paper);padding:0 clamp(18px,2vw,35px);border-color:var(--line);gap:11px}
+.transport .play{background:var(--ink);color:var(--paper);border:0;box-shadow:none;font-size:11px;font-weight:300;padding:0 18px}
+.transport input,.curve-controls input{accent-color:var(--ink)}
+.timeline{grid-template-columns:112px 1fr;border-bottom:1px solid var(--line)}
+.timeline-labels{border-right-color:var(--line)}
+.timeline-labels span,.track,.ruler{border-bottom-color:var(--line)}
+.timeline-segment{background:#d3d1ca}
+.timeline-segment.active,.transition{background:var(--ink)}
+.keyframe{border-color:var(--ink);background:var(--paper)}
+.keyframe.selected,.key,.playhead{background:var(--ink)}
+.playhead span{border-top-color:var(--ink)}
+.property{padding:24px;border-color:var(--line)}
+.property h3{font-size:11px;font-weight:300;letter-spacing:.08em}
+.property label{font-size:11px;line-height:1.5}
+.property select,.metric-grid div,.curve-editor{border-color:var(--line);background:transparent}
+.property h3 em,.inspector-title em,.ease-chip.active{color:var(--ink)}
+.ease-chip.active{border-color:var(--line);background:var(--paper)}
+.morph-shape{fill:var(--ink)}
+.ghost-path{stroke:var(--ink);opacity:.26}
+.point,.point.hot,.curve-editor circle{stroke:var(--ink)}
+.point.hot,.pulse{fill:var(--ink);background:var(--ink)}
+@media(max-width:1150px){.workspace{grid-template-columns:200px minmax(0,1fr) 240px}.topbar{grid-template-columns:auto 1fr auto;gap:12px;padding-inline:18px}.panel-tabs{gap:5px}.panel-tabs button{padding-inline:5px}.top-actions{gap:6px}}
+@media(max-width:920px){.workspace{grid-template-columns:180px minmax(0,1fr) 220px}.inspector{display:block}.topbar{grid-template-columns:auto minmax(0,1fr) auto}}
+@media(max-width:760px){html,body{overflow:auto}.app-shell{height:auto;min-height:100dvh;overflow:visible;display:block}.topbar{min-height:72px;height:auto;display:flex;flex-wrap:wrap;gap:5px 16px;padding:12px 16px}.brand{flex:1}.top-actions{flex:0 0 auto}.top-actions .quiet{display:inline-block}.panel-tabs{display:flex;order:3;flex:1 0 100%;justify-content:space-between;overflow-x:auto}.panel-tabs button{padding:12px 3px;white-space:nowrap}.panel-tabs button.active:after{bottom:5px}.workspace{display:flex;flex-direction:column;height:auto;overflow:visible}.left-rail{display:block;height:auto;max-height:275px;overflow:auto;border-right:0;border-bottom:1px solid var(--line);padding:14px 18px}.stage-wrap{height:calc(100dvh - 150px);min-height:450px;grid-template-rows:40px minmax(0,1fr) 64px 118px}.stage{margin:12px}.inspector{display:block;overflow:visible;border-left:0;border-top:1px solid var(--line)}.transport button:not(.play){display:inline-block}.transport{gap:5px;padding:0 12px}.transport code{display:none}.rail-head{height:30px}.asset-card{min-height:64px}.property{padding:20px}.timeline{grid-template-columns:80px 1fr}.timeline-labels span{font-size:8px;padding-left:7px}.brand i{display:none}}
+@media(prefers-reduced-motion:reduce){.vector-canvas{transition:none}}

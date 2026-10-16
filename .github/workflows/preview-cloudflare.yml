@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Revisao editorial 02: interface visual; motor original preservado.
+# Integracao da montagem editorial ao motor v72 sem alterar o dominio oficial.
 
 on:
   workflow_dispatch:
@@ -27,6 +27,9 @@ jobs:
           unzip -oq "$ZIP" -d .
           chmod +x scripts/*.sh
           cat design/labmattar-editor.css >> app/globals.css
+          cp design/EditorialAssembly.tsx app/editor/EditorialAssembly.tsx
+          cp design/editorial.css app/editor/editorial.css
+          python3 design/patch-editor.py
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'

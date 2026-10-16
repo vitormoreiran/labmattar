@@ -31,6 +31,8 @@ jobs:
           cache: npm
       - name: Instalar dependencias
         run: npm ci
+      - name: Corrigir permissoes de scripts extraidos do ZIP
+        run: chmod +x scripts/*.sh
       - name: Compilar
         run: npm run build
       - name: Validar paginas

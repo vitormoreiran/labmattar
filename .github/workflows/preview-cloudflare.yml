@@ -25,6 +25,7 @@ jobs:
           test -n "$ZIP"
           unzip -oq "$ZIP" -d .
           chmod +x scripts/*.sh
+          cat design/labmattar-editor.css >> app/globals.css
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'

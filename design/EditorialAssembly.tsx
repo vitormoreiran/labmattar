@@ -47,7 +47,7 @@ export default function EditorialAssembly(p:Props){
     <div className="lm-bottom"><p>Os estados formam uma sequência editável. A geometria, as correspondências e o movimento pertencem ao motor original da Matriz Vetorial.</p>
       <button onClick={()=>{setMode("montar");setExpanded(v=>!v)}}>{expanded?"FECHAR MONTAGEM ↑":"ABRIR MONTAGEM ↓"}</button></div>
     <input ref={p.inputRef} hidden type="file" accept=".svg,image/svg+xml" multiple onChange={e=>p.addFiles(e.target.files)}/>
-    {expanded&&<section> className="lm-panel" aria-label="Montagem de estados">
+    {expanded&&<section className="lm-panel" aria-label="Montagem de estados">
       <div><span className="lm-kicker">01 / MONTAGEM</span><h2>Organização dos estados</h2><p>{p.assets.length} estados · seleção atual {String(p.selected+1).padStart(2,"0")}</p></div>
       <div className="lm-panel-body"><p>Importe desenhos vetoriais e reorganize a sequência. As ações modificam diretamente o projeto original; duração, easing e exportações são mantidos no editor técnico.</p>
         <div className="lm-actions">

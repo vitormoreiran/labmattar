@@ -49,7 +49,7 @@ jobs:
             { waitUntil() {}, passThroughOnException() {} }
           );
           assert.equal(result.status, 307, 'A capa deve redirecionar para o manual');
-          assert.match(result.headers.get('location') || '', /manual\\.html/);
+          assert.ok((result.headers.get('location') || '').endsWith('/manual.html'));
           assert.ok(existsSync('public/manual.html'), 'Manual editorial presente');
           assert.match(readFileSync('public/manual.html','utf8'), /LABMATTAR/);
           console.log('Entrada editorial, redirecionamento e manual validados.');

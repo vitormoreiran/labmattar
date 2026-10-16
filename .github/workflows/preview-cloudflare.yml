@@ -2,6 +2,10 @@ name: Publicar previa LABMATTAR
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/preview-cloudflare.yml'
 
 permissions:
   contents: read

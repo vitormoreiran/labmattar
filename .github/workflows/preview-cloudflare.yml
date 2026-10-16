@@ -1,4 +1,5 @@
 name: Publicar previa LABMATTAR
+# Revisao editorial 02: interface visual; motor original preservado.
 
 on:
   workflow_dispatch:

@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Integracao da montagem editorial ao motor v72 sem alterar o dominio oficial.
+# Integracao montagem React + motor v72; build de validacao 2.
 
 on:
   workflow_dispatch:

@@ -74,5 +74,51 @@ content = content.replace(
     '    correspondence={' + correspondence_markup + '}\n    render={<svg viewBox="0 0 1000 1000"',
     1,
 )
+
+# Identity-first: load the actual M and nine vessels, not the previous eight generic presets.
+# Only skip an existing project when it is the old bundled sample; preserve custom saved work.
+content = content.replace(
+    'if(Array.isArray(saved.assets)&&saved.assets.length>=2){',
+    'if(Array.isArray(saved.assets)&&saved.assets.length>=2 && !saved.assets.every((a:VectorAsset)=>/^Estado [0-9]+$/.test(a.name))){',
+    1,
+)
+old_start = content.index('    let legacySaved:Record<string,unknown>|null=null;')
+old_end = content.index('    if(active){',old_start)
+replacement = """    const names=["M.svg",...Array.from({length:9},(_,i)=>`vaso_${String(i+1).padStart(2,"0")}.svg`)];
+    const cleanAssets:VectorAsset[]=await Promise.all(names.map(async name=>{
+      const response=await fetch(`/identidade/${name}`);
+      if(!response.ok)throw new Error(`Vetor oficial ausente: ${name}`);
+      return parseSvg(await response.text(),name==="M.svg"?"M":`Vaso ${name.slice(5,7)}`);
+    }));
+    const durationsNext=Array.from({length:cleanAssets.length-1},()=>2.5);
+    const densityNext=500,scaleModeNext:"bounds"="bounds",paddingNext=14;
+    const easingsNext=durationsNext.map(()=>"smooth" as EaseName);
+    const customCurvesNext=durationsNext.map(()=>[...DEFAULT_CURVE] as BezierCurve);
+    const loopNext=false,exportColorNext="#181814",exportBackgroundNext="#ffffff";
+    const exportDensityNext=4000,exportResolutionNext=2160,exportFpsNext=60;
+    const exportQualityNext:ExportQuality="maximum",exportSvgLoopNext=false,roundnessNext=55;
+"""
+content = content[:old_start]+replacement+content[old_end:]
+# The timeline must not simply skip to a static frame when a vessel is selected.
+content = content.replace(
+    '    go={goState}',
+    '    go={index=>{setSelected(index);setTime(index===0?0:stateTimes[index-1]);setPlaying(true)}}',
+    1,
+)
+# During automatic playback the index follows the active segment, including the last frame.
+content = content.replace(
+    '    selected={selected}',
+    '    selected={time>=totalDuration?assets.length-1:segment.index}',
+    1,
+)
+# Make the active preview use exactly the same SVG rendering code as the original v72 editor.
+content = content.replace(
+    '    render={<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">',
+    '    render={<svg viewBox="0 0 1000 1000" className="vector-canvas" preserveAspectRatio="xMidYMid meet">',
+    1,
+)
+# Avoid resetting to a vector display that omits the active morph during the transition.
+assert 'const cleanAssets:VectorAsset[]=await Promise.all(names.map' in content
+
 source.write_text(content,encoding="utf-8")
 print("Patched editor to use native v72 states and geometry with editorial montage.")

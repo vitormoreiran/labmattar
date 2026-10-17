@@ -20,13 +20,13 @@ for filename,area in areas.items():
  assert p.exists(),filename
  s=p.read_text(encoding="utf-8")
  # Normalize symbol page with canonical typography, without altering editorial layouts.
-  if area=="simbolos":
-   override = """<style>
+ if area=="simbolos":
+  override = """<style>
  @font-face{font-family:UniversMattar;src:local('Univers LT Std 45 Light'),local('UniversLTStd-Light'),url('https://labmattar.com/fonts/univers-lt-std-45-light.otf') format('opentype');font-weight:300;font-display:swap}
  @font-face{font-family:PerpetuaMattar;src:local('Perpetua Titling MT Light'),local('PerpetuaTitlingMT-Light'),url('https://labmattar.com/fonts/perpetua-titling-light.ttf') format('truetype');font-weight:300;font-display:swap}
  body{font-family:UniversMattar,Arial,sans-serif;font-weight:300}
  </style>"""
-   s=s.replace("</head>",override+"</head>",1)
+  s=s.replace("</head>",override+"</head>",1)
  
  # Remove the earlier exploratory cross-navigation and its styling.
  s=re.sub(r'<nav class="lm-crossnav"[^>]*>.*?</nav>',"",s,flags=re.S)

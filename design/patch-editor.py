@@ -60,5 +60,19 @@ content=content.replace('    </section>{notice&&<div className="toast">{notice}<
 content=content.replace('  </main>}</>','  </main>}{editorial&&notice&&<div role="status" className="lm-toast">{notice}</div>}</>',1)
 assert content.count('EditorialAssembly')==3
 assert '  </main>}{editorial&&notice' in content
+# Reuse the original correspondence JSX (analysis, contour selection and adjustments).
+# Do not fork the actual v72 handlers or rebuild mapping logic.
+marker = '{panel==="Correspondência"?'
+end_marker = ':<div className="stage">'
+start = content.index(marker) + len(marker)
+end = content.index(end_marker, start)
+correspondence_markup = content[start:end]
+assert correspondence_markup.lstrip().startswith('<div className="correspondence-stage">')
+assert correspondence_markup.rstrip().endswith('</div>')
+content = content.replace(
+    '    render={<svg viewBox="0 0 1000 1000"',
+    '    correspondence={' + correspondence_markup + '}\n    render={<svg viewBox="0 0 1000 1000"',
+    1,
+)
 source.write_text(content,encoding="utf-8")
 print("Patched editor to use native v72 states and geometry with editorial montage.")

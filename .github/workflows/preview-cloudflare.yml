@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Correcao topologica experimental: furos e contornos nao pareados.
+# Correcao localizada 03-04: preservar recortes e vazios no preview.
 
 on:
   workflow_dispatch:

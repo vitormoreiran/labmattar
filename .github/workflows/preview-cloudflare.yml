@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Correcao localizada 03-04: preservar recortes e vazios no preview.
+# Reverter fallback visual ruim da transicao 03-04.
 
 on:
   workflow_dispatch:

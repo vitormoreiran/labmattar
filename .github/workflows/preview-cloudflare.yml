@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Navegacao persistente entre simbolos tipografia cores e editor.
+# Auditoria de carregamento tipografico nos tres sistemas.
 
 on:
   workflow_dispatch:
@@ -33,6 +33,13 @@ jobs:
           cp design/tipografia.html public/tipografia.html
           cp design/cores.html public/cores.html
           python3 design/integrate-areas.py
+      - name: Verificar disponibilidade das fontes oficiais
+        shell: bash
+        run: |
+          for font in univers-lt-std-45-light.otf perpetua-titling-light.ttf; do
+            code=$(curl -L -s -o /dev/null -w '%{http_code}' --max-time 15 "https://labmattar.com/fonts/$font" || true)
+            echo "$font: HTTP $code"
+          done
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'

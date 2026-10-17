@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Reverter fallback visual ruim da transicao 03-04.
+# Integrar simbolos, tipografia e cores em uma navegacao comum.
 
 on:
   workflow_dispatch:
@@ -30,6 +30,9 @@ jobs:
           cp design/EditorialAssembly.tsx app/editor/EditorialAssembly.tsx
           cp design/editorial.css app/editor/editorial.css
           python3 design/patch-editor.py
+          cp design/tipografia.html public/tipografia.html
+          cp design/cores.html public/cores.html
+          python3 design/integrate-areas.py
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'

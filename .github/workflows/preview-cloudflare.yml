@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Integrar simbolos, tipografia e cores em uma navegacao comum.
+# Navegacao persistente entre simbolos tipografia cores e editor.
 
 on:
   workflow_dispatch:

@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Biblioteca original M e vasos com morph real / build de verificacao.
+# Correcao topologica experimental: furos e contornos nao pareados.
 
 on:
   workflow_dispatch:

@@ -11,3 +11,39 @@ body:has(.lm-root){margin:0;background:#f7f6f2}
 .lm-bottom{display:flex;justify-content:space-between;align-items:center;gap:25px;margin-top:24px;font-size:11px}.lm-bottom p{margin:0;color:var(--lm-muted);max-width:530px}.lm-bottom button{border-bottom:1px solid var(--lm-ink);padding:4px 0;font-size:11px;letter-spacing:.03em;text-align:right}
 .lm-panel{border-top:1px solid var(--lm-ink);padding:25px 0 10px;display:grid;grid-template-columns:1fr 2fr;gap:40px;min-height:170px;margin-top:28px}.lm-panel h2{font:300 23px/1.15 LMUnivers,"Helvetica Neue",Arial,sans-serif;margin:8px 0}.lm-panel p{margin:0;color:var(--lm-muted);max-width:54ch}.lm-kicker{font-size:10px;letter-spacing:.1em}.lm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}.lm-chip{display:inline-flex;align-items:center;border:1px solid var(--lm-line)!important;padding:10px 14px!important;font-size:11px!important;cursor:pointer}.lm-chip:hover{border-color:var(--lm-ink)!important}.lm-footer{display:flex;justify-content:space-between;margin-top:auto;padding-top:34px;font-size:10px;color:var(--lm-muted);letter-spacing:.05em}.lm-footer button{font-size:10px}
 @media(max-width:800px){.lm-root{padding:20px}.lm-intro{grid-template-columns:1fr}.lm-intro aside{max-width:65ch}.lm-chapter{align-items:flex-start;flex-direction:column}.lm-modebar{flex-wrap:wrap;gap:18px}.lm-stage{min-height:300px;padding:25px 14% 50px}.lm-art{width:min(53vw,320px);height:280px}.lm-index,.lm-counter{bottom:15px}.lm-stage-tools{top:5px}.lm-transport{grid-template-columns:92px 1fr 82px;gap:12px}.lm-states{margin-inline:-20px}.lm-state{flex:0 0 85px}.lm-panel{grid-template-columns:1fr;gap:20px}.lm-bottom{align-items:flex-start;flex-direction:column}}@media(max-width:440px){.lm-intro h1{font-size:45px}.lm-topright{font-size:9px}.lm-art{width:63vw;height:225px}.lm-stage{min-height:285px}.lm-stage-tools button{padding:7px 8px;font-size:9px}.lm-transport{grid-template-columns:85px 1fr 74px;gap:6px}.lm-time{font-size:10px}}
+
+/* Correspondencia: diagnostico original incorporado como capitulo editorial. */
+.lm-correspondence{border-top:1px solid var(--lm-ink);margin:32px 0 24px;padding-top:22px;min-width:0}
+.lm-correspondence:before{content:"02 / CORRESPONDÊNCIA";display:block;font-size:10px;letter-spacing:.1em;margin-bottom:23px}
+.lm-correspondence .correspondence-stage{display:flex;flex-direction:column;gap:18px;min-width:0;background:transparent}
+.lm-correspondence .analysis-banner{display:grid;grid-template-columns:repeat(4,minmax(70px,1fr)) minmax(180px,2fr);align-items:end;gap:16px;padding:0 0 20px;background:transparent;border-bottom:1px solid var(--lm-line);border-top:0}
+.lm-correspondence .analysis-banner>span{display:flex;flex-direction:column;gap:9px}
+.lm-correspondence .analysis-banner small{font-size:10px;letter-spacing:.05em;font-weight:300;color:var(--lm-muted)}
+.lm-correspondence .analysis-banner b{font-size:21px;font-weight:300}
+.lm-correspondence .correspondence-scrub{display:flex;flex-direction:column;gap:10px}
+.lm-correspondence .correspondence-scrub input{accent-color:var(--lm-ink);width:100%;min-width:0}
+.lm-correspondence .compare-grid{display:grid;grid-template-columns:minmax(0,1fr) clamp(160px,20%,250px) minmax(0,1fr);gap:20px;min-width:0;border:0;padding:0;background:transparent}
+.lm-correspondence .compare-pane{display:flex;flex-direction:column;gap:16px;min-width:0;padding:17px 0;border:0;background:transparent}
+.lm-correspondence .compare-pane header{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;border-bottom:1px solid var(--lm-line);padding:0 0 12px}
+.lm-correspondence .compare-pane header b{font-size:12px;font-weight:300}
+.lm-correspondence .compare-pane header small{font-size:10px;color:var(--lm-muted)}
+.lm-correspondence .compare-pane svg{width:100%;height:270px;display:block;overflow:visible}
+.lm-correspondence .compare-pane svg path{cursor:pointer}
+.lm-correspondence .mapping-column{display:flex;flex-direction:column;min-height:290px;padding:0;border:0;background:transparent}
+.lm-correspondence .mapping-filters{display:flex;gap:9px;flex-wrap:wrap;border-bottom:1px solid var(--lm-line);padding:10px 0}
+.lm-correspondence .mapping-filters button{font-size:10px;border:0;border-bottom:1px solid transparent;padding:5px 0}
+.lm-correspondence .mapping-filters button.active{border-bottom-color:var(--lm-ink)}
+.lm-correspondence .mapping-list{overflow-y:auto;max-height:280px;scrollbar-width:thin}
+.lm-correspondence .mapping-row{width:100%;display:grid;grid-template-columns:1fr 12px 1fr auto;align-items:center;gap:5px;padding:11px 5px;border:0;border-bottom:1px solid var(--lm-line);font-size:10px;text-align:left;background:transparent}
+.lm-correspondence .mapping-row.selected{background:#e8e4dd}
+.lm-correspondence .mapping-row i{display:block;width:10px;height:1px;background:var(--lm-muted)}
+.lm-correspondence .mapping-row em{font-style:normal;font-size:9px;color:var(--lm-muted)}
+.lm-correspondence .mapping-actions{display:flex;align-items:center;flex-wrap:wrap;gap:9px;background:transparent;border-top:1px solid var(--lm-line);border-bottom:1px solid var(--lm-line);padding:17px 0}
+.lm-correspondence .mapping-actions .relation-summary{margin-right:auto;min-width:170px;display:flex;flex-direction:column;gap:5px}
+.lm-correspondence .relation-summary b{font-weight:300;font-size:12px}
+.lm-correspondence .relation-summary small{font-size:10px;color:var(--lm-muted)}
+.lm-correspondence .mapping-actions button{border:1px solid var(--lm-line);padding:9px 12px;font-size:11px}
+.lm-correspondence .mapping-actions button.confirmed{background:var(--lm-ink);color:var(--lm-paper)}
+.lm-correspondence .offset-readout{font-weight:300;font-size:11px}
+@media(max-width:850px){.lm-correspondence .compare-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.lm-correspondence .mapping-column{grid-column:1/-1;grid-row:2;min-height:0}.lm-correspondence .mapping-list{max-height:220px}.lm-correspondence .compare-pane svg{height:220px}.lm-correspondence .analysis-banner{grid-template-columns:repeat(4,minmax(0,1fr))}.lm-correspondence .correspondence-scrub{grid-column:1/-1}}
+@media(max-width:470px){.lm-correspondence .compare-grid{gap:12px}.lm-correspondence .compare-pane svg{height:160px}.lm-correspondence .analysis-banner{gap:9px}.lm-correspondence .analysis-banner b{font-size:16px}.lm-correspondence .analysis-banner small{font-size:9px}.lm-correspondence .compare-pane header{display:block}}

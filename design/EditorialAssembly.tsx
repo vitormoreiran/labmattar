@@ -13,9 +13,11 @@ type Props={
   move:(index:number,delta:number)=>void;remove:()=>void;
   replace:()=>void;reset:()=>void;save:()=>void;download:()=>void;
   openTechnical:(mode:string)=>void;
+  correspondence:ReactNode;
+
 };
 export default function EditorialAssembly(p:Props){
-  const [mode,setMode]=useState<"observar"|"montar">("observar");
+  const [mode,setMode]=useState<"observar"|"montar"|"corresponder">("observar");
   const [expanded,setExpanded]=useState(false);
   const current=p.assets[p.selected];
   return <main className="lm-root" aria-busy={!p.ready}>
@@ -24,7 +26,7 @@ export default function EditorialAssembly(p:Props){
     <div className="lm-chapter"><span>03 / A FORMA EM TRANSFORMAÇÃO</span><nav className="lm-modebar" aria-label="Modos de trabalho">
       <button className={mode==="observar"?"active":""} onClick={()=>{setMode("observar");setExpanded(false)}}>Observar</button>
       <button className={mode==="montar"?"active":""} onClick={()=>{setMode("montar");setExpanded(true)}}>Montar</button>
-      <button onClick={()=>p.openTechnical("Correspondência")}>Correspondência ↗</button>
+      <button className={mode==="corresponder"?"active":""} onClick={()=>{setMode("corresponder");setExpanded(false)}}>Correspondência</button>
       <button onClick={()=>p.openTechnical("Exportar")}>Exportar ↗</button>
     </nav></div>
     <section className="lm-intro"><h1>MATRIZ<br/><em>VETORIAL</em></h1><aside>Um símbolo master. Nove estados equivalentes. Uma mesma superfície para observar e construir a transformação.</aside></section>
@@ -37,6 +39,7 @@ export default function EditorialAssembly(p:Props){
     <div className="lm-transport"><button className="lm-play" disabled={!p.ready} onClick={p.play}><span>{p.playing?"Ⅱ":"▶"}</span>{p.playing?"PAUSAR":"REPRODUZIR"}</button>
       <label className="lm-track"><span className="lm-sr">Posição na sequência</span><input type="range" min="0" max={Math.max(.1,p.totalDuration)} step=".001" value={p.time} onChange={e=>p.seek(Number(e.target.value))}/></label>
       <output className="lm-time">{p.time.toFixed(1)} / {p.totalDuration.toFixed(1)}s</output></div>
+    {mode==="corresponder"&&<section className="lm-correspondence" aria-label="Correspondência">{p.correspondence}</section>}
     <nav className="lm-states" aria-label="Estados vetoriais">
       {p.assets.map((asset,i)=><button key={i} className={"lm-state "+(p.selected===i?"active":"")} onClick={()=>p.go(i)} aria-pressed={p.selected===i}>
         <span className="lm-num">{String(i+1).padStart(2,"0")}</span>

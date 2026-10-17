@@ -62,8 +62,8 @@ html,body{background:var(--paper)}
 @media(prefers-reduced-motion:reduce){.vector-canvas{transition:none}}
 
 /* Revisao 02: composicao editorial, sem interferir nos estados ou no motor. */
-@font-face{font-family:UniversMattar;src:url("https://labmattar.com/fonts/univers-lt-std-45-light.otf") format("opentype");font-style:normal;font-weight:300;font-display:swap}
-@font-face{font-family:PerpetuaMattar;src:url("https://labmattar.com/fonts/perpetua-titling-light.ttf") format("truetype");font-style:normal;font-weight:300;font-display:swap}
+@font-face{font-family:UniversMattar;src:local("Univers LT Std 45 Light"),local("UniversLTStd-Light"),url("https://labmattar.com/fonts/univers-lt-std-45-light.otf") format("opentype");font-style:normal;font-weight:300;font-display:swap}
+@font-face{font-family:PerpetuaMattar;src:local("Perpetua Titling MT Light"),local("PerpetuaTitlingMT-Light"),url("https://labmattar.com/fonts/perpetua-titling-light.ttf") format("truetype");font-style:normal;font-weight:300;font-display:swap}
 html,body,.app-shell{font-family:UniversMattar,"Helvetica Neue",Arial,sans-serif;font-weight:300}
 .app-shell{--ink:#181818;--paper:#f7f6f2;--line:#c9c8c2;--red:#e22e24;--muted:#6d6a65}
 .app-shell button{transition:background-color .16s ease,border-color .16s ease,color .16s ease}

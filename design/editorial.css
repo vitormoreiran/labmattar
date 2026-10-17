@@ -47,3 +47,10 @@ body:has(.lm-root){margin:0;background:#f7f6f2}
 .lm-correspondence .offset-readout{font-weight:300;font-size:11px}
 @media(max-width:850px){.lm-correspondence .compare-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.lm-correspondence .mapping-column{grid-column:1/-1;grid-row:2;min-height:0}.lm-correspondence .mapping-list{max-height:220px}.lm-correspondence .compare-pane svg{height:220px}.lm-correspondence .analysis-banner{grid-template-columns:repeat(4,minmax(0,1fr))}.lm-correspondence .correspondence-scrub{grid-column:1/-1}}
 @media(max-width:470px){.lm-correspondence .compare-grid{gap:12px}.lm-correspondence .compare-pane svg{height:160px}.lm-correspondence .analysis-banner{gap:9px}.lm-correspondence .analysis-banner b{font-size:16px}.lm-correspondence .analysis-banner small{font-size:9px}.lm-correspondence .compare-pane header{display:block}}
+
+/* Navegacao compartilhada da identidade: disponivel tambem dentro do editor. */
+.lm-root .lm-site-nav{position:sticky;top:0;z-index:90;display:flex;justify-content:flex-end;gap:clamp(16px,3vw,48px);padding:12px 0 14px;min-height:43px;border-bottom:1px solid var(--lm-line);background:var(--lm-paper);font-size:11px;letter-spacing:.05em}
+.lm-root .lm-site-nav a{color:var(--lm-ink);text-decoration:none;white-space:nowrap;border-bottom:1px solid transparent;padding:2px 0}
+.lm-root .lm-site-nav a[aria-current=page]{border-color:var(--lm-ink)}
+.lm-root .lm-site-nav a:hover{text-decoration:underline;text-underline-offset:5px}
+@media(max-width:600px){.lm-root .lm-site-nav{justify-content:space-between;gap:9px;font-size:10px}}

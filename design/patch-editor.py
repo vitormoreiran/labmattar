@@ -120,5 +120,51 @@ content = content.replace(
 # Avoid resetting to a vector display that omits the active morph during the transition.
 assert 'const cleanAssets:VectorAsset[]=await Promise.all(names.map' in content
 
+
+# Topology correction for compound SVG paths and unmatched holes.
+# Work on the original source before saving the patched entry point.
+old_hole = "holes.push(subpathIndex>0);"
+assert old_hole in content
+content=content.replace(
+  old_hole,
+  "holes.push(false);",
+  1,
+)
+old_parse = "    return { name: name.replace(/\\.svg$/i, \"\"), contours, viewBox, sourceCount: paths.length, components, holes };"
+assert old_parse in content
+content=content.replace(
+  old_parse,
+  """    // Subpath order does not define whether a contour is a hole.
+    // Reclassify each compound path using geometric nesting instead.
+    const classified=contourHierarchy(contours);
+    return { name: name.replace(/\\.svg$/i, ""), contours, viewBox, sourceCount: paths.length, components:classified.components, holes:classified.holes };""",
+  1,
+)
+old_matching = "if(splitting&&pair.a===null){"
+assert old_matching in content
+content=content.replace(
+  old_matching,
+  "if(pair.a===null){",
+  1,
+)
+old_merging = "if(merging&&pair.b===null){"
+assert old_merging in content
+content=content.replace(
+  old_merging,
+  "if(pair.b===null){",
+  1,
+)
+# Avoid turning a hole into a black exterior when unmatched in an opposite frame:
+# the generated disappearing or appearing contour should retain its hole polarity.
+content=content.replace(
+  "holesA.push(pair.a===null?false:fromHoles[sourceIndex]);holesB.push(pair.b===null?false:toHoles[targetIndex]);",
+  "holesA.push(pair.a===null?toHoles[targetIndex]:fromHoles[sourceIndex]);holesB.push(pair.b===null?fromHoles[sourceIndex]:toHoles[targetIndex]);",
+  1,
+)
+# Explicitly avoid topology continuity being treated as native when hole inventories differ.
+# The existing topology check is left intact; its compatibility decision remains authoritative.
+assert 'components:classified.components, holes:classified.holes' in content
+assert 'if(pair.a===null)' in content
+
 source.write_text(content,encoding="utf-8")
 print("Patched editor to use native v72 states and geometry with editorial montage.")

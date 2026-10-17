@@ -1,5 +1,5 @@
-@font-face{font-family:LMUnivers;src:url("/fonts/univers-lt-std-45-light.otf") format("opentype");font-weight:300;font-display:swap}
-@font-face{font-family:LMPerpetua;src:url("/fonts/perpetua-titling-light.ttf") format("truetype");font-display:swap}
+@font-face{font-family:LMUnivers;src:local("Univers LT Std 45 Light"),local("UniversLTStd-Light"),url("https://labmattar.com/fonts/univers-lt-std-45-light.otf") format("opentype");font-weight:300;font-display:swap}
+@font-face{font-family:LMPerpetua;src:local("Perpetua Titling MT Light"),local("PerpetuaTitlingMT-Light"),url("https://labmattar.com/fonts/perpetua-titling-light.ttf") format("truetype");font-display:swap}
 .lm-root{--lm-paper:#f7f6f2;--lm-ink:#171717;--lm-line:#ccc9c3;--lm-muted:#77736c;min-height:100dvh;max-width:1700px;margin:auto;padding:28px clamp(22px,4.6vw,78px) 35px;background:var(--lm-paper);color:var(--lm-ink);display:flex;flex-direction:column;font:300 14px/1.4 LMUnivers,"Helvetica Neue",Arial,sans-serif;box-sizing:border-box}
 body:has(.lm-root){margin:0;background:#f7f6f2}
 .lm-root *{box-sizing:border-box}.lm-root button,.lm-root a,.lm-root input{font:inherit;color:inherit}.lm-root button{background:none;border:0;cursor:pointer}.lm-root button:disabled{opacity:.3;cursor:not-allowed}.lm-root a{text-decoration:none}.lm-root button:focus-visible,.lm-root a:focus-visible,.lm-root input:focus-visible{outline:2px solid currentColor;outline-offset:4px}

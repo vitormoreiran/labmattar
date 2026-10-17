@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Auditoria de carregamento tipografico nos tres sistemas.
+# Demonstracoes de movimento tipografico incorporadas a secao de tipografia.
 
 on:
   workflow_dispatch:

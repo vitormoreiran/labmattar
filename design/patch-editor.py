@@ -166,5 +166,37 @@ content=content.replace(
 assert 'components:classified.components, holes:classified.holes' in content
 assert 'if(pair.a===null)' in content
 
+# The third-to-fourth vessel pair has incompatible compound topology.
+# Keep original contours and apertures in the preview during this specific transition.
+# This scoped fallback does not alter other morph pairs.
+old_render = '''    render={<svg viewBox="0 0 1000 1000" className="vector-canvas" preserveAspectRatio="xMidYMid meet">
+      <g opacity={usesTopologyNative?1:0} transform={pairTransform}>
+        <UnionComponents contours={nativeContours} groups={usesTopologyNative?assetComponents(assets[segment.index]):[]}/>
+      </g>
+      <g opacity={usesTopologyNative?0:1}>
+        <UnionComponents contours={displayContours} groups={currentGroups}/>
+      </g>
+    </svg>}'''
+assert old_render in content
+replacement_render = '''    render={segment.index===3&&assets[3]?.name==="Vaso 03"&&assets[4]?.name==="Vaso 04"
+      ?<svg viewBox="0 0 1000 1000" className="vector-canvas" preserveAspectRatio="xMidYMid meet">
+        {[3,4].map((index,side)=><svg key={index} x="0" y="0" width="1000" height="1000" viewBox={assets[index].viewBox}
+          preserveAspectRatio="xMidYMid meet" opacity={side===0?1-easeValue(easings[3]??"smooth",segment.local,customCurves[3]??DEFAULT_CURVE):easeValue(easings[3]??"smooth",segment.local,customCurves[3]??DEFAULT_CURVE)}>
+          {[...new Set(assetComponents(assets[index]))].map(group=><path key={group}
+            d={assets[index].contours.filter((_,j)=>assetComponents(assets[index])[j]===group).join(" ")}
+            className="morph-shape" fillRule="evenodd" clipRule="evenodd"/>)}
+        </svg>)}
+      </svg>
+      :<svg viewBox="0 0 1000 1000" className="vector-canvas" preserveAspectRatio="xMidYMid meet">
+        <g opacity={usesTopologyNative?1:0} transform={pairTransform}>
+          <UnionComponents contours={nativeContours} groups={usesTopologyNative?assetComponents(assets[segment.index]):[]}/>
+        </g>
+        <g opacity={usesTopologyNative?0:1}>
+          <UnionComponents contours={displayContours} groups={currentGroups}/>
+        </g>
+      </svg>}'''
+content=content.replace(old_render,replacement_render,1)
+assert replacement_render in content
+
 source.write_text(content,encoding="utf-8")
 print("Patched editor to use native v72 states and geometry with editorial montage.")

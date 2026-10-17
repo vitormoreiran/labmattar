@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Integracao montagem React + motor v72; build de validacao 3.
+# Integracao da Correspondencia no editor editorial usando os handlers nativos v72.
 
 on:
   workflow_dispatch:

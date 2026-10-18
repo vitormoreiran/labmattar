@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Fundamentos consolidados e validados antes da publicacao.
+# Laboratorio de composicao experimental integrado na previa.
 
 on:
   workflow_dispatch:
@@ -32,6 +32,7 @@ jobs:
           python3 design/patch-editor.py
           cp design/tipografia.html public/tipografia.html
           cp design/cores.html public/cores.html
+          cp design/composicao.html public/composicao.html
           python3 design/integrate-areas.py
           python3 design/validate-identity.py
       - name: Verificar disponibilidade das fontes oficiais

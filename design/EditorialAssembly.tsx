@@ -21,7 +21,7 @@ export default function EditorialAssembly(p:Props){
   const [expanded,setExpanded]=useState(false);
   const current=p.assets[p.selected];
   return <main className="lm-root" aria-busy={!p.ready}>
-    <nav className="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR"><a href="/manual.html" aria-current="page">01 / SÍMBOLOS</a><a href="/tipografia.html">02 / TIPOGRAFIA</a><a href="/cores.html">03 / CORES</a></nav>
+    <nav className="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR"><a href="/manual.html" aria-current="page">01 / SÍMBOLOS</a><a href="/tipografia.html">02 / TIPOGRAFIA</a><a href="/cores.html">03 / CORES</a><a href="/composicao.html">04 / COMPOSIÇÃO</a></nav>
     <header className="lm-mast"><a href="/manual.html" className="lm-wordmark">LABMATTAR</a><div className="lm-topright">SISTEMA VETORIAL<span>IDENTIDADE / 2026</span></div></header>
     <div className="lm-rule"/>
     <div className="lm-chapter"><span>03 / A FORMA EM TRANSFORMAÇÃO</span><nav className="lm-modebar" aria-label="Modos de trabalho">

@@ -7,12 +7,12 @@ assert manifest["schemaVersion"]=="1.0.0"
 assert len(manifest["sections"])==7
 assert len(manifest["symbols"]["vessels"])==9
 assert len(set(manifest["colors"]["palette"].values()))==5
-for name in ("manual.html","tipografia.html","cores.html"):
+for name in ("manual.html","tipografia.html","cores.html","composicao.html"):
  page=Path("public")/name
  assert page.exists(),f"Missing page: {page}"
  text=page.read_text(encoding="utf-8")
  assert '<nav class="lm-site-nav"' in text,f"Missing shared navigation in {name}"
- for expected in ("/manual.html","/tipografia.html","/cores.html"):
+ for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html"):
   assert expected in text,f"Missing navigation link {expected} in {name}"
 for page in ("tipografia.html","cores.html"):
  text=(Path("public")/page).read_text(encoding="utf-8")

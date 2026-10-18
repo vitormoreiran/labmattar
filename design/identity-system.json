@@ -1,0 +1,108 @@
+{
+  "schemaVersion": "1.0.0",
+  "project": "LABMATTAR",
+  "status": "working-system",
+  "sections": [
+    {
+      "id": "symbols",
+      "label": "Símbolos",
+      "path": "/manual.html",
+      "stage": "existing",
+      "editor": "/editor"
+    },
+    {
+      "id": "typography",
+      "label": "Tipografia",
+      "path": "/tipografia.html",
+      "stage": "existing"
+    },
+    {
+      "id": "color",
+      "label": "Cores",
+      "path": "/cores.html",
+      "stage": "draft"
+    },
+    {
+      "id": "composition",
+      "label": "Composição",
+      "stage": "pending"
+    },
+    {
+      "id": "image",
+      "label": "Imagem",
+      "stage": "pending"
+    },
+    {
+      "id": "motion",
+      "label": "Movimento",
+      "stage": "partial"
+    },
+    {
+      "id": "applications",
+      "label": "Aplicações",
+      "stage": "pending"
+    }
+  ],
+  "typography": {
+    "structural": {
+      "name": "Univers LT Std 45 Light",
+      "weight": 300,
+      "source": "https://labmattar.com/fonts/univers-lt-std-45-light.otf"
+    },
+    "editorial": {
+      "name": "Perpetua Titling MT Light",
+      "weight": 300,
+      "source": "https://labmattar.com/fonts/perpetua-titling-light.ttf"
+    },
+    "roles": [
+      "title",
+      "body",
+      "detail"
+    ]
+  },
+  "colors": {
+    "base": {
+      "ink": "#181818",
+      "paper": "#F7F6F2"
+    },
+    "palette": {
+      "blue": "#1F3554",
+      "brown": "#5B463E",
+      "green": "#8FD81B",
+      "red": "#E22E24",
+      "beige": "#E6DBCF"
+    },
+    "validatedAccents": [
+      "green",
+      "red"
+    ],
+    "underEvaluation": [
+      "blue/white field",
+      "brown usage"
+    ]
+  },
+  "symbols": {
+    "master": "M.svg",
+    "vessels": [
+      "vaso_01.svg",
+      "vaso_02.svg",
+      "vaso_03.svg",
+      "vaso_04.svg",
+      "vaso_05.svg",
+      "vaso_06.svg",
+      "vaso_07.svg",
+      "vaso_08.svg",
+      "vaso_09.svg"
+    ],
+    "assetDirectory": "/identidade/"
+  },
+  "governance": {
+    "stages": [
+      "approved",
+      "draft",
+      "experimental"
+    ],
+    "sourceOfTruth": "design/identity-system.json",
+    "rule": "Experiments cannot silently overwrite approved identity parameters."
+  }
+}

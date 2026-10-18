@@ -25,7 +25,8 @@
     {
       "id": "composition",
       "label": "Composição",
-      "stage": "pending"
+      "stage": "experimental",
+      "path": "/composicao.html"
     },
     {
       "id": "image",

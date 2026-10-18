@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Entrada e scramble reunidos em uma unica demonstracao tipografica.
+# Fundamentos consolidados e validados antes da publicacao.
 
 on:
   workflow_dispatch:
@@ -33,6 +33,7 @@ jobs:
           cp design/tipografia.html public/tipografia.html
           cp design/cores.html public/cores.html
           python3 design/integrate-areas.py
+          python3 design/validate-identity.py
       - name: Verificar disponibilidade das fontes oficiais
         shell: bash
         run: |

@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Laboratorio de composicao experimental integrado na previa.
+# Indice geral de identidade, comportamento e cinco sistemas publicados.
 
 on:
   workflow_dispatch:
@@ -33,6 +33,8 @@ jobs:
           cp design/tipografia.html public/tipografia.html
           cp design/cores.html public/cores.html
           cp design/composicao.html public/composicao.html
+          cp design/imagem.html public/imagem.html
+          cp design/identidade.html public/identidade.html
           python3 design/integrate-areas.py
           python3 design/validate-identity.py
       - name: Verificar disponibilidade das fontes oficiais

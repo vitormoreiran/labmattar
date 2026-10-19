@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Reorganizacao da leitura da area de Simbolos sem alterar vetores.
+# Validar a primeira etapa da revisao de hierarquia editorial.
 
 on:
   workflow_dispatch:

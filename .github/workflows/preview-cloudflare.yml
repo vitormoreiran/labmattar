@@ -44,6 +44,7 @@ jobs:
           from pathlib import Path
           for name in ('univers-lt-std-45-light.otf','perpetua-titling-light.ttf'):
               data=(Path('public/fonts')/name).read_bytes()
+              print('MAGIC',name,len(data),repr(data[:24]))
               assert len(data)>3000 and data[:4] in (b'OTTO',b'\\x00\\x01\\x00\\x00',b'true',b'ttcf'),f'Invalid font: {name}'
               print(name, len(data), 'bytes OK')
           PY

@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Revisao editorial de clareza, hierarquia e navegacao inicial.
+# Reorganizacao da leitura da area de Simbolos sem alterar vetores.
 
 on:
   workflow_dispatch:
@@ -36,6 +36,7 @@ jobs:
           cp design/imagem.html public/imagem.html
           cp design/identidade.html public/identidade.html
           python3 design/integrate-areas.py
+          python3 design/revise-symbols-hierarchy.py
           python3 design/validate-identity.py
           mkdir -p public/fonts
           curl --fail --location --silent --show-error --retry 3 'https://labmattar.com/fonts/univers-lt-std-45-light.otf' --output public/fonts/univers-lt-std-45-light.otf

@@ -31,7 +31,8 @@
     {
       "id": "image",
       "label": "Imagem",
-      "stage": "pending"
+      "stage": "experimental",
+      "path": "/imagem.html"
     },
     {
       "id": "motion",

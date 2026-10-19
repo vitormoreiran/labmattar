@@ -6,6 +6,7 @@ NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/tipografia.html" data-area="tipografia">02 / TIPOGRAFIA</a>
 <a href="/cores.html" data-area="cores">03 / CORES</a>
 <a href="/composicao.html" data-area="composicao">04 / COMPOSIÇÃO</a>
+<a href="/imagem.html" data-area="imagem">05 / IMAGEM</a>
 </nav>'''
 STYLE='''<style>
 .lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,3vw,48px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;font:300 11px/1.5 UniversMattar,"Univers Mattar","Helvetica Neue",Arial,sans-serif;letter-spacing:.05em}
@@ -15,7 +16,7 @@ STYLE='''<style>
 .lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 @media(max-width:600px){.lm-site-nav{justify-content:space-between;gap:10px;padding:10px 16px;font-size:10px}}
 </style>'''
-areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao"}
+areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","imagem.html":"imagem"}
 for filename,area in areas.items():
  p=Path("public")/filename
  assert p.exists(),filename

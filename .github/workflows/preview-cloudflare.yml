@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Indice geral de identidade, comportamento e cinco sistemas publicados.
+# Fontes oficiais embutidas na previa, independentes da maquina.
 
 on:
   workflow_dispatch:
@@ -37,6 +37,17 @@ jobs:
           cp design/identidade.html public/identidade.html
           python3 design/integrate-areas.py
           python3 design/validate-identity.py
+          mkdir -p public/fonts
+          curl --fail --location --silent --show-error --retry 3 'https://labmattar.com/fonts/univers-lt-std-45-light.otf' --output public/fonts/univers-lt-std-45-light.otf
+          curl --fail --location --silent --show-error --retry 3 'https://labmattar.com/fonts/perpetua-titling-light.ttf' --output public/fonts/perpetua-titling-light.ttf
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('univers-lt-std-45-light.otf','perpetua-titling-light.ttf'):
+              data=(Path('public/fonts')/name).read_bytes()
+              assert len(data)>3000 and data[:4] in (b'OTTO',b'\\x00\\x01\\x00\\x00',b'true',b'ttcf'),f'Invalid font: {name}'
+              print(name, len(data), 'bytes OK')
+          PY
+          python3 design/localize-fonts.py
       - name: Verificar disponibilidade das fontes oficiais
         shell: bash
         run: |

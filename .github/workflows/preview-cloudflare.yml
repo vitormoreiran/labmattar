@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Fontes oficiais embutidas na previa, independentes da maquina.
+# Revisao editorial de clareza, hierarquia e navegacao inicial.
 
 on:
   workflow_dispatch:

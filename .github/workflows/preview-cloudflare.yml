@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Publicar introducao e acesso ao acervo da identidade.
+# Publicar pagina inicial LABMATTAR com area de video de abertura.
 
 on:
   workflow_dispatch:

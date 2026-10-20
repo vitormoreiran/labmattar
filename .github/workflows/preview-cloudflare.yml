@@ -1,5 +1,5 @@
 name: Publicar previa LABMATTAR
-# Validar a primeira etapa da revisao de hierarquia editorial.
+# Publicar introducao e acesso ao acervo da identidade.
 
 on:
   workflow_dispatch:
@@ -35,6 +35,7 @@ jobs:
           cp design/composicao.html public/composicao.html
           cp design/imagem.html public/imagem.html
           cp design/identidade.html public/identidade.html
+          cp design/inicio.html public/inicio.html
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py
           python3 design/validate-identity.py

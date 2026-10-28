@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LABMATTAR / Catálogo audiovisual",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "items"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "status",
+          "source"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "enum": [
+              "video",
+              "document",
+              "image"
+            ]
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "year": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1900
+          },
+          "description": {
+            "type": "string"
+          },
+          "credits": {
+            "type": "string"
+          },
+          "poster": {
+            "type": "string",
+            "description": "Path to optimized poster in public/media/posters, or a verified HTTPS URL."
+          },
+          "source": {
+            "type": "string",
+            "description": "HTTPS playback URL when published; empty while draft."
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "captions": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

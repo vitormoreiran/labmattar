@@ -14,7 +14,7 @@ jobs:
       - name: Diagnosticar HTTP da rota nova
         shell: bash
         run: |
-          for path in /manual /ambiente-editorial /ambiente-editorial/; do
+          for path in /manual /ambiente-editorial /ambiente-editorial/index.html; do
             echo "=== $path ==="
             curl -sS -L --max-time 20 -o /tmp/page -D /tmp/headers -w 'HTTP=%{http_code} URL=%{url_effective} SIZE=%{size_download}\n' "https://labmattar-identidade-previa.vitormoreiran.workers.dev$path" || true
             head -n 18 /tmp/headers || true

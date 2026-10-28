@@ -1,0 +1,1 @@
+{"name":"mattar-editor-domain","private":true,"type":"module","scripts":{"test":"node --test test/*.test.mjs"},"dependencies":{"jose":"^6.1.0"}}

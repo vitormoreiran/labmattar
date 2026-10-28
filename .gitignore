@@ -6,3 +6,13 @@ dist/
 .env.*
 !.env.example
 *.log
+
+# Originais de mídia local (não enviar ao Git)
+local-media/
+media-originals/
+*.mp4
+*.mov
+*.m4v
+*.avi
+*.mkv
+*.webm

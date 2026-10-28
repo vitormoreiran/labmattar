@@ -1,4 +1,5 @@
 name: Verificar rota Ambiente Editorial
+# Reteste da rota apos deploy da renderizacao client-only
 on:
   push:
     branches: [main]

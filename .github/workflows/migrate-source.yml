@@ -1,0 +1,66 @@
+name: Organizar fontes editaveis LABMATTAR
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/migrate-source.yml'
+permissions:
+  contents: write
+jobs:
+  extrair-fontes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extrair fontes do pacote legado com seguranca
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP=$(find . -maxdepth 1 -type f -iname 'LABMATTAR_CODIGO_PARA_GITHUB*.zip' -print -quit)
+          test -n "$ZIP"
+          python3 - "$ZIP" <<'PY'
+          from pathlib import Path
+          import sys, zipfile
+          zip_path=Path(sys.argv[1])
+          with zipfile.ZipFile(zip_path) as z:
+              files=[i for i in z.infolist() if not i.is_dir()]
+              for member in files:
+                  p=Path(member.filename)
+                  if p.is_absolute() or '..' in p.parts or p.parts[0]=='.github':
+                      raise SystemExit(f"Unsafe archive path: {p}")
+              print('Archive files:',len(files))
+              print('\n'.join(str(x.filename) for x in files[:70]))
+              assert any(x.filename.startswith('app/') for x in files)
+              assert any(x.filename.startswith('public/') for x in files)
+          PY
+          unzip -oq "$ZIP" -d .
+          test -f package.json
+          test -d app
+          test -d public
+          git switch -c refactor/source-files
+          cat > .gitignore <<'EOF'
+          node_modules/
+          .next/
+          dist/
+          .wrangler/
+          .env
+          .env.*
+          !.env.example
+          *.log
+          EOF
+          for path in app public scripts package.json package-lock.json tsconfig.json next.config.ts next.config.js next.config.mjs postcss.config.js postcss.config.mjs postcss.config.cjs wrangler.jsonc wrangler.toml components lib types .gitignore; do
+            if test -e "$path"; then git add -- "$path"; fi
+          done
+          git diff --cached --stat
+          git diff --cached --quiet && { echo "No extracted source files to commit"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Versionar arquivos-fonte antes contidos no ZIP"
+          git push --set-upstream origin refactor/source-files
+      - name: Resumo
+        run: |
+          echo 'Codigo extraido na branch refactor/source-files; nenhuma alteracao em main.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Abra PR e migre workflow de preview apenas depois de validar compilacao.' >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,22 @@
+name: Verificar rota Ambiente Editorial
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/smoke-editorial.yml'
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Diagnosticar HTTP da rota nova
+        shell: bash
+        run: |
+          for path in /manual /ambiente-editorial /ambiente-editorial/; do
+            echo "=== $path ==="
+            curl -sS -L --max-time 20 -o /tmp/page -D /tmp/headers -w 'HTTP=%{http_code} URL=%{url_effective} SIZE=%{size_download}\n' "https://labmattar-identidade-previa.vitormoreiran.workers.dev$path" || true
+            head -n 18 /tmp/headers || true
+            head -c 450 /tmp/page || true
+            printf '\n'
+          done

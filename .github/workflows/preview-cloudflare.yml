@@ -76,17 +76,18 @@ jobs:
         run: |
           test -f dist/server/index.js
           test -d dist/client
-          node --input-type=module <<'JS'
-          const mod=await import('./dist/server/index.js');
-          console.log('ENTRY_EXPORTS',Object.keys(mod));
-          console.log('DEFAULT_TYPE',typeof mod.default,'DEFAULT_KEYS',Object.keys(mod.default||{}));
+          cat > dist/server/worker-entry.js <<'JS'
+          import handleRequest from './index.js';
+          export default {
+            fetch(request, env, ctx) {
+              return handleRequest(request, env, ctx);
+            }
+          };
           JS
-          head -c 350 dist/server/index.js
-          echo
           cat > wrangler.preview.jsonc <<'JSON'
           {
             "name": "labmattar-identidade-previa",
-            "main": "dist/server/index.js",
+            "main": "dist/server/worker-entry.js",
             "compatibility_date": "2026-10-01",
             "compatibility_flags": ["nodejs_compat"],
             "assets": {

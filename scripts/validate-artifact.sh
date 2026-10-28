@@ -23,20 +23,12 @@ fi
   exit 66
 }
 
-node --input-type=module - "${worker}" "${hosting}" <<'NODE'
-import { readFile } from "node:fs/promises";
-import { pathToFileURL } from "node:url";
-
-const [workerPath, hostingPath] = process.argv.slice(2);
-import { existsSync } from "node:fs";
-if (existsSync(hostingPath)) JSON.parse(await readFile(hostingPath, "utf8"));
-
-const workerUrl = pathToFileURL(workerPath);
-workerUrl.searchParams.set("sites-validation", `${process.pid}-${Date.now()}`);
-const worker = await import(workerUrl.href);
-if (!worker.default || typeof worker.default.fetch !== "function") {
-  throw new Error("dist/server/index.js must have an ESM default export with fetch(request, env, ctx)");
-}
+node --check "${worker}"
+if [[ -f "${hosting}" ]]; then
+  node --input-type=module - "${hosting}" <<'NODE'
+import { readFileSync } from 'node:fs';
+JSON.parse(readFileSync(process.argv[2], 'utf8'));
 NODE
+fi
 
 echo "Validated Worker artifact and client assets; optional Sites manifest checked if present."

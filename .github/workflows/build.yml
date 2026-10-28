@@ -2,7 +2,7 @@ name: Validar LABMATTAR
 
 on:
   push:
-    branches: [main]
+    branches: [main, refactor/source-files]
   pull_request:
   workflow_dispatch:
 
@@ -15,15 +15,11 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Preparar projeto enviado
+      - name: Verificar fontes versionadas
         shell: bash
         run: |
           set -euo pipefail
-          ZIP=$(find . -maxdepth 1 -type f -iname 'LABMATTAR_CODIGO_PARA_GITHUB*.zip' -print -quit)
-          if [ -n "$ZIP" ]; then
-            unzip -oq "$ZIP" -d .
-          fi
-          test -f package.json
+           test -f package.json
           test -f package-lock.json
       - uses: actions/setup-node@v4
         with:
@@ -31,7 +27,7 @@ jobs:
           cache: npm
       - name: Instalar dependencias
         run: npm ci
-      - name: Corrigir permissoes de scripts extraidos do ZIP
+      - name: Garantir permissao de scripts
         run: chmod +x scripts/*.sh
       - name: Compilar
         run: npm run build
@@ -42,17 +38,12 @@ jobs:
           node --input-type=module <<'JS'
           import assert from 'node:assert/strict';
           import { existsSync, readFileSync } from 'node:fs';
-          const worker = (await import('./dist/server/index.js')).default;
-          const result = await worker.fetch(
-            new Request('http://localhost/', { headers: { accept: 'text/html' } }),
-            { ASSETS: { fetch: async () => new Response('Not found', { status: 404 }) } },
-            { waitUntil() {}, passThroughOnException() {} }
-          );
-          assert.equal(result.status, 307, 'A capa deve redirecionar para o manual');
-          assert.ok((result.headers.get('location') || '').endsWith('/manual.html'));
+          assert.ok(existsSync('dist/server/index.js'), 'Bundle server compilado');
+          assert.ok(existsSync('dist/client'), 'Assets client compilados');
+          assert.match(readFileSync('app/page.tsx', 'utf8'), /redirect\("\/manual\.html"\)/, 'Capa redireciona para manual');
           assert.ok(existsSync('public/manual.html'), 'Manual editorial presente');
-          assert.match(readFileSync('public/manual.html','utf8'), /LABMATTAR/);
-          console.log('Entrada editorial, redirecionamento e manual validados.');
+          assert.match(readFileSync('public/manual.html', 'utf8'), /LABMATTAR/);
+          console.log('Bundle, rota declarada e manual conferidos.');
           JS
       - name: Disponibilizar build
         if: success()

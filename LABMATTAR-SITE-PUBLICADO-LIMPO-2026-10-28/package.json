@@ -1,0 +1,10 @@
+{
+  "name": "mattar-recovered",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --keep-vars"
+  },
+  "devDependencies": {"wrangler": "4.92.0"}
+}

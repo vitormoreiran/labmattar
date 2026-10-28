@@ -1,0 +1,8 @@
+.lm-overlay-languages{position:fixed;z-index:2147483647;top:max(104px,calc(env(safe-area-inset-top) + 78px));right:max(20px,env(safe-area-inset-right));display:flex;align-items:center;gap:10px;color:#fff;font:300 var(--type-detail-size,12px)/1 LABUnivers,Arial,sans-serif;pointer-events:auto}
+.lm-overlay-languages[hidden]{display:none}
+.lm-overlay-languages button{appearance:none;border:0;border-bottom:1px solid transparent;border-radius:0;background:none;color:inherit;opacity:.55;min-width:28px;min-height:32px;padding:6px 0;font:inherit;cursor:pointer}
+.lm-overlay-languages button[aria-pressed=true],.lm-overlay-languages button:hover,.lm-overlay-languages button:focus-visible{opacity:1;border-bottom-color:currentColor}
+.lm-overlay-languages button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+html[lang="en"] .chapter2-gallery-open .chapter2-eye-cursor i::after{content:"CLICK TO SEE MORE"}
+html[lang="es"] .chapter2-gallery-open .chapter2-eye-cursor i::after{content:"PULSA PARA VER MÁS"}
+@media(max-width:760px){.lm-overlay-languages{top:max(104px,calc(env(safe-area-inset-top) + 82px));right:max(18px,env(safe-area-inset-right));gap:7px}}

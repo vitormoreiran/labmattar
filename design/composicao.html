@@ -82,7 +82,7 @@
 @media(max-width:700px){.lm-case-intro{grid-template-columns:1fr}.lm-case-intro h2{font-size:clamp(42px,10vw,70px)}.lm-case-stage{padding:8px}.lm-case-layout{gap:18px}.lm-case-aside{display:block}.lm-case-aside .eyebrow{margin-bottom:10px}.lm-case-frame:not(.is-mobile){--lm-safe:clamp(10px,5.2cqw,28px)}.lm-case-frame:not(.is-mobile) .lm-case-reading h3{font-size:clamp(23px,6cqw,37px)}.lm-case-frame:not(.is-mobile) .lm-case-reading p{font-size:10px}.lm-case-frame:not(.is-mobile) .lm-case-footer,.lm-case-frame:not(.is-mobile) .lm-case-kicker{font-size:8px}.lm-case-facts{margin-top:45px;gap:24px}.lm-case-validation{grid-template-columns:1fr;margin-top:45px}}
 @media(max-width:440px){.lm-case-facts{grid-template-columns:1fr}.lm-case-control{gap:8px}.lm-case-control button+button{margin-left:1px}.lm-case-frame.is-mobile{width:min(100%,305px)}}
 @media(prefers-reduced-motion:reduce){.lm-case-frame{transition:none}}
-</style></head><body>
+</style><link rel="stylesheet" href="/composicao-lab.css"></head><body>
 <nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR"><a href="/manual.html">01 / SÍMBOLOS</a><a href="/tipografia.html">02 / TIPOGRAFIA</a><a href="/cores.html">03 / CORES</a><a href="/composicao.html" aria-current="page">04 / COMPOSIÇÃO</a></nav>
 <main><section class="chapter"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 2026</p><h1 class="big">SISTEMA DE<br><span class="perpetua">COMPOSIÇÃO</span></h1><div class="intro"><p>O sistema de composição é aprofundado abaixo com um estudo aplicado de página real e, em seguida, um laboratório de testes. Os resultados ainda não constituem modelos aprovados.</p><span class="status">ESTUDO / NÃO NORMATIVO</span></div></section>
 
@@ -168,18 +168,89 @@
     </div>
   </div>
 </section>
-<section class="chapter" id="laboratorio"><p class="eyebrow">02 / TESTE DE COMPOSIÇÃO</p><div class="controls">
-<label class="control">Estrutura<select id="placement"><option value="left">Título à esquerda</option><option value="center">Título centralizado</option><option value="lower">Título no campo inferior</option></select></label>
-<label class="control">Campo cromático<select id="color"><option value="neutral">Neutro</option><option value="blue">Azul</option><option value="green">Verde</option><option value="beige">Bege</option></select></label>
-<label class="control">Margens / <output id="marginValue">7%</output><input id="margin" type="range" min="4" max="16" value="7"></label>
-<label class="control">Símbolo oficial<select id="symbol"><option value="none">Sem símbolo</option><option value="M.svg">M</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option></select></label>
-<label class="control">Grid<select id="grid"><option value="hidden">Oculto</option><option value="visible">Mostrar 12 colunas</option></select></label>
-</div>
-<div class="stage"><div class="artboard" id="artboard" style="--pad:7%"><div class="grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="head">LABMATTAR / 2026</div><img class="symbol" id="symbolImage" alt="" hidden><h2 class="headline">PRÁTICAS<br><span class="perpetua">MATERIAIS</span><br>E PROCESSOS</h2><div class="foot"><span>GASTROPERFORMANCE &amp; FOOD DESIGN</span><span>ESTUDO 01 / COMPOSIÇÃO</span></div></div></div>
-<p class="explain">Experimente margens, alinhamento e cor no quadro acima. O grid de 12 colunas é apenas um recurso de visualização, não uma regra oficial.</p>
-<button class="button" id="reset" type="button">RESTAURAR ESTUDO</button>
-</section><section class="chapter"><p class="eyebrow">03 / O QUE AINDA PRECISA SER DEFINIDO</p><div class="notes"><article><h3>Superfície e proporção</h3><p>Definir margens e tamanhos para diferentes formatos, depois de testar peças reais.</p></article><article><h3>Símbolo e palavra</h3><p>Definir quando usar o M ou um dos vasos e como posicioná-los em relação ao título.</p></article><article><h3>Imagem e campo cromático</h3><p>Definir como distribuir título, imagem e cor na mesma peça.</p></article></div></section></main>
-<script>(()=>{const by=id=>document.getElementById(id);const art=by('artboard');const palette={neutral:['#f7f6f2','#181818'],blue:['#1F3554','#fff'],green:['#8FD81B','#181818'],beige:['#E6DBCF','#181818']};function update(){const pos=by('placement').value;art.classList.remove('center','lower');if(pos!=='left')art.classList.add(pos);const [bg,fg]=palette[by('color').value];art.style.background=bg;art.style.color=fg;art.style.setProperty('--pad',by('margin').value+'%');by('marginValue').textContent=by('margin').value+'%';art.classList.toggle('showgrid',by('grid').value==='visible');const file=by('symbol').value;const img=by('symbolImage');img.hidden=file==='none';if(file!=='none')img.src='/identidade/'+file;}['placement','color','margin','symbol','grid'].forEach(id=>by(id).addEventListener('input',update));by('reset').addEventListener('click',()=>{by('placement').value='left';by('color').value='neutral';by('margin').value='7';by('symbol').value='none';by('grid').value='hidden';update()});update()})()</script>
+<section class="chapter lm-lab" id="laboratorio">
+  <div class="lm-lab-heading">
+    <div><p class="eyebrow">02 / LABORATÓRIO / CONSTRUÇÃO DE PÁGINAS</p><h2>TESTAR<br><span class="perpetua">RELAÇÕES</span></h2></div>
+    <p>Uma superfície experimental para combinar os elementos que já existem na identidade. Alterar uma condição deve revelar como texto, fotografia, M e espaço respondem juntos — sem criar uma regra nova para cada página.</p>
+  </div>
+  <div class="lm-lab-prep">
+    <span class="lm-lab-prep-label">COMEÇAR COM UMA RELAÇÃO</span>
+    <div class="lm-lab-presets" role="group" aria-label="Pontos de partida para a composição">
+      <button type="button" data-lab-preset="tipografia" aria-pressed="true">01 / Tipografia</button>
+      <button type="button" data-lab-preset="mascara" aria-pressed="false">02 / M + fotografia</button>
+      <button type="button" data-lab-preset="imagem" aria-pressed="false">03 / Imagem integral</button>
+    </div>
+  </div>
+  <div class="lm-lab-workspace">
+    <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">
+      <fieldset class="lm-lab-section"><legend>01 / SUPERFÍCIE</legend><div class="lm-lab-fields">
+        <div class="lm-lab-field"><label for="labFormat">Formato da página</label><select id="labFormat">
+          <option value="horizontal">Horizontal / 16:9</option><option value="vertical">Vertical / 9:16</option><option value="quadrado">Quadrado / 1:1</option><option value="editorial">Editorial / √2:1</option>
+        </select></div>
+        <div class="lm-lab-field"><label for="labColor">Campo cromático</label><select id="labColor">
+          <option value="neutral">Neutro / papel</option><option value="green">Verde / acento</option><option value="red">Vermelho / acento</option><option value="beige">Bege / neutro</option><option value="blue">Azul / em avaliação</option><option value="brown">Marrom / em avaliação</option>
+        </select><small>Atua apenas na superfície sem fotografia.</small></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labMargin">Margem de leitura</label><output id="labMarginValue" for="labMargin">7%</output></div><input id="labMargin" type="range" min="4" max="16" value="7" step="1"></div>
+        <div class="lm-lab-field"><label for="labGuides">Guias de construção</label><select id="labGuides"><option value="nenhuma">Ocultar</option><option value="margens">Área útil</option><option value="grid">Área útil + 12 colunas</option></select><small>As 12 colunas são uma ferramenta de observação, não um grid normativo.</small></div>
+      </div></fieldset>
+      <fieldset class="lm-lab-section"><legend>02 / COMPOSIÇÃO E TIPOGRAFIA</legend><div class="lm-lab-fields">
+        <div class="lm-lab-field"><label for="labPlacement">Posição do bloco de título</label><select id="labPlacement"><option value="esquerda">À esquerda</option><option value="central">Centralizado</option><option value="inferior">No campo inferior</option><option value="superior">No campo superior</option></select></div>
+        <div class="lm-lab-field"><label for="labRelation">Relação entre texto e imagem</label><select id="labRelation"><option value="separada">Áreas separadas</option><option value="sobreposta">Texto sobre a imagem</option></select></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTextWidth">Largura da coluna</label><output for="labTextWidth" id="labTextWidthValue">61%</output></div><input type="range" id="labTextWidth" min="40" max="90" step="2" value="61"></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTitleScale">Escala do título</label><output id="labTitleScaleValue" for="labTitleScale">100%</output></div><input type="range" id="labTitleScale" min="70" max="140" step="5" value="100"></div>
+        <div class="lm-lab-field"><label for="labType">Composição tipográfica</label><select id="labType"><option value="alternada">Univers + Perpetua</option><option value="univers">Univers</option><option value="perpetua">Perpetua</option></select><small>São tratamentos do mesmo título, não três categorias de título.</small></div>
+      </div></fieldset>
+      <fieldset class="lm-lab-section"><legend>03 / IMAGEM E SÍMBOLO</legend><div class="lm-lab-fields">
+        <div class="lm-lab-field"><label for="labImage">Modo de imagem</label><select id="labImage"><option value="nenhuma">Sem imagem</option><option value="recorte">Fotografia recortada no M</option><option value="inteira">Fotografia integral</option></select></div>
+        <div class="lm-lab-field"><label for="labPhoto">Fotografia / Cada Corpo Abre um Mundo</label><select id="labPhoto"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select></div>
+        <div class="lm-lab-field"><label for="labMPosition">Posição do M fotográfico</label><select id="labMPosition"><option value="direita">À direita</option><option value="centro">Central</option><option value="esquerda">À esquerda</option></select></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="5" value="60"></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusX">Foco horizontal da fotografia</label><output id="labFocusXValue" for="labFocusX">50%</output></div><input id="labFocusX" type="range" min="0" max="100" step="5" value="50"></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusY">Foco vertical da fotografia</label><output id="labFocusYValue" for="labFocusY">50%</output></div><input id="labFocusY" type="range" min="0" max="100" step="5" value="50"></div>
+        <div class="lm-lab-field"><label for="labSymbol">Símbolo de assinatura / opcional</label><select id="labSymbol"><option value="none">Sem assinatura adicional</option><option value="M.svg">M / master</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select></div>
+      </div></fieldset>
+      <fieldset class="lm-lab-section"><legend>04 / CONTEÚDO EDITORIAL</legend><div class="lm-lab-fields">
+        <div class="lm-lab-field"><label for="labTitleInput">Título / uma linha por grupo de palavras</label><textarea id="labTitleInput" rows="3" maxlength="140" spellcheck="true">PRÁTICAS
+MATERIAIS
+E PROCESSOS</textarea><small>As quebras indicadas aqui são editoriais. A fonte Perpetua atua apenas no título.</small></div>
+        <div class="lm-lab-field"><label for="labBodyInput">Texto de leitura</label><textarea id="labBodyInput" rows="4" maxlength="380" spellcheck="true">Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</textarea></div>
+        <div class="lm-lab-field"><label for="labBodyMode">Presença do texto de leitura</label><select id="labBodyMode"><option value="oculto">Somente título</option><option value="visivel">Título + texto</option></select></div>
+      </div></fieldset>
+      <div class="lm-lab-mini-actions"><button type="button" id="labReset">RESTAURAR COMPOSIÇÃO</button><span class="lm-lab-local" id="labSaveState">Estudo experimental / não altera o site.</span></div>
+    </aside>
+    <div class="lm-lab-preview">
+      <div class="lm-lab-preview-head"><span>PROVA DE PÁGINA / CADA CORPO ABRE UM MUNDO</span><span id="labFormatLabel">HORIZONTAL / 16:9</span></div>
+      <div class="lm-lab-stage">
+        <article id="labArtboard" class="lm-lab-board" data-image="nenhuma" data-format="horizontal" data-placement="esquerda" data-relation="separada" data-guide="nenhuma" data-photo-text="false" data-m-text="false" data-state="ok" aria-label="Prévia experimental de composição LABMATTAR">
+          <div class="lm-lab-photo-layer" aria-hidden="true">
+            <img class="lm-lab-photo-ambient" id="labAmbientPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
+            <div class="lm-lab-photo-contrast"></div>
+            <div class="lm-lab-m-photo" id="labMask"><img id="labMaskPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
+          </div>
+          <img id="labSignature" class="lm-lab-mark" src="/identidade/M.svg" alt="" aria-hidden="true" hidden>
+          <div class="lm-lab-reading" id="labReading">
+            <p class="lm-lab-kicker">LABMATTAR / 2026</p>
+            <div id="labCopy" class="lm-lab-main-copy">
+              <h3 id="labRenderedTitle" class="lm-lab-title"><span class="lm-lab-title-line">PRÁTICAS</span><span class="lm-lab-title-line perpetua">MATERIAIS</span><span class="lm-lab-title-line">E PROCESSOS</span></h3>
+              <p id="labRenderedBody" class="lm-lab-body" hidden></p>
+            </div>
+            <footer class="lm-lab-bottom"><span>GASTROPERFORMANCE &amp; FOOD DESIGN</span><span>LABMATTAR / IDENTIDADE VISUAL</span></footer>
+          </div>
+          <div class="lm-lab-grid" aria-hidden="true"></div>
+          <div class="lm-lab-safeline" aria-hidden="true"></div>
+        </article>
+      </div>
+      <div class="lm-lab-preview-foot"><strong id="labStatus" role="status" data-state="ok">COMPOSIÇÃO / SUPERFÍCIE NEUTRA</strong><span id="labPhotoStatus">SEM TRATAMENTO FOTOGRÁFICO</span></div>
+    </div>
+  </div>
+  <div class="lm-lab-legend">
+    <div><b>01 / CONSTRUIR</b><p>Troque a relação dos elementos antes de ajustar valores pontuais. Os três pontos de partida demonstram organizações possíveis, não templates obrigatórios.</p></div>
+    <div><b>02 / COMPARAR</b><p>Observe a mesma composição em outras superfícies, com títulos longos ou diferentes enquadramentos. A área útil e o grid são recursos de leitura.</p></div>
+    <div><b>03 / VALIDAR</b><p>O véu preto de 20% entra automaticamente sobre a fotografia sob texto. Se os elementos perderem espaço ou contraste, o estudo deve indicar a revisão.</p></div>
+  </div>
+  <p class="lm-lab-lead">As famílias, símbolos e cores continuam vinculados à identidade LABMATTAR. Escalas, margens e distribuições desta área são hipóteses de composição, não novas normas aprovadas. A área de estudo aplicada acima permanece como referência de construção.</p>
+</section><section class="chapter"><p class="eyebrow">03 / O QUE AINDA PRECISA SER VALIDADO</p><div class="notes"><article><h3>Superfície e proporção</h3><p>Os formatos e margens agora podem ser testados no laboratório. Suas escalas definitivas ainda dependem de comparação visual com páginas publicadas, especialmente em telas verticais.</p></article><article><h3>Símbolo e palavra</h3><p>O M fotográfico, os nove vasos e a composição tipográfica são estudados separadamente. Posições e relações de escala só se tornam norma quando verificadas em diferentes aplicações reais.</p></article><article><h3>Imagem e campo cromático</h3><p>O véu preto de 20% em fotografias sob texto já é regra. Enquadramentos, campos azuis ou marrons e usos da cor sem imagem permanecem sujeitos à avaliação editorial.</p></article></div></section></main>
+<script src="/composicao-lab.js" defer></script>
 <script id="lm-case-demonstration">
 (()=>{
   const frame=document.getElementById("caseFrame");

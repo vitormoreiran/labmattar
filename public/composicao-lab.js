@@ -434,7 +434,9 @@
     const ok=fits();
     const real=parseFloat(getComputedStyle(title).fontSize)||applied||requested;
     const actualBody=parseFloat(getComputedStyle(body).fontSize)||bodyRequested;
-    const lowLegibility=real<requested*.60-0.05||(!body.hidden&&actualBody<bodyRequested*.85-0.05);
+    // Reduced hierarchy requires an editorial warning before reaching the
+    // absolute proportional floor (60% title / 85% body).
+    const lowLegibility=real<requested*.72||(!body.hidden&&actualBody<bodyRequested*.90);
     const adjusted=real<requested*.98||bodyReduced||emergency;
     const info=by("labTitleFitInfo");
     if(info){

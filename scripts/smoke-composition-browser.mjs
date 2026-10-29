@@ -92,6 +92,12 @@ try{
   assert(await page.locator("#labHelp-overview").isVisible()&&
     await page.locator("#labHelp-overview .lm-lab-legend>div").count()===3,
     "Original Construct / Compare / Validate guidance must stay reachable");
+  await page.waitForTimeout(170);
+  await page.evaluate(()=>window.scrollBy(0,12));
+  await page.waitForTimeout(90);
+  assert(await page.locator("#labHelp-overview").isVisible()&&
+    await page.locator("#labOverviewHelp").getAttribute("aria-expanded")==="true",
+    "Help must survive routine page scrolling and remain attached to its trigger");
   await page.screenshot({path:"composition-lab-help-overview.png",fullPage:false});
   await page.keyboard.press("Escape");
   assert(await page.locator("#labHelp-overview").isHidden()&&

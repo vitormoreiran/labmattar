@@ -619,6 +619,20 @@
   border:0;
   border-radius:0;
 }
+/* As legendas de campos consecutivos não podem encostar nos selects. */
+#mediaPanel > label,
+#structurePanel > label{
+  display:block;
+  margin:19px 0 8px;
+}
+#mediaPanel > .media-preview + label{
+  margin-top:0;
+}
+#mediaPanel > select,
+#structurePanel > select,
+#structurePanel > input{
+  display:block;
+}
 .inspector-panel .section-label.space-top{
   padding:22px 0 10px;margin:22px 0 8px;
   border-top:1px solid var(--ui-line);

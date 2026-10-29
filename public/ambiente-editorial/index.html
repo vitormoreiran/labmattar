@@ -65,6 +65,44 @@ body:has(.ed-root){overflow:auto;background:#f7f6f2}.ed-root{--paper:#f7f6f2;--i
 .ed-inspector .ed-control-note{font-size:11px;opacity:.55;margin-top:7px}
 .ed-side-nav{flex-wrap:wrap}
 @media(max-width:720px){.ed-filmstrip{padding:8px;gap:6px}.ed-filmstrip button{flex-basis:85px;min-height:55px}.ed-head-actions button{font-size:9px}}
+
+/* PÁGINA EDITORIAL — composição LABMATTAR, não uma folha com cabeçalho.
+   O chrome (nome, número e ações) pertence ao ambiente de edição. */
+.ed-root{--ed-canvas-gap:clamp(18px,3vw,48px);--ed-composition-inset:clamp(24px,5.5cqw,86px)}
+.ed-stage{background:#e8e6e0;min-width:0}
+.ed-stage-bar,.ed-stage-bottom{padding:14px clamp(18px,2vw,32px);letter-spacing:.035em}
+.ed-sheet-wrap{flex:1;align-items:center;padding:clamp(18px,3vw,48px);min-height:0}
+.ed-sheet{position:relative;isolation:isolate;container-type:inline-size;width:min(100%,1080px);min-height:0;aspect-ratio:16/9;padding:0;background:#f5f3ec;box-shadow:none;overflow:hidden}
+.ed-sheet-top,.ed-sheet-bottom{display:none!important}
+.ed-sheet-content{position:absolute;inset:0;display:block;padding:0;margin:0}
+.ed-texts{position:absolute;inset:0;display:block;z-index:3;pointer-events:none}
+.ed-text-node{position:absolute;left:8%;margin:0;padding:0;width:76%;max-width:none;pointer-events:auto;font-family:LMUnivers,Arial,sans-serif;font-weight:300;letter-spacing:-.014em}
+.ed-text-node.role-subtitle{top:17%;font-size:clamp(10px,1.5cqw,16px);line-height:1.1;letter-spacing:.05em;order:unset}
+.ed-text-node.role-title{top:28%;font-size:clamp(40px,7.6cqw,105px);line-height:.91;letter-spacing:-.048em;text-transform:uppercase}
+.ed-text-node.role-body{top:76%;font-size:clamp(12px,1.65cqw,21px);line-height:1.3;width:46%;max-width:49ch}
+.ed-image-field{position:absolute;inset:0;display:block;height:100%;min-height:0;border:0;pointer-events:none}
+.ed-image-field.empty{position:absolute;inset:13% 8%;width:auto;height:auto;min-height:0;display:flex;border:1px solid #b6b2a8;background:transparent;pointer-events:auto}
+.ed-sheet.ed-original-media{min-height:0;aspect-ratio:16/9}
+.ed-sheet.ed-original-media .ed-sheet-content{inset:0}
+.ed-sheet.ed-original-media .ed-original-image{width:90%}
+.ed-sheet.ed-original-media .ed-text-node{left:8%;padding:0}
+.ed-sheet.ed-original-media .role-subtitle{top:17%}
+.ed-sheet.ed-original-media .role-title{top:28%;font-size:clamp(40px,7.6cqw,105px)}
+.ed-sheet.ed-original-media .role-body{bottom:auto;top:76%;max-width:46%;font-size:clamp(12px,1.65cqw,21px)}
+.ed-sheet-wrap.mobile{padding:24px}
+.ed-sheet-wrap.mobile .ed-sheet{aspect-ratio:9/16;width:min(100%,365px);min-height:0;padding:0}
+.ed-sheet-wrap.mobile .ed-sheet-content{position:absolute;inset:0;display:block;padding:0}
+.ed-sheet-wrap.mobile .ed-text-node{position:absolute;width:84%;left:8%}
+.ed-sheet-wrap.mobile .role-subtitle{top:19%;font-size:11px}
+.ed-sheet-wrap.mobile .role-title{top:30%;font-size:clamp(35px,10cqw,58px)}
+.ed-sheet-wrap.mobile .role-body{top:76%;width:80%;font-size:14px}
+.ed-sheet-wrap.mobile .ed-sheet.ed-original-media{aspect-ratio:9/16;min-height:0}
+.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .ed-text-node{left:8%;width:84%}
+.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .role-title{top:30%;font-size:clamp(35px,10cqw,58px)}
+.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .role-body{top:76%;max-width:80%;font-size:14px}
+.is-preview .ed-sheet-wrap{padding:0;min-height:calc(100dvh - 78px)}
+.is-preview .ed-sheet{width:min(100%,1600px);box-shadow:none}
+@media(max-width:640px){.ed-sheet-wrap{padding:12px}.ed-sheet{aspect-ratio:9/16}.ed-text-node.role-title{font-size:clamp(30px,9cqw,54px)}.ed-text-node.role-body{width:80%}}
 </style></head><body><main class="ed-root"><header class="ed-head"><a class="ed-brand" href="/manual">LABMATTAR</a><span class="ed-head-divider"></span><div class="ed-document"><input id="docTitle" aria-label="Nome da apresentação" value="Cada corpo abre um mundo"><small id="status">RASCUNHO LOCAL</small></div><div class="ed-head-actions"><button id="undo" title="Desfazer (Ctrl+Z)">↶ DESFAZER</button><button id="redo" title="Refazer (Ctrl+Shift+Z)">↷ REFAZER</button><button id="device">MOBILE</button><button id="preview">VISUALIZAR</button><button id="importDoc">ABRIR JSON</button><input id="importFile" type="file" accept=".json,application/json" hidden><button id="download">EXPORTAR JSON ↗</button></div></header><div class="ed-main"><aside class="ed-side"><nav class="ed-side-nav"><button data-tab="pages" class="current">PÁGINAS</button><button data-tab="insert">INSERIR</button><button data-tab="layers">CAMADAS</button><button data-tab="library">ACERVO</button><button data-tab="models">MODELOS</button></nav><div id="sideContent" class="ed-side-content"></div></aside><section class="ed-stage"><div class="ed-stage-bar"><span id="pageIndex">COMPOSIÇÃO / 01</span><span id="viewMode">VISUALIZAÇÃO HORIZONTAL</span></div><div id="sheetWrap" class="ed-sheet-wrap"><article class="ed-sheet" id="sheet"><div class="ed-sheet-top"><span>LABMATTAR</span><span id="sheetCounter">01 / 02</span></div><div class="ed-sheet-content"><div class="ed-texts" id="texts"></div><div class="ed-image-field" id="imageField"></div></div><div class="ed-sheet-bottom"><span>LABMATTAR / IDENTIDADE VISUAL</span><span>2026</span></div></article></div><div class="ed-stage-bottom"><button id="prev">← ANTERIOR</button><span>EDIÇÃO DIRETA / TEXTO E COMPOSIÇÃO</span><button id="next">PRÓXIMA →</button></div><div class="ed-filmstrip" id="filmstrip" aria-label="Sequência de páginas"></div></section><aside class="ed-inspector"><div class="ed-section-heading">PROPRIEDADES <span>↗</span></div><div id="inspector" class="ed-prop"></div></aside></div></main><script>
 const makeId=()=>Math.random().toString(36).slice(2,10);
 const starter=[{id:"p1",name:"Abertura",mode:"opening",nodes:[{id:"a1",role:"title",text:"CADA CORPO ABRE UM MUNDO"},{id:"a2",role:"subtitle",text:"GASTROPERFORMANCE"},{id:"a3",role:"body",text:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo."}],images:["https://labmattar.com/assets/chapter2/aleteia.jpg"]},{id:"p2",name:"Desenvolvimento",mode:"portfolio",nodes:[{id:"b1",role:"title",text:"CORPO, IMAGEM E MEMÓRIA"},{id:"b2",role:"subtitle",text:"01 / INVESTIGAÇÃO SENSÍVEL"},{id:"b3",role:"body",text:"A composição articula texto, matéria, imagens e gestos em uma narrativa que se transforma ao longo da experiência."}],images:["https://labmattar.com/assets/chapter2/concha-y-toro.jpg"]},{id:"p3",name:"Detalhe",mode:"detail",nodes:[{id:"c1",role:"title",text:"FORMAS DE SENTIR"},{id:"c2",role:"subtitle",text:"02 / MATÉRIA E PAISAGEM"},{id:"c3",role:"body",text:"Um recorte da imagem amplia a composição e transforma o espaço de leitura."}],images:["https://labmattar.com/assets/chapter2/dadiva.jpg"]}];

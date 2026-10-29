@@ -255,6 +255,8 @@ try{
   await tool("labFormat").click();
   await expandedBelow("pagina","Format restored below menu");
   await clickCard("format","vertical");
+  assert(await page.locator("#labTextWidth").inputValue()==="90",
+    "Portrait must recompose its column rather than inherit narrow landscape width");
   const portrait=await proveBoard("Desktop vertical 1440x900");
   await assertEditorialTitleGroups("Vertical title group");
   await editorialMetrics("Vertical editorial ruler");
@@ -262,15 +264,21 @@ try{
     "Portrait layout should grow to use the available height");
   await page.screenshot({path:"composition-studio-desktop-portrait.png"});
   await clickCard("format","quadrado");
+  assert(await page.locator("#labTextWidth").inputValue()==="78",
+    "Square must use its own editorial column width");
   const square=await proveBoard("Desktop square 1440x900");
   await assertEditorialTitleGroups("Square title group");
   await editorialMetrics("Square editorial ruler");
   assert(approx(square.board.width,square.board.height,1),"Square was not rendered 1:1");
   await page.screenshot({path:"composition-studio-desktop-square.png"});
   await clickCard("format","editorial");
+  assert(await page.locator("#labTextWidth").inputValue()==="70",
+    "Editorial format must have its own column width");
   await proveBoard("Desktop editorial 1440x900");
   await editorialMetrics("Editorial format ruler");
   await clickCard("format","horizontal");
+  assert(await page.locator("#labTextWidth").inputValue()==="61",
+    "Returning to landscape must restore the original column width");
   await tool("labFormat").click();
   await menuVisible("Page menu restored without scrolling");
 

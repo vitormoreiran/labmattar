@@ -15,7 +15,22 @@ await page.locator('#mediaAssetSelect').selectOption('151');
 await page.locator('#assetsTab').click();await page.locator('.asset-entry').first().click();
 await page.locator('#viewportButton').click();await page.locator('.editor[data-viewport="mobile"]').waitFor();
 await page.locator('#viewportButton').click();
-await page.locator('#previewButton').click();await page.locator('.editor.is-preview').waitFor();await page.locator('#previewButton').click();
+const editingFit=await page.evaluate(()=>{
+ const a=document.querySelector('#artboard').getBoundingClientRect();
+ const v=document.querySelector('#stageViewport').getBoundingClientRect();
+ return {board:[a.width,a.height],surface:[v.width,v.height],deltaWidth:Math.abs(a.width-v.width),deltaHeight:Math.abs(a.height-v.height)};
+});
+if(editingFit.deltaWidth>3||editingFit.deltaHeight>3)throw Error('Desktop canvas should fill stage: '+JSON.stringify(editingFit));
+await page.locator('#previewButton').click();await page.locator('.editor.is-preview').waitFor();
+const previewFit=await page.evaluate(()=>{
+ const a=document.querySelector('#artboard').getBoundingClientRect();
+ const v=document.querySelector('#stageViewport').getBoundingClientRect();
+ const w=window.innerWidth;
+ return {board:[a.width,a.height],surface:[v.width,v.height],viewportWidth:w,deltaWidth:Math.abs(a.width-v.width),deltaHeight:Math.abs(a.height-v.height)};
+});
+if(previewFit.deltaWidth>3||previewFit.deltaHeight>3||Math.abs(previewFit.board[0]-previewFit.viewportWidth)>3)throw Error('Preview must be full bleed: '+JSON.stringify(previewFit));
+await page.screenshot({path:'editorial-full-bleed-preview.png',fullPage:true});
+await page.locator('#previewButton').click();
 await page.locator('#undoButton').click();await page.locator('#redoButton').click();
 await page.screenshot({path:'editorial-desktop-smoke.png',fullPage:true});
 if(errors.length)throw Error(errors.join(' | '));

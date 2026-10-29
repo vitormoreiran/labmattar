@@ -32,8 +32,15 @@ async function read(){
   });
 }
 async function select(id,value){
-  await page.locator("#"+id).selectOption(value);
+  await page.locator("#"+id).evaluate((el,v)=>{
+    el.value=v;
+    el.dispatchEvent(new Event("change",{bubbles:true}));
+  },value);
   await page.waitForTimeout(75);
+}
+async function tab(name){
+  await page.locator('[data-lab-tab="'+name+'"]').click();
+  await page.waitForTimeout(35);
 }
 async function range(id,value){
   await page.locator("#"+id).evaluate((el,v)=>{
@@ -64,6 +71,11 @@ try{
   assert(original.photoText==="false"&&original.mText==="false","No-image mode should not use a darkening veil");
   assert(await page.locator("#construcao").count()===1,"Applied study removed");
   assert(original.state==="ok","Original typographic composition overflows its page");
+  assert(await page.locator("[data-lab-tab]").count()===3,"Inspector must have three functional work areas");
+  assert(await page.locator("[data-lab-panel]").count()===3,"Grouped inspector panels are missing");
+  assert(await page.locator('[data-lab-tab="pagina"]').getAttribute("aria-selected")==="true","Page tab should open by default");
+  assert(await page.locator("[data-lab-more]").count()===3,"Optional tools should be available in contextual disclosures");
+  assert(await page.locator(".lm-inspector-precision input").count()===6,"Six scales should have precise numeric entry");
   // Every editorial text layer in the preview must be directly editable.
   assert(await page.locator("[data-lab-inline]").count()===5,"Some page texts are not inline-editable");
   const inlineTitle=page.locator("#labRenderedTitle");
@@ -113,6 +125,16 @@ try{
   await page.locator("#labReset").click();
   assert((await read()).title==="PRÁTICASMATERIAISE PROCESSOS",
     "Restore did not return the default composition after in-canvas editing");
+  assert(await page.locator('[data-lab-tab="texto"]').getAttribute("aria-selected")==="true",
+    "Clicking a text layer must reveal its related inspector");
+  await tab("pagina");
+  assert(await page.locator("#labPanel-texto").isHidden()&&await page.locator("#labPanel-pagina").isVisible(),
+    "Only the chosen inspector panel may be displayed");
+  await page.locator('[data-lab-tab="pagina"]').focus();
+  await page.keyboard.press("ArrowRight");
+  assert(await page.locator('[data-lab-tab="texto"]').getAttribute("aria-selected")==="true",
+    "Arrow keys must navigate grouped inspector panels");
+  await tab("pagina");
   // Editorial-control UI has illustrated, keyboard-focusable choices.
   assert(await page.locator("[data-lab-choice]").count()>=30,"Illustrated choices are missing");
   assert(await page.locator("[data-choice-for]").count()===0,"Duplicated visual controls remain in the inspector");
@@ -133,21 +155,39 @@ try{
   assert(await page.locator("#labFormat").inputValue()==="quadrado","Illustrated format and native control got out of sync");
   assert(await page.locator("[data-lab-choice='format'][data-value='quadrado']").getAttribute("aria-pressed")==="true","Chosen card lacks an active state");
   await page.locator("[data-lab-choice='format'][data-value='horizontal']").click();
+  await page.locator("#labPrecision-margin").fill("11");
+  await page.locator("#labPrecision-margin").press("Enter");
+  assert(await page.locator("#labMargin").inputValue()==="11"&&(await read()).margin==="11%",
+    "Precise margin entry must control the existing slider and page geometry");
+  await page.locator("#labPrecision-margin").fill("100");
+  await page.locator("#labPrecision-margin").press("Enter");
+  assert(await page.locator("#labMargin").inputValue()==="16","Precision must respect the established margin limit");
+  await range("labMargin",7);
+  await tab("texto");
   await page.locator("[data-lab-choice='placement'][data-value='central']").click();
   assert(await page.locator("#labPlacement").inputValue()==="central","Placement illustration is inert");
   await page.locator("[data-lab-choice='placement'][data-value='esquerda']").click();
+  await page.locator("#labPrecision-titleScale").fill("113");
+  await page.locator("#labPrecision-titleScale").press("Enter");
+  assert(await page.locator("#labTitleScale").inputValue()==="113",
+    "Precise typography scale should use a one-percent increment");
+  await range("labTitleScale",100);
+  await tab("pagina");
   await page.locator("[data-lab-choice='color'][data-value='red']").click();
   assert(await page.locator("#labColor").inputValue()==="red","Color swatch is inert");
   await page.locator("[data-lab-choice='color'][data-value='neutral']").click();
+  await page.locator('[data-lab-more="pagina"] summary').click();
   await page.locator("[data-lab-choice='guides'][data-value='grid']").click();
   assert(await page.locator("#labArtboard").getAttribute("data-guide")==="grid","Illustrated guides are inert");
   await page.locator("[data-lab-choice='guides'][data-value='nenhuma']").click();
+  await page.locator('[data-lab-more="pagina"] summary').click();
+  await tab("texto");
   await page.locator("[data-lab-choice='bodyMode'][data-value='visivel']").click();
   assert((await read()).bodyHidden===false,"Show-body illustration did not reveal text");
   await page.locator("[data-lab-choice='bodyMode'][data-value='oculto']").click();
   assert((await read()).bodyHidden===true,"Hide-body illustration did not conceal text");
   await page.evaluate(()=>{
-    const el=document.querySelectorAll(".lm-lab-section")[1];
+    const el=document.querySelector("#labPanel-texto");
     window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
   });
   await page.screenshot({path:"composition-lab-controls-type.png",fullPage:false});
@@ -155,6 +195,8 @@ try{
   assert(await page.locator("#labType").inputValue()==="perpetua","Typeface illustration is inert");
   await page.locator("[data-lab-choice='type'][data-value='alternada']").click();
   const colorStateBefore=await page.locator("#labColor").inputValue();
+  await tab("imagem");
+  assert(await page.locator("#labPhoto").isHidden(),"Photo options should not occupy the inspector without an image");
   await page.locator("[data-lab-choice='image'][data-value='recorte']").click();
   assert((await read()).image==="recorte","M mask illustration did not activate the image");
   assert(await page.locator("#labFocalPreview").isEnabled(),"Focal point must be active with a photo");
@@ -180,7 +222,7 @@ try{
   assert(await page.locator('[data-control-effect="mask"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-mask-scale"))==="0.85",
     "M scale diagram must follow the original M scale slider");
   await page.evaluate(()=>{
-    const el=document.querySelectorAll(".lm-lab-section")[2];
+    const el=document.querySelector("#labPanel-imagem");
     window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
   });
   await page.screenshot({path:"composition-lab-controls-media.png",fullPage:false});
@@ -189,6 +231,7 @@ try{
   assert(await page.locator("#labColor").inputValue()===colorStateBefore,"Switching image mode should preserve color selection");
   assert(await page.locator("[data-lab-choice='color'][data-value='green']").isEnabled(),"Color swatches did not reactivate");
   await page.locator("#labReset").click();
+  await tab("pagina");
   await page.locator("#labArtboard").screenshot({path:"composition-lab-typography.png"});
 
   // The same controls provide the visual explanation and actual action.
@@ -246,12 +289,16 @@ try{
   await page.locator("#labArtboard").screenshot({path:"composition-lab-full-image.png"});
   await select("labGuides","grid");
   assert(await page.locator("#labArtboard").getAttribute("data-guide")==="grid","12-column guide toggle is inert");
+  await tab("imagem");
+  await page.locator('[data-lab-more="imagem"] summary').click();
   await select("labSymbol","vaso_09.svg");
   data=await read();
   assert(data.symbol.endsWith("/identidade/vaso_09.svg"),"Ninth official vessel unavailable");
   await select("labPhoto","151");
   data=await read();
   assert(data.photoSrc.includes("BOXDOSENTIR-151.jpg"),"Photo selection not linked");
+  await tab("texto");
+  await page.locator('[data-lab-more="texto"] summary').click();
   await page.locator("#labTitleInput").fill("CORPOS\nEM MOVIMENTO");
   await select("labType","perpetua");
   data=await read();
@@ -275,12 +322,12 @@ try{
   assert(await page.locator("#labSymbol").inputValue()==="none","Restore should preserve the original no-symbol state");
   await page.setViewportSize({width:390,height:844});
   await page.evaluate(()=>{
-    const el=document.querySelector(".lm-ctrl-inspector-intro");
+    const el=document.querySelector(".lm-inspector-head");
     window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-24,behavior:"instant"});
   });
   const mobileChoices=await page.evaluate(()=>{
     const bounds=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
-    return [...document.querySelectorAll(".lm-lab-inspector .lm-ctrl-choice")].map(el=>{
+    return [...document.querySelectorAll(".lm-lab-inspector .lm-ctrl-choice")].filter(el=>el.getClientRects().length).map(el=>{
       const r=el.getBoundingClientRect();
       return {x:r.left,right:r.right,sw:r.width,inside:r.left>=bounds.left-1&&r.right<=bounds.right+1};
     });
@@ -333,6 +380,9 @@ try{
   await range("labTextWidth",90);
   await range("labTitleScale",110);
   await select("labType","perpetua");
+  await tab("texto");
+  if(!await page.locator('[data-lab-more="texto"]').evaluate(el=>el.open))
+    await page.locator('[data-lab-more="texto"] summary').click();
   await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
   await select("labBodyMode","visivel");
   let boundary=await assertReadingBoundary("Screenshot: red square GASTROPERFORMANCE");

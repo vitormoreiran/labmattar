@@ -34,6 +34,22 @@ for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm
 for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+# The inspector has three focused work areas; every approved control remains.
+for key in ("pagina","texto","imagem"):
+ assert 'data-lab-tab="'+key+'"' in composition,f"Missing navigation: {key}"
+ assert 'data-lab-panel="'+key+'"' in composition,f"Missing panel: {key}"
+ assert 'data-lab-more="'+key+'"' in composition,f"Advanced options not discoverable: {key}"
+for control in ("labFormat","labColor","labMargin","labGuides",
+                "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
+                "labTitleInput","labBodyInput","labImage","labPhoto","labRelation",
+                "labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
+ assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
+lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
+assert "setFieldVisible" in lab_js and "sessionStorage" in lab_js
+assert "const inlineEditors=" in lab_js
+assert "rgba(0,0,0,.20)" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+
 for key in ("title","body","kicker","footerLeft","footerRight"):
  assert 'data-lab-inline="'+key+'"' in composition,f"Missing editable text layer: {key}"
 assert 'contenteditable="plaintext-only"' in composition

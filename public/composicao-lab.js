@@ -88,6 +88,47 @@
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
+  const editorTabs=[...document.querySelectorAll("[data-lab-tab]")];
+  const editorPanels=[...document.querySelectorAll("[data-lab-panel]")];
+  const validPanels=["pagina","texto","imagem"];
+  let activePanel="pagina";
+  try{
+    const savedPanel=sessionStorage.getItem("labmattar-composicao-panel-v1");
+    if(validPanels.includes(savedPanel))activePanel=savedPanel;
+  }catch{}
+  function selectPanel(name,{focus=false}={}){
+    if(!validPanels.includes(name))return;
+    activePanel=name;
+    for(const tab of editorTabs){
+      const active=tab.dataset.labTab===name;
+      tab.setAttribute("aria-selected",String(active));
+      tab.tabIndex=active?0:-1;
+      if(active&&focus)tab.focus();
+    }
+    for(const panel of editorPanels)panel.hidden=panel.dataset.labPanel!==name;
+    try{sessionStorage.setItem("labmattar-composicao-panel-v1",name)}catch{}
+  }
+  editorTabs.forEach((tab,index)=>{
+    tab.addEventListener("click",()=>selectPanel(tab.dataset.labTab));
+    tab.addEventListener("keydown",e=>{
+      const next={
+        ArrowRight:(index+1)%editorTabs.length,
+        ArrowLeft:(index-1+editorTabs.length)%editorTabs.length,
+        Home:0,End:editorTabs.length-1
+      }[e.key];
+      if(next===undefined)return;
+      e.preventDefault();
+      selectPanel(editorTabs[next].dataset.labTab,{focus:true});
+    });
+  });
+  // When editing copy on the artboard, display the relevant controls without
+  // stealing focus or moving the cursor from the text itself.
+  selectPanel(activePanel);
+  function setFieldVisible(id,visible){
+    const input=by(id);
+    const wrapper=input?.closest(".lm-lab-field,.lm-ctrl-focus-field");
+    if(wrapper)wrapper.hidden=!visible;
+  }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
@@ -95,8 +136,24 @@
     for(const key of ["mPosition","mScale"])by(fields[key]).disabled=!mask;
     by("labColor").disabled=activeImage;
     by("labRelation").disabled=!activeImage;
+    // Controls follow the page's actual state. An absent photograph does not
+    // need six ghost tools; M-specific tools appear only with the M mask.
+    setFieldVisible("labColor",!activeImage);
+    for(const id of ["labPhoto","labRelation","labFocalPreview","labFocusX","labFocusY"])
+      setFieldVisible(id,activeImage);
+    for(const id of ["labMPosition","labMScale"])setFieldVisible(id,mask);
+    by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
+    by("labTabMeta-texto").textContent=
+      (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
+    by("labTabMeta-imagem").textContent=
+      state.image==="nenhuma"?"Sem fotografia":state.image==="recorte"?"Máscara M":"Imagem integral";
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
+      const precision=by("labPrecision-"+key);
+      if(precision){
+        precision.value=state[key];
+        precision.disabled=by(fields[key]).disabled;
+      }
     }
 
     document.querySelectorAll("[data-lab-preset]").forEach(b=>
@@ -451,6 +508,7 @@
       snapshot=state[key];
       cancelled=false;
       board.dataset.editing=key;
+      selectPanel("texto");
     });
     el.addEventListener("compositionstart",()=>{composing=true});
     el.addEventListener("compositionend",()=>{
@@ -544,6 +602,43 @@
       select.dispatchEvent(new Event("change",{bubbles:true}));
     });
   });
+  // Keep the original sliders as the source of truth, but allow exact integer
+  // percentages in a compact numeric input. This makes one-percent edits
+  // possible without adding separate scale controls or new design tokens.
+  for(const key of numeric){
+    const slider=by(fields[key]);
+    slider.step="1";
+    const row=slider.closest(".lm-lab-field")?.querySelector(".lm-lab-value-row");
+    const output=row?.querySelector("output");
+    if(!row||!output)continue;
+    const holder=document.createElement("span");
+    holder.className="lm-inspector-precision";
+    const number=document.createElement("input");
+    number.id="labPrecision-"+key;
+    number.type="number";
+    number.inputMode="numeric";
+    number.min=slider.min;
+    number.max=slider.max;
+    number.step="1";
+    number.value=slider.value;
+    const label=row.querySelector("label")?.textContent?.trim()||"Escala";
+    number.setAttribute("aria-label",label+" em porcentagem");
+    const suffix=document.createElement("span");
+    suffix.textContent="%";
+    suffix.setAttribute("aria-hidden","true");
+    holder.append(number,suffix);
+    output.after(holder);
+    number.addEventListener("change",()=>{
+      if(number.disabled)return;
+      const raw=Number(number.value);
+      if(!Number.isFinite(raw)){number.value=slider.value;return;}
+      slider.value=String(Math.max(Number(slider.min),Math.min(Number(slider.max),Math.round(raw))));
+      slider.dispatchEvent(new Event("input",{bubbles:true}));
+    });
+    number.addEventListener("keydown",e=>{
+      if(e.key==="Enter"){number.blur();}
+    });
+  }
   // Sliders show both endpoints and the current value without adding another
   // state system. The endpoints are ordinary labels, not draggable controls.
   for(const input of document.querySelectorAll(".lm-lab-inspector input[type=range]")){

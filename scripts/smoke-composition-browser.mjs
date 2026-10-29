@@ -62,7 +62,7 @@ try{
   assert(original.lines===3&&original.title.includes("PRÁTICAS"),"Base typography disappeared");
   assert(original.board.width/original.board.height>1.7,"Horizontal aspect ratio invalid");
   assert(original.photoText==="false"&&original.mText==="false","No-image mode should not use a darkening veil");
-  assert(page.locator("#construcao").count()===1,"Applied study removed");
+  assert(await page.locator("#construcao").count()===1,"Applied study removed");
   await page.screenshot({path:"composition-lab-typography.png",fullPage:false});
 
   await page.locator('[data-lab-preset="mascara"]').click();

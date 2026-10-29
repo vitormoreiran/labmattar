@@ -3,6 +3,8 @@
  * The manual remains untouched in normal document mode; the single
  * canonical state, actual images, M vector and 20% contrast remain shared.
  */
+/* Studio-only tools never appear in the embedded/manual version. */
+.lm-studio-tools,.lm-studio-detail,.lm-studio-quickreset{display:none}
 .lm-studio-launch{display:flex;align-items:center;justify-content:flex-end;min-width:0}
 .lm-studio-launch>button{
   appearance:none;display:inline-flex;align-items:center;justify-content:center;
@@ -305,6 +307,13 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
   body.lm-studio-open .lm-lab-presets{justify-content:flex-start;gap:2px}
   body.lm-studio-open .lm-lab-presets button{min-height:32px;padding:4px 5px}
   body.lm-studio-open .lm-lab-presets .lm-ctrl-preset-text strong{font-size:10px}
+  body.lm-studio-open .lm-studio-quickreset{
+    display:inline-flex;align-items:center;justify-content:center;
+    border:0;padding:4px;background:transparent;
+    min-width:28px;min-height:29px;color:#181818;
+    font:300 21px/1 UniversMattar,Arial,sans-serif;letter-spacing:0;
+  }
+  body.lm-studio-open .lm-studio-quickreset:focus-visible{outline:2px solid #181818;outline-offset:2px}
   body.lm-studio-open .lm-studio-launch>button{padding:5px 7px;gap:4px}
   body.lm-studio-open #labStudioToggleText{font-size:0}
   body.lm-studio-open #labStudioToggleText::after{content:"SAIR";font-size:10px}

@@ -146,7 +146,7 @@ const geometryFor=(p,n)=>{const [x,y,w]=(roleGeometry[normalizeMode(p.mode)]||ro
 const samples=[{label:"Abertura com imagem ambiente",mode:"opening",treatment:"opening",url:"./media/aleteia.jpg"},{label:"Projeto no M integral",mode:"project",treatment:"portfolio",url:"./media/concha-y-toro.jpg"},{label:"Detalhe / recorte editorial",mode:"development",treatment:"detail",url:"./media/dadiva.jpg"}];
 
 let doc={title:"Cada corpo abre um mundo",pages:structuredClone(starter)};try{const a=JSON.parse(localStorage.getItem("labmattar-editorial-v1")||"null");if(a&&Array.isArray(a.pages)&&a.pages.length)doc={title:a.title||doc.title,pages:a.pages}}catch{}
-doc.pages.forEach(p=>{const old=p.mode;p.mode=normalizeMode(old);p.treatment=p.treatment||({portfolio:"portfolio",detail:"detail",opening:"opening"}[old]||treatment(p))});
+doc.pages.forEach(p=>{const old=p.mode;p.mode=normalizeMode(old);p.treatment=p.treatment||({portfolio:"portfolio",detail:"detail",opening:"opening"}[old]||treatment(p));p.images=(p.images||[]).map(item=>{const remap=url=>typeof url==="string"?url.replace(/^https:\/\/labmattar\.com\/assets\/chapter2\/(aleteia|concha-y-toro|dadiva)\.jpg$/, "./media/$1.jpg"):url;return typeof item==="string"?remap(item):item&&typeof item==="object"?{...item,src:remap(item.src)}:item})});
 let selected=doc.pages[0].id,tab="pages",nodeId=null,mobile=false,preview=false;
 const history={past:[],future:[]};let selectedImage=false;let saveTimer;
 function snapshot(){return JSON.stringify(doc)}

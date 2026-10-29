@@ -699,6 +699,20 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=vertical]){
     grid-template-rows:minmax(0,53dvh) minmax(0,1fr);
   }
+  /* The same format logic applies with the media inspector selected; its
+     original ID-specific layout rule would otherwise override these sizes. */
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])):has(.lm-lab-board[data-format=horizontal]){
+    grid-template-rows:minmax(0,38dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])):has(.lm-lab-board[data-format=editorial]){
+    grid-template-rows:minmax(0,41dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])):has(.lm-lab-board[data-format=quadrado]){
+    grid-template-rows:minmax(0,50dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])):has(.lm-lab-board[data-format=vertical]){
+    grid-template-rows:minmax(0,53dvh) minmax(0,1fr);
+  }
   body.lm-studio-open #laboratorio.lm-lab{
     grid-template-rows:46px minmax(0,1fr);
   }

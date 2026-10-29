@@ -6,6 +6,25 @@ function make(profile="project",name="Nova página"){return{id:uid(),name,profil
 function initial(){const items=[["opening","Abertura","CADA CORPO ABRE UM MUNDO","GASTROPERFORMANCE","Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.","64"],["project","O projeto","CADA CORPO ABRE UM MUNDO","SIMONE MATTAR E MARTINA MATTAR","Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.","179"],["development","Cinco atos","CINCO ATOS","SAUDADE · GARRA · OTIMISMO · EUFORIA · AMOR","A experiência articula criações gastronômicas, composições olfativas, imagens em movimento, música e poesia.","151"],["gallery","Galeria","IMAGENS DA EXPERIÊNCIA","","Registros visuais de Cada Corpo Abre um Mundo.","179"],["text","O encontro","SENTIR O MUNDO","UM PERCURSO SENSORIAL","Entre memórias individuais e experiências compartilhadas, a obra transforma a mesa em espaço de investigação sensível.","64"],["closing","Encerramento","CADA CORPO ABRE UM MUNDO","","Diferentes maneiras de sentir e perceber o mundo.","64"],["credits","Créditos","CRÉDITOS","","Cada Corpo Abre um Mundo","64"]];return{version:2,title:"Cada Corpo Abre um Mundo",assets:structuredClone(base),pages:items.map(([profile,name,title,subtitle,body,id])=>{const p=make(profile,name);p.content={...p.content,title,subtitle,body};p.media.assetId=id;if(profile==="gallery")p.content.caption=body;if(profile==="credits")p.content.credits="Criação: Simone Mattar e Martina Mattar · O Boticário";if(profile==="development")p.treatment="m-detalhe";if(profile==="gallery")p.treatment="imagem-livre";if(profile==="closing")p.treatment="fundo-com-blur";return p})}}
 const key="labmattar-editorial-v2";let doc;try{doc=JSON.parse(localStorage.getItem(key))}catch{}if(!doc?.pages?.length||doc.version!==2)doc=initial();
 let selected=doc.pages[0].id,mobile=false,preview=false,past=[],future=[];
+const panelStateKey="labmattar-editorial-panels-v1";
+let panelState={left:true,right:window.innerWidth>1050};
+try{const saved=JSON.parse(localStorage.getItem(panelStateKey)||"null");if(saved&&typeof saved.left==="boolean"&&typeof saved.right==="boolean")panelState=saved}catch{}
+function syncPanels(){
+ const root=$("editor");
+ root.dataset.leftHidden=String(!panelState.left);
+ root.dataset.rightHidden=String(!panelState.right);
+ $("togglePagesButton").setAttribute("aria-expanded",String(panelState.left));
+ $("toggleInspectorButton").setAttribute("aria-expanded",String(panelState.right));
+ $("togglePagesButton").title=panelState.left?"Ocultar páginas":"Mostrar páginas";
+ $("toggleInspectorButton").title=panelState.right?"Ocultar propriedades":"Mostrar propriedades";
+ queueComposition();
+}
+function togglePanel(side){
+ panelState[side]=!panelState[side];
+ try{localStorage.setItem(panelStateKey,JSON.stringify(panelState))}catch{}
+ syncPanels();
+}
+
 const page=()=>doc.pages.find(p=>p.id===selected)||doc.pages[0],asset=id=>doc.assets.find(a=>a.id===id),allowed=(p,r)=>profiles[p.profile][1].includes(r)&&p.visible[r]!==false;
 function save(){try{localStorage.setItem(key,JSON.stringify(doc));$("saveStatus").textContent="SALVO NESTE NAVEGADOR"}catch{$("saveStatus").textContent="EXPORTAR PARA PRESERVAR"}}
 function checkpoint(){past.push(JSON.stringify(doc));if(past.length>80)past.shift();future=[];buttons()}
@@ -109,10 +128,14 @@ $("deleteButton").onclick=()=>{if(doc.pages.length===1||!confirm("Excluir esta p
 $("documentTitle").onfocus=checkpoint;$("documentTitle").oninput=e=>{doc.title=e.target.value;save()};
 $("artboard").querySelectorAll("[data-content-slot]").forEach(n=>{n.onfocus=checkpoint;n.oninput=()=>{const r=n.dataset.contentSlot;page().content[r]=n.innerText;const f=$("field-"+r);if(f)f.value=n.innerText;n.dataset.empty=String(!n.innerText.trim());save();queueComposition()}});
 $("viewportButton").onclick=()=>{mobile=!mobile;render()};$("previewButton").onclick=()=>{preview=!preview;render()};
+$("togglePagesButton").onclick=()=>togglePanel("left");
+$("toggleInspectorButton").onclick=()=>togglePanel("right");
+document.addEventListener("pointerdown",event=>{if(!$("fileActions").contains(event.target))$("fileActions").open=false});
+
 $("undoButton").onclick=()=>undo();$("redoButton").onclick=()=>undo(true);
 document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"&&!e.target.isContentEditable&&!["INPUT","TEXTAREA"].includes(e.target.tagName)){e.preventDefault();undo(e.shiftKey)}});
-$("exportButton").onclick=()=>{const blob=new Blob([JSON.stringify(doc,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="labmattar-editorial.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000)};
-$("importButton").onclick=()=>$("importFile").click();$("importFile").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(d.version!==2||!Array.isArray(d.pages)||!Array.isArray(d.assets)||!d.pages.length)throw Error("Documento incompatível");change(()=>{doc=d;selected=doc.pages[0].id})}catch(e){alert("Importação não realizada: "+e.message)}e.target.value=""};
+$("exportButton").onclick=()=>{const blob=new Blob([JSON.stringify(doc,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="labmattar-editorial.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);$("fileActions").open=false};
+$("importButton").onclick=()=>{$("fileActions").open=false;$("importFile").click()};$("importFile").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(d.version!==2||!Array.isArray(d.pages)||!Array.isArray(d.assets)||!d.pages.length)throw Error("Documento incompatível");change(()=>{doc=d;selected=doc.pages[0].id})}catch(e){alert("Importação não realizada: "+e.message)}e.target.value=""};
 $("resetButton").onclick=()=>{if(confirm("Restaurar projeto-base? A versão anterior pode ser recuperada com Desfazer nesta sessão."))change(()=>{doc=initial();selected=doc.pages[0].id})};
 $("recoverLegacyButton").hidden=!localStorage.getItem("labmattar-editorial-v1");
 $("recoverLegacyButton").onclick=()=>{try{const d=JSON.parse(localStorage.getItem("labmattar-editorial-v1"));if(!Array.isArray(d?.pages)||!d.pages.length)throw Error("Sem páginas");if(!confirm("Converter as "+d.pages.length+" páginas do rascunho antigo?"))return;change(()=>{doc=initial();doc.title=d.title||doc.title;doc.pages=d.pages.map(q=>{const profile=({cover:"opening",opening:"opening",project:"project",portfolio:"project",development:"development",essay:"text",gallery:"gallery",closing:"closing",section:"project"})[q.mode]||"project",p=make(profile,q.name);for(const n of q.nodes||[])if(roles.includes(n.role))p.content[n.role]=n.text||"";const src=String(q.images?.[0]?.src||q.images?.[0]||"");p.media.assetId=src.includes("179")?"179":src.includes("151")?"151":"64";p.treatment=({detail:"m-detalhe",none:"sem-imagem",plain:"imagem-livre",portfolio:"m-central",opening:"m-central"})[q.treatment]||"m-central";return p});selected=doc.pages[0].id})}catch(e){alert(e.message)}};
@@ -121,5 +144,5 @@ const compositionObserver=new ResizeObserver(queueComposition);
 compositionObserver.observe($("artboard"));
 document.fonts.ready.then(queueComposition);
 window.addEventListener("resize",queueComposition,{passive:true});
-save();render();
+syncPanels();save();render();
 })();

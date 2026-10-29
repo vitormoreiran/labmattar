@@ -92,7 +92,11 @@ try{
   await page.keyboard.type("Texto editado na própria página.");
   assert(await page.locator("#labBodyInput").inputValue()==="Texto editado na própria página.",
     "Direct body editing and the inspector diverged");
+  // Commit the initial body edit before testing a fresh Escape transaction.
+  await page.locator("#labRenderedTitle").click();
+  await inlineBody.click();
   const beforeEscape=await page.locator("#labBodyInput").inputValue();
+  await page.keyboard.press("End");
   await page.keyboard.type(" ALTERADO");
   await page.keyboard.press("Escape");
   assert(await page.locator("#labBodyInput").inputValue()===beforeEscape,

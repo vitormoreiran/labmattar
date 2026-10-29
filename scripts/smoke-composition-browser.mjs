@@ -139,6 +139,89 @@ try{
   data=await read();
   assert(data.image==="nenhuma"&&data.format==="horizontal"&&data.lines===3,"Restore does not recover the original study");
   assert(await page.locator("#labSymbol").inputValue()==="none","Restore should preserve the original no-symbol state");
+  // Regression from the actual 1:1 red-square composition:
+  // GASTROPERFORMANCE in Perpetua must never overrun the safe text margin.
+  async function assertReadingBoundary(label){
+    await page.waitForTimeout(90);
+    const data=await page.evaluate(()=>{
+      const board=document.querySelector("#labArtboard");
+      const safe=document.querySelector("#labReading").getBoundingClientRect();
+      const column=document.querySelector("#labCopy").getBoundingClientRect();
+      const title=document.querySelector("#labRenderedTitle");
+      const nodes=[...title.querySelectorAll(".lm-lab-title-line")];
+      const body=document.querySelector("#labRenderedBody");
+      if(!body.hidden)nodes.push(body);
+      const rects=nodes.flatMap(node=>{
+        const range=document.createRange();
+        range.selectNodeContents(node);
+        const found=[...range.getClientRects()];
+        return found.map(r=>({x:r.left,right:r.right,y:r.top,bottom:r.bottom,w:r.width,h:r.height,text:node.textContent.slice(0,35)}));
+      });
+      const epsilon=2.5;
+      return {
+        fit:board.dataset.typeFit,state:board.dataset.state,mode:board.dataset.titleBreak,
+        safe:{left:safe.left,right:safe.right,top:safe.top,bottom:safe.bottom},
+        column:{left:column.left,right:column.right,top:column.top,bottom:column.bottom},
+        titleSize:parseFloat(getComputedStyle(title).fontSize),
+        sourceScale:document.querySelector("#labTitleScale").value,
+        invalid:rects.filter(r=>r.w>0&&r.h>0&&(
+          r.x<safe.left-epsilon||r.right>safe.right+epsilon||
+          r.x<column.left-epsilon||r.right>column.right+epsilon||
+          r.y<safe.top-epsilon||r.bottom>safe.bottom+epsilon
+        )),
+        scroll: nodes.filter(n=>n.scrollWidth>n.clientWidth+2.5).map(n=>n.textContent.slice(0,35))
+      };
+    });
+    assert(data.fit!=="review"&&data.state!=="overflow",
+      label+" could not be fitted to the reading zone: "+JSON.stringify(data));
+    assert(!data.invalid.length&&!data.scroll.length,
+      label+" text crosses the reading margin: "+JSON.stringify(data));
+    return data;
+  }
+  await page.locator('[data-lab-preset="tipografia"]').click();
+  await select("labFormat","quadrado");
+  await select("labColor","red");
+  await range("labMargin",4);
+  await range("labTextWidth",90);
+  await range("labTitleScale",110);
+  await select("labType","perpetua");
+  await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
+  await select("labBodyMode","visivel");
+  let boundary=await assertReadingBoundary("Screenshot: red square GASTROPERFORMANCE");
+  assert(boundary.fit==="adjusted","Long single word must auto-fit, not preserve overflow");
+  console.log("SQUARE AUTOMATIC FIT",JSON.stringify({size:boundary.titleSize,fit:boundary.fit}));
+  await page.locator("#labArtboard").screenshot({path:"composition-lab-margin-fit-square.png"});
+
+  // Stress the interaction itself: after changing width, margin, format and
+  // typography, the requested 140% is a CAP, never a right to cross safe limits.
+  await range("labTitleScale",140);
+  await range("labMargin",16);
+  await range("labTextWidth",40);
+  for(const fmt of ["horizontal","vertical","quadrado","editorial"]){
+    await select("labFormat",fmt);
+    for(const face of ["univers","perpetua","alternada"]){
+      await select("labType",face);
+      await assertReadingBoundary(fmt+" / "+face+" / margin 16% / scale 140%");
+    }
+  }
+  await page.locator("#labTitleInput").fill("COMPOSIÇÕES EXTREMAMENTE LONGAS\nENTRE PALAVRAS COMPLETAS\nGASTROPERFORMANCE");
+  await assertReadingBoundary("Long title with explicit editorial breaks");
+  await page.locator("#labTitleInput").fill("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM");
+  await assertReadingBoundary("Long unbreakable title safety fallback");
+  await page.locator("#labBodyInput").fill("Um texto mais longo que também precisa permanecer dentro da coluna de leitura. ".repeat(4));
+  await assertReadingBoundary("Long body plus title");
+
+  // Physical phone viewport changes layout geometry without permitting
+  // the typography to expand outside the column.
+  await page.setViewportSize({width:390,height:844});
+  for(const fmt of ["horizontal","vertical","quadrado"]){
+    await select("labFormat",fmt);
+    await assertReadingBoundary("Physical mobile viewport / "+fmt);
+  }
+  await page.locator("#labReset").click();
+  const restored=await assertReadingBoundary("Restored base composition");
+  assert(restored.fit!=="review","Baseline degraded after typography test");
+
   assert(failures.length===0,"Javascript/browser errors: "+failures.join(" / "));
   console.log("LABMATTAR composition lab browser check OK");
 }catch(e){

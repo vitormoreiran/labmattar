@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f7f6f2">
   <title>LABMATTAR — Ambiente Editorial</title>
   <link rel="stylesheet" href="./editorial-v2.css">
+  <link rel="stylesheet" href="./editorial-composition.css">
   <script defer src="./editorial-v2.js"></script>
 </head>
 <body>
@@ -73,11 +74,13 @@
             <div class="masked-photo"><img id="primaryPhoto" alt=""></div>
           </div>
           <div class="editorial-content" id="editorialContent">
-            <p class="content-subtitle" data-content-slot="subtitle" data-role="subtitle" contenteditable="true" spellcheck="true"></p>
-            <h1 class="content-title" data-content-slot="title" data-role="title" contenteditable="true" spellcheck="true"></h1>
-            <div class="content-body" data-content-slot="body" data-role="body" contenteditable="true" spellcheck="true"></div>
-            <p class="content-caption" data-content-slot="caption" data-role="caption" contenteditable="true" spellcheck="true"></p>
-            <div class="content-credits" data-content-slot="credits" data-role="credits" contenteditable="true" spellcheck="true"></div>
+            <div class="editorial-stack" id="editorialStack" aria-label="Blocos de conteúdo editorial">
+              <p class="content-subtitle" data-content-slot="subtitle" data-role="subtitle" contenteditable="true" spellcheck="true"></p>
+              <h1 class="content-title" data-content-slot="title" data-role="title" contenteditable="true" spellcheck="true"></h1>
+              <div class="content-body" data-content-slot="body" data-role="body" contenteditable="true" spellcheck="true"></div>
+              <p class="content-caption" data-content-slot="caption" data-role="caption" contenteditable="true" spellcheck="true"></p>
+              <div class="content-credits" data-content-slot="credits" data-role="credits" contenteditable="true" spellcheck="true"></div>
+            </div>
           </div>
         </article>
       </div>

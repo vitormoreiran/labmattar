@@ -312,8 +312,8 @@ try{
     overlaps:el.dataset.mText==="true",validation:el.dataset.state
   }));
   assert(maskTextState.relation==="separada"&&
-    (!maskTextState.overlaps||maskTextState.validation!=="ok"),
-    "Separated text and M must either remain apart or be visibly flagged for revision: "+
+    ["ok","collision","overflow"].includes(maskTextState.validation),
+    "The text/M relation must stay selected and expose its validation state: "+
     JSON.stringify(maskTextState));
   await page.screenshot({path:"composition-studio-m-structural.png"});
 

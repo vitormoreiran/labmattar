@@ -4,6 +4,7 @@ const $=id=>document.getElementById(id),uid=()=>Math.random().toString(36).slice
 const base=[{id:"64",name:"Cada Corpo / Abertura",src:"./media/BOXDOSENTIR-64.jpg"},{id:"179",name:"Cada Corpo / Projeto",src:"./media/BOXDOSENTIR-179.jpg"},{id:"151",name:"Cada Corpo / Detalhe",src:"./media/BOXDOSENTIR-151.jpg"}];
 function make(profile="project",name="Nova página"){return{id:uid(),name,profile,status:"draft",treatment:profile==="text"||profile==="credits"?"sem-imagem":"m-central",media:{assetId:"64",focusX:50,focusY:50,gallery:["64","179","151"]},content:Object.fromEntries(roles.map(r=>[r,""])),visible:{}}}
 function initial(){const items=[["opening","Abertura","CADA CORPO ABRE UM MUNDO","GASTROPERFORMANCE","Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.","64"],["project","O projeto","CADA CORPO ABRE UM MUNDO","SIMONE MATTAR E MARTINA MATTAR","Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.","179"],["development","Cinco atos","CINCO ATOS","SAUDADE · GARRA · OTIMISMO · EUFORIA · AMOR","A experiência articula criações gastronômicas, composições olfativas, imagens em movimento, música e poesia.","151"],["gallery","Galeria","IMAGENS DA EXPERIÊNCIA","","Registros visuais de Cada Corpo Abre um Mundo.","179"],["text","O encontro","SENTIR O MUNDO","UM PERCURSO SENSORIAL","Entre memórias individuais e experiências compartilhadas, a obra transforma a mesa em espaço de investigação sensível.","64"],["closing","Encerramento","CADA CORPO ABRE UM MUNDO","","Diferentes maneiras de sentir e perceber o mundo.","64"],["credits","Créditos","CRÉDITOS","","Cada Corpo Abre um Mundo","64"]];return{version:2,title:"Cada Corpo Abre um Mundo",assets:structuredClone(base),pages:items.map(([profile,name,title,subtitle,body,id])=>{const p=make(profile,name);p.content={...p.content,title,subtitle,body};p.media.assetId=id;if(profile==="gallery")p.content.caption=body;if(profile==="credits")p.content.credits="Criação: Simone Mattar e Martina Mattar · O Boticário";if(profile==="development")p.treatment="m-detalhe";if(profile==="gallery")p.treatment="imagem-livre";if(profile==="closing")p.treatment="fundo-com-blur";return p})}}
+const uiIcon=name=>'<svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-'+name+'"></use></svg>';
 const key="labmattar-editorial-v2";let doc;try{doc=JSON.parse(localStorage.getItem(key))}catch{}if(!doc?.pages?.length||doc.version!==2)doc=initial();
 let selected=doc.pages[0].id,mobile=false,preview=false,past=[],future=[];
 const panelStateKey="labmattar-editorial-panels-v1";
@@ -16,7 +17,9 @@ function syncPanels(){
  $("togglePagesButton").setAttribute("aria-expanded",String(panelState.left));
  $("toggleInspectorButton").setAttribute("aria-expanded",String(panelState.right));
  $("togglePagesButton").title=panelState.left?"Ocultar páginas":"Mostrar páginas";
+ $("togglePagesButton").setAttribute("aria-label",$("togglePagesButton").title);
  $("toggleInspectorButton").title=panelState.right?"Ocultar propriedades":"Mostrar propriedades";
+ $("toggleInspectorButton").setAttribute("aria-label",$("toggleInspectorButton").title);
  queueComposition();
 }
 function togglePanel(side){
@@ -26,7 +29,7 @@ function togglePanel(side){
 }
 
 const page=()=>doc.pages.find(p=>p.id===selected)||doc.pages[0],asset=id=>doc.assets.find(a=>a.id===id),allowed=(p,r)=>profiles[p.profile][1].includes(r)&&p.visible[r]!==false;
-function save(){try{localStorage.setItem(key,JSON.stringify(doc));$("saveStatus").textContent="SALVO NESTE NAVEGADOR"}catch{$("saveStatus").textContent="EXPORTAR PARA PRESERVAR"}}
+function save(){try{localStorage.setItem(key,JSON.stringify(doc));$("saveStatus").textContent="Salvo neste navegador"}catch{$("saveStatus").textContent="Armazenamento cheio · exporte seu arquivo"}}
 function checkpoint(){past.push(JSON.stringify(doc));if(past.length>80)past.shift();future=[];buttons()}
 function change(fn){checkpoint();fn();save();render()}
 function undo(reverse=false){const from=reverse?future:past,to=reverse?past:future;if(!from.length)return;to.push(JSON.stringify(doc));doc=JSON.parse(from.pop());if(!doc.pages.some(p=>p.id===selected))selected=doc.pages[0].id;save();render()}
@@ -37,7 +40,7 @@ $("pagesList").innerHTML=doc.pages.map((q,j)=>{
  const thumb=q.treatment!=="sem-imagem"?asset(q.media.assetId):null;
  const image=thumb?'<img loading="lazy" draggable="false" src="'+escape(thumb.src)+'" alt="">':'<span class="thumb-empty">TEXTO</span>';
  const status=({draft:"Rascunho",review:"Em revisão",ready:"Pronta"}[q.status]||"Rascunho");
- return '<button type="button" draggable="true" class="page-entry '+(q.id===selected?"selected":"")+'" data-p="'+escape(q.id)+'" aria-current="'+(q.id===selected?"page":"false")+'" title="Selecionar ou arrastar para ordenar a página '+String(j+1)+'"><span class="page-thumb">'+image+'<span class="page-number">'+String(j+1).padStart(2,"0")+'</span></span><span class="page-meta"><strong>'+escape(q.name)+'</strong><small>'+profiles[q.profile][0]+' · '+status+'</small></span><span class="page-handle" aria-hidden="true">⋮</span></button>';
+ return '<button type="button" draggable="true" class="page-entry '+(q.id===selected?"selected":"")+'" data-p="'+escape(q.id)+'" aria-current="'+(q.id===selected?"page":"false")+'" title="Selecionar ou arrastar para ordenar a página '+String(j+1)+'"><span class="page-thumb">'+image+'<span class="page-number">'+String(j+1).padStart(2,"0")+'</span></span><span class="page-meta"><strong>'+escape(q.name)+'</strong><small>'+profiles[q.profile][0]+' · '+status+'</small></span><span class="page-handle" aria-hidden="true">'+uiIcon("grip")+'</span></button>';
 }).join("");
 $("pagesList").querySelectorAll("[data-p]").forEach(b=>{
  b.onclick=()=>{selected=b.dataset.p;render()};
@@ -52,10 +55,10 @@ $("pagesList").querySelectorAll("[data-p]").forEach(b=>{
  };
  b.ondragend=()=>{$("pagesList").querySelectorAll(".drag-over,.dragging").forEach(x=>x.classList.remove("drag-over","dragging"))};
 });
-$("pagesTotal").textContent=doc.pages.length+" PÁGINAS";
+$("pagesTotal").textContent=doc.pages.length+(doc.pages.length===1?" página":" páginas");
 $("assetsList").innerHTML=doc.assets.map(a=>'<button class="asset-entry" data-a="'+escape(a.id)+'"><img src="'+escape(a.src)+'" alt=""><span>'+escape(a.name)+'</span></button>').join("");
 $("assetsList").querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>change(()=>{page().media.assetId=b.dataset.a;if(page().treatment==="sem-imagem")page().treatment="m-central"}));
-$("assetsTotal").textContent=doc.assets.length+" IMAGENS";
+$("assetsTotal").textContent=doc.assets.length+(doc.assets.length===1?" imagem":" imagens");
 art.dataset.profile=p.profile;art.dataset.treatment=p.treatment;art.dataset.hasMedia=String(Boolean(a&&p.treatment!=="sem-imagem"));art.style.setProperty("--focus-x",p.media.focusX+"%");art.style.setProperty("--focus-y",p.media.focusY+"%");
 $("primaryPhoto").src=$("ambientPhoto").src=a?.src||"";
 art.querySelector(".gallery-grid")?.remove();
@@ -64,7 +67,7 @@ art.querySelectorAll("[data-content-slot]").forEach(node=>{const r=node.dataset.
 $("compositionLabel").textContent="PÁGINA / "+String(i+1).padStart(2,"0");$("editorialRoleLabel").textContent=profiles[p.profile][0].toUpperCase();$("stageCount").textContent=$("inspectorPage").textContent=String(i+1).padStart(2,"0")+" / "+String(doc.pages.length).padStart(2,"0");$("inspectorPageName").textContent=p.name;
 $("previousButton").disabled=i===0;$("nextButton").disabled=i===doc.pages.length-1;$("deleteButton").disabled=doc.pages.length===1;$("movePageUp").disabled=i===0;$("movePageDown").disabled=i===doc.pages.length-1;
 $("pageName").value=p.name;$("pageProfile").value=p.profile;$("pageStatus").value=p.status;$("profileDescription").textContent="Organização editorial: "+profiles[p.profile][1].map(r=>names[r].toLowerCase()).join(", ")+". Identidade automática.";
-$("contentFields").innerHTML=profiles[p.profile][1].map(r=>'<div class="field-group"><label for="field-'+r+'">'+names[r]+'<span class="field-kind">'+({title:"Hierarquia",subtitle:"Identificação",body:"Leitura",caption:"Legenda",credits:"Ficha técnica"}[r])+'</span></label><textarea id="field-'+r+'" data-field="'+r+'" rows="'+(r==="body"||r==="credits"?5:2)+'" '+(allowed(p,r)?"":"disabled")+'>'+escape(p.content[r])+'</textarea></div>').join("");
+$("contentFields").innerHTML=profiles[p.profile][1].map(r=>'<div class="field-group"><label for="field-'+r+'">'+names[r]+'</label><textarea id="field-'+r+'" data-field="'+r+'" rows="'+(r==="body"||r==="credits"?5:2)+'" '+(allowed(p,r)?"":"disabled")+'>'+escape(p.content[r])+'</textarea></div>').join("");
 $("contentFields").querySelectorAll("[data-field]").forEach(t=>{t.onfocus=checkpoint;t.oninput=()=>{p.content[t.dataset.field]=t.value;const n=art.querySelector('[data-content-slot="'+t.dataset.field+'"]');if(n){n.innerText=t.value;n.dataset.empty=String(!t.value.trim())}save();queueComposition()}});
 $("visibilityFields").innerHTML=profiles[p.profile][1].map(r=>'<label class="visibility-option"><input type="checkbox" data-v="'+r+'" '+(allowed(p,r)?"checked":"")+'><span>'+names[r]+'</span></label>').join("");
 $("visibilityFields").querySelectorAll("[data-v]").forEach(t=>t.onchange=()=>change(()=>{p.visible[t.dataset.v]=t.checked}));
@@ -73,7 +76,7 @@ $("mediaPreviewImage").src=a?.src||"";$("mediaPreviewImage").hidden=!a;$("mediaP
 for(const ax of ["X","Y"]){$("focus"+ax).value=p.media["focus"+ax];$("focus"+ax+"Value").value=p.media["focus"+ax]+"%"}
 $("galleryControls").hidden=p.profile!=="gallery";$("galleryAssets").innerHTML=doc.assets.map(a=>'<label class="gallery-option"><input type="checkbox" data-g="'+escape(a.id)+'" '+(p.media.gallery?.includes(a.id)?"checked":"")+'><span>'+escape(a.name)+'</span></label>').join("");
 $("galleryAssets").querySelectorAll("[data-g]").forEach(t=>t.onchange=()=>change(()=>{const ids=new Set(p.media.gallery||[]);t.checked?ids.add(t.dataset.g):ids.delete(t.dataset.g);p.media.gallery=[...ids]}));
-$("documentTitle").value=doc.title;$("editor").dataset.viewport=mobile?"mobile":"desktop";$("editor").classList.toggle("is-preview",preview);$("viewportButton").textContent=mobile?"DESKTOP":"MOBILE";$("previewButton").textContent=preview?"EDITAR":"VISUALIZAR";buttons();queueComposition();
+$("documentTitle").value=doc.title;$("editor").dataset.viewport=mobile?"mobile":"desktop";$("editor").classList.toggle("is-preview",preview);$("viewportLabel").textContent=mobile?"Desktop":"Mobile";$("viewportIconUse").setAttribute("href",mobile?"#ui-monitor":"#ui-smartphone");$("viewportButton").setAttribute("aria-pressed",String(mobile));$("viewportButton").title=mobile?"Visualização desktop":"Visualização mobile";$("previewLabel").textContent=preview?"Editar":"Visualizar";$("previewIconUse").setAttribute("href",preview?"#ui-pencil":"#ui-eye");$("previewButton").setAttribute("aria-pressed",String(preview));buttons();queueComposition();
 }
 
 let layoutFrame=0;

@@ -63,6 +63,32 @@ try{
   });
   if(fonts.some(x=>!x))throw Error('Official fonts are not available');
   await geometry('opening edit',{expectedLayout:'compact'});
+
+  // The UI icon language must render from symbols, not from missing-font glyphs.
+  const uiCheck=await page.evaluate(()=>{
+    const useIds=[...document.querySelectorAll('.editor-header .ui-icon use')].map(el=>el.getAttribute('href'));
+    const missing=useIds.filter(href=>!document.querySelector(href));
+    const rgb=style=>{const match=style.match(/[\d.]+/g);return match?.slice(0,3).map(Number)||[]};
+    const luminance=values=>{const v=values.map(x=>x/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2]};
+    const ratio=(fg,bg)=>{const l1=luminance(rgb(fg)),l2=luminance(rgb(bg));return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05)};
+    const pairs=[
+      ['#pagesTotal','.page-section-head'],
+      ['#inspectorPageName','.inspector-heading'],
+      ['#previewButton','#previewButton'],
+      ['#layoutStatus','.stage-footline']
+    ].map(([fgSelector,bgSelector])=>{
+      const fg=getComputedStyle(document.querySelector(fgSelector)).color;
+      const bg=getComputedStyle(document.querySelector(bgSelector)).backgroundColor;
+      return{element:fgSelector,ratio:Number(ratio(fg,bg).toFixed(2)),fg,bg};
+    });
+    return{symbolCount:document.querySelectorAll('.ui-icon-sprite symbol').length,missing,useIds,pairs};
+  });
+  if(uiCheck.symbolCount<20||uiCheck.missing.length)throw Error('Missing or unusable SVG icons: '+JSON.stringify(uiCheck));
+  if(uiCheck.pairs.some(item=>item.ratio<4.5))throw Error('Low contrast in main UI: '+JSON.stringify(uiCheck.pairs));
+  if(!(await page.locator('#viewportIconUse').getAttribute('href')).includes('ui-smartphone'))throw Error('Incorrect initial viewport icon');
+  if(!(await page.locator('#previewIconUse').getAttribute('href')).includes('ui-eye'))throw Error('Incorrect initial preview icon');
+  console.log('UI CONTRAST',JSON.stringify(uiCheck.pairs));
+
   // Contrast is not a permanently darkened photo: test the actual on/off
   // state by moving the original M behind the title, then restore geometry.
   const initialContrast=await page.evaluate(()=>{
@@ -136,6 +162,8 @@ try{
   await page.screenshot({path:'editorial-composition-edit.png',fullPage:true});
   await page.locator('#previewButton').click();
   await page.locator('.editor.is-preview').waitFor();
+  if(await page.locator('#previewLabel').textContent()!=='Editar')throw Error('Preview label was not updated');
+  if(await page.locator('#previewIconUse').getAttribute('href')!=='#ui-pencil')throw Error('Preview icon disappeared while switching mode');
   await geometry('opening full bleed',{expectedLayout:'wide',fullBleed:true});
   await page.screenshot({path:'editorial-composition-wide.png',fullPage:true});
   for(let i=1;i<7;i++){
@@ -144,6 +172,7 @@ try{
   }
   await page.evaluate(()=>document.querySelectorAll('.page-entry')[0].click());
   await page.locator('#viewportButton').click();
+  if(await page.locator('#viewportLabel').textContent()!=='Desktop'||await page.locator('#viewportIconUse').getAttribute('href')!=='#ui-monitor')throw Error('Viewport icon/label did not switch');
   await geometry('mobile simulation',{expectedLayout:'narrow',portrait:true});
   await page.screenshot({path:'editorial-composition-mobile.png',fullPage:true});
   for(let i=1;i<7;i++){

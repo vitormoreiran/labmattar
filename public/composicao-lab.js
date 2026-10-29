@@ -76,6 +76,40 @@
   try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
+  const illustrated={
+    format:{id:"labFormat",items:[["horizontal","Horizontal"],["vertical","Vertical"],["quadrado","Quadrado"],["editorial","Editorial"]]},
+    placement:{id:"labPlacement",items:[["esquerda","Esquerda"],["central","Centro"],["superior","Superior"],["inferior","Inferior"]]},
+    image:{id:"labImage",items:[["nenhuma","Sem imagem"],["recorte","No M"],["inteira","Integral"]]}
+  };
+  for(const [kind,group] of Object.entries(illustrated)){
+    const container=document.querySelector('[data-choice-for="'+kind+'"]');
+    if(!container)continue;
+    for(const [value,label] of group.items){
+      const b=document.createElement("button");
+      b.type="button";b.className="lm-lab-choice";b.dataset.choice=value;
+      b.setAttribute("aria-pressed","false");
+      const pic=document.createElement("span");pic.className="lm-lab-choice-illustration";pic.setAttribute("aria-hidden","true");
+      const name=document.createElement("span");name.textContent=label;
+      b.append(pic,name);
+      b.addEventListener("click",()=>{
+        const select=by(group.id);
+        select.value=value;
+        select.dispatchEvent(new Event("change",{bubbles:true}));
+      });
+      container.append(b);
+    }
+  }
+  function syncIllustrations(){
+    for(const [kind,group] of Object.entries(illustrated)){
+      const container=document.querySelector('[data-choice-for="'+kind+'"]');
+      if(!container)continue;
+      const disabled=by(group.id).disabled;
+      container.querySelectorAll("button").forEach(b=>{
+        b.setAttribute("aria-pressed",String(b.dataset.choice===state[kind]));
+        b.disabled=disabled;
+      });
+    }
+  }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
@@ -86,6 +120,7 @@
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
     }
+    syncIllustrations();
     document.querySelectorAll("[data-lab-preset]").forEach(b=>
       b.setAttribute("aria-pressed",String(b.dataset.labPreset===activePreset)));
     // Visual choice cards and hidden select retain the SAME state.

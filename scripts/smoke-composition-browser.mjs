@@ -119,7 +119,16 @@ try{
   await page.locator("#labReset").click();
   await page.locator("#labArtboard").screenshot({path:"composition-lab-typography.png"});
 
-  await page.locator('[data-lab-preset="mascara"]').click();
+  // Illustrated choices must change the same state as the original selects.
+  await page.locator('[data-choice-for="format"] [data-choice="quadrado"]').click();
+  assert(await page.locator("#labFormat").inputValue()==="quadrado","Illustrated format is inert");
+  await page.locator('[data-choice-for="placement"] [data-choice="central"]').click();
+  assert(await page.locator("#labPlacement").inputValue()==="central","Illustrated alignment is inert");
+  await page.locator('[data-choice-for="image"] [data-choice="inteira"]').click();
+  assert(await page.locator("#labImage").inputValue()==="inteira","Illustrated image mode is inert");
+  await page.locator("#labReset").click();
+  assert(await page.locator('[data-choice-for="format"] [data-choice="horizontal"]').getAttribute("aria-pressed")==="true","Format choice active state not synchronized");
+    await page.locator('[data-lab-preset="mascara"]').click();
   await page.waitForTimeout(200);
   let data=await read();
   assert(data.image==="recorte"&&data.lines===3,"Masked photo preset did not change composition");

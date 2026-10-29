@@ -959,21 +959,13 @@
       // the user's actual content, fonts, format and selected photograph.
       if(id==="labImage"&&previousImage!=="recorte"&&state.image==="recorte"){
         state.mMode="janela";
-        state.mPosition="direita";
-        state.mScale=50;
+        state.mScale=Math.min(state.mScale,50);
         state.textWidth=Math.min(state.textWidth,40);
-        state.relation="separada";
+        state.relation="lado-a-lado";
+        state.gap=4;
       }
       if(id==="labMMode"&&previousMode!==state.mMode){
-        if(state.mMode==="janela"){
-          state.mScale=Math.min(state.mScale,50);
-          state.relation="separada";
-        }else if(state.mMode==="corte"){
-          state.mScale=Math.max(70,state.mScale);
-        }else if(state.mMode==="sutil"){
-          state.mScale=Math.min(62,state.mScale);
-          state.relation="sobreposta";
-        }
+        if(state.mMode==="janela")state.mScale=Math.min(state.mScale,50);
       }
       if(id==="labTextWidth"||id==="labImage")
         rememberedReadingWidths.set(state.format,state.textWidth);

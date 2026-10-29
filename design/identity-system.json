@@ -106,5 +106,24 @@
     ],
     "sourceOfTruth": "design/identity-system.json",
     "rule": "Experiments cannot silently overwrite approved identity parameters."
+  },
+  "composition": {
+    "imageTextContrast": {
+      "status": "approved",
+      "trigger": "visible text over a photograph",
+      "overlayColor": "#000000",
+      "overlayOpacity": 0.2,
+      "overlayOrder": [
+        "photograph",
+        "black overlay",
+        "editorial text"
+      ],
+      "targets": [
+        "M-masked image",
+        "full-bleed image"
+      ],
+      "noText": "no mandatory darkening of the sharp image",
+      "safeguard": "verify final text legibility without changing the master M vector or source photo"
+    }
   }
 }

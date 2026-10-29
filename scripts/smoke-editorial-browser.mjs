@@ -81,6 +81,11 @@ try{
   await page.locator('#viewportButton').click();
   await geometry('mobile simulation',{expectedLayout:'narrow',portrait:true});
   await page.screenshot({path:'editorial-composition-mobile.png',fullPage:true});
+  for(let i=1;i<7;i++){
+    await page.evaluate(i=>document.querySelectorAll('.page-entry')[i].click(),i);
+    await geometry('portrait page '+(i+1),{expectedLayout:'narrow',portrait:true});
+  }
+  await page.evaluate(()=>document.querySelectorAll('.page-entry')[0].click());
   await page.locator('#viewportButton').click();
   await page.locator('#previewButton').click();
   await page.locator('#structureTab').click();

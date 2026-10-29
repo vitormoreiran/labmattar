@@ -171,26 +171,26 @@
 <section class="chapter lm-lab" id="laboratorio">
   <div class="lm-lab-heading">
     <div><p class="eyebrow">02 / LABORATÓRIO / CONSTRUÇÃO DE PÁGINAS</p><h2>TESTAR<br><span class="perpetua">RELAÇÕES</span></h2></div>
-    <p>Uma superfície experimental para combinar os elementos que já existem na identidade. Alterar uma condição deve revelar como texto, fotografia, M e espaço respondem juntos — sem criar uma regra nova para cada página.</p>
+    <div class="lm-lab-heading-aside"><p>Construa e compare páginas a partir da identidade.</p><button type="button" class="lm-help-trigger lm-help-trigger-overview" id="labOverviewHelp" aria-expanded="false" aria-label="Dúvidas: como funciona o laboratório" aria-controls="labHelp-overview"><span aria-hidden="true">?</span><span class="lm-help-trigger-text">Como funciona</span></button></div>
   </div>
   <div class="lm-lab-prep">
-    <span class="lm-lab-prep-label">PONTO DE PARTIDA <small>Escolha um estudo ou comece a ajustar o seu.</small></span>
+    <span class="lm-lab-prep-label">EXEMPLOS DE COMPOSIÇÃO</span>
     <div class="lm-lab-presets" role="group" aria-label="Pontos de partida para a composição">
-      <button type="button" data-lab-preset="tipografia" aria-pressed="true"><span class="lm-ctrl-preset-visual" data-preview="type" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>01 / Tipografia</strong><small>Campo sem imagem</small></span></button>
-      <button type="button" data-lab-preset="mascara" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="mask" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>02 / M + fotografia</strong><small>Recorte e texto</small></span></button>
-      <button type="button" data-lab-preset="imagem" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="full" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>03 / Imagem integral</strong><small>Campo fotográfico</small></span></button>
+      <button type="button" data-lab-preset="tipografia" aria-pressed="true"><span class="lm-ctrl-preset-visual" data-preview="type" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>Tipografia</strong><small>Campo sem imagem</small></span></button>
+      <button type="button" data-lab-preset="mascara" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="mask" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>M + fotografia</strong><small>Recorte e texto</small></span></button>
+      <button type="button" data-lab-preset="imagem" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="full" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>Imagem integral</strong><small>Campo fotográfico</small></span></button>
     </div>
   </div>
   <div class="lm-lab-workspace">
     <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">
-      <div class="lm-inspector-head"><span>FERRAMENTAS / COMPOSIÇÃO</span><p>Três áreas de trabalho. Uma página em atualização contínua.</p></div>
+      <div class="lm-inspector-head"><span>FERRAMENTAS / COMPOSIÇÃO</span></div>
       <div class="lm-inspector-tabs" role="tablist" aria-label="Áreas de edição">
         <button type="button" id="labTab-pagina" data-lab-tab="pagina" role="tab" aria-controls="labPanel-pagina" aria-selected="true" tabindex="0"><span class="lm-inspector-tab-name">Página</span><span class="lm-inspector-tab-description" id="labTabMeta-pagina">Formato e margens</span></button>
         <button type="button" id="labTab-texto" data-lab-tab="texto" role="tab" aria-controls="labPanel-texto" aria-selected="false" tabindex="-1"><span class="lm-inspector-tab-name">Texto</span><span class="lm-inspector-tab-description" id="labTabMeta-texto">Hierarquia e leitura</span></button>
         <button type="button" id="labTab-imagem" data-lab-tab="imagem" role="tab" aria-controls="labPanel-imagem" aria-selected="false" tabindex="-1"><span class="lm-inspector-tab-name">Imagem / M</span><span class="lm-inspector-tab-description" id="labTabMeta-imagem">Fotografia e recorte</span></button>
       </div>
       <section class="lm-inspector-panel" id="labPanel-pagina" data-lab-panel="pagina" role="tabpanel" aria-labelledby="labTab-pagina" tabindex="0">
-        <div class="lm-inspector-panel-heading"><span>01 / Superfície, cor e limites</span><p>Defina primeiro a superfície. Os limites de leitura são preservados automaticamente.</p></div>
+        <div class="lm-inspector-panel-heading"><span>SUPERFÍCIE E MARGENS</span></div>
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labFormatTitle" class="lm-lab-field-title">Proporção da superfície</div><select id="labFormat" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
           <option value="horizontal">Horizontal / 16:9</option><option value="vertical">Vertical / 9:16</option><option value="quadrado">Quadrado / 1:1</option><option value="editorial">Editorial / √2:1</option>
         </select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labFormatTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="horizontal" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="horizontal"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Horizontal</span><span class="lm-ctrl-meta">16:9</span></button>
@@ -214,7 +214,7 @@
         </details>
       </section>
       <section class="lm-inspector-panel" id="labPanel-texto" data-lab-panel="texto" role="tabpanel" aria-labelledby="labTab-texto" tabindex="0" hidden>
-        <div class="lm-inspector-panel-heading"><span>02 / Tipografia e composição</span><p>Edite diretamente na página. Use estes parâmetros para controlar a hierarquia e a escala.</p></div>
+        <div class="lm-inspector-panel-heading"><span>TIPOGRAFIA E COMPOSIÇÃO</span></div>
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labPlacementTitle" class="lm-lab-field-title">Posição do bloco de título</div><select id="labPlacement" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="esquerda">À esquerda</option><option value="central">Centralizado</option><option value="inferior">No campo inferior</option><option value="superior">No campo superior</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labPlacementTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="placement" data-value="esquerda" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet lm-ctrl-placement" data-placement="left"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Esquerda</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="placement" data-value="central" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet lm-ctrl-placement" data-placement="center"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Centro</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="placement" data-value="superior" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet lm-ctrl-placement" data-placement="top"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Superior</span></button>
@@ -235,7 +235,7 @@ E PROCESSOS</textarea><small>As quebras indicadas aqui são editoriais. A fonte 
         </details>
       </section>
       <section class="lm-inspector-panel" id="labPanel-imagem" data-lab-panel="imagem" role="tabpanel" aria-labelledby="labTab-imagem" tabindex="0" hidden>
-        <div class="lm-inspector-panel-heading"><span>03 / Tratamento fotográfico</span><p>Escolha como a fotografia participa da composição. O recorte conserva a proporção do M.</p></div>
+        <div class="lm-inspector-panel-heading"><span>FOTOGRAFIA E RECORTE</span></div>
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labImageTitle" class="lm-lab-field-title">Aplicação fotográfica</div><select id="labImage" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="nenhuma">Sem imagem</option><option value="recorte">Fotografia recortada no M</option><option value="inteira">Fotografia integral</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labImageTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="nenhuma" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="none"><i></i><i></i></span></span><span class="lm-ctrl-name">Sem foto</span><span class="lm-ctrl-meta">Campo liso</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="recorte" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="mask"><i></i><i></i></span></span><span class="lm-ctrl-name">Máscara M</span><span class="lm-ctrl-meta">Foto recortada</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="inteira" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="full"><i></i><i></i></span></span><span class="lm-ctrl-name">Integral</span><span class="lm-ctrl-meta">Imagem total</span></button></div><small class="lm-ctrl-helper">O recorte utiliza o M oficial sem deformar sua geometria.</small></div>

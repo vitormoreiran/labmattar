@@ -76,40 +76,6 @@
   try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
-  const illustrated={
-    format:{id:"labFormat",items:[["horizontal","Horizontal"],["vertical","Vertical"],["quadrado","Quadrado"],["editorial","Editorial"]]},
-    placement:{id:"labPlacement",items:[["esquerda","Esquerda"],["central","Centro"],["superior","Superior"],["inferior","Inferior"]]},
-    image:{id:"labImage",items:[["nenhuma","Sem imagem"],["recorte","No M"],["inteira","Integral"]]}
-  };
-  for(const [kind,group] of Object.entries(illustrated)){
-    const container=document.querySelector('[data-choice-for="'+kind+'"]');
-    if(!container)continue;
-    for(const [value,label] of group.items){
-      const b=document.createElement("button");
-      b.type="button";b.className="lm-lab-choice";b.dataset.choice=value;
-      b.setAttribute("aria-pressed","false");
-      const pic=document.createElement("span");pic.className="lm-lab-choice-illustration";pic.setAttribute("aria-hidden","true");
-      const name=document.createElement("span");name.textContent=label;
-      b.append(pic,name);
-      b.addEventListener("click",()=>{
-        const select=by(group.id);
-        select.value=value;
-        select.dispatchEvent(new Event("change",{bubbles:true}));
-      });
-      container.append(b);
-    }
-  }
-  function syncIllustrations(){
-    for(const [kind,group] of Object.entries(illustrated)){
-      const container=document.querySelector('[data-choice-for="'+kind+'"]');
-      if(!container)continue;
-      const disabled=by(group.id).disabled;
-      container.querySelectorAll("button").forEach(b=>{
-        b.setAttribute("aria-pressed",String(b.dataset.choice===state[kind]));
-        b.disabled=disabled;
-      });
-    }
-  }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
@@ -120,7 +86,7 @@
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
     }
-    syncIllustrations();
+
     document.querySelectorAll("[data-lab-preset]").forEach(b=>
       b.setAttribute("aria-pressed",String(b.dataset.labPreset===activePreset)));
     // Visual choice cards and hidden select retain the SAME state.
@@ -146,11 +112,24 @@
     }
     const focusPreview=by("labFocalPreview");
     if(focusPreview){
+      focusPreview.disabled=!activeImage;
       focusPreview.dataset.inactive=String(!activeImage);
+      focusPreview.setAttribute("aria-label","Enquadramento da imagem: foco horizontal "+state.focusX+"%, vertical "+state.focusY+"%. Use as setas ou arraste.");
       by("labFocusImage").style.backgroundImage="url('"+photos[state.photo]+"')";
       by("labFocusImage").style.backgroundPosition=state.focusX+"% "+state.focusY+"%";
       by("labFocusPointer").style.left=state.focusX+"%";
       by("labFocusPointer").style.top=state.focusY+"%";
+    }
+    // The four diagrams show the actual numeric parameters rather than
+    // decorative illustrations that might contradict the live page.
+    const diagrams={
+      margin:["--lm-mini-margin",state.margin+"%"],
+      width:["--lm-mini-width",state.textWidth+"%"],
+      title:["--lm-mini-title-scale",String(state.titleScale/100)],
+      mask:["--lm-mini-mask-scale",String(state.mScale/100)]
+    };
+    for(const [key,[prop,value]] of Object.entries(diagrams)){
+      document.querySelector('[data-control-effect="'+key+'"]')?.style.setProperty(prop,value);
     }
   }
   function readInputs(){
@@ -410,6 +389,42 @@
     activePreset=key;
     render();save();
   }
+  // Direct manipulation of the image focal point reuses the exact X/Y
+  // sliders and their single state pipeline. No new image transform is added.
+  const focusSurface=by("labFocalPreview");
+  const clampFocus=v=>Math.max(0,Math.min(100,Math.round(v/5)*5));
+  const setFocus=(x,y)=>{
+    if(focusSurface.disabled)return;
+    by("labFocusX").value=String(clampFocus(x));
+    by("labFocusY").value=String(clampFocus(y));
+    by("labFocusX").dispatchEvent(new Event("input",{bubbles:true}));
+  };
+  const readFocusPosition=e=>{
+    const bounds=focusSurface.getBoundingClientRect();
+    if(bounds.width<=0||bounds.height<=0)return;
+    setFocus((e.clientX-bounds.left)/bounds.width*100,(e.clientY-bounds.top)/bounds.height*100);
+  };
+  focusSurface.addEventListener("pointerdown",e=>{
+    if(focusSurface.disabled)return;
+    focusSurface.setPointerCapture(e.pointerId);
+    readFocusPosition(e);
+  });
+  focusSurface.addEventListener("pointermove",e=>{
+    if(focusSurface.disabled||!focusSurface.hasPointerCapture(e.pointerId))return;
+    readFocusPosition(e);
+  });
+  const releaseFocus=e=>{
+    if(focusSurface.hasPointerCapture(e.pointerId))focusSurface.releasePointerCapture(e.pointerId);
+  };
+  focusSurface.addEventListener("pointerup",releaseFocus);
+  focusSurface.addEventListener("pointercancel",releaseFocus);
+  focusSurface.addEventListener("keydown",e=>{
+    if(focusSurface.disabled)return;
+    const delta={ArrowLeft:[-5,0],ArrowRight:[5,0],ArrowUp:[0,-5],ArrowDown:[0,5]}[e.key];
+    if(!delta)return;
+    e.preventDefault();
+    setFocus(state.focusX+delta[0],state.focusY+delta[1]);
+  });
   // One action model for the graphic controls and the original select fields.
   document.querySelectorAll("[data-lab-choice]").forEach(button=>{
     button.addEventListener("click",()=>{

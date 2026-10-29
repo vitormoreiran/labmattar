@@ -72,9 +72,36 @@ function fitComposition(){
   }
   const overflow=Boolean(visible.length&&!fits());
   art.dataset.overflow=String(overflow);
+  updateImageContrast(art,visible);
   $("layoutStatus").textContent=overflow?
     "REVISAR CONTEÚDO / ÁREA DE LEITURA EXCEDIDA":
     "COMPOSIÇÃO AJUSTADA / IDENTIDADE PRESERVADA";
+}
+
+
+/* Legibility is conditional: ambient photography lies behind the reading
+   surface; the sharp photo inside M (or unmasked image) gets a distinct 20%
+   black veil only if an actual text line intersects its on-screen bounds.
+   Recompute after edits, font loading and responsive layout changes. */
+function updateImageContrast(art,visible){
+  const hasMedia=art.dataset.hasMedia==="true"&&art.dataset.treatment!=="sem-imagem";
+  const readable=visible.filter(node=>node.textContent.trim().length>0);
+  art.dataset.contrastBackground=String(hasMedia&&readable.length>0);
+  const sharp=art.querySelector(".masked-photo");
+  if(!hasMedia||!readable.length||art.dataset.treatment==="fundo-com-blur"||art.dataset.profile==="gallery"||!sharp||getComputedStyle(sharp).display==="none"){
+    art.dataset.contrastM="false";
+    return;
+  }
+  const imageBox=sharp.getBoundingClientRect();
+  const intersects=(a,b)=>a.width>0&&a.height>0&&b.width>0&&b.height>0&&a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;
+  const isOverImage=readable.some(node=>{
+    const range=document.createRange();
+    range.selectNodeContents(node);
+    const lines=Array.from(range.getClientRects());
+    if(!lines.length)lines.push(node.getBoundingClientRect());
+    return lines.some(rect=>intersects(rect,imageBox));
+  });
+  art.dataset.contrastM=String(isOverImage);
 }
 
 function shift(n){const i=doc.pages.indexOf(page()),t=i+n;if(t<0||t>=doc.pages.length)return;change(()=>{const [p]=doc.pages.splice(i,1);doc.pages.splice(t,0,p)})}

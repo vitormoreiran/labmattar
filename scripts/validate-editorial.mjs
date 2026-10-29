@@ -40,6 +40,6 @@ assert.match(js,/labmattar-editorial-v2/);
 assert.match(js,/labmattar-editorial-v1/);
 assert.match(js,/function (checkpoint|undo|render|save)\(/);
 assert.doesNotMatch(html,/titleFamily|fontPicker|marginSlider/);
-assert.match(css,/\.artboard\[data-profile="gallery"\]/);
+assert.match(composition,/\.artboard\[data-profile="gallery"\]/);
 assert.match(css,/@media\(max-width:650px\)/);
 console.log("PASS: editor v2, 7 perfis, 5 tratamentos, conteudo, acervo, fontes e modelo verificados.");

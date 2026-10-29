@@ -1,23 +1,34 @@
 import assert from "node:assert/strict";
-import { readFileSync, existsSync } from "node:fs";
-import { Script } from "node:vm";
-const path="public/ambiente-editorial/index.html";
-const html=readFileSync(path,"utf8");
-const match=html.match(/<script>([\s\S]*?)<\/script>/);
-assert.ok(match,"O editor deve possuir script de inicialização");
-new Script(match[1],{filename:"ambiente-editorial-inline.js"});
-assert.match(html,/id="filmstrip"/);
-assert.match(html,/id="undo"/);
-assert.match(html,/id="redo"/);
-assert.match(html,/function attachCanvas\(/);
-assert.match(html,/function drawFilmstrip\(/);
-assert.match(html,/function addImageControls\(/);
-assert.match(html,/M integral do portfólio/);
-assert.match(html,/const treatments=/);
-assert.match(html,/data-editorial-role/);
-assert.match(html,/data-treatment/);
-assert.match(html,/m-publicado\.svg/);
-for(const f of ["public/ambiente-editorial/media/m-publicado.svg","public/ambiente-editorial/media/media-engine.css"])assert.ok(existsSync(f),"Arquivo obrigatório: "+f);
-assert.match(html,/function snapshot\(/);
-assert.match(html,/restoreHistory\(/);
-console.log("Sintaxe do editor, máscara oficial, modelos, edição, histórico e sequência verificados.");
+import {readFileSync,existsSync} from "node:fs";
+import {Script} from "node:vm";
+
+const base="public/ambiente-editorial/";
+const html=readFileSync(base+"index.html","utf8");
+const js=readFileSync(base+"editorial-v2.js","utf8");
+const css=readFileSync(base+"editorial-v2.css","utf8");
+
+new Script(js,{filename:"editorial-v2.js"});
+assert.match(html,/editorial-v2\.js/);
+assert.match(html,/editorial-v2\.css/);
+for(const id of ["editor","artboard","pagesList","assetsList","contentFields","pageProfile","mediaTreatment","mediaAssetSelect","focusX","focusY","undoButton","redoButton","viewportButton","previewButton","exportButton","importButton","recoverLegacyButton"]){
+  assert.ok(html.includes('id="'+id+'"'),"Missing editor control: "+id);
+}
+for(const name of ["opening","project","development","gallery","text","closing","credits"]){
+  assert.match(html,new RegExp('value="'+name+'"'),"Missing editorial profile "+name);
+}
+for(const name of ["m-central","m-detalhe","fundo-com-blur","imagem-livre","sem-imagem"]){
+  assert.match(html,new RegExp('value="'+name+'"'),"Missing independent media treatment "+name);
+}
+for(const name of ["title","subtitle","body","caption","credits"]){
+  assert.ok(html.includes('data-content-slot="'+name+'"'),"Missing content slot "+name);
+}
+for(const name of ["BOXDOSENTIR-64.jpg","BOXDOSENTIR-179.jpg","BOXDOSENTIR-151.jpg","m-publicado.svg"]){
+  assert.ok(existsSync(base+"media/"+name),"Missing Cada Corpo asset "+name);
+}
+assert.match(js,/labmattar-editorial-v2/);
+assert.match(js,/labmattar-editorial-v1/);
+assert.match(js,/function (checkpoint|undo|render|save)\(/);
+assert.doesNotMatch(html,/titleFamily|fontPicker|marginSlider/);
+assert.match(css,/\.artboard\[data-profile="gallery"\]/);
+assert.match(css,/@media\(max-width:650px\)/);
+console.log("PASS: editor v2, 7 perfis, 5 tratamentos, conteudo, acervo, fontes e modelo verificados.");

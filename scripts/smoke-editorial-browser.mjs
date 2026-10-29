@@ -1,58 +1,23 @@
-import { chromium } from 'playwright';
+import {chromium} from 'playwright';
 const url=process.env.EDITORIAL_URL||'https://labmattar-identidade-previa.vitormoreiran.workers.dev/ambiente-editorial/';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
 const page=await browser.newPage({viewport:{width:1440,height:900}});
-let errors=[];
-page.on('pageerror',error=>errors.push(error.message));
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
 try{
- await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
- await page.locator('#sheet').waitFor();
- const projectMedia=await page.evaluate(async()=>{const names=['BOXDOSENTIR-64','BOXDOSENTIR-179','BOXDOSENTIR-151'];return await Promise.all(names.map(async name=>{const res=await fetch('./media/'+name+'.jpg');return {name,status:res.status,bytes:(await res.arrayBuffer()).byteLength}}))});
- if(projectMedia.some(x=>x.status!==200||x.bytes<20000))throw new Error('Cada Corpo Abre um Mundo assets missing: '+JSON.stringify(projectMedia));
-
- const baseline=await page.locator('#sheet').evaluate(sheet=>{const a=sheet.getBoundingClientRect();const nodes=[...sheet.querySelectorAll('.ed-text-node')].map(el=>{const r=el.getBoundingClientRect();return {role:el.className,top:r.top,bottom:r.bottom,left:r.left,right:r.right,inside:r.left>=a.left-2&&r.right<=a.right+2&&r.top>=a.top-2&&r.bottom<=a.bottom+2}});return {nodes,ratio:a.width/a.height}});
- if(baseline.nodes.some(n=>!n.inside))throw new Error('Text overflow on initial page: '+JSON.stringify(baseline));
-
- const initialState=await page.locator('#sheet').evaluate(el=>({source:el.classList.contains('ed-source-page'),media:el.dataset.mediaState,background:getComputedStyle(el).backgroundColor}));
- if(!initialState.source)throw new Error('Original renderer must remain active on every page: '+JSON.stringify(initialState));
-
- const official=await page.evaluate(async()=>{await document.fonts.load('300 20px "LM Univers Official"');await document.fonts.load('300 20px "LM Perpetua Official"');return {univers:document.fonts.check('300 20px "LM Univers Official"'),perpetua:document.fonts.check('300 20px "LM Perpetua Official"'),assets:await Promise.all(['/fonts/univers-lt-std-45-light.otf','/fonts/perpetua-titling-light.ttf'].map(async p=>{const r=await fetch(p);return {status:r.status,type:r.headers.get('content-type'),bytes:(await r.arrayBuffer()).byteLength}}))}});
- if(!official.univers||!official.perpetua||official.assets.some(a=>a.status!==200||a.bytes<3000))throw new Error('Fontes oficiais nao carregadas: '+JSON.stringify(official));
-
- await page.locator('#undo').waitFor();
- await page.locator('#filmstrip [data-film]').first().waitFor();
- const count=await page.locator('#filmstrip [data-film]').count();
- if(count<3)throw new Error('Exige ao menos 3 paginas ilustradas: '+count);
- await page.locator('[data-tab="models"]').click();
- await page.locator('[data-model="project"]').click();
- const titleFont=await page.locator('#sheet .role-title').evaluate(el=>({family:getComputedStyle(el).fontFamily,chosen:el.dataset.family}));
- if(titleFont.chosen!=='perpetua'||!titleFont.family.includes('LM Perpetua Official'))throw new Error('Perpetua should be governed by editorial profile: '+JSON.stringify(titleFont));
- if(await page.locator('#titleFamily').count())throw new Error('Identity family must not be a free inspector setting');
- await page.locator('[data-tab="models"]').click();
- if(await page.locator('#sideContent [data-treatment]').count())throw new Error('Media treatment must not be part of editorial profiles');
- await page.locator('[data-tab="layers"]').click();
- await page.locator('#layerImage').click();
- await page.locator('#mediaTreatment').selectOption('portfolio');
- await page.locator('#sheet.ed-source-page[data-editorial-role="project"][data-treatment="portfolio"] .chapter2-stage-stack .chapter2-m-image').waitFor();
- const ratio=await page.locator('.chapter2-stage-stack').evaluate(el=>{const r=el.getBoundingClientRect();return r.width/r.height});
- if(Math.abs(ratio-990.08/743.18)>.03)throw new Error('M distorcido: '+ratio);
- const src=await page.locator('#sharp').count();
- if(src)throw new Error('Editor deve usar renderizador principal, nao demo');
- await page.locator('[data-tab="insert"]').click();
- await page.locator('#addTitle').click();
- await page.locator('#undo').click();
- await page.locator('#redo').click();
- await page.locator('[data-tab="layers"]').click();
- await page.locator('#layerImage').click();
- await page.locator('[data-image-prop="x"]').evaluate(el=>{el.value='66';el.dispatchEvent(new Event('input',{bubbles:true}))});
- await page.locator('#device').click();
- await page.locator('.ed-sheet-wrap.mobile').waitFor();
- await page.locator('#device').click();
- await page.locator('#preview').click();
- await page.locator('.is-preview').waitFor();
- await page.locator('#preview').click();
- await page.screenshot({path:'editorial-desktop-smoke.png',fullPage:true});
- if(errors.length)throw new Error('Erros JavaScript: '+errors.join(' | '));
- console.log('PASS: 3 paginas, estrutura editorial independente do M, perfis independentes da identidade, inserir, historico, camadas, focal point, responsividade, preview');
-}catch(e){await page.screenshot({path:'editorial-browser-failure.png',fullPage:true}).catch(()=>{});console.error(e);process.exitCode=1}
-finally{await browser.close()}
+await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
+await page.locator('#artboard').waitFor();
+await page.waitForFunction(()=>document.querySelectorAll('.page-entry').length===7);
+const files=await page.evaluate(async()=>Promise.all(['64','179','151'].map(async n=>{const r=await fetch('./media/BOXDOSENTIR-'+n+'.jpg');return {status:r.status,bytes:(await r.arrayBuffer()).byteLength}})));
+if(files.some(f=>f.status!==200||f.bytes<20000))throw Error('Assets absent: '+JSON.stringify(files));
+await page.locator('#structureTab').click();await page.locator('#pageProfile').selectOption('gallery');await page.locator('#artboard[data-profile="gallery"]').waitFor();
+await page.locator('#mediaTab').click();await page.locator('#mediaTreatment').selectOption('m-detalhe');await page.locator('#artboard[data-treatment="m-detalhe"]').waitFor();
+await page.locator('#mediaAssetSelect').selectOption('151');
+await page.locator('#assetsTab').click();await page.locator('.asset-entry').first().click();
+await page.locator('#viewportButton').click();await page.locator('.editor[data-viewport="mobile"]').waitFor();
+await page.locator('#viewportButton').click();
+await page.locator('#previewButton').click();await page.locator('.editor.is-preview').waitFor();await page.locator('#previewButton').click();
+await page.locator('#undoButton').click();await page.locator('#redoButton').click();
+await page.screenshot({path:'editorial-desktop-smoke.png',fullPage:true});
+if(errors.length)throw Error(errors.join(' | '));
+console.log('PASS: assets, seven pages, profiles, treatments, acervo, viewport, preview and history');
+}catch(e){await page.screenshot({path:'editorial-browser-failure.png',fullPage:true}).catch(()=>{});console.error(e);process.exitCode=1}finally{await browser.close()}

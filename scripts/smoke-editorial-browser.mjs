@@ -72,7 +72,18 @@ try{
   if(initialContrast.background!=='true'||initialContrast.m!=='false')
     throw Error('Unexpected automatic contrast in separated desktop layout: '+JSON.stringify(initialContrast));
   await page.evaluate(()=>{
-    document.querySelector('.masked-photo').style.left='7cqw';
+    const art=document.querySelector('#artboard');
+    const title=document.querySelector('.content-title');
+    const photo=document.querySelector('.masked-photo');
+    const line=document.createRange();
+    line.selectNodeContents(title);
+    const glyph=line.getClientRects()[0]||title.getBoundingClientRect();
+    const area=art.getBoundingClientRect();
+    // Move the sharp image behind the actual title line rather than only
+    // changing its horizontal coordinate. The normal layout has a deliberately
+    // separate text column, so horizontal movement alone may miss the glyphs.
+    photo.style.left=Math.max(0,glyph.left-area.left)+'px';
+    photo.style.top=(glyph.top+glyph.height/2-area.top)+'px';
     window.dispatchEvent(new Event('resize'));
   });
   await page.waitForFunction(()=>document.querySelector('#artboard')?.dataset.contrastM==='true');
@@ -83,7 +94,9 @@ try{
   if(!maskShade.background.includes('0.2')||maskShade.opacity!=='1')
     throw Error('20% black veil missing when text overlaps M: '+JSON.stringify(maskShade));
   await page.evaluate(()=>{
-    document.querySelector('.masked-photo').style.removeProperty('left');
+    const photo=document.querySelector('.masked-photo');
+    photo.style.removeProperty('left');
+    photo.style.removeProperty('top');
     window.dispatchEvent(new Event('resize'));
   });
   await page.waitForFunction(()=>document.querySelector('#artboard')?.dataset.contrastM==='false');

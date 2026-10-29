@@ -69,7 +69,7 @@ assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
 for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo","lm-m-position-grid"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
-for key in ("format","relation","type","image","photo","bodyMode"):
+for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 # The inspector has three focused work areas; every approved control remains.
@@ -78,9 +78,9 @@ for key in ("pagina","texto","imagem"):
  assert 'data-lab-panel="'+key+'"' in composition,f"Missing panel: {key}"
  assert 'data-lab-more="'+key+'"' in composition,f"Advanced options not discoverable: {key}"
 for control in ("labFormat","labColor","labMargin","labGuides",
-                "labTextX","labTextY","labType","labTitleScale","labTextWidth","labBodyMode",
+                "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
                 "labTitleInput","labBodyInput","labImage","labMMode","labPhoto","labRelation",
-                "labMPosition","labMX","labMY","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
+                "labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
  assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js

@@ -366,60 +366,30 @@
       candidate(low);
       return low;
     }
-    const minReadable=Math.min(12,requested);
+    // An editorial surface must not silently turn approved typography into
+    // microscopic type. A dense configuration is a validation failure, not a
+    // successful layout merely because every glyph fits inside its margins.
+    const titleFloor=Math.min(14,requested);
+    const bodyFloor=Math.min(10,bodyRequested);
     let applied=null,emergency=false,bodyReduced=false;
-    // Editorial breaks are intentional: favor reducing the whole line rather
-    // than fragmenting a long word into single letters beside the M.
-    board.dataset.titleBreak="normal";
-    applied=searchTitle(minReadable);
-    if(applied===null)applied=searchTitle(7);
-    if(applied===null){
-      board.dataset.titleBreak="emergency";
-      applied=searchTitle(minReadable);
-      emergency=applied!==null;
-    }
+    applied=searchTitle(titleFloor);
     if(applied===null&&!body.hidden){
-      // On unusually dense pages, reclaim vertical space from the body before
-      // allowing title or body to leave the approved reading area.
-      body.style.fontSize="8px";
+      // Recover vertical space proportionally without breaking the body's
+      // minimum readable size or changing the selected editorial hierarchy.
+      body.style.fontSize=bodyFloor+"px";
       bodyReduced=true;
+      applied=searchTitle(titleFloor);
+    }
+    if(applied===null){
+      // Preserve readable typography. A blocked composition must be corrected
+      // through text, column, format or margins; never force 1px text.
+      title.style.fontSize=titleFloor+"px";
+      applied=titleFloor;
       board.dataset.titleBreak="normal";
-      applied=searchTitle(minReadable);
-      if(applied===null)applied=searchTitle(7);
-      if(applied===null){
-        board.dataset.titleBreak="emergency";
-        applied=searchTitle(minReadable);
-        emergency=applied!==null;
-      }
-    }
-    if(applied===null){
-      board.dataset.titleBreak="emergency";
       emergency=true;
-      if(!body.hidden){body.style.fontSize="6px";bodyReduced=true;}
-      applied=searchTitle(3);
     }
-    if(applied===null){
-      // In a very small horizontal canvas viewed on a phone, hundreds of body
-      // characters can still fill all available height. Shrink the reading
-      // text as well; then flag illegibility rather than allowing any overflow.
-      board.dataset.titleBreak="emergency";
-      emergency=true;
-      if(!body.hidden){
-        bodyReduced=true;
-        for(const size of [4,3,2,1]){
-          body.style.fontSize=size+"px";
-          applied=searchTitle(3);
-          if(applied===null)applied=searchTitle(1);
-          if(applied!==null)break;
-        }
-      }else{
-        applied=searchTitle(1);
-      }
-    }
-    if(applied!==null&&bodyReduced&&!body.hidden){
-      const requestedBody=bodyRequested;
-      let low=parseFloat(getComputedStyle(body).fontSize)||6;
-      let high=requestedBody;
+    if(bodyReduced&&!body.hidden){
+      let low=bodyFloor,high=bodyRequested;
       for(let i=0;i<14;i++){
         const mid=(low+high)/2;
         body.style.fontSize=mid.toFixed(3)+"px";
@@ -447,6 +417,7 @@
         "Escala aplicada: "+Math.round(real)+" px · margens preservadas.";
     }
     board.dataset.typeFit=ok?(lowLegibility?"compromised":adjusted?"adjusted":"natural"):"review";
+    board.setAttribute("aria-invalid",String(!ok||lowLegibility));
     return {ok,adjusted,lowLegibility,emergency,requested,applied:real};
   }
 

@@ -11,6 +11,9 @@
   <script defer src="./editorial-v2.js"></script>
 </head>
 <body>
+<svg class="ui-icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" focusable="false">
+<defs><symbol id="ui-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 1 3 6.5"/></symbol><symbol id="ui-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 0-3 6.5"/></symbol><symbol id="ui-panel-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol><symbol id="ui-panel-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/></symbol><symbol id="ui-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></symbol><symbol id="ui-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="15" rx="2"/><path d="M8 22h8M12 18v4"/></symbol><symbol id="ui-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.1 12a10.6 10.6 0 0 1 19.8 0 10.6 10.6 0 0 1-19.8 0Z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ui-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-4 1 1-4Z"/><path d="m18 13 2-2a2.1 2.1 0 0 0-3-3l-2 2"/></symbol><symbol id="ui-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 3h8a2 2 0 0 1 2 2v9H3V7Z"/></symbol><symbol id="ui-chevron-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="ui-file-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/><path d="m9 16 3-3 3 3M12 13v6"/></symbol><symbol id="ui-file-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/><path d="m9 16 3 3 3-3M12 12v7"/></symbol><symbol id="ui-files" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="13" height="14" rx="1"/><path d="M4 17V4a1 1 0 0 1 1-1h11"/></symbol><symbol id="ui-images" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M4 16H3a1 1 0 0 1-1-1V4a2 2 0 0 1 2-2h11a1 1 0 0 1 1 1v1"/><circle cx="12" cy="12" r="1.5"/><path d="m9 19 4-4 2.5 2.5 2-2L21 19"/></symbol><symbol id="ui-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ui-arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 12 6-6 6 6M12 6v12"/></symbol><symbol id="ui-arrow-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 12 6 6 6-6M12 18V6"/></symbol><symbol id="ui-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol><symbol id="ui-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="ui-grip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="5" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="19" r="1"/></symbol><symbol id="ui-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7M8 13h8M8 17h8"/></symbol><symbol id="ui-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 17l9 5 9-5"/></symbol><symbol id="ui-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol><symbol id="ui-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol><symbol id="ui-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M5 6l1 15h12l1-15M10 10v7M14 10v7"/></symbol><symbol id="ui-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19 13 2-1-2-1-.5-2 1-2-2-2-2 1-2-.5-1-2-1 2-2 .5-2-1-2 2 1 2-.5 2-2 1 2 1 .5 2-1 2 2 2 2-1 2 .5 1 2 1-2 2-.5 2 1 2-2-1-2 .5-2Z"/></symbol><symbol id="ui-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3m-5 5 5-5 5 5M3 17v4h18v-4"/></symbol><symbol id="ui-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></symbol><symbol id="ui-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 11v6M12 7h.01"/></symbol></defs>
+</svg>
 <div class="editor" id="editor" data-viewport="desktop">
   <header class="editor-header">
     <div class="header-identity">
@@ -24,27 +27,27 @@
     </div>
     <nav class="header-actions" aria-label="Ferramentas do editor">
       <div class="header-tool-group header-history" role="group" aria-label="Histórico">
-        <button id="undoButton" class="tool-icon" type="button" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶</button>
-        <button id="redoButton" class="tool-icon" type="button" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer">↷</button>
+        <button id="undoButton" class="tool-icon" type="button" title="Desfazer (Ctrl+Z)" aria-label="Desfazer"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-undo"></use></svg></button>
+        <button id="redoButton" class="tool-icon" type="button" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-redo"></use></svg></button>
       </div>
       <div class="header-tool-group panel-buttons" role="group" aria-label="Mostrar ou ocultar painéis">
-        <button id="togglePagesButton" class="tool-toggle" type="button" aria-controls="editorSidebar" aria-expanded="true" title="Mostrar ou ocultar páginas">
-          <span aria-hidden="true">☷</span><span>Páginas</span>
+        <button id="togglePagesButton" class="tool-toggle" type="button" aria-controls="editorSidebar" aria-expanded="true" title="Mostrar ou ocultar páginas" aria-label="Ocultar páginas">
+          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-panel-left"></use></svg><span class="button-label">Páginas</span>
         </button>
-        <button id="toggleInspectorButton" class="tool-toggle" type="button" aria-controls="editorInspector" aria-expanded="true" title="Mostrar ou ocultar propriedades">
-          <span aria-hidden="true">◧</span><span>Propriedades</span>
+        <button id="toggleInspectorButton" class="tool-toggle" type="button" aria-controls="editorInspector" aria-expanded="true" title="Mostrar ou ocultar propriedades" aria-label="Ocultar propriedades">
+          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-panel-right"></use></svg><span class="button-label">Propriedades</span>
         </button>
       </div>
       <div class="header-tool-group view-buttons" role="group" aria-label="Modo de visualização">
-        <button id="viewportButton" type="button" aria-pressed="false">MOBILE</button>
-        <button id="previewButton" class="primary-action" type="button" aria-pressed="false">VISUALIZAR</button>
+        <button id="viewportButton" type="button" aria-pressed="false" title="Alternar visualização desktop/mobile"><svg class="ui-icon" aria-hidden="true" focusable="false"><use id="viewportIconUse" href="#ui-smartphone"></use></svg><span id="viewportLabel">Mobile</span></button>
+        <button id="previewButton" class="primary-action" type="button" aria-pressed="false"><svg class="ui-icon" aria-hidden="true" focusable="false"><use id="previewIconUse" href="#ui-eye"></use></svg><span id="previewLabel">Visualizar</span></button>
       </div>
       <details class="file-actions" id="fileActions">
-        <summary>ARQUIVO <span aria-hidden="true">⌄</span></summary>
+        <summary><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-folder"></use></svg><span>Arquivo</span><svg class="ui-icon ui-chevron" aria-hidden="true" focusable="false"><use href="#ui-chevron-down"></use></svg></summary>
         <div class="file-actions-menu">
-          <button id="importButton" type="button">Importar documento JSON</button>
+          <button id="importButton" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-file-up"></use></svg> Importar JSON</button>
           <input id="importFile" type="file" accept="application/json,.json" hidden>
-          <button id="exportButton" type="button">Exportar documento JSON</button>
+          <button id="exportButton" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-file-down"></use></svg> Exportar JSON</button>
         </div>
       </details>
     </nav>
@@ -53,38 +56,37 @@
   <div class="editor-workspace">
     <aside class="editor-sidebar" id="editorSidebar" aria-label="Navegação editorial">
       <div class="sidebar-tabs" role="tablist" aria-label="Navegação">
-        <button type="button" class="active" role="tab" id="pagesTab" aria-selected="true" aria-controls="pagesPanel" data-side-tab="pages">PÁGINAS</button>
-        <button type="button" role="tab" id="assetsTab" aria-selected="false" aria-controls="assetsPanel" data-side-tab="assets">ACERVO</button>
+        <button type="button" class="active" role="tab" id="pagesTab" aria-selected="true" aria-controls="pagesPanel" data-side-tab="pages"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-files"></use></svg><span>Páginas</span></button>
+        <button type="button" role="tab" id="assetsTab" aria-selected="false" aria-controls="assetsPanel" data-side-tab="assets"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-images"></use></svg><span>Acervo</span></button>
       </div>
       <section id="pagesPanel" role="tabpanel" aria-labelledby="pagesTab" class="sidebar-panel">
         <div class="page-section-head">
           <div>
-            <span class="section-kicker">APRESENTAÇÃO</span>
-            <strong id="pagesTotal">07 PÁGINAS</strong>
+            <strong id="pagesTotal">07 páginas</strong>
           </div>
-          <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página após a selecionada">+ NOVA</button>
+          <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página após a selecionada"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg> <span>Página</span></button>
         </div>
         <div class="sequence-actions" aria-label="Organização de páginas">
-          <span>ORDEM DAS PÁGINAS</span>
+          <span>Sequência</span>
           <div>
-            <button id="movePageUp" type="button" title="Mover página para cima" aria-label="Mover página para cima">↑</button>
-            <button id="movePageDown" type="button" title="Mover página para baixo" aria-label="Mover página para baixo">↓</button>
+            <button id="movePageUp" type="button" title="Mover página para cima" aria-label="Mover página para cima"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-arrow-up"></use></svg></button>
+            <button id="movePageDown" type="button" title="Mover página para baixo" aria-label="Mover página para baixo"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-arrow-down"></use></svg></button>
           </div>
         </div>
         <div class="pages-list" id="pagesList" aria-label="Ordem das páginas"></div>
-        <p class="sidebar-hint">Arraste páginas para reorganizar ou use as setas. Selecione uma página para editar.</p>
+        <p class="sidebar-hint">Arraste para reordenar.</p>
       </section>
       <section id="assetsPanel" role="tabpanel" aria-labelledby="assetsTab" class="sidebar-panel" hidden>
-        <div class="section-label"><span>ACERVO / PROJETO</span><span id="assetsTotal"></span></div>
-        <p class="small-note">Imagens originais de <em>Cada Corpo Abre um Mundo</em>. Selecione uma para aplicá-la à página.</p>
+        <div class="section-label"><span>Imagens do projeto</span><span id="assetsTotal"></span></div>
+        <p class="small-note">Selecione uma imagem para aplicar à página atual.</p>
         <div class="assets-list" id="assetsList"></div>
-        <button id="addAssetButton" class="outlined-action" type="button">+ IMAGEM LOCAL</button>
+        <button id="addAssetButton" class="outlined-action" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg> Adicionar imagem</button>
         <input id="assetFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
-        <p class="small-note">Os arquivos adicionados ficam no navegador. Exportar JSON inclui essas referências.</p>
+        <p class="small-note">Imagens adicionadas são armazenadas neste navegador.</p>
       </section>
       <div class="sidebar-foot">
         <details class="document-options">
-          <summary>OPÇÕES DO DOCUMENTO</summary>
+          <summary><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-settings"></use></svg><span>Opções do documento</span></summary>
           <div class="document-options-items">
             <button id="resetButton" type="button">Restaurar projeto-base</button>
             <button id="recoverLegacyButton" type="button" hidden>Recuperar rascunho anterior</button>
@@ -95,7 +97,7 @@
 
     <main class="editor-stage" aria-label="Página atual">
       <div class="stage-topline">
-        <span id="compositionLabel">COMPOSIÇÃO / 01</span>
+        <span id="compositionLabel">PÁGINA / 01</span>
         <span id="editorialRoleLabel">ABERTURA</span>
       </div>
       <div id="stageViewport" class="stage-viewport">
@@ -118,9 +120,9 @@
       </div>
       <div class="stage-footline">
         <div class="pagination">
-          <button id="previousButton" type="button" aria-label="Página anterior">← ANTERIOR</button>
+          <button id="previousButton" type="button" aria-label="Página anterior" title="Página anterior"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-chevron-left"></use></svg><span>Anterior</span></button>
           <span id="stageCount">01 / 07</span>
-          <button id="nextButton" type="button" aria-label="Próxima página">PRÓXIMA →</button>
+          <button id="nextButton" type="button" aria-label="Próxima página" title="Próxima página"><span>Próxima</span><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-chevron-right"></use></svg></button>
         </div>
         <span id="layoutStatus" role="status">IDENTIDADE APLICADA AUTOMATICAMENTE</span>
       </div>
@@ -129,20 +131,20 @@
     <aside class="editor-inspector" id="editorInspector" aria-label="Propriedades da página">
       <div class="inspector-heading">
         <div>
-          <span class="inspector-kicker">PROPRIEDADES</span>
+          <span class="inspector-kicker">Página selecionada</span>
           <strong id="inspectorPageName">Abertura</strong>
         </div>
         <span class="inspector-page" id="inspectorPage">01 / 07</span>
       </div>
       <div class="inspector-tabs" role="tablist" aria-label="Tipo de edição">
-        <button type="button" class="active" data-inspector-tab="content" id="contentTab" role="tab" aria-controls="contentPanel" aria-selected="true">CONTEÚDO</button>
-        <button type="button" data-inspector-tab="structure" id="structureTab" role="tab" aria-controls="structurePanel" aria-selected="false">ESTRUTURA</button>
-        <button type="button" data-inspector-tab="media" id="mediaTab" role="tab" aria-controls="mediaPanel" aria-selected="false">MÍDIA</button>
+        <button type="button" class="active" data-inspector-tab="content" id="contentTab" role="tab" aria-controls="contentPanel" aria-selected="true"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-file-text"></use></svg><span>Texto</span></button>
+        <button type="button" data-inspector-tab="structure" id="structureTab" role="tab" aria-controls="structurePanel" aria-selected="false"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-layers"></use></svg><span>Estrutura</span></button>
+        <button type="button" data-inspector-tab="media" id="mediaTab" role="tab" aria-controls="mediaPanel" aria-selected="false"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-image"></use></svg><span>Mídia</span></button>
       </div>
       <section class="inspector-panel" id="contentPanel" role="tabpanel" aria-labelledby="contentTab">
-        <div class="panel-section-heading"><span>TEXTO DA PÁGINA</span><span>EDITÁVEL</span></div>
+        <div class="panel-section-heading"><span>Blocos de texto</span></div>
         <div id="contentFields"></div>
-        <p class="small-note">Edite aqui ou diretamente na página. A tipografia e a posição seguem o perfil editorial.</p>
+        <p class="small-note">Você também pode editar o texto diretamente na página.</p>
       </section>
       <section class="inspector-panel" id="structurePanel" role="tabpanel" aria-labelledby="structureTab" hidden>
         <label for="pageName">NOME DA PÁGINA</label>
@@ -167,10 +169,10 @@
         <div class="section-label space-top">BLOCOS VISÍVEIS</div>
         <div id="visibilityFields" class="visibility-fields"></div>
         <div class="inspector-actions">
-          <button id="duplicateButton" type="button">DUPLICAR PÁGINA</button>
-          <button id="deleteButton" type="button">EXCLUIR PÁGINA</button>
+          <button id="duplicateButton" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-copy"></use></svg> Duplicar</button>
+          <button id="deleteButton" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-trash"></use></svg> Excluir</button>
         </div>
-        <p class="small-note identity-note">IDENTIDADE / AUTOMÁTICA<br>Univers, Perpetua, margens, alinhamentos, M e responsividade não são controles editáveis.</p>
+        <p class="small-note identity-note"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-check"></use></svg> Identidade aplicada automaticamente.</p>
       </section>
       <section class="inspector-panel" id="mediaPanel" role="tabpanel" aria-labelledby="mediaTab" hidden>
         <div class="media-preview" id="mediaPreview">
@@ -195,7 +197,7 @@
           <div class="section-label space-top">SEQUÊNCIA DA GALERIA</div>
           <div id="galleryAssets" class="gallery-assets"></div>
         </div>
-        <p class="small-note">O enquadramento é específico desta página. A geometria do M e o comportamento responsivo pertencem ao sistema.</p>
+        <p class="small-note">O enquadramento é específico desta página.</p>
       </section>
     </aside>
   </div>

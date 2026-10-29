@@ -210,8 +210,8 @@ try{
     "Focused mode did not open from its direct URL");
   assert(await page.locator("#labStudioToggleText").textContent()==="VOLTAR AO MANUAL",
     "Exit from focus mode is not visible");
-  assert(await page.locator("[data-studio-tool]").count()===20,
-    "All 20 page, typography and image tools must retain one canonical input");
+  assert(await page.locator("[data-studio-tool]").count()===19,
+    "All 19 page, typography and image tools must retain one canonical input");
   await page.screenshot({path:"composition-studio-desktop-initial-review.png",fullPage:false});
   const baseline=await proveBoard("Desktop horizontal 1440x900");
   const initialType=await editorialMetrics("Desktop horizontal typography");

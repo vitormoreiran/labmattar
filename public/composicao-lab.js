@@ -253,7 +253,6 @@
     mScaleInput.max=String(mMax);
     const mPrecision=by("labPrecision-mScale");
     if(mPrecision)mPrecision.max=String(mMax);
-    syncInputs();
     const relationLayout={
       "lado-a-lado":{placement:"central",mPosition:"centro-direita"},
       topo:{placement:"superior",mPosition:"superior-direita"},
@@ -263,6 +262,7 @@
     }[state.relation]||{placement:"central",mPosition:"centro-direita"};
     state.placement=relationLayout.placement;
     state.mPosition=relationLayout.mPosition;
+    syncInputs();
     board.dataset.format=state.format;
     board.dataset.placement=state.placement;
     board.dataset.relation=state.relation;

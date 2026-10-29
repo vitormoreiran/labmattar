@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Garantir permissao de scripts
         run: chmod +x scripts/*.sh
+      - name: Validar contrato funcional do Ambiente Editorial
+        run: node scripts/validate-editorial.mjs
       - name: Compilar
         run: npm run build
       - name: Validar entrada editorial e arquivos

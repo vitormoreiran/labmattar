@@ -44,6 +44,8 @@
   let active=false,currentEntry=null,overviewMarker=null;
   let fitFrame=0,syncFrame=0,lastFocus=null;
   const overview=lab.querySelector(".lm-lab-heading-aside");
+  const heading=lab.querySelector(".lm-inspector-head>span");
+  if(heading)heading.textContent="AJUSTES";
   if(overview){overviewMarker=document.createComment("Return overview help to manual");overview.after(overviewMarker)}
   const quickReset=document.createElement("button");
   quickReset.type="button";
@@ -109,7 +111,7 @@
     const head=make("div","lm-studio-detail-head");
     const back=make("button","lm-studio-back");
     back.type="button";
-    back.append(make("span","lm-studio-back-icon","×"),make("span","lm-studio-back-text","RECOLHER"));
+    back.append(make("span","lm-studio-back-icon","×"),make("span","lm-studio-back-text","FECHAR AJUSTE"));
     back.setAttribute("aria-label","Recolher opções");
     const value=make("span","lm-studio-detail-value","");
     head.append(back,value);
@@ -201,14 +203,17 @@
     closeTool();
     const layout=layouts.get(entry.panelName);
     layout.body.append(entry.field);
+    // An Apple-style inspector keeps the property hierarchy stable: one
+    // quiet row expands directly BELOW the selected row, in the same list.
+    // The only real field is moved, never duplicated.
+    entry.button.after(layout.detail);
     layout.value.textContent=fieldValue(entry.id);
     layout.detail.setAttribute("aria-label","Opções: "+label[entry.id]);
     layout.detail.hidden=false;
     currentEntry=entry;
     entry.button.setAttribute("aria-expanded","true");
-    // Leave focus on the chosen property, directly above its new section.
-    // Reclick the card to collapse it, or select another tool to switch
-    // the options displayed below the unchanged index.
+    // Keep focus at the selected property. Reclick to collapse, or choose
+    // another property to replace only the inline options, not the list.
     scheduleSync();
   }
   function syncTools(){
@@ -333,6 +338,15 @@
   for(const entry of entries.values()){
     new MutationObserver(scheduleSync).observe(entry.field,{attributes:true,attributeFilter:["hidden"]});
   }
+  // A page click selects the relevant inspector rather than forcing users
+  // to navigate a technical hierarchy. Text-layer focus is handled by the
+  // canonical editor; clicking elsewhere on a photographed page selects media.
+  board.addEventListener("click",event=>{
+    if(!active)return;
+    if(event.target.closest("[data-lab-inline]"))return;
+    if(board.dataset.image==="nenhuma")return;
+    by("labTab-imagem")?.click();
+  });
   document.addEventListener("input",scheduleSync,true);
   document.addEventListener("change",scheduleSync,true);
   document.addEventListener("click",e=>{

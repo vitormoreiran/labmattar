@@ -393,3 +393,17 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
     aspect-ratio:auto;
   }
 }
+
+/* The MOBILE button is a portrait proof inside the editor, not a stretch mode. */
+.editor[data-viewport="mobile"] .artboard{
+  flex:0 1 auto;
+  width:min(100%,355px);
+  max-width:355px;
+  min-width:0;
+  height:auto;
+  aspect-ratio:9/16;
+  align-self:center;
+}
+.artboard[data-layout="narrow"][data-treatment="fundo-com-blur"] .editorial-content{
+  bottom:0;
+}

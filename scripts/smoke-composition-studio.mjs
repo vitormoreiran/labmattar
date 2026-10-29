@@ -76,6 +76,38 @@ async function menuVisible(label){
     label+": some controls require scrolling or are clipped: "+JSON.stringify(g.toolRects));
   return g;
 }
+async function expandedBelow(panelName,label){
+  await page.waitForTimeout(75);
+  const state=await page.evaluate(name=>{
+    const panel=document.querySelector("#labPanel-"+name);
+    const menu=panel.querySelector(".lm-studio-tools");
+    const detail=panel.querySelector(".lm-studio-detail");
+    const inspector=document.querySelector(".lm-lab-inspector");
+    const m=menu.getBoundingClientRect(),d=detail.getBoundingClientRect(),p=panel.getBoundingClientRect();
+    const ir=inspector.getBoundingClientRect();
+    return {
+      menuVisible:getComputedStyle(menu).display!=="none"&&menu.getClientRects().length>0,
+      detailVisible:!detail.hidden&&getComputedStyle(detail).display!=="none",
+      menu:{top:m.top,bottom:m.bottom,height:m.height},
+      detail:{top:d.top,bottom:d.bottom,height:d.height},
+      panel:{top:p.top,bottom:p.bottom},
+      inspector:{height:ir.height,scrollHeight:inspector.scrollHeight},
+      buttons:[...menu.querySelectorAll(".lm-studio-tool")].filter(b=>!b.hidden).map(b=>{
+        const r=b.getBoundingClientRect();
+        return {id:b.dataset.studioTool,expanded:b.getAttribute("aria-expanded"),top:r.top,bottom:r.bottom}
+      })
+    };
+  },panelName);
+  assert(state.menuVisible&&state.detailVisible,label+": menu must remain on-screen alongside options "+JSON.stringify(state));
+  assert(state.menu.bottom<=state.detail.top+2,label+": options must open BELOW the complete menu "+JSON.stringify(state));
+  assert(state.detail.bottom<=state.panel.bottom+2,label+": options are clipped below inspector "+JSON.stringify(state));
+  assert(state.inspector.scrollHeight<=state.inspector.height+3,label+": showing options requires scrolling "+JSON.stringify(state));
+  assert(state.buttons.every(b=>b.top>=state.panel.top-2&&b.bottom<=state.detail.top+1),
+    label+": original menu was replaced or obscured "+JSON.stringify(state));
+  assert(state.buttons.filter(b=>b.expanded==="true").length===1,
+    label+": exactly one property should indicate expanded state "+JSON.stringify(state));
+  return state;
+}
 async function flatImageVisible(label){
   await page.waitForTimeout(90);
   const g=await page.evaluate(()=>{
@@ -144,8 +176,16 @@ try{
   await tab("pagina");
   await tool("labFormat").click();
   assert(await page.locator("#labStudioDetail-pagina").isVisible()&&
-    await page.locator(".lm-studio-tools[data-studio-tools=pagina]").isHidden(),
-    "Property selection should replace the index rather than expand the page");
+    await page.locator(".lm-studio-tools[data-studio-tools=pagina]").isVisible(),
+    "Opening a property must preserve the menu and reveal a section underneath");
+  await expandedBelow("pagina","Desktop format expanded");
+  await page.screenshot({path:"composition-studio-desktop-expanded-below.png"});
+  await tool("labMargin").click();
+  await expandedBelow("pagina","Switched to margin without losing menu");
+  assert(await page.locator("#labMargin").isVisible(),"Newly selected property was not placed below the list");
+  assert(await page.locator("#labFormat").isHidden(),"Previous property should close when another is selected");
+  await tool("labFormat").click();
+  await expandedBelow("pagina","Format restored below menu");
   await clickCard("format","vertical");
   const portrait=await proveBoard("Desktop vertical 1440x900");
   await assertEditorialTitleGroups("Vertical title group");
@@ -166,6 +206,7 @@ try{
   await tab("texto");
   await menuVisible("Text tools no scrolling");
   await tool("labTitleScale").click();
+  await expandedBelow("texto","Desktop typography slider expanded");
   assert(await page.locator("#labTitleScale").isVisible(),"Typography slider should be visible when selected");
   await page.locator("#labPrecision-titleScale").fill("120");
   await page.locator("#labPrecision-titleScale").press("Enter");
@@ -234,6 +275,7 @@ try{
   await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
   await tab("texto");
   await tool("labTitleInput").click();
+  await expandedBelow("texto","Desktop direct text field below menu");
   await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
   await page.waitForTimeout(200);
   const longWord=await page.evaluate(()=>{
@@ -271,6 +313,17 @@ try{
   await tab("pagina");
   await menuVisible("Mobile all page tools");
   await tool("labFormat").click();
+  await expandedBelow("pagina","Mobile menu remains visible with format options");
+  const illustratedOptions=await page.locator("#labStudioDetail-pagina .lm-ctrl-choice").evaluateAll(cards=>
+    cards.map(card=>{
+      const visual=card.querySelector(".lm-ctrl-visual"),name=card.querySelector(".lm-ctrl-name");
+      const art=visual?.firstElementChild;
+      return {name:name?.textContent||"",iconBottom:art?.getBoundingClientRect().bottom||0,
+        labelTop:name?.getBoundingClientRect().top||0};
+    }));
+  assert(illustratedOptions.length===4&&illustratedOptions.every(x=>x.iconBottom<=x.labelTop+1),
+    "Mobile icons and labels should not overlap in the expanded section: "+JSON.stringify(illustratedOptions));
+  await page.screenshot({path:"composition-studio-mobile-expanded-below.png"});
   await clickCard("format","vertical");
   await proveBoard("Mobile portrait");
   await page.screenshot({path:"composition-studio-mobile-portrait.png"});
@@ -284,6 +337,10 @@ try{
   await page.setViewportSize({width:390,height:700});
   await proveBoard("Short mobile 390x700");
   await menuVisible("Short mobile all text tools");
+  await tool("labType").click();
+  await expandedBelow("texto","Short mobile 390x700 text options below persistent menu");
+  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await menuVisible("Short mobile text tools restored");
   await tab("imagem");
   await flatImageVisible("Short mobile flat Image / M controls");
 
@@ -295,6 +352,8 @@ try{
   assert(await page.locator("#labStudioQuickReset").isHidden(),
     "Mobile reset button must not intrude on the original manual");
   assert(await page.locator("#labArtboard").isVisible(),"Original applied page disappeared");
+  assert(await page.locator(".lm-studio-detail:visible").count()===0,
+    "Expanded studio controls must not leak into the regular manual");
   assert(await page.locator("#construcao").count()===1,"The existing applied study was removed");
   assert(await page.locator("#aplicacoes-do-m").count()===1,"Three original-M applications need an accompanying guide");
   assert(await page.locator("#labMMode").count()===1&&

@@ -45,6 +45,14 @@ for mode in ("janela","corte","sutil"):
  assert 'data-lab-choice="mMode" data-value="'+mode+'"' in composition,f"Missing approved M study: {mode}"
  assert 'data-m-mode='+mode in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 assert "mountFlatImage()" in studio_js and "restoreFlatImage()" in studio_js
+# The inspector is spatially continuous: a property expands under the full
+# tool index rather than replacing or covering the original menu.
+assert "layout.menu.hidden=true" not in studio_js
+assert "layout.detail.hidden=false" in studio_js
+assert 'entry.button.setAttribute("aria-expanded","true")' in studio_js
+assert "EXPANSION BELOW THE PALETTE" in studio_css
+assert "position:relative;" in studio_css
+assert "lm-studio-image-flat" in studio_css, "The existing flat M inspector must remain intact"
 assert "lm-studio-image-flat" in studio_css, "Image controls still use nested studio folders"
 assert "state.mMode" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"), "Fixed 20% must be preserved"

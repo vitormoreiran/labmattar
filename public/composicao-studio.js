@@ -104,11 +104,13 @@
     const detail=make("div","lm-studio-detail");
     detail.id="labStudioDetail-"+panelName;
     detail.hidden=true;
+    detail.setAttribute("role","region");
+    detail.setAttribute("aria-label","Opções de edição");
     const head=make("div","lm-studio-detail-head");
     const back=make("button","lm-studio-back");
     back.type="button";
-    back.append(make("span","lm-studio-back-icon","←"),make("span","lm-studio-back-text","TODAS AS FERRAMENTAS"));
-    back.setAttribute("aria-label","Voltar às ferramentas");
+    back.append(make("span","lm-studio-back-icon","×"),make("span","lm-studio-back-text","RECOLHER"));
+    back.setAttribute("aria-label","Recolher opções");
     const value=make("span","lm-studio-detail-value","");
     head.append(back,value);
     const body=make("div","lm-studio-detail-body");
@@ -186,7 +188,8 @@
     restoreField(entry);
     const layout=layouts.get(entry.panelName);
     layout.detail.hidden=true;
-    layout.menu.hidden=false;
+    // The property index is the stable spatial reference point. It is
+    // never removed when a parameter opens or closes.
     if(focus&&active&&!layout.panel.hidden&&!entry.button.hidden)
       entry.button.focus();
     scheduleSync();
@@ -199,12 +202,13 @@
     const layout=layouts.get(entry.panelName);
     layout.body.append(entry.field);
     layout.value.textContent=fieldValue(entry.id);
-    layout.menu.hidden=true;
+    layout.detail.setAttribute("aria-label","Opções: "+label[entry.id]);
     layout.detail.hidden=false;
     currentEntry=entry;
     entry.button.setAttribute("aria-expanded","true");
-    layout.back.querySelector(".lm-studio-back-text").textContent=label[entry.id]+" / VOLTAR";
-    layout.back.focus({preventScroll:true});
+    // Leave focus on the chosen property, directly above its new section.
+    // Reclick the card to collapse it, or select another tool to switch
+    // the options displayed below the unchanged index.
     scheduleSync();
   }
   function syncTools(){

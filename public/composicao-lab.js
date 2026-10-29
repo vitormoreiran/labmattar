@@ -145,6 +145,10 @@
     mark.hidden=state.symbol==="none";
     if(!mark.hidden)mark.src="/identidade/"+state.symbol;
     renderTitle();
+    // Do not carry the previous composition's fitted size into this one.
+    title.style.removeProperty("font-size");
+    body.style.removeProperty("font-size");
+    board.dataset.titleBreak="normal";
     by("labFormatLabel").textContent=formatNames[state.format];
     requestMeasurement();
   }
@@ -162,7 +166,124 @@
     const lines=Array.from(range.getClientRects()).filter(r=>r.width>0&&r.height>0);
     return lines.length?lines:[node.getBoundingClientRect()];
   }
+
+  /*
+   * An entered scale is a requested maximum, never a license to cross a margin.
+   * Measure rendered line boxes after fonts and layout resolve; reduce the title
+   * only as far as necessary. Long unbreakable words are preserved first.
+   * Emergency wrapping is a last resort when a readable whole word cannot fit.
+   */
+  function fitTitleToReadingArea(){
+    const reading=by("labReading");
+    const kicker=reading.querySelector(".lm-lab-kicker");
+    const footer=reading.querySelector(".lm-lab-bottom");
+    const lines=[...title.querySelectorAll(".lm-lab-title-line")];
+    title.style.removeProperty("font-size");
+    body.style.removeProperty("font-size");
+    board.dataset.titleBreak="normal";
+    const requested=parseFloat(getComputedStyle(title).fontSize)||36;
+    const bodyRequested=parseFloat(getComputedStyle(body).fontSize)||14;
+    const sideRoom=2;
+    function fits(){
+      const safe=reading.getBoundingClientRect();
+      const column=copyArea.getBoundingClientRect();
+      const top=kicker.getBoundingClientRect().bottom;
+      const bottom=footer.getBoundingClientRect().top;
+      if(!safe.width||!safe.height||column.width<4||column.height<1)return false;
+      if(column.left<safe.left-sideRoom||column.right>safe.right+sideRoom)return false;
+      if(column.top<top+2||column.bottom>bottom-2)return false;
+      for(const node of lines){
+        if(node.scrollWidth>node.clientWidth+1.5)return false;
+        for(const rect of rects(node)){
+          if(rect.left<column.left-sideRoom||rect.right>column.right+sideRoom||
+             rect.left<safe.left-sideRoom||rect.right>safe.right+sideRoom)return false;
+        }
+      }
+      if(!body.hidden){
+        const b=body.getBoundingClientRect();
+        if(body.scrollWidth>body.clientWidth+2||
+           b.left<safe.left-sideRoom||b.right>safe.right+sideRoom||
+           b.bottom>bottom-2)return false;
+      }
+      return true;
+    }
+    function searchTitle(floor){
+      const candidate=size=>{
+        title.style.fontSize=size.toFixed(3)+"px";
+        return fits();
+      };
+      if(candidate(requested))return requested;
+      if(!candidate(floor))return null;
+      let low=floor,high=requested;
+      for(let i=0;i<19;i++){
+        const mid=(low+high)/2;
+        if(candidate(mid))low=mid;
+        else high=mid;
+      }
+      candidate(low);
+      return low;
+    }
+    const minReadable=Math.min(12,requested);
+    let applied=null,emergency=false,bodyReduced=false;
+    for(const wrap of ["normal","emergency"]){
+      board.dataset.titleBreak=wrap;
+      applied=searchTitle(minReadable);
+      if(applied!==null){emergency=wrap==="emergency";break;}
+    }
+    if(applied===null&&!body.hidden){
+      // On unusually dense pages, reclaim vertical space from the body before
+      // allowing title or body to leave the approved reading area.
+      body.style.fontSize="8px";
+      bodyReduced=true;
+      for(const wrap of ["normal","emergency"]){
+        board.dataset.titleBreak=wrap;
+        applied=searchTitle(minReadable);
+        if(applied!==null){emergency=wrap==="emergency";break;}
+      }
+    }
+    if(applied===null){
+      board.dataset.titleBreak="emergency";
+      emergency=true;
+      if(!body.hidden){body.style.fontSize="6px";bodyReduced=true;}
+      applied=searchTitle(3);
+    }
+    if(applied===null){
+      // Maximum 140-character titles and 380-character bodies normally fit
+      // after emergency reflow, but retain a final non-clipping contingency.
+      applied=searchTitle(1);
+    }
+    if(applied!==null&&bodyReduced&&!body.hidden){
+      const requestedBody=bodyRequested;
+      let low=parseFloat(getComputedStyle(body).fontSize)||6;
+      let high=requestedBody;
+      for(let i=0;i<14;i++){
+        const mid=(low+high)/2;
+        body.style.fontSize=mid.toFixed(3)+"px";
+        if(fits())low=mid;
+        else high=mid;
+      }
+      body.style.fontSize=low.toFixed(3)+"px";
+    }
+    const ok=fits();
+    const real=parseFloat(getComputedStyle(title).fontSize)||applied||requested;
+    const adjusted=real<requested-.6||bodyReduced||emergency;
+    const info=by("labTitleFitInfo");
+    if(info){
+      info.dataset.adjusted=String(adjusted);
+      info.textContent=!ok?
+        "Revisar o conteúdo: a área útil está no limite.":
+        emergency?
+        "Título excepcionalmente longo: quebra de segurança para preservar a margem.":
+        real<requested-.6?
+        "Escala ajustada automaticamente para "+Math.round(real)+" px, sem sair das margens.":
+        "Escala aplicada: "+Math.round(real)+" px · margens preservadas.";
+    }
+    board.dataset.typeFit=ok?(adjusted?"adjusted":"natural"):"review";
+    return {ok,adjusted,emergency,requested,applied:real};
+  }
+
   function measure(){
+    const titleFit=fitTitleToReadingArea();
     const hasPhoto=state.image!=="nenhuma";
     const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];
     if(!body.hidden)textNodes.push(body);
@@ -175,7 +296,7 @@
     const copyRect=copyArea.getBoundingClientRect();
     const footerRect=board.querySelector(".lm-lab-bottom").getBoundingClientRect();
     const titleWide=[...title.querySelectorAll(".lm-lab-title-line")].some(n=>n.scrollWidth>n.clientWidth+3);
-    const invalid=titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
+    const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
     const collision=overlap&&state.relation==="separada";
@@ -183,6 +304,7 @@
     const status=by("labStatus");
     const desc=invalid?"REVER / CONTEÚDO EXCEDE A ÁREA ÚTIL":
       collision?"REVER / TEXTO E M CRUZAM EM CAMPOS SEPARADOS":
+      titleFit.adjusted?"ESCALA AUTOAJUSTADA / MARGENS PRESERVADAS":
       hasPhoto?"ESTUDO / COMPOSIÇÃO COM IMAGEM":
       "ESTUDO / SUPERFÍCIE TIPOGRÁFICA";
     status.textContent=desc;
@@ -210,6 +332,7 @@
   const obs=new ResizeObserver(requestMeasurement);
   obs.observe(board);
   document.fonts.ready.then(requestMeasurement);
+  document.fonts.addEventListener?.("loadingdone",requestMeasurement);
   previewImg.addEventListener("load",requestMeasurement);
   maskImg.addEventListener("load",requestMeasurement);
   window.addEventListener("resize",requestMeasurement,{passive:true});

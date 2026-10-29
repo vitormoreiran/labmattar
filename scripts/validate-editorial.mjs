@@ -22,6 +22,20 @@ for(const id of ["togglePagesButton","toggleInspectorButton","fileActions","medi
 }
 assert.match(js,/dragstart/);
 assert.match(js,/panelStateKey/);
+assert.match(html,/class="ui-icon-sprite"/);
+for(const icon of ["undo","redo","panel-left","panel-right","smartphone","monitor","eye","pencil","folder","chevron-down","files","images","plus","arrow-up","arrow-down","file-text","layers","image","grip","copy","trash"]){
+  assert.ok(html.includes('id="ui-'+icon+'"'),"Missing icon symbol: "+icon);
+}
+for(const id of ["viewportLabel","previewLabel","viewportIconUse","previewIconUse"]){
+  assert.ok(html.includes('id="'+id+'"'),"Missing state-safe icon label: "+id);
+}
+assert.match(js,/\$\("viewportLabel"\)\.textContent/);
+assert.match(js,/\$\("previewLabel"\)\.textContent/);
+assert.doesNotMatch(js,/\$\("viewportButton"\)\.textContent=/);
+assert.doesNotMatch(js,/\$\("previewButton"\)\.textContent=/);
+assert.match(interfaceCss,/\.ui-icon\{/);
+assert.match(interfaceCss,/--ui-muted:#415047/);
+
 
 assert.match(html,/class="editorial-stack"/);
 const composition=readFileSync(base+"editorial-composition.css","utf8");

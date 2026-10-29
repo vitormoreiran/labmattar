@@ -1,20 +1,24 @@
 name: Publicar previa LABMATTAR
-# Publicar pagina inicial LABMATTAR com area de video de abertura.
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, fix/manual-symbols-verified]
     paths:
       - '.github/workflows/preview-cloudflare.yml'
       - 'app/**'
       - 'public/**'
       - 'design/**'
+      - 'scripts/smoke-symbols-browser.mjs'
       - 'package.json'
       - 'package-lock.json'
 
 permissions:
   contents: read
+
+concurrency:
+  group: labmattar-preview-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publicar:
@@ -31,38 +35,29 @@ jobs:
           test -d app
           test -f public/manual.html
           chmod +x scripts/*.sh
+          python3 -m py_compile design/*.py
           cat design/labmattar-editor.css >> app/globals.css
           cp design/EditorialAssembly.tsx app/editor/EditorialAssembly.tsx
           cp design/editorial.css app/editor/editorial.css
           python3 design/patch-editor.py
-          cp design/tipografia.html public/tipografia.html
-          cp design/cores.html public/cores.html
-          cp design/composicao.html public/composicao.html
-          cp design/imagem.html public/imagem.html
-          cp design/identidade.html public/identidade.html
-          cp design/inicio.html public/inicio.html
+          for page in tipografia cores composicao imagem identidade inicio; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py
+          cp public/manual.html /tmp/manual-once.html
+          python3 design/revise-symbols-hierarchy.py
+          cmp /tmp/manual-once.html public/manual.html
+          git diff --exit-code -- public/identidade
           python3 design/validate-identity.py
           mkdir -p public/fonts
-          curl --fail --location --silent --show-error --retry 3 'https://labmattar.com/fonts/univers-lt-std-45-light.otf' --output public/fonts/univers-lt-std-45-light.otf
-          curl --fail --location --silent --show-error --retry 3 'https://labmattar.com/fonts/perpetua-titling-light.ttf' --output public/fonts/perpetua-titling-light.ttf
+          curl --fail --location --silent --show-error --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf --output public/fonts/univers-lt-std-45-light.otf
+          curl --fail --location --silent --show-error --retry 3 https://labmattar.com/fonts/perpetua-titling-light.ttf --output public/fonts/perpetua-titling-light.ttf
           python3 - <<'PY'
           from pathlib import Path
           for name in ('univers-lt-std-45-light.otf','perpetua-titling-light.ttf'):
               data=(Path('public/fonts')/name).read_bytes()
-              print('MAGIC',name,len(data),repr(data[:24]))
               assert len(data)>3000 and data[:4] in (b'OTTO',bytes.fromhex('00010000'),b'true',b'ttcf'),f'Invalid font: {name}'
-              print(name, len(data), 'bytes OK')
           PY
           python3 design/localize-fonts.py
-      - name: Verificar disponibilidade das fontes oficiais
-        shell: bash
-        run: |
-          for font in univers-lt-std-45-light.otf perpetua-titling-light.ttf; do
-            code=$(curl -L -s -o /dev/null -w '%{http_code}' --max-time 15 "https://labmattar.com/fonts/$font" || true)
-            echo "$font: HTTP $code"
-          done
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'
@@ -70,19 +65,29 @@ jobs:
       - name: Instalar e compilar
         run: |
           npm ci
+          mkdir -p public/vendor
+          cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
+          node --check public/manual-symbols.js
+          node --check scripts/smoke-symbols-browser.mjs
           npm run build
+      - name: Instalar navegador de testes
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Validar pagina compilada antes de publicar
+        shell: bash
+        run: |
+          python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
+          MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
       - name: Preparar Workers preview
+        if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           test -f dist/server/index.js
           test -d dist/client
           cat > dist/server/worker-entry.js <<'JS'
           import handleRequest from './index.js';
-          export default {
-            fetch(request, env, ctx) {
-              return handleRequest(request, env, ctx);
-            }
-          };
+          export default { fetch(request, env, ctx) { return handleRequest(request, env, ctx); } };
           JS
           cat > wrangler.preview.jsonc <<'JSON'
           {
@@ -90,19 +95,30 @@ jobs:
             "main": "dist/server/worker-entry.js",
             "compatibility_date": "2026-10-01",
             "compatibility_flags": ["nodejs_compat"],
-            "assets": {
-              "directory": "dist/client",
-              "binding": "ASSETS"
-            },
+            "assets": {"directory": "dist/client", "binding": "ASSETS"},
             "workers_dev": true
           }
           JSON
       - name: Publicar apenas Worker de previa
+        if: github.ref == 'refs/heads/main'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         shell: bash
         run: |
-          test -n "$CLOUDFLARE_API_TOKEN" || { echo "Configure o secret CLOUDFLARE_API_TOKEN"; exit 1; }
-          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "Configure o secret CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
           npx wrangler deploy --config wrangler.preview.jsonc
+      - name: Verificar manual e matriz na URL publicada
+        if: github.ref == 'refs/heads/main'
+        env:
+          MANUAL_URL: https://labmattar-identidade-previa.vitormoreiran.workers.dev/manual?verify=${{ github.sha }}
+          CHECK_EDITOR: '1'
+        run: node scripts/smoke-symbols-browser.mjs
+      - name: Salvar evidencias visuais e relatorio
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: manual-symbols-proof-${{ github.sha }}
+          path: symbols-proof/
+          if-no-files-found: warn

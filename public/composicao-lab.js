@@ -447,7 +447,10 @@
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
     const collision=editorialOverlap&&state.relation==="separada";
-    board.dataset.state=invalid?"overflow":"ok";
+    // The visual proof and its status must agree: an unintended overlap is
+    // never an approved canvas, even if all text fits inside the page.
+    board.dataset.state=invalid?"overflow":collision?"collision":"ok";
+    board.setAttribute("aria-invalid",String(invalid||collision||titleFit.lowLegibility));
     const status=by("labStatus");
     const desc=invalid?"REVER / CONTEÚDO EXCEDE A ÁREA ÚTIL":
       collision?"REVER / TEXTO E M CRUZAM EM CAMPOS SEPARADOS":
@@ -456,7 +459,7 @@
       hasPhoto?"ESTUDO / COMPOSIÇÃO COM IMAGEM":
       "ESTUDO / SUPERFÍCIE TIPOGRÁFICA";
     status.textContent=desc;
-    status.dataset.state=invalid?"overflow":"ok";
+    status.dataset.state=invalid?"overflow":collision?"collision":titleFit.lowLegibility?"review":"ok";
     const treatment=by("labPhotoStatus");
     treatment.textContent=!hasPhoto?"SEM VÉU FOTOGRÁFICO":
       overlap?"PRETO 20% / FUNDO E RECORTE M":

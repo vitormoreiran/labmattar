@@ -467,10 +467,12 @@
 
     const gapPx=safeRect.width*(state.gap/100);
     const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-    const minX=safeRect.left-boardRect.left+maskRect.width/2;
-    const maxX=safeRect.right-boardRect.left-maskRect.width/2;
-    const minY=safeRect.top-boardRect.top+maskRect.height/2;
-    const maxY=safeRect.bottom-boardRect.top-maskRect.height/2;
+    // Text is constrained by the reading area. The M is constrained by the
+    // page surface itself, so its scale is never silently reduced by margins.
+    const minX=maskRect.width/2;
+    const maxX=boardRect.width-maskRect.width/2;
+    const minY=maskRect.height/2;
+    const maxY=boardRect.height-maskRect.height/2;
 
     let x,y;
     if(state.relation==="sobreposta"){

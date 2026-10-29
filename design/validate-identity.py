@@ -27,6 +27,14 @@ assert ".lm-case-image::after" in composition, "Mask must carry its own text con
 assert 'id="construcao"' in composition and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition
 assert 'src="/composicao-lab.js"' in composition
+assert 'href="/composicao-lab-controls.css"' in composition, "Illustrated control stylesheet missing"
+controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
+for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo"):
+ assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
+for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
+ assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
+assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+
 lab_css=(Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 for selector in ('lm-lab-workspace','lm-lab-m-photo','lm-lab-main-copy','lm-lab-photo-contrast'):

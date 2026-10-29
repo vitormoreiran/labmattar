@@ -88,6 +88,35 @@
     }
     document.querySelectorAll("[data-lab-preset]").forEach(b=>
       b.setAttribute("aria-pressed",String(b.dataset.labPreset===activePreset)));
+    // Visual choice cards and hidden select retain the SAME state.
+    // The native controls remain in the DOM for predictable serialization.
+    document.querySelectorAll("[data-lab-choice]").forEach(button=>{
+      const key=button.dataset.labChoice;
+      const select=by(fields[key]);
+      button.setAttribute("aria-pressed",String(state[key]===button.dataset.value));
+      button.disabled=Boolean(select&&select.disabled);
+    });
+    for(const [key,id] of Object.entries(fields)){
+      const input=by(id);
+      if(input.type==="range"){
+        const min=Number(input.min),max=Number(input.max),value=Number(input.value);
+        const percent=max>min?(value-min)*100/(max-min):0;
+        input.style.setProperty("--lm-range-progress",percent+"%");
+      }
+    }
+    const signature=by("labSymbolPreview");
+    if(signature){
+      signature.parentElement.dataset.empty=String(state.symbol==="none");
+      if(state.symbol!=="none")signature.src="/identidade/"+state.symbol;
+    }
+    const focusPreview=by("labFocalPreview");
+    if(focusPreview){
+      focusPreview.dataset.inactive=String(!activeImage);
+      by("labFocusImage").style.backgroundImage="url('"+photos[state.photo]+"')";
+      by("labFocusImage").style.backgroundPosition=state.focusX+"% "+state.focusY+"%";
+      by("labFocusPointer").style.left=state.focusX+"%";
+      by("labFocusPointer").style.top=state.focusY+"%";
+    }
   }
   function readInputs(){
     const next={};
@@ -345,6 +374,26 @@
     state=copy(presets[key]);
     activePreset=key;
     render();save();
+  }
+  // One action model for the graphic controls and the original select fields.
+  document.querySelectorAll("[data-lab-choice]").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const select=by(fields[button.dataset.labChoice]);
+      if(!select||select.disabled)return;
+      select.value=button.dataset.value;
+      select.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+  });
+  // Sliders show both endpoints and the current value without adding another
+  // state system. The endpoints are ordinary labels, not draggable controls.
+  for(const input of document.querySelectorAll(".lm-lab-inspector input[type=range]")){
+    const scale=document.createElement("div");
+    scale.className="lm-ctrl-range-limits";
+    const min=document.createElement("span");
+    const max=document.createElement("span");
+    min.textContent=input.min+"%";max.textContent=input.max+"%";
+    scale.append(min,max);
+    input.insertAdjacentElement("afterend",scale);
   }
   for(const id of Object.values(fields)){
     const el=by(id);

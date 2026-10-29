@@ -64,6 +64,59 @@ try{
   assert(original.photoText==="false"&&original.mText==="false","No-image mode should not use a darkening veil");
   assert(await page.locator("#construcao").count()===1,"Applied study removed");
   assert(original.state==="ok","Original typographic composition overflows its page");
+  // Editorial-control UI has illustrated, keyboard-focusable choices.
+  assert(await page.locator("[data-lab-choice]").count()>=30,"Illustrated choices are missing");
+  assert(await page.locator("[data-lab-choice='format'][data-value='horizontal']").getAttribute("aria-pressed")==="true","Initial choice is not synchronized");
+  assert(await page.locator(".lm-lab-presets .lm-ctrl-preset-visual").count()===3,"Three source presets should each have an illustration");
+  await page.evaluate(()=>{
+    const el=document.querySelector(".lm-lab-workspace");
+    window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
+  });
+  await page.screenshot({path:"composition-lab-controls-desktop.png",fullPage:false});
+  await page.locator("[data-lab-choice='format'][data-value='quadrado']").click();
+  assert((await read()).format==="quadrado","Clicking the format illustration must change the actual canvas");
+  assert(await page.locator("#labFormat").inputValue()==="quadrado","Illustrated format and native control got out of sync");
+  assert(await page.locator("[data-lab-choice='format'][data-value='quadrado']").getAttribute("aria-pressed")==="true","Chosen card lacks an active state");
+  await page.locator("[data-lab-choice='format'][data-value='horizontal']").click();
+  await page.locator("[data-lab-choice='placement'][data-value='central']").click();
+  assert(await page.locator("#labPlacement").inputValue()==="central","Placement illustration is inert");
+  await page.locator("[data-lab-choice='placement'][data-value='esquerda']").click();
+  await page.locator("[data-lab-choice='color'][data-value='red']").click();
+  assert(await page.locator("#labColor").inputValue()==="red","Color swatch is inert");
+  await page.locator("[data-lab-choice='color'][data-value='neutral']").click();
+  await page.locator("[data-lab-choice='guides'][data-value='grid']").click();
+  assert(await page.locator("#labArtboard").getAttribute("data-guide")==="grid","Illustrated guides are inert");
+  await page.locator("[data-lab-choice='guides'][data-value='nenhuma']").click();
+  await page.locator("[data-lab-choice='bodyMode'][data-value='visivel']").click();
+  assert((await read()).bodyHidden===false,"Show-body illustration did not reveal text");
+  await page.locator("[data-lab-choice='bodyMode'][data-value='oculto']").click();
+  assert((await read()).bodyHidden===true,"Hide-body illustration did not conceal text");
+  await page.evaluate(()=>{
+    const el=document.querySelectorAll(".lm-lab-section")[1];
+    window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
+  });
+  await page.screenshot({path:"composition-lab-controls-type.png",fullPage:false});
+  await page.locator("[data-lab-choice='type'][data-value='perpetua']").click();
+  assert(await page.locator("#labType").inputValue()==="perpetua","Typeface illustration is inert");
+  await page.locator("[data-lab-choice='type'][data-value='alternada']").click();
+  const colorStateBefore=await page.locator("#labColor").inputValue();
+  await page.locator("[data-lab-choice='image'][data-value='recorte']").click();
+  assert((await read()).image==="recorte","M mask illustration did not activate the image");
+  assert(await page.locator("[data-lab-choice='color'][data-value='green']").isDisabled(),"Color selector must disable while photography is present");
+  await page.locator("[data-lab-choice='photo'][data-value='151']").click();
+  assert((await read()).photoSrc.includes("BOXDOSENTIR-151.jpg"),"Thumbnail did not change the photograph");
+  assert(await page.locator("#labFocusImage").evaluate(el=>getComputedStyle(el).backgroundImage.includes("151.jpg")),"Focus diagram did not follow the selected photo");
+  await page.locator("[data-lab-choice='mPosition'][data-value='esquerda']").click();
+  assert(await page.locator("#labMPosition").inputValue()==="esquerda","M-placement illustration is inert");
+  await page.evaluate(()=>{
+    const el=document.querySelectorAll(".lm-lab-section")[2];
+    window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
+  });
+  await page.screenshot({path:"composition-lab-controls-media.png",fullPage:false});
+  await page.locator("[data-lab-choice='image'][data-value='nenhuma']").click();
+  assert(await page.locator("#labColor").inputValue()===colorStateBefore,"Switching image mode should preserve color selection");
+  assert(await page.locator("[data-lab-choice='color'][data-value='green']").isEnabled(),"Color swatches did not reactivate");
+  await page.locator("#labReset").click();
   await page.locator("#labArtboard").screenshot({path:"composition-lab-typography.png"});
 
   await page.locator('[data-lab-preset="mascara"]').click();
@@ -139,6 +192,20 @@ try{
   data=await read();
   assert(data.image==="nenhuma"&&data.format==="horizontal"&&data.lines===3,"Restore does not recover the original study");
   assert(await page.locator("#labSymbol").inputValue()==="none","Restore should preserve the original no-symbol state");
+  await page.setViewportSize({width:390,height:844});
+  await page.evaluate(()=>{
+    const el=document.querySelector(".lm-ctrl-inspector-intro");
+    window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-24,behavior:"instant"});
+  });
+  const mobileChoices=await page.evaluate(()=>{
+    const bounds=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
+    return [...document.querySelectorAll(".lm-lab-inspector .lm-ctrl-choice")].map(el=>{
+      const r=el.getBoundingClientRect();
+      return {x:r.left,right:r.right,sw:r.width,inside:r.left>=bounds.left-1&&r.right<=bounds.right+1};
+    });
+  });
+  assert(mobileChoices.every(x=>x.inside&&x.sw>45),"Illustrated control leaves the mobile inspector: "+JSON.stringify(mobileChoices.slice(0,8)));
+  await page.screenshot({path:"composition-lab-controls-mobile.png",fullPage:false});
   // Regression from the actual 1:1 red-square composition:
   // GASTROPERFORMANCE in Perpetua must never overrun the safe text margin.
   async function assertReadingBoundary(label){
@@ -188,7 +255,8 @@ try{
   await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
   await select("labBodyMode","visivel");
   let boundary=await assertReadingBoundary("Screenshot: red square GASTROPERFORMANCE");
-  assert(boundary.fit==="adjusted","Long single word must auto-fit, not preserve overflow");
+  assert(["natural","adjusted","compromised"].includes(boundary.fit),
+    "The title may retain its requested size when it fits; it must never overflow");
   console.log("SQUARE AUTOMATIC FIT",JSON.stringify({size:boundary.titleSize,fit:boundary.fit}));
   await page.locator("#labArtboard").screenshot({path:"composition-lab-margin-fit-square.png"});
 

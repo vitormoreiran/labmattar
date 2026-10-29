@@ -152,3 +152,13 @@
   .editor.is-preview .editor-workspace{display:block;height:auto;overflow:hidden}
   .editor.is-preview .editor-stage,.editor.is-preview .stage-viewport{height:100%}
 }
+
+/* Sobrescreve especificamente os seletores historicos do chrome anterior. */
+.editor-sidebar .sidebar-tabs,.editor-sidebar .sidebar-foot{border-color:var(--ui-line)}
+.editor-sidebar .sidebar-tabs button.active{border-bottom-color:var(--ui-ink)}
+.editor-sidebar .page-entry{color:var(--ui-ink);border-color:transparent;border-bottom-color:var(--ui-line)}
+.editor-sidebar .page-entry.selected{border:1px solid #aab9ab;background:#e2e9e1}
+.editor-sidebar .small-note{color:var(--ui-muted)}
+.editor-sidebar .asset-entry{border-color:var(--ui-line)}
+.editor-inspector .inspector-tabs button.active{border-bottom-color:var(--ui-ink)}
+.editor.is-preview .editor-workspace{min-height:0}

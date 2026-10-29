@@ -325,11 +325,17 @@ try{
     JSON.stringify(maskTextState));
   await page.screenshot({path:"composition-studio-m-structural.png"});
 
-  await page.locator("#labPrecision-mScale").fill("88");
+  const formatScaleMax=Number(await page.locator("#labMScale").getAttribute("max"));
+  await page.locator("#labPrecision-mScale").fill(String(Math.min(88,formatScaleMax)));
   await page.locator("#labPrecision-mScale").press("Enter");
+  const scaleBeforeMove=await page.locator("#labMScale").inputValue();
+  await page.locator('[data-lab-choice="mPosition"][data-value="centro-esquerda"]').click();
+  assert(await page.locator("#labMScale").inputValue()===scaleBeforeMove,
+    "Moving the M must not change its scale");
   mask=await mGeometry();
-  assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2,
-    "Increasing M scale must not create an invented bleed mode: "+JSON.stringify(mask));
+  assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2&&
+    mask.m.top>=mask.board.top-2&&mask.m.bottom<=mask.board.bottom+2,
+    "Format-aware M scale must keep the full M inside the page: "+JSON.stringify(mask));
 
   await clickCard("photo","151");
   const focal=page.locator("#labFocalPreview");

@@ -5,6 +5,7 @@
  */
 /* Studio-only tools never appear in the embedded/manual version. */
 .lm-studio-tools,.lm-studio-detail,.lm-studio-quickreset{display:none}
+.lm-studio-launch>.lm-studio-quickreset{display:none}
 .lm-studio-launch{display:flex;align-items:center;justify-content:flex-end;min-width:0}
 .lm-studio-launch>button{
   appearance:none;display:inline-flex;align-items:center;justify-content:center;
@@ -307,7 +308,7 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
   body.lm-studio-open .lm-lab-presets{justify-content:flex-start;gap:2px}
   body.lm-studio-open .lm-lab-presets button{min-height:32px;padding:4px 5px}
   body.lm-studio-open .lm-lab-presets .lm-ctrl-preset-text strong{font-size:10px}
-  body.lm-studio-open .lm-studio-quickreset{
+  body.lm-studio-open .lm-studio-launch>.lm-studio-quickreset{
     display:inline-flex;align-items:center;justify-content:center;
     border:0;padding:4px;background:transparent;
     min-width:28px;min-height:29px;color:#181818;
@@ -363,6 +364,20 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
     grid-template-rows:minmax(0,1fr) 235px;
   }
   body.lm-studio-open .lm-studio-tool{min-height:47px;padding:5px}
+}
+/* A narrow viewport should not devote half its height to gray letterboxing
+   around a horizontal sheet. Each format gets a deliberate page/inspector
+   balance while the sheet itself still uses strict contain geometry. */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=horizontal]){
+    grid-template-rows:minmax(0,43dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=editorial]){
+    grid-template-rows:minmax(0,48dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=quadrado]){
+    grid-template-rows:minmax(0,53dvh) minmax(0,1fr);
+  }
 }
 @media(max-width:850px){
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-studio-detail:not([hidden])){

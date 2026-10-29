@@ -8,6 +8,41 @@ const js=readFileSync(base+"editorial-v2.js","utf8");
 const css=readFileSync(base+"editorial-v2.css","utf8");
 
 new Script(js,{filename:"editorial-v2.js"});
+const inspectorJs=readFileSync(base+"editorial-inspector.js","utf8");
+const sequencesJs=readFileSync(base+"editorial-sequences.js","utf8");
+const inspectorCss=readFileSync(base+"editorial-inspector.css","utf8");
+const sequencesCss=readFileSync(base+"editorial-sequences.css","utf8");
+new Script(inspectorJs,{filename:"editorial-inspector.js"});
+new Script(sequencesJs,{filename:"editorial-sequences.js"});
+for(const path of ["editorial-inspector.css","editorial-sequences.css","editorial-inspector.js","editorial-sequences.js"]){
+ assert.ok(html.includes(path),"Missing integrated editor module: "+path);
+}
+for(const id of [
+ "textFlowOverview","profileLibrary","statusCards","sectionName","pageSectionSelect",
+ "sectionBackgroundSelect","sectionBackgroundImage","areaPageCount","addAreaButton",
+ "mediaLibrary","librarySearch","libraryFilters","mediaAddAsset","treatmentCards",
+ "mediaZoom","mediaZoomValue","mediaAlt","mediaCredit","storyViewer"
+]){
+ assert.ok(html.includes('id="'+id+'"'),"Missing new inspector or area control: "+id);
+}
+assert.match(inspectorJs,/function renderMediaLibrary\(/);
+assert.match(inspectorJs,/function renderTreatments\(/);
+assert.match(inspectorJs,/function renderText\(/);
+assert.match(inspectorJs,/function renderStructure\(/);
+assert.match(sequencesJs,/function normalize\(/);
+assert.match(sequencesJs,/function renderSidebar\(/);
+assert.match(sequencesJs,/function renderViewer\(/);
+assert.match(sequencesCss,/\.story-area-backdrop\{/);
+assert.match(sequencesCss,/position:sticky/);
+assert.match(sequencesCss,/\.story-area-pages\{/);
+assert.match(sequencesCss,/m-publicado\.svg/);
+assert.match(inspectorCss,/\.media-library\{/);
+assert.match(inspectorCss,/\.profile-library\{/);
+assert.match(js,/LMSequences\?\.normalize/);
+assert.match(js,/LMSequences\?\.renderViewer/);
+assert.match(js,/LMInspector\?\.render/);
+assert.doesNotMatch(inspectorCss,/\.artboard\b/,"Inspector skin may not override the page composition");
+
 assert.match(html,/editorial-v2\.js/);
 assert.match(html,/editorial-v2\.css/);
 assert.match(html,/editorial-composition\.css/);

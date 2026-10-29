@@ -13,7 +13,7 @@
   const presets={
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"central",relation:"separada",textWidth:61,titleScale:100,type:"alternada",
+      placement:"central",relation:"centro",gap:4,textWidth:61,titleScale:100,type:"alternada",
       image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro-direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
@@ -21,7 +21,7 @@
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"central",relation:"separada",textWidth:40,titleScale:95,type:"alternada",
+      placement:"central",relation:"lado-a-lado",gap:4,textWidth:40,titleScale:95,type:"alternada",
       image:"recorte",mMode:"janela",photo:"64",mPosition:"centro-direita",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
@@ -29,7 +29,7 @@
     },
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"inferior",relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
+      placement:"central",relation:"sobreposta",gap:0,textWidth:80,titleScale:95,type:"alternada",
       image:"inteira",mMode:"janela",photo:"179",mPosition:"centro-direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
@@ -38,13 +38,13 @@
   };
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
-    placement:"labPlacement",relation:"labRelation",textWidth:"labTextWidth",
+    placement:"labPlacement",relation:"labRelation",gap:"labGap",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
     mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
+  const numeric=new Set(["margin","gap","textWidth","titleScale","mScale","focusX","focusY"]);
   const palette={
     neutral:["#f7f6f2","#181818"],
     beige:["#e6dbcf","#181818"],
@@ -143,21 +143,22 @@
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     for(const key of ["mPosition","mScale","mMode"])by(fields[key]).disabled=!mask;
     by("labColor").disabled=activeImage;
-    by("labRelation").disabled=!activeImage;
+    by("labRelation").disabled=!mask;
+    by("labGap").disabled=!mask;
     // Controls follow the page's actual state. An absent photograph does not
     // need six ghost tools; M-specific tools appear only with the M mask.
     setFieldVisible("labColor",!activeImage);
-    for(const id of ["labPhoto","labRelation","labFocalPreview","labFocusX","labFocusY"])
+    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY"])
       setFieldVisible(id,activeImage);
-    for(const id of ["labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
+    for(const id of ["labRelation","labGap","labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
     by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
     by("labTabMeta-texto").textContent=
       (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
     by("labTabMeta-imagem").textContent=
       state.image==="nenhuma"?"Sem fotografia":
-      state.image==="recorte"?"M / "+state.mPosition.replaceAll("-"," "):
+      state.image==="recorte"?"M / "+({ "lado-a-lado":"lado a lado",topo:"topo",centro:"centro",base:"base",sobreposta:"sobreposição"}[state.relation]||state.relation):
       "Imagem integral";
-    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
+    for(const key of ["margin","gap","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -253,6 +254,15 @@
     const mPrecision=by("labPrecision-mScale");
     if(mPrecision)mPrecision.max=String(mMax);
     syncInputs();
+    const relationLayout={
+      "lado-a-lado":{placement:"central",mPosition:"centro-direita"},
+      topo:{placement:"superior",mPosition:"superior-direita"},
+      centro:{placement:"central",mPosition:"centro-direita"},
+      base:{placement:"inferior",mPosition:"inferior-direita"},
+      sobreposta:{placement:"central",mPosition:"centro"}
+    }[state.relation]||{placement:"central",mPosition:"centro-direita"};
+    state.placement=relationLayout.placement;
+    state.mPosition=relationLayout.mPosition;
     board.dataset.format=state.format;
     board.dataset.placement=state.placement;
     board.dataset.relation=state.relation;
@@ -267,13 +277,8 @@
     board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
-    const [mV,mH]=state.mPosition.split("-");
-    const halfW=state.mScale/2;
-    const halfH=state.mScale*formatRatio[state.format]/mAspect/2;
-    const x={esquerda:halfW,centro:50,direita:100-halfW}[mH||mV]||50;
-    const y={superior:halfH,centro:50,inferior:100-halfH}[mV]||50;
-    board.style.setProperty("--lab-m-x",x+"%");
-    board.style.setProperty("--lab-m-y",y+"%");
+    board.style.setProperty("--lab-m-x",state.relation==="sobreposta"?"50%":"75%");
+    board.style.setProperty("--lab-m-y","50%");
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);
@@ -306,29 +311,14 @@
   }
 
   /*
-   * Keep the editorial block on the same twelve-step ruler in every format.
-   * The selected row is a preferred center; if its text would collide with
-   * kicker or footer, constrain the whole block inside the useful text band.
-   * This never splits a word, changes fonts, or moves individual lines.
+   * Text remains on the page ruler. The relation control changes only its
+   * vertical structural band; it never introduces free X/Y positioning.
    */
   function positionCopyOnRuler(){
-    const safe=by("labReading").getBoundingClientRect();
-    const kickerRect=kicker.getBoundingClientRect();
-    const footerRect=board.querySelector(".lm-lab-bottom").getBoundingClientRect();
-    const copyHeight=copyArea.getBoundingClientRect().height;
-    const gap=safe.width*.012;
-    const minTop=kickerRect.bottom+gap;
-    const maxTop=footerRect.top-gap-copyHeight;
-    const preferredTop=safe.top+safe.height*(state.textY-.5)/12-copyHeight/2;
-    const actualTop=maxTop>=minTop?
-      Math.min(maxTop,Math.max(minTop,preferredTop)):minTop;
-    if(safe.height>0){
-      copyArea.style.top=((actualTop-safe.top)/safe.height*100).toFixed(5)+"%";
-      copyArea.style.transform="none";
-    }
-    const adjusted=Math.abs(actualTop-preferredTop)>safe.width*.001;
-    copyArea.dataset.rulerAdjusted=String(adjusted);
-    return {adjusted,room:maxTop>=minTop};
+    copyArea.style.removeProperty("top");
+    copyArea.style.removeProperty("transform");
+    copyArea.dataset.rulerAdjusted="false";
+    return {adjusted:false,room:true};
   }
 
   /*
@@ -466,8 +456,42 @@
     return {ok,adjusted,lowLegibility,emergency,requested,applied:real};
   }
 
+  function alignMToCopy(){
+    if(state.image!=="recorte")return;
+    const boardRect=board.getBoundingClientRect();
+    const safeRect=by("labReading").getBoundingClientRect();
+    const copyRect=copyArea.getBoundingClientRect();
+    const mask=by("labMask");
+    const maskRect=mask.getBoundingClientRect();
+    if(!boardRect.width||!boardRect.height||!maskRect.width||!maskRect.height)return;
+
+    const gapPx=safeRect.width*(state.gap/100);
+    const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+    const minX=safeRect.left-boardRect.left+maskRect.width/2;
+    const maxX=safeRect.right-boardRect.left-maskRect.width/2;
+    const minY=safeRect.top-boardRect.top+maskRect.height/2;
+    const maxY=safeRect.bottom-boardRect.top-maskRect.height/2;
+
+    let x,y;
+    if(state.relation==="sobreposta"){
+      x=(copyRect.left+copyRect.right)/2-boardRect.left;
+      y=(copyRect.top+copyRect.bottom)/2-boardRect.top;
+    }else{
+      x=copyRect.right-boardRect.left+gapPx+maskRect.width/2;
+      const center=(copyRect.top+copyRect.bottom)/2-boardRect.top;
+      if(state.relation==="topo")y=copyRect.top-boardRect.top+maskRect.height/2;
+      else if(state.relation==="base")y=copyRect.bottom-boardRect.top-maskRect.height/2;
+      else y=center;
+    }
+    x=clamp(x,minX,maxX);
+    y=clamp(y,minY,maxY);
+    board.style.setProperty("--lab-m-x",(x/boardRect.width*100).toFixed(4)+"%");
+    board.style.setProperty("--lab-m-y",(y/boardRect.height*100).toFixed(4)+"%");
+  }
+
   function measure(){
     const titleFit=fitTitleToReadingArea();
+    alignMToCopy();
     const hasPhoto=state.image!=="nenhuma";
     const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];
     if(!body.hidden)textNodes.push(body);
@@ -491,7 +515,7 @@
     const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
-    const collision=editorialOverlap&&state.relation==="separada";
+    const collision=editorialOverlap&&state.relation!=="sobreposta";
     // The visual proof and its status must agree: an unintended overlap is
     // never an approved canvas, even if all text fits inside the page.
     board.dataset.state=invalid?"overflow":collision?"collision":"ok";
@@ -727,15 +751,12 @@
     labPhoto:["Fotografia",
       "Experimente diferentes registros de Cada Corpo Abre um Mundo mantendo a mesma composição.",
       "O enquadramento pode ser ajustado sem modificar o arquivo fotográfico."],
-    labRelation:["Texto e fotografia",
-      "Define se texto e fotografia dividem campos distintos ou aparecem sobrepostos.",
-      "Onde houver texto sobre fotografia, aplica-se automaticamente preto a 20% abaixo da tipografia."],
-    labPlacement:["Altura do texto",
-      "Move o bloco apenas entre alto, centro e baixo. O eixo horizontal continua fixo na régua da página.",
-      "A composição muda de altura sem soltar o texto da estrutura."],
-    labMPosition:["Posição do M",
-      "Escolhe uma das nove posições estruturais do M dentro da página.",
-      "Mover o M não altera sua escala. Escala e posição são controles independentes."],
+    labRelation:["Relação texto + M",
+      "Define a relação estrutural entre o bloco tipográfico e o M: lado a lado, alinhados pelo topo, centro, base ou sobrepostos.",
+      "A relação move o M em resposta ao texto; não altera a escala de nenhum dos dois."],
+    labGap:["Distância texto / M",
+      "Ajusta apenas o intervalo entre texto e M nas relações lado a lado e alinhadas.",
+      "Distância não muda escala, tipografia ou margem."],
     labMScale:["Escala do M",
       "Dimensiona o M proporcionalmente dentro da área útil.",
       "A escala respeita a posição definida na régua; o vetor não é deformado."],

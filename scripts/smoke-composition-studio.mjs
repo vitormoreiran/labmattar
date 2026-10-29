@@ -217,7 +217,7 @@ try{
   await clickCard("format","editorial");
   await proveBoard("Desktop editorial 1440x900");
   await clickCard("format","horizontal");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await menuVisible("Page menu restored without scrolling");
 
   await tab("texto");
@@ -229,7 +229,7 @@ try{
   await page.locator("#labPrecision-titleScale").press("Enter");
   assert(await page.locator("#labTitleScale").inputValue()==="120",
     "The focused palette must preserve exact scale values");
-  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tool("labTitleScale").click();
   await page.locator("#labRenderedTitle").click();
   assert(await page.locator('[data-lab-tab="texto"]').getAttribute("aria-selected")==="true",
     "Direct title editing should keep Typography active");
@@ -289,7 +289,7 @@ try{
   await tab("pagina");
   await tool("labFormat").click();
   await clickCard("format","quadrado");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tab("texto");
   await tool("labTitleInput").click();
   await expandedBelow("texto","Desktop direct text field below menu");
@@ -304,11 +304,11 @@ try{
   assert(longWord.break==="normal"&&longWord.fragments===1&&longWord.state!=="overflow",
     "Long title must be scaled, never scattered into single-letter lines: "+JSON.stringify(longWord));
   await page.screenshot({path:"composition-studio-m-square-title.png"});
-  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tool("labTitleInput").click();
   await tab("pagina");
   await tool("labFormat").click();
   await clickCard("format","horizontal");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tab("imagem");
   await flatImageVisible("Image / M after direct title editing");
 
@@ -344,11 +344,11 @@ try{
   await clickCard("format","vertical");
   await proveBoard("Mobile portrait");
   await page.screenshot({path:"composition-studio-mobile-portrait.png"});
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tool("labFormat").click();
   await clickCard("format","quadrado");
   await proveBoard("Mobile square");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tab("texto");
   await menuVisible("Mobile all text properties");
   await page.setViewportSize({width:390,height:700});
@@ -356,7 +356,7 @@ try{
   await menuVisible("Short mobile all text tools");
   await tool("labType").click();
   await expandedBelow("texto","Short mobile 390x700 text options below persistent menu");
-  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tool("labType").click();
   await menuVisible("Short mobile text tools restored");
   await tab("imagem");
   await flatImageVisible("Short mobile flat Image / M controls");

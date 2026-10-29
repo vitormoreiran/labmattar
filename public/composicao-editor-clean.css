@@ -850,8 +850,13 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
     height:30px;
     min-height:30px;
   }
+  /* Text takes one more row than the earlier inspector design. Reserve
+     its complete block first, then give an expanded property extra room. */
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-texto:not([hidden])){
+    grid-template-rows:minmax(0,1fr) minmax(370px,56dvh);
+  }
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-texto:not([hidden]) .lm-studio-detail:not([hidden])){
-    grid-template-rows:minmax(0,1fr) minmax(390px,60dvh);
+    grid-template-rows:minmax(0,1fr) minmax(420px,64dvh);
   }
   /* The compact media surface needs more inspector space than page controls;
      otherwise focus and M coordinates slip underneath the viewport. */

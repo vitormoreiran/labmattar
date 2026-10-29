@@ -313,6 +313,18 @@ body.lm-studio-open #laboratorio .lm-studio-detail{
   border-radius:0;
   overflow:hidden;
 }
+/* Counter the legacy laboratory disclosure spacing: the inline section
+   begins exactly at the selected property's bottom edge. */
+body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=pagina] .lm-studio-detail,
+body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=texto] .lm-studio-detail{
+  position:static;
+  inset:auto;
+  margin:0;
+  padding:12px 8px 15px;
+  border-top:0;
+  border-bottom:1px solid #e6e6e3;
+  background:#f3f3f0;
+}
 body.lm-studio-open #laboratorio .lm-studio-detail[hidden]{
   display:none!important;
 }

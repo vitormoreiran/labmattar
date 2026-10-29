@@ -109,6 +109,15 @@
   margin-top:10%;
   margin-bottom:auto;
 }
+/* A portrait cannot support a narrow two-column split between a long word
+   and the M. Stack the editorial title and image on the same reading axis,
+   so the whole word can be fitted without arbitrary character fragments. */
+.lm-lab-board[data-format=vertical][data-image=recorte][data-m-mode=janela][data-relation=separada] .lm-lab-main-copy{
+  width:100%;
+  max-width:100%;
+  margin-top:9%;
+  margin-bottom:auto;
+}
 .lm-lab-board[data-format=vertical][data-image=recorte][data-m-mode=corte] .lm-lab-m-photo{
   top:65%;
 }

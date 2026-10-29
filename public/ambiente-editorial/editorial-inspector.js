@@ -35,7 +35,7 @@ let environment=null;
 const dimensions=new Map();
 const loading=new Set();
 const normalize=t=>String(t??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-const esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;":"&#39;"}[c]));
+const esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const desc=(p)=>profileDescriptions[p]||profileDescriptions.project;
 const statName={draft:"Rascunho",review:"Em revisão",ready:"Pronta"};
 function profileSchematic(profile){

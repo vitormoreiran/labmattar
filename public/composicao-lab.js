@@ -713,11 +713,7 @@
     openHelp.trigger.setAttribute("aria-expanded","false");
     openHelp=null;
   }
-  function showHelp(trigger,panel){
-    if(openHelp?.trigger===trigger){dismissHelp();return}
-    dismissHelp();
-    panel.hidden=false;
-    trigger.setAttribute("aria-expanded","true");
+  function positionHelp(trigger,panel){
     const anchor=trigger.getBoundingClientRect();
     const width=Math.min(325,window.innerWidth-24);
     panel.style.width=width+"px";
@@ -730,7 +726,14 @@
         Math.max(12,window.innerHeight-height-12);
     }
     panel.style.top=top+"px";
+  }
+  function showHelp(trigger,panel){
+    if(openHelp?.trigger===trigger){dismissHelp();return}
+    dismissHelp();
+    panel.hidden=false;
+    trigger.setAttribute("aria-expanded","true");
     openHelp={trigger,panel};
+    positionHelp(trigger,panel);
   }
   function helpNode(tag,className,text){
     const el=document.createElement(tag);
@@ -839,8 +842,19 @@
       trigger.focus();
     }
   });
-  window.addEventListener("scroll",dismissHelp,{passive:true});
-  window.addEventListener("resize",dismissHelp,{passive:true});
+  // Auto-scroll from the browser must not close help immediately after
+  // a click. Keep the panel anchored while the tool stays on screen.
+  const followHelp=()=>{
+    if(!openHelp)return;
+    const rect=openHelp.trigger.getBoundingClientRect();
+    if(rect.bottom<0||rect.top>window.innerHeight){
+      dismissHelp();
+      return;
+    }
+    positionHelp(openHelp.trigger,openHelp.panel);
+  };
+  window.addEventListener("scroll",followHelp,{passive:true});
+  window.addEventListener("resize",followHelp,{passive:true});
   for(const tab of editorTabs){
     tab.addEventListener("click",dismissHelp);
     tab.addEventListener("keydown",e=>{

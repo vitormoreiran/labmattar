@@ -12,23 +12,6 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Conferir respostas das rotas publicadas
-        run: |
-          mkdir -p symbols-proof
-          python3 - <<'PY'
-          import urllib.request,json,time,hashlib
-          from pathlib import Path
-          base='https://labmattar-identidade-previa.vitormoreiran.workers.dev'
-          report=[]
-          for path in ['/manual','/manual.html','/manual-symbols.js','/manual-symbols.css','/vendor/MorphSVGPlugin.js','/editor']:
-              request=urllib.request.Request(base+path+'?check='+str(time.time_ns()),headers={'Cache-Control':'no-cache'})
-              with urllib.request.urlopen(request,timeout=30) as r:
-                  data=r.read()
-                  report.append({'path':path,'status':r.status,'url':r.url,'headers':dict(r.headers),'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'revision':b'20261029-verified' in data,'sampler':b'manual-states-script' in data})
-                  if path in ['/manual','/manual.html']: Path('symbols-proof/'+path.strip('/').replace('.','-')+'-response.txt').write_bytes(data)
-          Path('symbols-proof/routes.json').write_text(json.dumps(report,indent=2))
-          print(json.dumps(report,indent=2))
-          PY
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -38,6 +21,30 @@ jobs:
           npm install --prefix /tmp/symbols-browser --no-package-lock playwright@1.58.2
           /tmp/symbols-browser/node_modules/.bin/playwright install --with-deps chromium
           cp scripts/smoke-symbols-browser.mjs /tmp/symbols-browser/check.mjs
+      - name: Conferir rotas no navegador
+        run: |
+          cat > /tmp/symbols-browser/routes.mjs <<'JS'
+          import {chromium} from 'playwright';
+          import {mkdir,writeFile} from 'node:fs/promises';
+          import {createHash} from 'node:crypto';
+          await mkdir('symbols-proof',{recursive:true});
+          const browser=await chromium.launch();
+          const page=await browser.newPage();
+          const base='https://labmattar-identidade-previa.vitormoreiran.workers.dev';
+          const report=[];
+          for(const path of ['/manual','/manual.html','/manual-symbols.js','/manual-symbols.css','/vendor/MorphSVGPlugin.js','/editor']){
+            try{
+              const r=await page.goto(base+path,{waitUntil:'networkidle',timeout:60000});
+              const data=await r.text();
+              report.push({path,status:r.status(),url:r.url(),headers:await r.allHeaders(),bytes:data.length,sha256:createHash('sha256').update(data).digest('hex'),revision:data.includes('20261029-verified'),sampler:data.includes('manual-states-script')});
+              if(path==='/manual'||path==='/manual.html')await writeFile('symbols-proof/'+path.slice(1).replace('.','-')+'-response.txt',data);
+            }catch(error){report.push({path,error:String(error)});}
+          }
+          await writeFile('symbols-proof/routes.json',JSON.stringify(report,null,2));
+          console.log(JSON.stringify(report,null,2));
+          await browser.close();
+          JS
+          node /tmp/symbols-browser/routes.mjs
       - name: Testar manual e matriz publicados
         env:
           MANUAL_URL: https://labmattar-identidade-previa.vitormoreiran.workers.dev/manual?check=${{ github.sha }}

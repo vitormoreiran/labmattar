@@ -67,9 +67,10 @@
         <span id="editorialRoleLabel">ABERTURA</span>
       </div>
       <div id="stageViewport" class="stage-viewport">
-        <article class="artboard" id="artboard" data-profile="opening" data-treatment="m-central" data-has-media="true" aria-label="Prévia da página">
+        <article class="artboard" id="artboard" data-profile="opening" data-treatment="m-central" data-has-media="true" data-text-on-background="false" data-text-on-mask="false" aria-label="Prévia da página">
           <div class="media-scene" id="mediaScene" aria-hidden="true">
             <img id="ambientPhoto" class="ambient-photo" alt="">
+            <div class="ambient-photo-contrast" aria-hidden="true"></div>
             <div class="scene-veil"></div>
             <div class="masked-photo"><img id="primaryPhoto" alt=""></div>
           </div>
@@ -134,7 +135,7 @@
           <button id="duplicateButton" type="button">DUPLICAR PÁGINA</button>
           <button id="deleteButton" type="button">EXCLUIR PÁGINA</button>
         </div>
-        <p class="small-note identity-note">IDENTIDADE / AUTOMÁTICA<br>Univers, Perpetua, margens, alinhamentos, M e responsividade não são controles editáveis.</p>
+        <p class="small-note identity-note">IDENTIDADE / AUTOMÁTICA<br>Univers, Perpetua, margens, alinhamentos, M e responsividade não são controles editáveis.<br><br>CONTRASTE / Quando texto e fotografia ocupam o mesmo campo, o sistema aplica preto 20% à imagem, sem alterar o arquivo original.</p>
       </section>
       <section class="inspector-panel" id="mediaPanel" role="tabpanel" aria-labelledby="mediaTab" hidden>
         <label for="mediaAssetSelect">IMAGEM DO ACERVO</label>

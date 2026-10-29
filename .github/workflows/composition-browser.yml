@@ -32,6 +32,14 @@ jobs:
           mkdir -p public/fonts
           curl --fail --location --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf -o public/fonts/univers-lt-std-45-light.otf
           curl --fail --location --retry 3 https://labmattar.com/fonts/perpetua-titling-light.ttf -o public/fonts/perpetua-titling-light.ttf
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("public/composicao.html")
+          s=p.read_text(encoding="utf-8")
+          s=s.replace("https://labmattar.com/fonts/univers-lt-std-45-light.otf","/fonts/univers-lt-std-45-light.otf")
+          s=s.replace("https://labmattar.com/fonts/perpetua-titling-light.ttf","/fonts/perpetua-titling-light.ttf")
+          p.write_text(s,encoding="utf-8")
+          PY
       - name: Testar composicoes no navegador
         run: |
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &

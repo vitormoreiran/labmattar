@@ -718,7 +718,7 @@
     const width=Math.min(325,window.innerWidth-24);
     panel.style.width=width+"px";
     panel.style.left=Math.max(12,Math.min(window.innerWidth-width-12,anchor.right-width))+"px";
-    panel.style.maxHeight=Math.max(100,window.innerHeight-24)+"px";
+    panel.style.maxHeight=Math.min(510,Math.max(100,window.innerHeight-24))+"px";
     const height=panel.getBoundingClientRect().height;
     let top=anchor.bottom+10;
     if(top+height>window.innerHeight-12){

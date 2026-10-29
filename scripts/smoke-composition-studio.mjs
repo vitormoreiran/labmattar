@@ -39,6 +39,18 @@ async function geometry(){
     return data;
   });
 }
+async function assertEditorialTitleGroups(label){
+  const lines=await page.evaluate(()=>{
+    return [...document.querySelectorAll("#labRenderedTitle .lm-lab-title-line")].map(node=>{
+      const range=document.createRange();
+      range.selectNodeContents(node);
+      return {text:node.textContent,fragments:range.getClientRects().length};
+    });
+  });
+  assert(lines.length===3&&lines[2].text==="E PROCESSOS"&&
+    lines.every(line=>line.fragments===1),
+    label+": editorial title groups unexpectedly wrap: "+JSON.stringify(lines));
+}
 async function proveBoard(label){
   await page.waitForTimeout(110);
   const g=await geometry();
@@ -94,11 +106,13 @@ try{
     "Property selection should replace the index rather than expand the page");
   await clickCard("format","vertical");
   const portrait=await proveBoard("Desktop vertical 1440x900");
+  await assertEditorialTitleGroups("Vertical title group");
   assert(portrait.board.height>500&&portrait.board.width>250,
     "Portrait layout should grow to use the available height");
   await page.screenshot({path:"composition-studio-desktop-portrait.png"});
   await clickCard("format","quadrado");
   const square=await proveBoard("Desktop square 1440x900");
+  await assertEditorialTitleGroups("Square title group");
   assert(approx(square.board.width,square.board.height,1),"Square was not rendered 1:1");
   await page.screenshot({path:"composition-studio-desktop-square.png"});
   await clickCard("format","editorial");
@@ -157,6 +171,10 @@ try{
   await page.waitForTimeout(120);
   const mobile=await proveBoard("Mobile viewport 390x844");
   assert(mobile.board.width<=390,"Mobile canvas is cropped");
+  assert(mobile.stage.height<=844*.47,
+    "Horizontal mobile sheet must not leave an excessive empty letterbox");
+  assert(await page.locator("#labStudioQuickReset").isVisible(),
+    "Mobile studio must keep restore action within the viewport");
   await menuVisible("Mobile complete image controls");
   await page.screenshot({path:"composition-studio-mobile.png"});
   await tab("pagina");
@@ -183,6 +201,8 @@ try{
     "Closing studio should restore normal manual");
   assert(await page.locator(".lm-studio-tool:visible").count()===0,
     "Studio-only controls leak into the original manual");
+  assert(await page.locator("#labStudioQuickReset").isHidden(),
+    "Mobile reset button must not intrude on the original manual");
   assert(await page.locator("#labArtboard").isVisible(),"Original applied page disappeared");
   assert(await page.locator("#construcao").count()===1,"The existing applied study was removed");
   await page.locator("#labStudioToggle").click();

@@ -219,7 +219,7 @@
     active=true;
     document.body.classList.add("lm-studio-open");
     lab.dataset.studio="true";
-    if(overview)launch.insertBefore(overview,toggle);
+    if(overview)toolbar.insertBefore(overview,launch);
     toggle.setAttribute("aria-pressed","true");
     toggleText.textContent="VOLTAR AO MANUAL";
     toggle.setAttribute("aria-label","Sair do editor e voltar ao manual");

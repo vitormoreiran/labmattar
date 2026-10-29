@@ -14,14 +14,14 @@
 
   const fieldsByPanel={
     pagina:["labFormat","labMargin","labColor","labGuides"],
-    texto:["labPlacement","labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
-    imagem:["labImage","labPhoto","labRelation","labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
+    texto:["labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
+    imagem:["labImage","labPhoto","labRelation","labGap","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
   };
   const label={
     labFormat:"Formato",labMargin:"Margem",labColor:"Fundo",labGuides:"Guias",
-    labPlacement:"Altura do texto",labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
+    labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
     labBodyMode:"Leitura",labTitleInput:"Editar título",labBodyInput:"Editar texto",
-    labImage:"Aplicação",labPhoto:"Fotografia",labRelation:"Relação",labMPosition:"Posição M",
+    labImage:"Aplicação",labPhoto:"Fotografia",labRelation:"Relação texto + M",labGap:"Distância",
     labMScale:"Escala M",labFocalPreview:"Enquadrar",labFocusX:"Foco X",
     labFocusY:"Foco Y",labSymbol:"Assinatura"
   };
@@ -29,18 +29,13 @@
     format:{horizontal:"16:9",vertical:"9:16",quadrado:"1:1",editorial:"√2:1"},
     color:{neutral:"Papel",beige:"Bege",green:"Verde",red:"Vermelho",blue:"Azul",brown:"Marrom"},
     guides:{nenhuma:"Oculto",margens:"Margens",grid:"12 colunas"},
-    placement:{superior:"Alto",central:"Centro",inferior:"Baixo"},
+    
     type:{alternada:"U + P",univers:"Univers",perpetua:"Perpetua"},
     bodyMode:{oculto:"Só título",visivel:"Título + texto"},
     image:{nenhuma:"Sem foto",recorte:"Com M",inteira:"Integral"},
     mMode:{janela:"Janela",corte:"Corte lateral",sutil:"Marca sutil"},
     photo:{"64":"Imagem 01","179":"Imagem 02","151":"Imagem 03"},
-    relation:{separada:"Separados",sobreposta:"Sobrepostos"},
-    mPosition:{
-      "superior-esquerda":"↖","superior-centro":"↑","superior-direita":"↗",
-      "centro-esquerda":"←",centro:"Centro","centro-direita":"→",
-      "inferior-esquerda":"↙","inferior-centro":"↓","inferior-direita":"↘"
-    },
+    relation:{"lado-a-lado":"Lado a lado",topo:"Topo",centro:"Centro",base:"Base",sobreposta:"Sobrepostos"},
     symbol:{none:"Nenhuma","M.svg":"M mestre"}
   };
   const ratio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
@@ -144,8 +139,8 @@
     {name:"aplicacao",fields:["labImage"]},
     {name:"fotografia",fields:["labPhoto"]},
     {name:"foco",fields:["labFocalPreview","labFocusX","labFocusY"]},
-    {name:"geometria",fields:["labMPosition","labMScale"]},
-    {name:"texto",fields:["labRelation"]},
+    {name:"relacao",fields:["labRelation","labGap"]},
+    {name:"geometria",fields:["labMScale"]},
     {name:"assinatura",fields:["labSymbol"]}
   ];
   for(const spec of imageSpec){
@@ -154,8 +149,8 @@
     container.setAttribute("role","group");
     const heading={
       aplicacao:"IMAGEM",fotografia:"FOTOGRAFIA",
-      foco:"ENQUADRAMENTO",geometria:"GEOMETRIA DO M",
-      texto:"TEXTO E IMAGEM",assinatura:"ASSINATURA"
+      foco:"ENQUADRAMENTO",relacao:"TEXTO + M",geometria:"ESCALA DO M",
+      assinatura:"ASSINATURA"
     }[spec.name];
     container.append(make("span","lm-studio-image-block-label",heading));
     imageFlat.append(container);

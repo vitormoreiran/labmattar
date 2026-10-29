@@ -244,39 +244,27 @@ try{
     "Image / M must be a single flat editing surface");
   await flatImageVisible("Photo panel without image");
   await clickCard("image","recorte");
-  assert(await page.locator("#labMMode").isVisible(),"M-use modes must be visible without opening a folder");
+  assert(await page.locator("#labMMode").isHidden(),"Invented M-use modes must not be exposed");
+  assert(await page.locator("#labMMode").inputValue()==="janela","M geometry must use the single structural mode");
   await flatImageVisible("Full M controls visible");
-  await clickCard("mMode","janela");
   let mask=await mGeometry();
   assert(mask.mode==="janela"&&mask.vector.includes("m-publicado.svg"),
-    "Window mode must use the original M SVG");
+    "The composition must use the original M SVG");
   assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2,
-    "Window M must fit completely inside the page: "+JSON.stringify(mask));
+    "The M must remain inside the structural page area: "+JSON.stringify(mask));
   assert(mask.veil.includes("0.2")&&mask.veilOpacity==="1",
     "Photo text contrast must remain an automatic 20% black veil");
   assert(await page.locator("#labRelation").inputValue()==="separada"&&
     await page.locator("#labArtboard").getAttribute("data-m-text")==="false",
-    "Window mode should start with distinct typography and M fields");
-  await page.screenshot({path:"composition-studio-m-janela.png"});
+    "Typography and M fields must begin as distinct structural layers");
+  await page.screenshot({path:"composition-studio-m-structural.png"});
 
   await page.locator("#labPrecision-mScale").fill("88");
   await page.locator("#labPrecision-mScale").press("Enter");
   mask=await mGeometry();
   assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2,
-    "Increasing window scale must not crop the M: "+JSON.stringify(mask));
-  await clickCard("mMode","corte");
-  mask=await mGeometry();
-  assert(mask.mode==="corte"&&mask.m.right>mask.board.right+8,
-    "Lateral cut must be deliberate and visibly bleed beyond the page: "+JSON.stringify(mask));
-  await page.screenshot({path:"composition-studio-m-corte.png"});
+    "Increasing M scale must not create an invented bleed mode: "+JSON.stringify(mask));
 
-  await clickCard("mMode","sutil");
-  mask=await mGeometry();
-  assert(mask.mode==="sutil"&&mask.imageHidden&&Number(mask.mOpacity)<.25,
-    "Subtle mode must become a quiet M over a full photograph: "+JSON.stringify(mask));
-  await page.screenshot({path:"composition-studio-m-sutil.png"});
-
-  await clickCard("mMode","janela");
   await clickCard("photo","151");
   const focal=page.locator("#labFocalPreview");
   const rect=await focal.boundingBox();
@@ -387,10 +375,9 @@ try{
   assert(await page.locator(".lm-studio-detail:visible").count()===0,
     "Expanded studio controls must not leak into the regular manual");
   assert(await page.locator("#construcao").count()===1,"The existing applied study was removed");
-  assert(await page.locator("#aplicacoes-do-m").count()===1,"Three original-M applications need an accompanying guide");
-  assert(await page.locator("#labMMode").count()===1&&
-    await page.locator("#labMMode").evaluate(el=>Boolean(el.closest(".lm-inspector-primary"))),
-    "M use control must return to the original manual without duplication");
+  assert(await page.locator("#regras-de-composicao").count()===1,"Composition rules must remain visible in the manual");
+  assert(await page.locator("#labMMode").count()===1&&await page.locator("#labMMode").isHidden(),
+    "The fixed M structural mode must remain internal and not become a user-facing choice");
   await page.locator("#labStudioToggle").click();
   assert(await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
     "The studio cannot be reopened");

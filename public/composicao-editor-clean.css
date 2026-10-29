@@ -165,6 +165,19 @@ body.lm-studio-open #laboratorio .lm-lab-preview-foot span:last-child{
   margin-left:auto;
   color:#777774;
 }
+/* Only surface actionable status. Success metadata belongs in the manual,
+   not below an otherwise healthy artboard. */
+body.lm-studio-open #laboratorio .lm-lab-preview:has(#labArtboard[data-state=ok]){
+  grid-template-rows:minmax(0,1fr);
+}
+body.lm-studio-open #laboratorio .lm-lab-preview:has(#labArtboard[data-state=ok]) .lm-lab-preview-foot{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-preview:has(#labArtboard[data-state=overflow]) .lm-lab-preview-foot{
+  display:flex!important;
+  color:#a34431;
+}
+
 /* Inspector. No nested card surfaces, no extra headers, no shadow layers. */
 body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
   grid-area:inspector;

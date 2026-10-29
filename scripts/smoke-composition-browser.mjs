@@ -66,6 +66,12 @@ try{
   assert(original.state==="ok","Original typographic composition overflows its page");
   // Editorial-control UI has illustrated, keyboard-focusable choices.
   assert(await page.locator("[data-lab-choice]").count()>=30,"Illustrated choices are missing");
+  assert(await page.locator("[data-choice-for]").count()===0,"Duplicated visual controls remain in the inspector");
+  assert(await page.locator("[data-lab-choice='format']").count()===4,"One format group should have four options");
+  assert(await page.locator("[data-lab-choice='placement']").count()===4,"One placement group should have four options");
+  assert(await page.locator("[data-lab-choice='image']").count()===3,"One image group should have three options");
+  assert(await page.locator("#labFocalPreview").isDisabled(),"Focal point must be inactive without a photograph");
+  assert(await page.locator("[data-control-effect]").count()===4,"Scale diagrams must match the four meaningful parameters");
   assert(await page.locator("[data-lab-choice='format'][data-value='horizontal']").getAttribute("aria-pressed")==="true","Initial choice is not synchronized");
   assert(await page.locator(".lm-lab-presets .lm-ctrl-preset-visual").count()===3,"Three source presets should each have an illustration");
   await page.evaluate(()=>{
@@ -102,33 +108,50 @@ try{
   const colorStateBefore=await page.locator("#labColor").inputValue();
   await page.locator("[data-lab-choice='image'][data-value='recorte']").click();
   assert((await read()).image==="recorte","M mask illustration did not activate the image");
+  assert(await page.locator("#labFocalPreview").isEnabled(),"Focal point must be active with a photo");
   assert(await page.locator("[data-lab-choice='color'][data-value='green']").isDisabled(),"Color selector must disable while photography is present");
   await page.locator("[data-lab-choice='photo'][data-value='151']").click();
   assert((await read()).photoSrc.includes("BOXDOSENTIR-151.jpg"),"Thumbnail did not change the photograph");
   assert(await page.locator("#labFocusImage").evaluate(el=>getComputedStyle(el).backgroundImage.includes("151.jpg")),"Focus diagram did not follow the selected photo");
   await page.locator("[data-lab-choice='mPosition'][data-value='esquerda']").click();
   assert(await page.locator("#labMPosition").inputValue()==="esquerda","M-placement illustration is inert");
+  const focal=page.locator("#labFocalPreview");
+  await focal.scrollIntoViewIfNeeded();
+  const rect=await focal.boundingBox();
+  await focal.click({position:{x:rect.width*.80,y:rect.height*.25}});
+  assert(await page.locator("#labFocusX").inputValue()==="80"&&await page.locator("#labFocusY").inputValue()==="25",
+    "Illustrated image focus click must adjust both sliders");
+  await focal.focus();
+  await page.keyboard.press("ArrowLeft");
+  await page.keyboard.press("ArrowDown");
+  assert(await page.locator("#labFocusX").inputValue()==="75"&&await page.locator("#labFocusY").inputValue()==="30",
+    "Focal point arrow keys must change the live X/Y values");
+  assert((await read()).photoSrc.includes("151.jpg"),"Focal editing must preserve the photo selection");
+  await range("labMScale",85);
+  assert(await page.locator('[data-control-effect="mask"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-mask-scale"))==="0.85",
+    "M scale diagram must follow the original M scale slider");
   await page.evaluate(()=>{
     const el=document.querySelectorAll(".lm-lab-section")[2];
     window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
   });
   await page.screenshot({path:"composition-lab-controls-media.png",fullPage:false});
   await page.locator("[data-lab-choice='image'][data-value='nenhuma']").click();
+  assert(await page.locator("#labFocalPreview").isDisabled(),"Focal surface should deactivate without a photo");
   assert(await page.locator("#labColor").inputValue()===colorStateBefore,"Switching image mode should preserve color selection");
   assert(await page.locator("[data-lab-choice='color'][data-value='green']").isEnabled(),"Color swatches did not reactivate");
   await page.locator("#labReset").click();
   await page.locator("#labArtboard").screenshot({path:"composition-lab-typography.png"});
 
-  // Illustrated choices must change the same state as the original selects.
-  await page.locator('[data-choice-for="format"] [data-choice="quadrado"]').click();
-  assert(await page.locator("#labFormat").inputValue()==="quadrado","Illustrated format is inert");
-  await page.locator('[data-choice-for="placement"] [data-choice="central"]').click();
-  assert(await page.locator("#labPlacement").inputValue()==="central","Illustrated alignment is inert");
-  await page.locator('[data-choice-for="image"] [data-choice="inteira"]').click();
-  assert(await page.locator("#labImage").inputValue()==="inteira","Illustrated image mode is inert");
+  // The same controls provide the visual explanation and actual action.
+  // No redundant second row or shadow state is allowed.
+  await range("labMargin",12);
+  assert(await page.locator('[data-control-effect="margin"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-margin"))==="12%","Margin diagram is not live");
+  await range("labTextWidth",80);
+  assert(await page.locator('[data-control-effect="width"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-width"))==="80%","Column diagram is not live");
+  await range("labTitleScale",120);
+  assert(await page.locator('[data-control-effect="title"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-title-scale"))==="1.2","Title scale diagram is not live");
   await page.locator("#labReset").click();
-  assert(await page.locator('[data-choice-for="format"] [data-choice="horizontal"]').getAttribute("aria-pressed")==="true","Format choice active state not synchronized");
-    await page.locator('[data-lab-preset="mascara"]').click();
+  await page.locator('[data-lab-preset="mascara"]').click();
   await page.waitForTimeout(200);
   let data=await read();
   assert(data.image==="recorte"&&data.lines===3,"Masked photo preset did not change composition");

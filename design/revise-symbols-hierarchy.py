@@ -36,6 +36,7 @@ style='''<style id="lm-reading-hierarchy">
 @media(max-width:760px){#estrutura .lm-reading-intro{grid-template-columns:1fr;gap:18px;margin-bottom:25px}#estrutura .lm-reading-intro h2{font-size:clamp(35px,10vw,58px)}#estrutura .corners{padding:25px 0}#estrutura .corners .center-piece .copy{font-size:13px}}
 </style>'''
 assert '</head>' in html
-if 'id="lm-reading-hierarchy"' not in html:\n    html=html.replace('</head>',style+'</head>',1)
+if 'id="lm-reading-hierarchy"' not in html:
+    html=html.replace('</head>',style+'</head>',1)
 p.write_text(html,encoding="utf-8")
 print("Symbols: heading, explanation and artwork reorganized without SVG mutation")

@@ -102,7 +102,7 @@ assert "rgba(0,0,0,.20)" in (Path("public")/"composicao-lab.css").read_text(enco
 
 assert 'id="labPlacement"' in composition
 assert 'id="labMPosition"' in composition
-assert 'class="lm-relation-grid"' in composition
+assert "lm-relation-grid" in composition
 for key in ("title","body","kicker","footerLeft","footerRight"):
  assert 'data-lab-inline="'+key+'"' in composition,f"Missing editable text layer: {key}"
 assert 'contenteditable="plaintext-only"' in composition

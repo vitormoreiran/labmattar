@@ -319,9 +319,9 @@ try{
     relation:document.querySelector("#labRelation").value,
     overlaps:el.dataset.mText==="true",validation:el.dataset.state
   }));
-  assert(maskTextState.relation==="separada"&&
+  assert(maskTextState.relation==="lado-a-lado"&&
     ["ok","collision","overflow"].includes(maskTextState.validation),
-    "The text/M relation must stay selected and expose its validation state: "+
+    "The text/M relationship must stay selected and expose its validation state: "+
     JSON.stringify(maskTextState));
   await page.screenshot({path:"composition-studio-m-structural.png"});
 
@@ -329,9 +329,13 @@ try{
   await page.locator("#labPrecision-mScale").fill(String(Math.min(88,formatScaleMax)));
   await page.locator("#labPrecision-mScale").press("Enter");
   const scaleBeforeMove=await page.locator("#labMScale").inputValue();
-  await page.locator('[data-lab-choice="mPosition"][data-value="centro-esquerda"]').click();
+  await page.locator('[data-lab-choice="relation"][data-value="topo"]').click();
   assert(await page.locator("#labMScale").inputValue()===scaleBeforeMove,
-    "Moving the M must not change its scale");
+    "Changing the text + M relationship must not change M scale");
+  await page.locator("#labGap").fill("7");
+  await page.locator("#labGap").dispatchEvent("input");
+  assert(await page.locator("#labMScale").inputValue()===scaleBeforeMove,
+    "Changing text + M distance must not change M scale");
   mask=await mGeometry();
   assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2&&
     mask.m.top>=mask.board.top-2&&mask.m.bottom<=mask.board.bottom+2,

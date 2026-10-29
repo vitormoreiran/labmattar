@@ -10,6 +10,7 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   --type-display:clamp(38px,5.5cqw,94px);
   --type-body:clamp(15px,1.34cqw,18px);
   --type-detail:clamp(11px,1.02cqw,13px);
+  --lm-image-contrast-alpha:.20;
   width:100%;
   max-width:none;
   min-width:0;
@@ -33,7 +34,21 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   overflow:hidden;
   pointer-events:none;
 }
+/* Photo legibility: a 20% black overlay belongs to the image, not to the text.
+   It only activates when content is over photographic media; the M overlay
+   is separately clipped by the existing mask. */
+.artboard .media-scene::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:rgb(0 0 0 / var(--lm-image-contrast-alpha));
+  opacity:0;
+  pointer-events:none;
+}
+.artboard[data-contrast-background="true"] .media-scene::before{opacity:1}
 .artboard .ambient-photo{
+  z-index:0;
   position:absolute;
   inset:-7%;
   width:114%;
@@ -46,10 +61,12 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
 .artboard .scene-veil{
   position:absolute;
   inset:0;
+  z-index:2;
   background:linear-gradient(90deg,rgba(8,11,9,.84) 0%,rgba(8,11,9,.67) 43%,rgba(8,11,9,.20) 100%);
 }
 .artboard .masked-photo{
   position:absolute;
+  z-index:3;
   left:52cqw;
   top:50%;
   width:min(46cqw,114cqh);
@@ -60,6 +77,16 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   -webkit-mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;
   mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;
 }
+.artboard .masked-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:rgb(0 0 0 / var(--lm-image-contrast-alpha));
+  opacity:0;
+  pointer-events:none;
+}
+.artboard[data-contrast-m="true"] .masked-photo::after{opacity:1}
 .artboard .masked-photo img{
   display:block;
   width:100%;
@@ -214,7 +241,7 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   bottom:18%;
   left:6%;
   right:6%;
-  z-index:1;
+  z-index:3;
   display:flex;
   align-items:stretch;
   justify-content:center;

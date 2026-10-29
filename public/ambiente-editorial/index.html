@@ -133,6 +133,41 @@ body:has(.ed-root){overflow:auto;background:#f7f6f2}.ed-root{--paper:#f7f6f2;--i
 .ed-sheet[data-editorial-role="development"] .role-body{width:min(64%,65ch)}
 .ed-sheet-wrap.mobile .ed-sheet .role-body{font-size:16px!important;line-height:1.5!important}
 .ed-sheet-wrap.mobile .ed-sheet .role-subtitle{font-size:12px!important}
+
+/* SOURCE FIDELITY / Portfolio Chapter 2.
+ * Provenance: acervo-publicado-2026-10-28/public/assets/index-DaKY3Ax1.css
+ * The published site defines a true 990.08:743.18 M stage,
+ * background blur(16px), image brightness(.66), and Perpetua project headlines.
+ * Keep this isolated from editor chrome and from the manual. */
+.ed-sheet[data-editorial-role="project"] .role-title,
+.ed-sheet[data-editorial-role="section"] .role-title{
+  font-family:LMPerpetua,Georgia,serif!important;
+  font-weight:300!important;
+  font-synthesis:none!important;
+  letter-spacing:-.025em!important;
+  line-height:.82!important;
+}
+.ed-sheet[data-editorial-role="project"] .ed-original-image,
+.ed-sheet[data-editorial-role="section"] .ed-original-image{
+  aspect-ratio:990.08 / 743.18!important;
+  height:auto!important;
+  width:min(100%,calc(100cqh * 1.332))!important;
+  -webkit-mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat!important;
+  mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat!important;
+}
+.ed-sheet[data-editorial-role="project"] .ed-original-image img,
+.ed-sheet[data-editorial-role="section"] .ed-original-image img{filter:brightness(.66)!important}
+.ed-sheet[data-editorial-role="project"]:before,
+.ed-sheet[data-editorial-role="section"]:before{
+  filter:blur(16px) saturate(1.02) brightness(.78)!important;
+  transform:scale(1.045)!important;
+}
+.ed-sheet-wrap.mobile .ed-sheet[data-editorial-role="project"] .ed-original-image,
+.ed-sheet-wrap.mobile .ed-sheet[data-editorial-role="section"] .ed-original-image{
+  width:143.9%!important;
+  height:auto!important;
+  max-width:none!important;
+}
 </style></head><body><main class="ed-root"><header class="ed-head"><a class="ed-brand" href="/manual">LABMATTAR</a><span class="ed-head-divider"></span><div class="ed-document"><input id="docTitle" aria-label="Nome da apresentação" value="Cada corpo abre um mundo"><small id="status">RASCUNHO LOCAL</small></div><div class="ed-head-actions"><button id="undo" title="Desfazer (Ctrl+Z)">↶ DESFAZER</button><button id="redo" title="Refazer (Ctrl+Shift+Z)">↷ REFAZER</button><button id="device">MOBILE</button><button id="preview">VISUALIZAR</button><button id="importDoc">ABRIR JSON</button><input id="importFile" type="file" accept=".json,application/json" hidden><button id="download">EXPORTAR JSON ↗</button></div></header><div class="ed-main"><aside class="ed-side"><nav class="ed-side-nav"><button data-tab="pages" class="current">PÁGINAS</button><button data-tab="insert">INSERIR</button><button data-tab="layers">CAMADAS</button><button data-tab="library">ACERVO</button><button data-tab="models">MODELOS</button></nav><div id="sideContent" class="ed-side-content"></div></aside><section class="ed-stage"><div class="ed-stage-bar"><span id="pageIndex">COMPOSIÇÃO / 01</span><span id="viewMode">VISUALIZAÇÃO HORIZONTAL</span></div><div id="sheetWrap" class="ed-sheet-wrap"><article class="ed-sheet" id="sheet"><div class="ed-sheet-top"><span>LABMATTAR</span><span id="sheetCounter">01 / 02</span></div><div class="ed-sheet-content"><div class="ed-texts" id="texts"></div><div class="ed-image-field" id="imageField"></div></div><div class="ed-sheet-bottom"><span>LABMATTAR / IDENTIDADE VISUAL</span><span>2026</span></div></article></div><div class="ed-stage-bottom"><button id="prev">← ANTERIOR</button><span>EDIÇÃO DIRETA / TEXTO E COMPOSIÇÃO</span><button id="next">PRÓXIMA →</button></div><div class="ed-filmstrip" id="filmstrip" aria-label="Sequência de páginas"></div></section><aside class="ed-inspector"><div class="ed-section-heading">PROPRIEDADES <span>↗</span></div><div id="inspector" class="ed-prop"></div></aside></div></main><script>
 const makeId=()=>Math.random().toString(36).slice(2,10);
 const starter=[{id:"p1",name:"Abertura",mode:"opening",treatment:"opening",nodes:[{id:"a1",role:"title",text:"CADA CORPO ABRE UM MUNDO"},{id:"a2",role:"subtitle",text:"GASTROPERFORMANCE"},{id:"a3",role:"body",text:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo."}],images:["https://labmattar.com/assets/chapter2/aleteia.jpg"]},{id:"p2",name:"Desenvolvimento",mode:"project",treatment:"portfolio",nodes:[{id:"b1",role:"title",text:"CORPO, IMAGEM E MEMÓRIA"},{id:"b2",role:"subtitle",text:"01 / INVESTIGAÇÃO SENSÍVEL"},{id:"b3",role:"body",text:"A composição articula texto, matéria, imagens e gestos em uma narrativa que se transforma ao longo da experiência."}],images:["https://labmattar.com/assets/chapter2/concha-y-toro.jpg"]},{id:"p3",name:"Detalhe",mode:"development",treatment:"detail",nodes:[{id:"c1",role:"title",text:"FORMAS DE SENTIR"},{id:"c2",role:"subtitle",text:"02 / MATÉRIA E PAISAGEM"},{id:"c3",role:"body",text:"Um recorte da imagem amplia a composição e transforma o espaço de leitura."}],images:["https://labmattar.com/assets/chapter2/dadiva.jpg"]}];

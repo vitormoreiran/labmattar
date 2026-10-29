@@ -137,7 +137,7 @@
   }
   function openTool(entry){
     if(!active)return;
-    if(entry.field.hidden)return;
+    if(entry.field.hidden||entry.input.disabled)return;
     if(currentEntry===entry){closeTool({focus:true});return}
     closeTool();
     const layout=layouts.get(entry.panelName);
@@ -154,12 +154,13 @@
   function syncTools(){
     if(!active)return;
     for(const entry of entries.values()){
-      entry.button.hidden=entry.field.hidden;
+      entry.button.hidden=entry.field.hidden||Boolean(entry.input.disabled);
       entry.value.textContent=fieldValue(entry.id);
       entry.button.setAttribute("aria-label",label[entry.id]+": "+entry.value.textContent);
     }
     if(currentEntry){
-      if(currentEntry.field.hidden||layouts.get(currentEntry.panelName)?.panel.hidden){
+      if(currentEntry.field.hidden||currentEntry.input.disabled||
+         layouts.get(currentEntry.panelName)?.panel.hidden){
         closeTool();
       }else{
         layouts.get(currentEntry.panelName).value.textContent=fieldValue(currentEntry.id);

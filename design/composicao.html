@@ -244,6 +244,32 @@ E PROCESSOS</textarea><small>As quebras indicadas aqui são editoriais. A fonte 
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labImageTitle" class="lm-lab-field-title">Aplicação fotográfica</div><select id="labImage" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="nenhuma">Sem imagem</option><option value="recorte">Fotografia recortada no M</option><option value="inteira">Fotografia integral</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labImageTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="nenhuma" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="none"><i></i><i></i></span></span><span class="lm-ctrl-name">Sem foto</span><span class="lm-ctrl-meta">Campo liso</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="recorte" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="mask"><i></i><i></i></span></span><span class="lm-ctrl-name">Máscara M</span><span class="lm-ctrl-meta">Foto recortada</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="inteira" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="full"><i></i><i></i></span></span><span class="lm-ctrl-name">Integral</span><span class="lm-ctrl-meta">Imagem total</span></button></div><small class="lm-ctrl-helper">O recorte utiliza o M oficial sem deformar sua geometria.</small></div>
+        <div class="lm-lab-field lm-ctrl-choice-field lm-m-usage-field">
+          <div id="labMModeTitle" class="lm-lab-field-title">Uso do M</div>
+          <select id="labMMode" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
+            <option value="janela">Janela / M completo</option>
+            <option value="corte">Recorte lateral / M em sangria</option>
+            <option value="sutil">Marca sutil / imagem integral</option>
+          </select>
+          <div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-m-modes" role="group" aria-labelledby="labMModeTitle">
+            <button type="button" class="lm-ctrl-choice" data-lab-choice="mMode" data-value="janela" aria-pressed="true">
+              <span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-m-mode-figure" data-usage="janela"><i></i><i></i></span></span>
+              <span class="lm-ctrl-name">Janela</span>
+              <span class="lm-ctrl-meta">Forma inteira</span>
+            </button>
+            <button type="button" class="lm-ctrl-choice" data-lab-choice="mMode" data-value="corte" aria-pressed="false">
+              <span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-m-mode-figure" data-usage="corte"><i></i><i></i></span></span>
+              <span class="lm-ctrl-name">Corte lateral</span>
+              <span class="lm-ctrl-meta">Sangria</span>
+            </button>
+            <button type="button" class="lm-ctrl-choice" data-lab-choice="mMode" data-value="sutil" aria-pressed="false">
+              <span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-m-mode-figure" data-usage="sutil"><i></i><i></i></span></span>
+              <span class="lm-ctrl-name">Marca sutil</span>
+              <span class="lm-ctrl-meta">Segundo plano</span>
+            </button>
+          </div>
+          <small class="lm-ctrl-helper">O mesmo vetor do M; três modos de construir a relação com a fotografia.</small>
+        </div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia do projeto</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="179" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg"></span></span><span class="lm-ctrl-name">Imagem 02</span><span class="lm-ctrl-meta">Projeto</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="151" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg"></span></span><span class="lm-ctrl-name">Imagem 03</span><span class="lm-ctrl-meta">Detalhe</span></button></div><small class="lm-ctrl-helper">Imagens de Cada Corpo Abre um Mundo, para testar o enquadramento.</small></div>
@@ -288,13 +314,27 @@ E PROCESSOS</textarea><small>As quebras indicadas aqui são editoriais. A fonte 
       <div class="lm-lab-preview-foot"><strong id="labStatus" role="status" data-state="ok">COMPOSIÇÃO / SUPERFÍCIE NEUTRA</strong><span id="labPhotoStatus">SEM TRATAMENTO FOTOGRÁFICO</span></div>
     </div>
   </div>
+  <section class="chapter lm-m-guide" id="aplicacoes-do-m" aria-labelledby="lmMGuideTitle">
+    <p class="eyebrow">03 / APLICAÇÕES DO M / ESTUDO DE COMPOSIÇÃO</p>
+    <h2 id="lmMGuideTitle">UM VETOR.<br><span class="perpetua">TRÊS RELAÇÕES.</span></h2>
+    <p class="lm-m-guide-lead">O desenho do M permanece intacto. O que muda é a relação entre a letra, a fotografia e o espaço da página. Estas aplicações são estudos para validação, não uma substituição das regras aprovadas da identidade.</p>
+    <div class="lm-m-guide-grid">
+      <article><span class="lm-m-guide-preview" data-m-example="janela"><i></i><i></i></span>
+        <h3>Janela</h3><p>O M aparece inteiro, como campo fotográfico protagonista. Priorizar uma silhueta reconhecível, com respiro em torno do recorte.</p><small>Evitar cortar as extremidades ou deixar a imagem ambiente competir com o vetor.</small></article>
+      <article><span class="lm-m-guide-preview" data-m-example="corte"><i></i><i></i></span>
+        <h3>Corte lateral</h3><p>O mesmo M avança deliberadamente além do limite da página. A sangria deve ser evidente, não parecer um erro de enquadramento.</p><small>Evitar cortes aleatórios que descaracterizem a letra.</small></article>
+      <article><span class="lm-m-guide-preview" data-m-example="sutil"><i></i><i></i></span>
+        <h3>Marca sutil</h3><p>A fotografia ocupa a superfície e o M funciona como uma presença discreta, sem disputar protagonismo com o texto.</p><small>Evitar utilizar a marca como um segundo título.</small></article>
+    </div>
+    <p class="lm-m-guide-rule"><strong>Regra compartilhada:</strong> quando houver tipografia sobre fotografia, aplica-se preto a 20% à imagem sob o texto. A forma vetorial do M não é esticada nem refeita.</p>
+  </section>
   <div class="lm-lab-legend">
     <div><b>CONSTRUIR</b><p>Escolha um exemplo. Ajuste a superfície em Página, a hierarquia em Texto e o recorte em Imagem / M.</p></div>
     <div><b>COMPARAR</b><p>Altere um parâmetro por vez: formato, escala ou enquadramento. Observe o efeito na prova ao lado.</p></div>
     <div><b>VERIFICAR</b><p>O texto não pode sair das margens. Com texto sobre foto, o preto 20% entra automaticamente. Observe os avisos de legibilidade.</p></div>
   </div>
   <p class="lm-lab-lead">Os exemplos são testes de composição, não novas normas. A aplicação estudada acima continua sendo a referência.</p>
-</section><section class="chapter"><p class="eyebrow">03 / O QUE AINDA PRECISA SER VALIDADO</p><div class="notes"><article><h3>Superfície e proporção</h3><p>Os formatos e margens agora podem ser testados no laboratório. Suas escalas definitivas ainda dependem de comparação visual com páginas publicadas, especialmente em telas verticais.</p></article><article><h3>Símbolo e palavra</h3><p>O M fotográfico, os nove vasos e a composição tipográfica são estudados separadamente. Posições e relações de escala só se tornam norma quando verificadas em diferentes aplicações reais.</p></article><article><h3>Imagem e campo cromático</h3><p>O véu preto de 20% em fotografias sob texto já é regra. Enquadramentos, campos azuis ou marrons e usos da cor sem imagem permanecem sujeitos à avaliação editorial.</p></article></div></section></main>
+</section><section class="chapter"><p class="eyebrow">04 / O QUE AINDA PRECISA SER VALIDADO</p><div class="notes"><article><h3>Superfície e proporção</h3><p>Os formatos e margens agora podem ser testados no laboratório. Suas escalas definitivas ainda dependem de comparação visual com páginas publicadas, especialmente em telas verticais.</p></article><article><h3>Símbolo e palavra</h3><p>O M fotográfico, os nove vasos e a composição tipográfica são estudados separadamente. Posições e relações de escala só se tornam norma quando verificadas em diferentes aplicações reais.</p></article><article><h3>Imagem e campo cromático</h3><p>O véu preto de 20% em fotografias sob texto já é regra. Enquadramentos, campos azuis ou marrons e usos da cor sem imagem permanecem sujeitos à avaliação editorial.</p></article></div></section></main>
 <script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script>
 <script id="lm-case-demonstration">
 (()=>{

@@ -27,6 +27,9 @@ try{
  if(await page.locator('#titleFamily').count())throw new Error('Identity family must not be a free inspector setting');
  await page.locator('[data-tab="models"]').click();
  if(await page.locator('[data-treatment]').count())throw new Error('Media treatment must not be part of editorial profiles');
+ await page.locator('[data-tab="layers"]').click();
+ await page.locator('#layerImage').click();
+ await page.locator('#mediaTreatment').selectOption('portfolio');
  await page.locator('#sheet.ed-source-page[data-editorial-role="project"][data-treatment="portfolio"] .chapter2-stage-stack .chapter2-m-image').waitFor();
  const ratio=await page.locator('.chapter2-stage-stack').evaluate(el=>{const r=el.getBoundingClientRect();return r.width/r.height});
  if(Math.abs(ratio-990.08/743.18)>.03)throw new Error('M distorcido: '+ratio);

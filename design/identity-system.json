@@ -62,6 +62,21 @@
       "detail"
     ]
   },
+  "image": {
+    "textContrast": {
+      "status": "approved",
+      "trigger": "visible text overlaps photographic area",
+      "veilColor": "#000000",
+      "veilOpacity": 0.2,
+      "targets": [
+        "photographic background",
+        "image clipped by M",
+        "unmasked image"
+      ],
+      "otherwise": "no automatic veil",
+      "notes": "The 20% black veil belongs to the photo layer and follows its clipping; it is separate from atmospheric blur and tonal treatments."
+    }
+  },
   "colors": {
     "base": {
       "ink": "#181818",

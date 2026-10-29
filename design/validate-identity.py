@@ -29,6 +29,14 @@ assert 'href="/composicao-lab.css"' in composition
 assert 'src="/composicao-lab.js"' in composition
 assert 'href="/composicao-lab-controls.css"' in composition, "Illustrated control stylesheet missing"
 assert 'href="/composicao-studio.css"' in composition, "Viewport studio stylesheet missing"
+assert 'href="/composicao-editor-clean.css"' in composition, "Focused editor treatment missing"
+clean_css=(Path("public")/"composicao-editor-clean.css").read_text(encoding="utf-8")
+assert "grid-template-columns:minmax(0,1fr) 322px" in clean_css
+assert "lm-studio-tool[aria-expanded=true]" in clean_css
+assert "lm-studio-image-flat" in clean_css
+assert "entry.button.after(layout.detail)" in (Path("public")/"composicao-studio.js").read_text(encoding="utf-8")
+assert "lm-studio-detail-body" in clean_css
+
 assert 'src="/composicao-studio.js"' in composition, "Viewport studio behavior missing"
 assert 'id="labStudioToggle"' in composition, "Focused editing entry must be visible"
 studio_css=(Path("public")/"composicao-studio.css").read_text(encoding="utf-8")

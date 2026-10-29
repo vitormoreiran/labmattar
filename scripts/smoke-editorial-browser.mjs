@@ -18,6 +18,15 @@ try{
  await page.locator('[data-model="project"]').click();
  await page.locator('[data-treatment="portfolio"]').click();
  await page.locator('[data-example="1"]').click();
+ const titleFont=await page.locator('#sheet .role-title').evaluate(el=>({family:getComputedStyle(el).fontFamily,chosen:el.dataset.family,left:getComputedStyle(el).left,top:getComputedStyle(el).top}));
+ if(titleFont.chosen!=='perpetua'||!titleFont.family.includes('LM Perpetua Official'))throw new Error('Perpetua nao aplicada ao titulo de projeto: '+JSON.stringify(titleFont));
+ await page.locator('#sheet .role-title').click();
+ const familyControl=page.locator('#titleFamily');
+ await familyControl.selectOption('univers');
+ const universFont=await page.locator('#sheet .role-title').evaluate(el=>getComputedStyle(el).fontFamily);
+ if(!universFont.includes('LM Univers Official'))throw new Error('Univers nao aplicada ao titulo: '+universFont);
+ await familyControl.selectOption('perpetua');
+
  await page.locator('#sheet.ed-source-page[data-editorial-role="project"][data-treatment="portfolio"] .chapter2-stage-stack .chapter2-m-image').waitFor();
  const ratio=await page.locator('.chapter2-stage-stack').evaluate(el=>{const r=el.getBoundingClientRect();return r.width/r.height});
  if(Math.abs(ratio-990.08/743.18)>.03)throw new Error('M distorcido: '+ratio);

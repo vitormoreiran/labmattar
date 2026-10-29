@@ -2,7 +2,7 @@
 "use strict";
 const $=id=>document.getElementById(id),uid=()=>Math.random().toString(36).slice(2),roles=["title","subtitle","body","caption","credits"],names={title:"TÍTULO",subtitle:"SUBTÍTULO",body:"CORPO",caption:"LEGENDA",credits:"CRÉDITOS"},profiles={opening:["Abertura",["subtitle","title","body"]],project:["Projeto",roles],development:["Desenvolvimento",["subtitle","title","body","caption"]],gallery:["Galeria",["title","caption"]],text:["Texto",["subtitle","title","body"]],closing:["Encerramento",["title","body"]],credits:["Créditos",["title","body","credits"]]},escape=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const base=[{id:"64",name:"Cada Corpo / Abertura",src:"./media/BOXDOSENTIR-64.jpg"},{id:"179",name:"Cada Corpo / Projeto",src:"./media/BOXDOSENTIR-179.jpg"},{id:"151",name:"Cada Corpo / Detalhe",src:"./media/BOXDOSENTIR-151.jpg"}];
-function make(profile="project",name="Nova página"){return{id:uid(),name,profile,status:"draft",treatment:profile==="text"||profile==="credits"?"sem-imagem":"m-central",media:{assetId:"64",focusX:50,focusY:50,gallery:["64","179","151"]},content:Object.fromEntries(roles.map(r=>[r,""])),visible:{}}}
+function make(profile="project",name="Nova página"){return{id:uid(),name,profile,status:"draft",treatment:profile==="text"||profile==="credits"?"sem-imagem":"m-central",media:{assetId:"64",focusX:50,focusY:50,zoom:100,gallery:["64","179","151"]},content:Object.fromEntries(roles.map(r=>[r,""])),visible:{}}}
 function initial(){const items=[["opening","Abertura","CADA CORPO ABRE UM MUNDO","GASTROPERFORMANCE","Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.","64"],["project","O projeto","CADA CORPO ABRE UM MUNDO","SIMONE MATTAR E MARTINA MATTAR","Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.","179"],["development","Cinco atos","CINCO ATOS","SAUDADE · GARRA · OTIMISMO · EUFORIA · AMOR","A experiência articula criações gastronômicas, composições olfativas, imagens em movimento, música e poesia.","151"],["gallery","Galeria","IMAGENS DA EXPERIÊNCIA","","Registros visuais de Cada Corpo Abre um Mundo.","179"],["text","O encontro","SENTIR O MUNDO","UM PERCURSO SENSORIAL","Entre memórias individuais e experiências compartilhadas, a obra transforma a mesa em espaço de investigação sensível.","64"],["closing","Encerramento","CADA CORPO ABRE UM MUNDO","","Diferentes maneiras de sentir e perceber o mundo.","64"],["credits","Créditos","CRÉDITOS","","Cada Corpo Abre um Mundo","64"]];return{version:2,title:"Cada Corpo Abre um Mundo",assets:structuredClone(base),pages:items.map(([profile,name,title,subtitle,body,id])=>{const p=make(profile,name);p.content={...p.content,title,subtitle,body};p.media.assetId=id;if(profile==="gallery")p.content.caption=body;if(profile==="credits")p.content.credits="Criação: Simone Mattar e Martina Mattar · O Boticário";if(profile==="development")p.treatment="m-detalhe";if(profile==="gallery")p.treatment="imagem-livre";if(profile==="closing")p.treatment="fundo-com-blur";return p})}}
 const uiIcon=name=>'<svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-'+name+'"></use></svg>';
 const key="labmattar-editorial-v2";let doc;try{doc=JSON.parse(localStorage.getItem(key))}catch{}if(!doc?.pages?.length||doc.version!==2)doc=initial();
@@ -59,7 +59,7 @@ $("pagesTotal").textContent=doc.pages.length+(doc.pages.length===1?" página":" 
 $("assetsList").innerHTML=doc.assets.map(a=>'<button class="asset-entry" data-a="'+escape(a.id)+'"><img src="'+escape(a.src)+'" alt=""><span>'+escape(a.name)+'</span></button>').join("");
 $("assetsList").querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>change(()=>{page().media.assetId=b.dataset.a;if(page().treatment==="sem-imagem")page().treatment="m-central"}));
 $("assetsTotal").textContent=doc.assets.length+(doc.assets.length===1?" imagem":" imagens");
-art.dataset.profile=p.profile;art.dataset.treatment=p.treatment;art.dataset.hasMedia=String(Boolean(a&&p.treatment!=="sem-imagem"));art.style.setProperty("--focus-x",p.media.focusX+"%");art.style.setProperty("--focus-y",p.media.focusY+"%");
+art.dataset.profile=p.profile;art.dataset.treatment=p.treatment;art.dataset.hasMedia=String(Boolean(a&&p.treatment!=="sem-imagem"));art.style.setProperty("--focus-x",p.media.focusX+"%");art.style.setProperty("--focus-y",p.media.focusY+"%");art.style.setProperty("--media-zoom",String(Math.max(1,Math.min(1.75,Number(p.media.zoom||100)/100))));
 $("primaryPhoto").src=$("ambientPhoto").src=a?.src||"";
 art.querySelector(".gallery-grid")?.remove();
 if(p.profile==="gallery"){const g=document.createElement("div");g.className="gallery-grid";for(const id of p.media.gallery||[]){const a=asset(id);if(!a)continue;const img=document.createElement("img");img.src=a.src;img.alt=a.name;g.append(img)}$("mediaScene").append(g)}
@@ -77,6 +77,7 @@ for(const ax of ["X","Y"]){$("focus"+ax).value=p.media["focus"+ax];$("focus"+ax+
 $("galleryControls").hidden=p.profile!=="gallery";$("galleryAssets").innerHTML=doc.assets.map(a=>'<label class="gallery-option"><input type="checkbox" data-g="'+escape(a.id)+'" '+(p.media.gallery?.includes(a.id)?"checked":"")+'><span>'+escape(a.name)+'</span></label>').join("");
 $("galleryAssets").querySelectorAll("[data-g]").forEach(t=>t.onchange=()=>change(()=>{const ids=new Set(p.media.gallery||[]);t.checked?ids.add(t.dataset.g):ids.delete(t.dataset.g);p.media.gallery=[...ids]}));
 $("documentTitle").value=doc.title;$("editor").dataset.viewport=mobile?"mobile":"desktop";$("editor").classList.toggle("is-preview",preview);$("viewportLabel").textContent=mobile?"Desktop":"Mobile";$("viewportIconUse").setAttribute("href",mobile?"#ui-monitor":"#ui-smartphone");$("viewportButton").setAttribute("aria-pressed",String(mobile));$("viewportButton").title=mobile?"Visualização desktop":"Visualização mobile";$("previewLabel").textContent=preview?"Editar":"Visualizar";$("previewIconUse").setAttribute("href",preview?"#ui-pencil":"#ui-eye");$("previewButton").setAttribute("aria-pressed",String(preview));buttons();queueComposition();
+window.LMInspector?.render({doc,page,asset,profiles,uiIcon,allowed,change,checkpoint,save,queueComposition});
 }
 
 let layoutFrame=0;
@@ -116,6 +117,7 @@ function fitComposition(){
   $("layoutStatus").textContent=overflow?
     "REVISAR CONTEÚDO / ÁREA DE LEITURA EXCEDIDA":
     "COMPOSIÇÃO AJUSTADA / IDENTIDADE PRESERVADA";
+   window.LMInspector?.updateTextHealth();
 }
 
 

@@ -478,9 +478,15 @@ body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-mini-photo{
 body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-choice .lm-ctrl-name{
   font-size:10px;
 }
-body.lm-studio-open .lm-studio-image-block--foco .lm-ctrl-focus-field{
+body.lm-studio-open .lm-studio-image-block--foco{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
   gap:4px 6px;
+}
+body.lm-studio-open .lm-studio-image-block--foco>.lm-studio-image-block-label{
+  grid-column:1/-1;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-ctrl-focus-field{
+  display:block;grid-column:1/-1;
 }
 body.lm-studio-open .lm-studio-image-block--foco #labFocalPreview{
   grid-column:1/-1;

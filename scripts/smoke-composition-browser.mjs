@@ -64,6 +64,55 @@ try{
   assert(original.photoText==="false"&&original.mText==="false","No-image mode should not use a darkening veil");
   assert(await page.locator("#construcao").count()===1,"Applied study removed");
   assert(original.state==="ok","Original typographic composition overflows its page");
+  // Every editorial text layer in the preview must be directly editable.
+  assert(await page.locator("[data-lab-inline]").count()===5,"Some page texts are not inline-editable");
+  const inlineTitle=page.locator("#labRenderedTitle");
+  await inlineTitle.click();
+  assert(await inlineTitle.evaluate(el=>document.activeElement===el),"Clicking the title did not enter editing mode");
+  await page.keyboard.press("Control+A");
+  await page.keyboard.type("TÍTULO DIRETO");
+  assert((await page.locator("#labTitleInput").inputValue()).includes("TÍTULO DIRETO"),
+    "Typing in the page did not synchronize the title inspector");
+  assert(await inlineTitle.evaluate(el=>document.activeElement===el),"Live update lost the title caret");
+  await page.keyboard.press("Enter");
+  await page.keyboard.type("SEGUNDA LINHA");
+  const inlineTitleValue=await page.locator("#labTitleInput").inputValue();
+  assert(inlineTitleValue.includes("TÍTULO DIRETO")&&inlineTitleValue.includes("SEGUNDA LINHA")&&
+    inlineTitleValue.includes("\n"),"Enter must create an editorial title break");
+  await page.locator("#labKicker").click();
+  assert((await read()).lines===2,"Leaving direct title edit must restore canonical title line treatment");
+  await page.locator("#labKicker").fill("ESTUDO / 2026");
+  assert(await page.locator("#labKicker").textContent()==="ESTUDO / 2026","Kicker did not accept direct editing");
+  await page.locator("#labFooterLeft").fill("PERFORMANCE / VISUAL");
+  await page.locator("#labFooterRight").fill("IDENTIDADE / AO VIVO");
+  await page.locator("[data-lab-choice='bodyMode'][data-value='visivel']").click();
+  const inlineBody=page.locator("#labRenderedBody");
+  await inlineBody.click();
+  await page.keyboard.press("Control+A");
+  await page.keyboard.type("Texto editado na própria página.");
+  assert(await page.locator("#labBodyInput").inputValue()==="Texto editado na própria página.",
+    "Direct body editing and the inspector diverged");
+  // Commit the initial body edit before testing a fresh Escape transaction.
+  await page.locator("#labRenderedTitle").click();
+  await inlineBody.click();
+  const beforeEscape=await page.locator("#labBodyInput").inputValue();
+  await page.keyboard.press("End");
+  await page.keyboard.type(" ALTERADO");
+  await page.keyboard.press("Escape");
+  assert(await page.locator("#labBodyInput").inputValue()===beforeEscape,
+    "Escape must discard only changes in the current text focus");
+  assert(await inlineBody.textContent()===beforeEscape,"Escape did not restore the page copy");
+  await page.locator("#labArtboard").screenshot({path:"composition-lab-inline-edit.png"});
+  await page.reload({waitUntil:"load"});
+  await page.waitForTimeout(190);
+  assert(await page.locator("#labTitleInput").inputValue()===inlineTitleValue,
+    "Directly edited title is not retained after reloading");
+  assert(await page.locator("#labKicker").textContent()==="ESTUDO / 2026"&&
+    await page.locator("#labFooterRight").textContent()==="IDENTIDADE / AO VIVO",
+    "Directly edited small page texts are not retained");
+  await page.locator("#labReset").click();
+  assert((await read()).title==="PRÁTICASMATERIAISE PROCESSOS",
+    "Restore did not return the default composition after in-canvas editing");
   // Editorial-control UI has illustrated, keyboard-focusable choices.
   assert(await page.locator("[data-lab-choice]").count()>=30,"Illustrated choices are missing");
   assert(await page.locator("[data-choice-for]").count()===0,"Duplicated visual controls remain in the inspector");

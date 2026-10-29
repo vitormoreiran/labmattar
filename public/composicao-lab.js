@@ -5,27 +5,35 @@
   const board=by("labArtboard");
   if(!board)return;
   const storageKey="labmattar-composicao-lab-v1";
+  const defaultMetadata={
+    kicker:"LABMATTAR / 2026",
+    footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
+    footerRight:"LABMATTAR / IDENTIDADE VISUAL"
+  };
   const presets={
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"esquerda",relation:"separada",textWidth:61,titleScale:100,type:"alternada",
       image:"nenhuma",photo:"64",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
-      body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto"
+      body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
+      ...defaultMetadata
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
       placement:"esquerda",relation:"sobreposta",textWidth:77,titleScale:100,type:"alternada",
       image:"recorte",photo:"64",mPosition:"centro",mScale:85,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
-      body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel"
+      body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
+      ...defaultMetadata
     },
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"inferior",relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
       image:"inteira",photo:"179",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
-      body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel"
+      body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
+      ...defaultMetadata
     }
   };
   const fields={
@@ -70,12 +78,16 @@
         result[key]=value;
       }
     }
+    for(const [key,max] of [["kicker",80],["footerLeft",100],["footerRight",100]]){
+      if(typeof data[key]==="string")result[key]=data[key].replace(/[\r\n]+/g," ").slice(0,max);
+    }
     return result;
   }
   let state=copy(presets.tipografia);
   try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
+  const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
@@ -133,7 +145,7 @@
     }
   }
   function readInputs(){
-    const next={};
+    const next={...state};
     for(const [key,id] of Object.entries(fields)){
       const value=by(id).value;
       next[key]=numeric.has(key)?Number(value):value;
@@ -146,7 +158,7 @@
       by("labSaveState").textContent="Configuração salva neste navegador / não publicada.";
     }catch{by("labSaveState").textContent="Rascunho local / armazenamento indisponível.";}
   }
-  function renderTitle(){
+  function renderTitleLines(){
     title.replaceChildren();
     const lines=state.title.replace(/\r/g,"").split("\n").map(s=>s.trim()).filter(Boolean);
     for(let i=0;i<lines.length;i++){
@@ -157,8 +169,14 @@
       span.textContent=lines[i];
       title.append(span);
     }
+  }
+  function renderTitle(){
+    renderTitleLines();
     body.textContent=state.body;
-    body.hidden=state.bodyMode!=="visivel"||!state.body.trim();
+    body.hidden=state.bodyMode!=="visivel";
+    kicker.textContent=state.kicker;
+    footerLeft.textContent=state.footerLeft;
+    footerRight.textContent=state.footerRight;
   }
   function render(){
     syncInputs();
@@ -241,6 +259,14 @@
       if(column.left<safe.left-sideRoom||column.right>safe.right+sideRoom)return false;
       if(column.top<safe.top-sideRoom||column.bottom>safe.bottom+sideRoom)return false;
       if(column.top<top+2||column.bottom>bottom-2)return false;
+      if(title.scrollWidth>title.clientWidth+1.5)return false;
+      // Editing can temporarily replace the precomposed title spans with
+      // plain text or a BR. The complete range must still obey the margins.
+      for(const rect of rects(title)){
+        if(rect.left<column.left-sideRoom||rect.right>column.right+sideRoom||
+           rect.left<safe.left-sideRoom||rect.right>safe.right+sideRoom||
+           rect.top<safe.top-sideRoom||rect.bottom>safe.bottom+sideRoom)return false;
+      }
       for(const node of lines){
         if(node.scrollWidth>node.clientWidth+1.5)return false;
         for(const rect of rects(node)){
@@ -363,7 +389,8 @@
     const rect=board.getBoundingClientRect();
     const copyRect=copyArea.getBoundingClientRect();
     const footerRect=board.querySelector(".lm-lab-bottom").getBoundingClientRect();
-    const titleWide=[...title.querySelectorAll(".lm-lab-title-line")].some(n=>n.scrollWidth>n.clientWidth+3);
+    const titleWide=title.scrollWidth>title.clientWidth+3||
+      [...title.querySelectorAll(".lm-lab-title-line")].some(n=>n.scrollWidth>n.clientWidth+3);
     const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
@@ -389,6 +416,89 @@
     activePreset=key;
     render();save();
   }
+  /*
+   * In-canvas editorial editing shares the inspector's state and local draft.
+   * Never re-render the currently focused contenteditable on each keystroke:
+   * doing so would destroy the caret. Canonical title lines are restored only
+   * when editing ends, keeping Univers/Perpetua treatment deterministic.
+   */
+  const inlineEditors=[
+    {key:"title",el:title,limit:140,multiline:true},
+    {key:"body",el:body,limit:380,multiline:true},
+    {key:"kicker",el:kicker,limit:80,multiline:false},
+    {key:"footerLeft",el:footerLeft,limit:100,multiline:false},
+    {key:"footerRight",el:footerRight,limit:100,multiline:false}
+  ];
+  const readInlineText=({el,multiline})=>{
+    const raw=el.innerText.replace(/\r/g,"").replace(/\u00a0/g," ");
+    return multiline?raw.replace(/\n{3,}/g,"\n\n").replace(/^\n+|\n+$/g,""):
+      raw.replace(/\n+/g," ");
+  };
+  const syncInlineValue=(editor)=>{
+    const value=readInlineText(editor).slice(0,editor.limit);
+    state[editor.key]=value;
+    const inspector=fields[editor.key]&&by(fields[editor.key]);
+    if(inspector)inspector.value=value;
+    activePreset="";
+    document.querySelectorAll("[data-lab-preset]").forEach(b=>b.setAttribute("aria-pressed","false"));
+    save();
+    requestMeasurement();
+  };
+  for(const editor of inlineEditors){
+    const {el,multiline,key}=editor;
+    let snapshot="",cancelled=false,composing=false;
+    el.addEventListener("focus",()=>{
+      snapshot=state[key];
+      cancelled=false;
+      board.dataset.editing=key;
+    });
+    el.addEventListener("compositionstart",()=>{composing=true});
+    el.addEventListener("compositionend",()=>{
+      composing=false;
+      syncInlineValue(editor);
+    });
+    el.addEventListener("beforeinput",e=>{
+      if(composing||e.isComposing||!e.inputType?.startsWith("insert"))return;
+      const incoming=e.data??e.dataTransfer?.getData("text/plain")??"";
+      if(!incoming)return;
+      const selected=window.getSelection()?.toString().length||0;
+      const current=readInlineText(editor);
+      if(current.length-selected+incoming.length>editor.limit)e.preventDefault();
+    });
+    el.addEventListener("input",()=>{
+      if(!composing)syncInlineValue(editor);
+    });
+    el.addEventListener("keydown",e=>{
+      if(e.key==="Escape"){
+        e.preventDefault();
+        cancelled=true;
+        state[key]=snapshot;
+        const inspector=fields[key]&&by(fields[key]);
+        if(inspector)inspector.value=snapshot;
+        el.blur();
+      }else if(e.key==="Enter"&&!multiline){
+        e.preventDefault();
+        el.blur();
+      }
+    });
+    el.addEventListener("blur",()=>{
+      if(!cancelled){
+        state[key]=readInlineText(editor).slice(0,editor.limit);
+      }
+      const inspector=fields[key]&&by(fields[key]);
+      if(inspector)inspector.value=state[key];
+      // Only reconcile the editor being closed. A full render here could
+      // reset the caret of another text layer receiving the next click.
+      if(key==="title")renderTitleLines();
+      else el.textContent=state[key];
+      board.removeAttribute("data-editing");
+      activePreset="";
+      document.querySelectorAll("[data-lab-preset]").forEach(b=>b.setAttribute("aria-pressed","false"));
+      save();
+      requestMeasurement();
+    });
+  }
+
   // Direct manipulation of the image focal point reuses the exact X/Y
   // sliders and their single state pipeline. No new image transform is added.
   const focusSurface=by("labFocalPreview");

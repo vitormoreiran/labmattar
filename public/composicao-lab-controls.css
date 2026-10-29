@@ -487,3 +487,63 @@
 @media(prefers-reduced-motion:reduce){
   .lm-lab-inspector .lm-ctrl-focus-visual,.lm-control-effect-canvas{transition:none}
 }
+
+
+/* Editar diretamente a prova de página — estado de interface, não decoração
+   exportada. Nenhuma tipografia, máscara ou margem da identidade é alterada. */
+.lm-lab-preview-edit-note{
+  font:300 10px/1.35 UniversMattar,Arial,sans-serif;
+  color:#77716a;
+  letter-spacing:.045em;
+  text-align:center;
+}
+.lm-lab-board .lm-lab-inline-edit{
+  pointer-events:auto;
+  cursor:text;
+  user-select:text;
+  -webkit-user-select:text;
+  caret-color:currentColor;
+  position:relative;
+  outline:1px solid transparent;
+  outline-offset:3px;
+}
+.lm-lab-board .lm-lab-title.lm-lab-inline-edit{
+  white-space:pre-wrap;
+  min-height:1em;
+}
+.lm-lab-board .lm-lab-body.lm-lab-inline-edit{
+  min-height:1.5em;
+}
+.lm-lab-board .lm-lab-inline-edit:hover{
+  outline-color:color-mix(in srgb,currentColor 32%,transparent);
+  outline-style:dashed;
+}
+.lm-lab-board .lm-lab-inline-edit:focus-visible,
+.lm-lab-board .lm-lab-inline-edit:focus{
+  outline:1px solid currentColor;
+  outline-offset:3px;
+}
+.lm-lab-board .lm-lab-inline-edit::selection,
+.lm-lab-board .lm-lab-inline-edit *::selection{
+  background:#8f8b8580;
+}
+.lm-lab-board .lm-lab-inline-edit:empty::before{
+  content:"Clique para escrever";
+  opacity:.55;
+  font:inherit;
+  pointer-events:none;
+}
+.lm-lab-board[data-title-break=emergency] .lm-lab-title.lm-lab-inline-edit{
+  overflow-wrap:anywhere;
+}
+@media(max-width:650px){
+  .lm-lab-preview-edit-note{
+    order:3;
+    flex-basis:100%;
+    text-align:left;
+    font-size:9px;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .lm-lab-board .lm-lab-inline-edit{transition:none}
+}

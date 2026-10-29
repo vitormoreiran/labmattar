@@ -47,6 +47,18 @@ for control in ("labFormat","labColor","labMargin","labGuides",
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
 assert "setFieldVisible" in lab_js and "sessionStorage" in lab_js
+# Guidance is contextual; no instructions or numbered pseudo-steps clutter the UI.
+assert 'id="labOverviewHelp"' in composition
+assert '<strong>01 / Tipografia</strong>' not in composition
+for field in ("labFormat","labMargin","labTitleScale","labType","labImage",
+              "labRelation","labMScale","labFocalPreview","labSymbol"):
+ assert field+':["' in lab_js,f"Missing contextual help for {field}"
+assert "showHelp(trigger,panel)" in lab_js
+assert 'data-lab-help' in lab_js and 'aria-expanded' in lab_js
+assert ".lm-help-popover[hidden]" in controls
+assert ".lm-lab>.lm-lab-legend" in controls
+assert "labHelp-overview" in lab_js
+
 assert "const inlineEditors=" in lab_js
 assert "rgba(0,0,0,.20)" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 

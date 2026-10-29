@@ -15,7 +15,9 @@ try{
  await page.locator('[data-model="project"]').click();
  await page.locator('[data-treatment="portfolio"]').click();
  await page.locator('[data-example="1"]').click();
- await page.locator('#sheet.ed-original-media[data-editorial-role="project"][data-treatment="portfolio"]').waitFor();
+ await page.locator('#sheet.ed-source-page[data-editorial-role="project"][data-treatment="portfolio"] .chapter2-stage-stack .chapter2-m-image').waitFor();
+ const ratio=await page.locator('.chapter2-stage-stack').evaluate(el=>{const r=el.getBoundingClientRect();return r.width/r.height});
+ if(Math.abs(ratio-990.08/743.18)>.03)throw new Error('M distorcido: '+ratio);
  const src=await page.locator('#sharp').count();
  if(src)throw new Error('Editor deve usar renderizador principal, nao demo');
  await page.locator('[data-tab="insert"]').click();

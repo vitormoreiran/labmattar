@@ -34,6 +34,13 @@ for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm
 for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+for key in ("title","body","kicker","footerLeft","footerRight"):
+ assert 'data-lab-inline="'+key+'"' in composition,f"Missing editable text layer: {key}"
+assert 'contenteditable="plaintext-only"' in composition
+assert "const inlineEditors=" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+assert "renderTitleLines()" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+assert "lm-lab-inline-edit" in controls, "Direct-edit focus styles missing"
+
 # One illustrated action for each state; duplicated controls undermine clarity.
 assert "data-choice-for=" not in composition
 for key,count in (("format",4),("placement",4),("image",3)):

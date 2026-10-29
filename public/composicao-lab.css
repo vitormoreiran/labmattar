@@ -106,8 +106,11 @@
 }
 /* O tamanho pedido pelo controle é apenas um teto. A rotina de medida
    aplica o maior corpo que cabe, com palavras inteiras sempre que possível. */
-.lm-lab-title .lm-lab-title-line{display:block;max-width:100%}
+/* Explicit editorial title lines stay intact. The fitting algorithm
+   scales the type down before allowing a word group to break. */
+.lm-lab-title .lm-lab-title-line{display:block;max-width:100%;white-space:nowrap}
 .lm-lab-board[data-title-break="emergency"] .lm-lab-title-line{
+  white-space:normal;
   overflow-wrap:anywhere;
   word-break:normal;
 }
@@ -136,6 +139,12 @@
 .lm-lab-board[data-format=vertical] .lm-lab-main-copy{width:min(100%,var(--lab-text-width))}
 .lm-lab-board[data-format=vertical] .lm-lab-m-photo{top:64%;width:min(var(--lab-m-size),96cqh)}
 .lm-lab-board[data-format=vertical][data-relation=separada] .lm-lab-main-copy{margin-top:7%;margin-bottom:auto}
+.lm-lab-board[data-format=vertical][data-image=nenhuma][data-placement=esquerda] .lm-lab-main-copy{
+  /* A type-only portrait reads as a balanced page, not a title trapped under
+     the header with an unused lower two-thirds. */
+  margin-top:auto;
+  margin-bottom:auto;
+}
 .lm-lab-board[data-format=vertical][data-relation=separada] .lm-lab-m-photo{top:74%}
 .lm-lab-board[data-format=vertical][data-placement=inferior] .lm-lab-main-copy{margin-top:auto;margin-bottom:5%}
 .lm-lab-board[data-format=quadrado] .lm-lab-title{font-size:clamp(28px,calc(8.3cqw * var(--lab-title-scale)),95px)}

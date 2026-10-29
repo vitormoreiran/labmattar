@@ -13,24 +13,24 @@
   const presets={
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"esquerda",textX:1,textY:5,relation:"separada",textWidth:61,titleScale:100,type:"alternada",
-      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",mX:8,mY:8,mScale:60,focusX:50,focusY:50,symbol:"none",
+      placement:"central",relation:"separada",textWidth:61,titleScale:100,type:"alternada",
+      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro-direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"esquerda",textX:1,textY:4,relation:"separada",textWidth:40,titleScale:95,type:"alternada",
-      image:"recorte",mMode:"janela",photo:"64",mPosition:"centro",mX:8,mY:8,mScale:50,focusX:50,focusY:50,symbol:"none",
+      placement:"central",relation:"separada",textWidth:40,titleScale:95,type:"alternada",
+      image:"recorte",mMode:"janela",photo:"64",mPosition:"centro-direita",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
     },
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"esquerda",textX:1,textY:8,relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
-      image:"inteira",mMode:"janela",photo:"179",mPosition:"centro",mX:8,mY:8,mScale:60,focusX:50,focusY:50,symbol:"none",
+      placement:"inferior",relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
+      image:"inteira",mMode:"janela",photo:"179",mPosition:"centro-direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -38,13 +38,13 @@
   };
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
-    placement:"labPlacement",textX:"labTextX",textY:"labTextY",relation:"labRelation",textWidth:"labTextWidth",
+    placement:"labPlacement",relation:"labRelation",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
-    mPosition:"labMPosition",mX:"labMX",mY:"labMY",mScale:"labMScale",focusX:"labFocusX",
+    mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textX","textY","textWidth","titleScale","mX","mY","mScale","focusX","focusY"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
   const palette={
     neutral:["#f7f6f2","#181818"],
     beige:["#e6dbcf","#181818"],
@@ -138,7 +138,7 @@
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
-    for(const key of ["mPosition","mX","mY","mScale","mMode"])by(fields[key]).disabled=!mask;
+    for(const key of ["mPosition","mScale","mMode"])by(fields[key]).disabled=!mask;
     by("labColor").disabled=activeImage;
     by("labRelation").disabled=!activeImage;
     // Controls follow the page's actual state. An absent photograph does not
@@ -146,15 +146,15 @@
     setFieldVisible("labColor",!activeImage);
     for(const id of ["labPhoto","labRelation","labFocalPreview","labFocusX","labFocusY"])
       setFieldVisible(id,activeImage);
-    for(const id of ["labMMode","labMPosition","labMX","labMY","labMScale"])setFieldVisible(id,mask);
+    for(const id of ["labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
     by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
     by("labTabMeta-texto").textContent=
       (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
     by("labTabMeta-imagem").textContent=
       state.image==="nenhuma"?"Sem fotografia":
-      state.image==="recorte"?"M / régua "+state.mX+"×"+state.mY:
+      state.image==="recorte"?"M / "+state.mPosition.replaceAll("-"," "):
       "Imagem integral";
-    for(const key of ["margin","textX","textY","textWidth","titleScale","mX","mY","mScale","focusX","focusY"]){
+    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -255,20 +255,14 @@
     board.style.setProperty("--lab-pad",state.margin+"%");
     board.style.setProperty("--lab-title-scale",String(state.titleScale/100));
     board.style.setProperty("--lab-text-width",state.textWidth+"%");
-    const gridX=n=>((n-1)/12)*100;
-    const gridCenter=n=>((n-.5)/12)*100;
-    board.style.setProperty("--lab-text-x",gridX(state.textX)+"%");
-    board.style.setProperty("--lab-text-y",gridCenter(state.textY)+"%");
-    const usable=100-2*state.margin;
-    const mAnchorX=state.margin+usable*(state.mX-.5)/12;
-    const mAnchorY=state.margin+usable*(state.mY-.5)/12;
-    const horizontalRoom=2*Math.min(mAnchorX-state.margin,100-state.margin-mAnchorX);
-    const effectiveMScale=Math.max(25,Math.min(state.mScale,horizontalRoom));
-    board.style.setProperty("--lab-m-size",effectiveMScale+"%");
+    board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
-    board.style.setProperty("--lab-m-x",mAnchorX+"%");
-    board.style.setProperty("--lab-m-y",mAnchorY+"%");
+    const [mV,mH]=state.mPosition.split("-");
+    const x={esquerda:25,centro:50,direita:75}[mH||mV]||50;
+    const y={superior:25,centro:50,inferior:75}[mV]||50;
+    board.style.setProperty("--lab-m-x",x+"%");
+    board.style.setProperty("--lab-m-y",y+"%");
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);
@@ -697,12 +691,6 @@
     labGuides:["Guias de construção",
       "Sobrepõe a área útil ou a divisão em colunas para conferir os alinhamentos.",
       "As guias não são impressas nem representam um grid obrigatório da marca."],
-    labTextX:["Texto / coluna",
-      "Move o eixo horizontal do bloco tipográfico pelas 12 divisões da área útil.",
-      "O bloco continua preso à régua: não existe posicionamento livre."],
-    labTextY:["Texto / linha",
-      "Move o eixo vertical do bloco tipográfico pelas 12 divisões da área útil.",
-      "Use a mesma régua para construir relações precisas entre título, imagem e M."],
     labType:["Tratamento tipográfico",
       "Escolhe como Univers e Perpetua aparecem no título. Na opção alternada, a Perpetua é aplicada a uma das linhas.",
       "São tratamentos de um único tipo de título, não categorias diferentes de página."],
@@ -731,12 +719,12 @@
     labRelation:["Texto e fotografia",
       "Define se texto e fotografia dividem campos distintos ou aparecem sobrepostos.",
       "Onde houver texto sobre fotografia, aplica-se automaticamente preto a 20% abaixo da tipografia."],
-    labMX:["M / coluna",
-      "Move o eixo horizontal do M pelas 12 divisões da área útil.",
-      "O M continua proporcional e preso à mesma régua usada pelo texto."],
-    labMY:["M / linha",
-      "Move o eixo vertical do M pelas 12 divisões da área útil.",
-      "Texto e M podem coincidir no mesmo eixo ou ocupar posições distintas da estrutura."],
+    labPlacement:["Altura do texto",
+      "Move o bloco apenas entre alto, centro e baixo. O eixo horizontal continua fixo na régua da página.",
+      "A composição muda de altura sem soltar o texto da estrutura."],
+    labMPosition:["Posição do M",
+      "Escolhe uma das nove posições estruturais do M dentro da página.",
+      "Mover o M não altera sua escala. Escala e posição são controles independentes."],
     labMScale:["Escala do M",
       "Dimensiona o M proporcionalmente dentro da área útil.",
       "A escala respeita a posição definida na régua; o vetor não é deformado."],

@@ -91,6 +91,11 @@ try{
   assert((await read()).bodyHidden===false,"Show-body illustration did not reveal text");
   await page.locator("[data-lab-choice='bodyMode'][data-value='oculto']").click();
   assert((await read()).bodyHidden===true,"Hide-body illustration did not conceal text");
+  await page.evaluate(()=>{
+    const el=document.querySelectorAll(".lm-lab-section")[1];
+    window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
+  });
+  await page.screenshot({path:"composition-lab-controls-type.png",fullPage:false});
   await page.locator("[data-lab-choice='type'][data-value='perpetua']").click();
   assert(await page.locator("#labType").inputValue()==="perpetua","Typeface illustration is inert");
   await page.locator("[data-lab-choice='type'][data-value='alternada']").click();
@@ -103,6 +108,11 @@ try{
   assert(await page.locator("#labFocusImage").evaluate(el=>getComputedStyle(el).backgroundImage.includes("151.jpg")),"Focus diagram did not follow the selected photo");
   await page.locator("[data-lab-choice='mPosition'][data-value='esquerda']").click();
   assert(await page.locator("#labMPosition").inputValue()==="esquerda","M-placement illustration is inert");
+  await page.evaluate(()=>{
+    const el=document.querySelectorAll(".lm-lab-section")[2];
+    window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
+  });
+  await page.screenshot({path:"composition-lab-controls-media.png",fullPage:false});
   await page.locator("[data-lab-choice='image'][data-value='nenhuma']").click();
   assert(await page.locator("#labColor").inputValue()===colorStateBefore,"Switching image mode should preserve color selection");
   assert(await page.locator("[data-lab-choice='color'][data-value='green']").isEnabled(),"Color swatches did not reactivate");

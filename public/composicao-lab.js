@@ -9,7 +9,7 @@
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"esquerda",relation:"separada",textWidth:61,titleScale:100,type:"alternada",
-      image:"nenhuma",photo:"64",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"M.svg",
+      image:"nenhuma",photo:"64",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto"
     },

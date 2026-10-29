@@ -348,9 +348,11 @@ try{
     const rects=(()=>{const r=document.createRange();r.selectNodeContents(line);return [...r.getClientRects()]})();
     return {break:board.dataset.titleBreak,state:board.dataset.state,fragments:rects.length,font:getComputedStyle(line).fontSize};
   });
+  const longWordStatus=await page.locator("#labStatus").textContent();
   assert(longWord.break==="normal"&&longWord.fragments===1&&
-    (longWord.state!=="overflow"||await page.locator("#labStatus").textContent()).length>0,
-    "Long title must preserve whole words and expose any invalid layout: "+JSON.stringify(longWord));
+    (longWord.state!=="overflow"||/REVER/.test(longWordStatus||"")),
+    "Long title must preserve whole words and expose any invalid layout: "+
+    JSON.stringify({longWord,longWordStatus}));
   await page.screenshot({path:"composition-studio-m-square-title.png"});
   await tool("labTitleInput").click();
   await tab("pagina");

@@ -23,7 +23,7 @@ try{
  await page.locator('#redo').click();
  await page.locator('[data-tab="layers"]').click();
  await page.locator('#layerImage').click();
- await page.locator('[data-image-prop="x"]').fill('66');
+ await page.locator('[data-image-prop="x"]').evaluate(el=>{el.value='66';el.dispatchEvent(new Event('input',{bubbles:true}))});
  await page.locator('#device').click();
  await page.locator('.ed-sheet-wrap.mobile').waitFor();
  await page.locator('#device').click();

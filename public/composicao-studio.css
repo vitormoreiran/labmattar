@@ -90,7 +90,7 @@ body.lm-studio-open .lm-help-trigger-overview>span:first-child{width:21px;height
 body.lm-studio-open .lm-help-trigger-overview .lm-help-trigger-text{display:none}
 body.lm-studio-open #laboratorio .lm-lab-workspace{
   display:grid!important;
-  grid-template-columns:minmax(0,1fr) 355px;
+  grid-template-columns:minmax(0,1fr) 378px;
   grid-template-areas:"page inspector";
   gap:13px;min-height:0;height:100%;width:100%;
   margin:0;align-items:stretch;
@@ -275,7 +275,7 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
 }
 @media(max-width:1200px){
   body.lm-studio-open #laboratorio .lm-lab-workspace{
-    grid-template-columns:minmax(0,1fr) 326px;gap:10px;
+    grid-template-columns:minmax(0,1fr) 344px;gap:10px;
   }
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
     padding-left:10px;
@@ -423,8 +423,8 @@ body.lm-studio-open .lm-studio-image-block{
 }
 body.lm-studio-open .lm-studio-image-block[hidden]{display:none!important}
 body.lm-studio-open .lm-studio-image-block-label{
-  font:300 9px/1.2 UniversMattar,Arial,sans-serif;
-  letter-spacing:.065em;color:#716d66;
+  font:300 10px/1.2 UniversMattar,Arial,sans-serif;
+  letter-spacing:.055em;color:#716d66;
 }
 body.lm-studio-open .lm-studio-image-block .lm-lab-field{
   display:flex;flex-direction:column;gap:4px;
@@ -459,7 +459,7 @@ body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice{
 }
 body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-visual{height:29px}
 body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-name{
-  font-size:10px;line-height:1.1;text-align:center;
+  font-size:11px;line-height:1.15;text-align:center;
 }
 body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-meta{display:none}
 body.lm-studio-open .lm-studio-image-block .lm-ctrl-mini-image,

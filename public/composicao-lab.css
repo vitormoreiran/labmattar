@@ -153,3 +153,63 @@
 @media(max-width:850px){.lm-lab-workspace{display:flex;flex-direction:column}.lm-lab-preview{position:static;order:-1;width:100%}.lm-lab-inspector{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 25px;width:100%}.lm-lab-mini-actions{grid-column:1/-1}.lm-lab-stage{min-height:530px}.lm-lab-heading{grid-template-columns:1fr}.lm-lab-heading p:not(.eyebrow){max-width:60ch}.lm-lab-heading h2{font-size:clamp(42px,10vw,85px)}}
 @media(max-width:540px){.lm-lab-inspector{grid-template-columns:1fr}.lm-lab-stage{min-height:455px;padding:8px}.lm-lab-board[data-format=vertical]{width:min(100%,315px)}.lm-lab-board:not([data-format=vertical]) .lm-lab-title{font-size:clamp(22px,calc(7.2cqw * var(--lab-title-scale)),60px)}.lm-lab-board:not([data-format=vertical]) .lm-lab-body{font-size:clamp(9px,1.65cqw,14px)}.lm-lab-board:not([data-format=vertical]) .lm-lab-kicker,.lm-lab-board:not([data-format=vertical]) .lm-lab-bottom{font-size:8px}.lm-lab-legend{grid-template-columns:1fr}.lm-lab-prep{align-items:start}.lm-lab-presets{gap:8px 20px}}
 @media(prefers-reduced-motion:reduce){.lm-lab-board{transition:none}}
+
+
+/* Refinamento: escolhas visuais discretas e instrutivas, sem cromatismo novo. */
+.lm-lab-context{margin:0;font:300 12px/1.5 UniversMattar,Arial,sans-serif;color:#67635d;max-width:26ch}
+.lm-lab-toolhead{display:flex;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid #181818;font:300 10px/1.4 UniversMattar,Arial,sans-serif;letter-spacing:.045em}
+.lm-lab-inspector{border-top:0}
+.lm-lab-inspector .lm-lab-section{padding:25px 0 27px}
+.lm-lab-section legend{margin-bottom:20px}
+.lm-lab-section .lm-lab-fields{gap:21px}
+.lm-lab-field{gap:9px}
+.lm-lab-field label{font-size:13px}
+.lm-lab-field small{font-size:11px;max-width:34ch}
+.lm-lab-field select,.lm-lab-field textarea{background:#f7f6f2;border:1px solid #b8b6af;transition:border-color .15s ease,background .15s ease}
+.lm-lab-field select:hover,.lm-lab-field textarea:hover{border-color:#706d67}
+.lm-lab-field select:focus-visible,.lm-lab-field textarea:focus-visible{border-color:#181818;outline:1px solid #181818;outline-offset:2px}
+.lm-lab-field input[type=range]{height:20px;accent-color:#181818;cursor:ew-resize}
+.lm-lab-field output{font-size:12px;color:#181818;font-variant-numeric:tabular-nums}
+.lm-lab-prep{gap:15px 28px}
+.lm-lab-presets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:min(100%,680px);gap:9px}
+.lm-lab-presets button{
+  position:relative;text-align:left;min-height:92px;display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:flex-end;gap:14px;border:1px solid #c7c5be;padding:14px;
+  transition:border-color .12s,background .12s,opacity .12s;
+}
+.lm-lab-presets button:before{content:"";width:45px;height:26px;display:block;border:1px solid #181818;opacity:.8;background:linear-gradient(90deg,#181818 0 34%,transparent 34% 100%)}
+.lm-lab-presets button[data-lab-preset=mascara]:before{background:#dddcd5 url('/ambiente-editorial/media/m-publicado.svg') center/auto 90% no-repeat}
+.lm-lab-presets button[data-lab-preset=imagem]:before{background:linear-gradient(135deg,#595e58 0 55%,#bfc3bb 55% 100%)}
+.lm-lab-presets button[aria-pressed=true]{border:1px solid #181818;background:#e8e6df}
+.lm-lab-presets button:hover{opacity:1;border-color:#181818}
+.lm-lab-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.lm-lab-choices[data-choice-for=placement]{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lm-lab-choices[data-choice-for=image]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.lm-lab-choice{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:12px 7px;min-height:94px;border:1px solid #ccc9c2;background:transparent;
+  color:#181818;text-align:center;font:300 11px/1.25 UniversMattar,Arial,sans-serif;
+  cursor:pointer;transition:background .13s,border-color .13s;
+}
+.lm-lab-choice[aria-pressed=true]{background:#e9e7e1;border-color:#181818}
+.lm-lab-choice:hover{border-color:#181818}
+.lm-lab-choice:focus-visible{outline:2px solid #181818;outline-offset:2px}
+.lm-lab-choice-illustration{position:relative;display:block;width:46px;height:31px;border:1px solid #77766f;flex-shrink:0;background:#f7f6f2}
+.lm-lab-choice-illustration::after{content:"";display:block;position:absolute;background:#181818}
+.lm-lab-choice[data-choice=horizontal] .lm-lab-choice-illustration{width:46px;height:26px}
+.lm-lab-choice[data-choice=vertical] .lm-lab-choice-illustration{width:22px;height:37px}
+.lm-lab-choice[data-choice=quadrado] .lm-lab-choice-illustration{width:31px;height:31px}
+.lm-lab-choice[data-choice=editorial] .lm-lab-choice-illustration{width:43px;height:30px}
+.lm-lab-choices[data-choice-for=format] .lm-lab-choice-illustration::after{height:2px;width:48%;top:38%;left:13%}
+.lm-lab-choices[data-choice-for=placement] .lm-lab-choice-illustration::after{width:48%;height:3px;left:10%;top:48%}
+.lm-lab-choice[data-choice=central] .lm-lab-choice-illustration::after{left:26%}
+.lm-lab-choice[data-choice=superior] .lm-lab-choice-illustration::after{top:18%}
+.lm-lab-choice[data-choice=inferior] .lm-lab-choice-illustration::after{top:76%}
+.lm-lab-choices[data-choice-for=image] .lm-lab-choice-illustration{width:42px;height:29px}
+.lm-lab-choice[data-choice=nenhuma] .lm-lab-choice-illustration::after{width:50%;height:3px;left:11%;top:47%}
+.lm-lab-choice[data-choice=recorte] .lm-lab-choice-illustration::after{inset:5px 3px;background:#535851;clip-path:polygon(5% 0,33% 0,50% 37%,67% 0,95% 0,100% 100%,63% 100%,50% 78%,37% 100%,0 100%)}
+.lm-lab-choice[data-choice=inteira] .lm-lab-choice-illustration::after{inset:0;background:linear-gradient(135deg,#535851 0 58%,#b1b5ad 58%)}
+.lm-lab-field:has(.lm-lab-choices) > select{position:absolute;width:1px;height:1px;min-height:0;padding:0;opacity:0;pointer-events:none;clip-path:inset(50%)}
+.lm-lab-field:has(.lm-lab-choices){position:relative}
+@media(max-width:950px){.lm-lab-prep{align-items:flex-start;flex-direction:column}.lm-lab-context{max-width:60ch}.lm-lab-presets{width:100%}}
+@media(max-width:540px){.lm-lab-presets{grid-template-columns:1fr 1fr}.lm-lab-presets button{min-height:82px}.lm-lab-choices[data-choice-for=image]{grid-template-columns:repeat(3,minmax(0,1fr))}}

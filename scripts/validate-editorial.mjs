@@ -10,6 +10,17 @@ const css=readFileSync(base+"editorial-v2.css","utf8");
 new Script(js,{filename:"editorial-v2.js"});
 assert.match(html,/editorial-v2\.js/);
 assert.match(html,/editorial-v2\.css/);
+assert.match(html,/editorial-composition\.css/);
+assert.match(html,/class="editorial-stack"/);
+const composition=readFileSync(base+"editorial-composition.css","utf8");
+assert.match(composition,/\.editorial-content\{/);
+assert.match(composition,/\.editorial-stack\{/);
+assert.match(composition,/\.masked-photo\{/);
+assert.match(composition,/m-publicado\.svg/);
+assert.match(composition,/data-layout="narrow"/);
+assert.doesNotMatch(css,/\.content-title\{top:/);
+assert.doesNotMatch(composition,/\.content-title\{top:/);
+
 for(const id of ["editor","artboard","pagesList","assetsList","contentFields","pageProfile","mediaTreatment","mediaAssetSelect","focusX","focusY","undoButton","redoButton","viewportButton","previewButton","exportButton","importButton","recoverLegacyButton"]){
   assert.ok(html.includes('id="'+id+'"'),"Missing editor control: "+id);
 }

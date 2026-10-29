@@ -5,7 +5,7 @@ p=Path("public/manual.html")
 html=p.read_text(encoding="utf-8")
 assert 'id="estrutura"' in html
 assert '<div class="symbol-row">' in html
-assert '<div class="center-piece">' in html
+
 # Legacy layout contained a third, repeated logo in .corners.
 # Current manual intentionally uses only the two side-by-side illustrations.
 # Apply legacy migration only when that layout is still present.

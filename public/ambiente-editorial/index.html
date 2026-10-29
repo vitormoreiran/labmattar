@@ -7,45 +7,72 @@
   <title>LABMATTAR — Ambiente Editorial</title>
   <link rel="stylesheet" href="./editorial-v2.css">
   <link rel="stylesheet" href="./editorial-composition.css">
+  <link rel="stylesheet" href="./editorial-interface.css">
   <script defer src="./editorial-v2.js"></script>
 </head>
 <body>
 <div class="editor" id="editor" data-viewport="desktop">
   <header class="editor-header">
-    <a class="editor-brand" href="/manual.html" title="Abrir manual de identidade">LABMATTAR</a>
-    <span class="header-divider" aria-hidden="true"></span>
+    <div class="header-identity">
+      <a class="editor-brand" href="/manual.html" title="Abrir manual de identidade">LABMATTAR</a>
+      <span class="editor-product">EDITOR</span>
+    </div>
     <div class="document-heading">
       <label class="sr-only" for="documentTitle">Nome da apresentação</label>
-      <input id="documentTitle" value="Cada Corpo Abre um Mundo" aria-label="Nome da apresentação">
-      <span class="save-status" id="saveStatus" role="status">DOCUMENTO LOCAL</span>
+      <input id="documentTitle" value="Cada Corpo Abre um Mundo" aria-label="Nome da apresentação" autocomplete="off">
+      <span class="save-status" id="saveStatus" role="status">SALVO NESTE NAVEGADOR</span>
     </div>
-    <div class="header-actions">
-      <button id="undoButton" type="button" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶ <span>DESFAZER</span></button>
-      <button id="redoButton" type="button" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer">↷ <span>REFAZER</span></button>
-      <span class="header-divider thin" aria-hidden="true"></span>
-      <button id="viewportButton" type="button" aria-pressed="false">MOBILE</button>
-      <button id="previewButton" type="button" aria-pressed="false">VISUALIZAR</button>
-      <button id="importButton" type="button">IMPORTAR</button>
-      <input id="importFile" type="file" accept="application/json,.json" hidden>
-      <button class="header-export" id="exportButton" type="button">EXPORTAR JSON ↗</button>
-    </div>
+    <nav class="header-actions" aria-label="Ferramentas do editor">
+      <div class="header-tool-group header-history" role="group" aria-label="Histórico">
+        <button id="undoButton" class="tool-icon" type="button" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶</button>
+        <button id="redoButton" class="tool-icon" type="button" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer">↷</button>
+      </div>
+      <div class="header-tool-group panel-buttons" role="group" aria-label="Mostrar ou ocultar painéis">
+        <button id="togglePagesButton" class="tool-toggle" type="button" aria-controls="editorSidebar" aria-expanded="true" title="Mostrar ou ocultar páginas">
+          <span aria-hidden="true">☷</span><span>Páginas</span>
+        </button>
+        <button id="toggleInspectorButton" class="tool-toggle" type="button" aria-controls="editorInspector" aria-expanded="true" title="Mostrar ou ocultar propriedades">
+          <span aria-hidden="true">◧</span><span>Propriedades</span>
+        </button>
+      </div>
+      <div class="header-tool-group view-buttons" role="group" aria-label="Modo de visualização">
+        <button id="viewportButton" type="button" aria-pressed="false">MOBILE</button>
+        <button id="previewButton" class="primary-action" type="button" aria-pressed="false">VISUALIZAR</button>
+      </div>
+      <details class="file-actions" id="fileActions">
+        <summary>ARQUIVO <span aria-hidden="true">⌄</span></summary>
+        <div class="file-actions-menu">
+          <button id="importButton" type="button">Importar documento JSON</button>
+          <input id="importFile" type="file" accept="application/json,.json" hidden>
+          <button id="exportButton" type="button">Exportar documento JSON</button>
+        </div>
+      </details>
+    </nav>
   </header>
 
   <div class="editor-workspace">
-    <aside class="editor-sidebar" aria-label="Navegação editorial">
+    <aside class="editor-sidebar" id="editorSidebar" aria-label="Navegação editorial">
       <div class="sidebar-tabs" role="tablist" aria-label="Navegação">
         <button type="button" class="active" role="tab" id="pagesTab" aria-selected="true" aria-controls="pagesPanel" data-side-tab="pages">PÁGINAS</button>
         <button type="button" role="tab" id="assetsTab" aria-selected="false" aria-controls="assetsPanel" data-side-tab="assets">ACERVO</button>
       </div>
       <section id="pagesPanel" role="tabpanel" aria-labelledby="pagesTab" class="sidebar-panel">
-        <div class="section-label"><span>SEQUÊNCIA</span><span id="pagesTotal">07 PÁGINAS</span></div>
-        <div class="pages-list" id="pagesList" aria-label="Ordem das páginas"></div>
-        <button type="button" class="outlined-action" id="addPageButton">+ ADICIONAR PÁGINA</button>
-        <div class="sequence-actions" aria-label="Organização de páginas">
-          <button id="movePageUp" type="button">↑ SUBIR</button>
-          <button id="movePageDown" type="button">↓ DESCER</button>
+        <div class="page-section-head">
+          <div>
+            <span class="section-kicker">APRESENTAÇÃO</span>
+            <strong id="pagesTotal">07 PÁGINAS</strong>
+          </div>
+          <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página após a selecionada">+ NOVA</button>
         </div>
-        <p class="small-note">Selecione, duplique ou reordene páginas. A composição permanece vinculada às regras da identidade.</p>
+        <div class="pages-list" id="pagesList" aria-label="Ordem das páginas"></div>
+        <div class="sequence-actions" aria-label="Organização de páginas">
+          <span>ORDEM DAS PÁGINAS</span>
+          <div>
+            <button id="movePageUp" type="button" title="Mover página para cima" aria-label="Mover página para cima">↑</button>
+            <button id="movePageDown" type="button" title="Mover página para baixo" aria-label="Mover página para baixo">↓</button>
+          </div>
+        </div>
+        <p class="sidebar-hint">Arraste páginas para reorganizar ou use as setas. Selecione uma página para editar.</p>
       </section>
       <section id="assetsPanel" role="tabpanel" aria-labelledby="assetsTab" class="sidebar-panel" hidden>
         <div class="section-label"><span>ACERVO / PROJETO</span><span id="assetsTotal"></span></div>
@@ -56,8 +83,13 @@
         <p class="small-note">Os arquivos adicionados ficam no navegador. Exportar JSON inclui essas referências.</p>
       </section>
       <div class="sidebar-foot">
-        <button id="resetButton" type="button">RESTAURAR PROJETO-BASE</button>
-        <button id="recoverLegacyButton" type="button" hidden>RECUPERAR RASCUNHO ANTERIOR</button>
+        <details class="document-options">
+          <summary>OPÇÕES DO DOCUMENTO</summary>
+          <div class="document-options-items">
+            <button id="resetButton" type="button">Restaurar projeto-base</button>
+            <button id="recoverLegacyButton" type="button" hidden>Recuperar rascunho anterior</button>
+          </div>
+        </details>
       </div>
     </aside>
 
@@ -94,9 +126,12 @@
       </div>
     </main>
 
-    <aside class="editor-inspector" aria-label="Propriedades da página">
+    <aside class="editor-inspector" id="editorInspector" aria-label="Propriedades da página">
       <div class="inspector-heading">
-        <span>EDIÇÃO DA PÁGINA</span>
+        <div>
+          <span class="inspector-kicker">PROPRIEDADES</span>
+          <strong id="inspectorPageName">Abertura</strong>
+        </div>
         <span class="inspector-page" id="inspectorPage">01 / 07</span>
       </div>
       <div class="inspector-tabs" role="tablist" aria-label="Tipo de edição">
@@ -105,6 +140,7 @@
         <button type="button" data-inspector-tab="media" id="mediaTab" role="tab" aria-controls="mediaPanel" aria-selected="false">MÍDIA</button>
       </div>
       <section class="inspector-panel" id="contentPanel" role="tabpanel" aria-labelledby="contentTab">
+        <div class="panel-section-heading"><span>TEXTO DA PÁGINA</span><span>EDITÁVEL</span></div>
         <div id="contentFields"></div>
         <p class="small-note">Edite aqui ou diretamente na página. A tipografia e a posição seguem o perfil editorial.</p>
       </section>
@@ -137,6 +173,10 @@
         <p class="small-note identity-note">IDENTIDADE / AUTOMÁTICA<br>Univers, Perpetua, margens, alinhamentos, M e responsividade não são controles editáveis.</p>
       </section>
       <section class="inspector-panel" id="mediaPanel" role="tabpanel" aria-labelledby="mediaTab" hidden>
+        <div class="media-preview" id="mediaPreview">
+          <img id="mediaPreviewImage" alt="">
+          <div class="media-preview-detail"><strong id="mediaPreviewName">Imagem selecionada</strong><span>ACERVO DO PROJETO</span></div>
+        </div>
         <label for="mediaAssetSelect">IMAGEM DO ACERVO</label>
         <select id="mediaAssetSelect"></select>
         <label for="mediaTreatment">TRATAMENTO DE MÍDIA</label>

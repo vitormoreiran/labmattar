@@ -361,3 +361,129 @@
 @media(prefers-reduced-motion:reduce){
   .lm-ctrl-choice,.lm-lab-presets button{transition:none}
 }
+
+/* Segunda apuração: controles não são cartelas decorativas.
+   Cada diagrama indica o parâmetro ativo; as regras da página continuam no
+   modelo editorial, nunca na ilustração do inspector. */
+.lm-control-effect{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:5px 0 2px;
+  min-width:0;
+}
+.lm-control-effect-canvas{
+  display:block;
+  flex:0 0 75px;
+  width:75px;
+  height:48px;
+  position:relative;
+  background:#efede7;
+  border:1px solid #c6c2b9;
+  overflow:hidden;
+}
+.lm-control-effect-canvas>i{position:absolute;display:block;pointer-events:none}
+.lm-control-effect-text{
+  color:#605d57;
+  font:300 11px/1.48 UniversMattar,Arial,sans-serif;
+  max-width:26ch;
+  text-align:left;
+}
+.lm-control-effect[data-control-effect=margin] i:first-child{
+  inset:var(--lm-mini-margin,7%);
+  border:1px solid #252520;
+}
+.lm-control-effect[data-control-effect=margin] i:nth-child(2){
+  left:calc(var(--lm-mini-margin,7%) + 5px);
+  top:19px;width:40%;height:3px;background:#252520;
+}
+.lm-control-effect[data-control-effect=margin] i:nth-child(3){
+  left:calc(var(--lm-mini-margin,7%) + 5px);
+  top:26px;width:26%;height:2px;background:#747169;
+}
+.lm-control-effect[data-control-effect=width] i:first-child{
+  inset:5px;
+  border:1px solid #a49f96;
+}
+.lm-control-effect[data-control-effect=width] i:nth-child(2){
+  left:9px;top:16px;
+  width:calc(var(--lm-mini-width,61%) * .7);
+  max-width:calc(100% - 18px);
+  height:4px;background:#252520;
+}
+.lm-control-effect[data-control-effect=width] i:nth-child(3){
+  left:9px;top:24px;
+  width:calc(var(--lm-mini-width,61%) * .55);
+  max-width:calc(100% - 18px);
+  height:3px;background:#747169;
+}
+.lm-control-effect[data-control-effect=title] i:first-child{
+  left:10px;bottom:6px;
+  width:auto;height:auto;
+  background:none;
+  font:300 calc(24px * var(--lm-mini-title-scale,1))/.95 PerpetuaMattar,Georgia,serif;
+  color:#252520;
+}
+.lm-control-effect[data-control-effect=title] i:first-child::before{content:"A"}
+.lm-control-effect[data-control-effect=title] i:nth-child(2){
+  position:absolute;bottom:5px;left:8px;right:8px;
+  height:1px;background:#a49f96;
+}
+.lm-control-effect[data-control-effect=mask] i:first-child{
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:calc(68px * var(--lm-mini-mask-scale,.6));
+  height:calc(50px * var(--lm-mini-mask-scale,.6));
+  background:#252520;
+  -webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
+  mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
+}
+.lm-control-effect[data-control-effect=mask] i:nth-child(2){
+  inset:5px;
+  border:1px solid #bdb8b0;
+  z-index:-1;
+}
+.lm-ctrl-focus-field{display:flex;flex-direction:column;gap:9px;min-width:0}
+.lm-lab-inspector .lm-ctrl-focus-visual{
+  appearance:none;
+  width:100%;
+  border:1px solid var(--ctrl-border);
+  border-radius:0;
+  padding:0;
+  text-align:left;
+  background:#ebe9e3;
+  cursor:crosshair;
+  touch-action:none;
+  display:block;
+}
+.lm-lab-inspector .lm-ctrl-focus-visual:disabled{
+  opacity:.4;cursor:not-allowed
+}
+.lm-lab-inspector .lm-ctrl-focus-visual:not(:disabled):hover{border-color:#88847c}
+.lm-lab-inspector .lm-ctrl-focus-visual:focus-visible{
+  outline:2px solid var(--ctrl-ink);
+  outline-offset:3px;
+}
+.lm-lab-inspector .lm-ctrl-focus-visual:disabled .lm-ctrl-focus-label{opacity:.76}
+.lm-lab-inspector .lm-ctrl-focus-field>.lm-ctrl-helper{font:300 11px/1.5 UniversMattar,Arial,sans-serif}
+.lm-lab-inspector .lm-control-effect~.lm-lab-fit-info{margin-top:0}
+.lm-ctrl-choice{
+  -webkit-tap-highlight-color:transparent
+}
+.lm-ctrl-choice[aria-pressed=true] .lm-ctrl-visual{
+  filter:contrast(1.06)
+}
+.lm-ctrl-choice[aria-pressed=true] .lm-ctrl-name{
+  text-decoration:none;
+}
+.lm-lab-inspector .lm-lab-field textarea:focus-visible{
+  outline:1px solid var(--ctrl-ink);
+  outline-offset:3px
+}
+@media(max-width:610px){
+  .lm-control-effect-canvas{flex-basis:67px;width:67px}
+  .lm-control-effect-text{max-width:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .lm-lab-inspector .lm-ctrl-focus-visual,.lm-control-effect-canvas{transition:none}
+}

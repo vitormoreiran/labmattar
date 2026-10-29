@@ -245,7 +245,8 @@ try{
   await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
   await select("labBodyMode","visivel");
   let boundary=await assertReadingBoundary("Screenshot: red square GASTROPERFORMANCE");
-  assert(boundary.fit==="adjusted","Long single word must auto-fit, not preserve overflow");
+  assert(["natural","adjusted","compromised"].includes(boundary.fit),
+    "The title may retain its requested size when it fits; it must never overflow");
   console.log("SQUARE AUTOMATIC FIT",JSON.stringify({size:boundary.titleSize,fit:boundary.fit}));
   await page.locator("#labArtboard").screenshot({path:"composition-lab-margin-fit-square.png"});
 

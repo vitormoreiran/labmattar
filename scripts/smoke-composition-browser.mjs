@@ -63,12 +63,14 @@ try{
   assert(original.board.width/original.board.height>1.7,"Horizontal aspect ratio invalid");
   assert(original.photoText==="false"&&original.mText==="false","No-image mode should not use a darkening veil");
   assert(await page.locator("#construcao").count()===1,"Applied study removed");
-  await page.screenshot({path:"composition-lab-typography.png",fullPage:false});
+  assert(original.state==="ok","Original typographic composition overflows its page");
+  await page.locator("#labArtboard").screenshot({path:"composition-lab-typography.png"});
 
   await page.locator('[data-lab-preset="mascara"]').click();
   await page.waitForTimeout(200);
   let data=await read();
   assert(data.image==="recorte"&&data.lines===3,"Masked photo preset did not change composition");
+  console.log("MASK PRESET STATUS",data.state,data.status);
   assert(data.photoText==="true"&&data.backgroundOpacity==="1","20% background veil did not activate");
   assert(data.m.mask.includes("m-publicado.svg"),"Original M geometry not used as mask");
   assert(Math.abs(data.m.width/data.m.height-990.08/743.18)<.05,"M image distorted");
@@ -78,7 +80,7 @@ try{
   assert(data.mText==="true"&&data.m.opacity==="1","M must darken by 20% when the text intersects it");
   const color=await page.locator("#labMask").evaluate(el=>getComputedStyle(el,"::after").backgroundColor);
   assert(color.includes("0.2")||color.includes("0.20"),"M overlay is not 20% opaque black");
-  await page.screenshot({path:"composition-lab-m-overlay.png",fullPage:false});
+  await page.locator("#labArtboard").screenshot({path:"composition-lab-m-overlay.png"});
 
   await select("labRelation","separada");
   await select("labMPosition","direita");
@@ -94,7 +96,7 @@ try{
   await select("labFormat","vertical");
   data=await read();
   assert(data.format==="vertical"&&Math.abs(data.board.width/data.board.height-9/16)<.02,"Vertical canvas not responsive");
-  await page.screenshot({path:"composition-lab-vertical.png",fullPage:false});
+  await page.locator("#labArtboard").screenshot({path:"composition-lab-vertical.png"});
   await select("labFormat","quadrado");
   data=await read();
   assert(Math.abs(data.board.width/data.board.height-1)<.02,"Square canvas ratio invalid");
@@ -106,7 +108,8 @@ try{
   await page.waitForTimeout(100);
   data=await read();
   assert(data.image==="inteira"&&data.photoText==="true"&&data.backgroundOpacity==="1","Fullbleed photo text needs 20% black overlay");
-  await page.screenshot({path:"composition-lab-full-image.png",fullPage:false});
+  console.log("FULL IMAGE PRESET STATUS",data.state,data.status);
+  await page.locator("#labArtboard").screenshot({path:"composition-lab-full-image.png"});
   await select("labGuides","grid");
   assert(await page.locator("#labArtboard").getAttribute("data-guide")==="grid","12-column guide toggle is inert");
   await select("labSymbol","vaso_09.svg");

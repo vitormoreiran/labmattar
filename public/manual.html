@@ -89,6 +89,15 @@ header.top nav a{flex-shrink:0}
 .state-picker button{font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.state-preview img{transition:none}}
+</style><style id="manual-morph-interaction">
+.state-preview svg{display:block;width:100%;height:100%;max-width:520px;overflow:visible}
+.state-transport{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding:20px 0}
+.state-transport button{border:1px solid var(--line);background:transparent;color:inherit;padding:12px 16px;cursor:pointer;font:300 12px var(--u)}
+.state-transport button:hover{background:var(--ink);color:var(--paper)}
+.state-transport button:focus-visible,.state-transport input:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.state-transport label{display:flex;justify-content:space-between;gap:15px;font:300 11px var(--u);flex:1;min-width:180px}
+.state-transport input{flex:2;min-width:150px;accent-color:var(--ink)}
+@media(max-width:600px){.state-transport{display:grid;grid-template-columns:1fr 1fr}.state-transport label,.state-transport input{grid-column:1/-1}.state-transport button:last-child{grid-row:1;grid-column:2}.state-transport button:first-child{grid-row:1;grid-column:1}.state-preview{height:260px}}
 </style></head><body>
 <header class="top"><span>LABMATTAR / IDENTIDADE VISUAL</span><nav aria-label="Seções"><a href="#principio">Princípio</a><a href="#estrutura">Elementos</a><a href="#vasos">Vasos</a><a href="#transformacao">Transformação</a><a href="#regras">Regras</a><a href="#ferramenta">Ferramenta</a></nav></header>
 <main><section class="chapter cover" id="principio"><div class="inner"><p class="eyebrow">Sistema de identidade / Elementos gráficos / 2026</p><h1 class="title"><span class="line">DA FORMA</span><span class="line perpetua">AO ESTADO</span><span class="line">LABMATTAR</span></h1><div class="bottomline"><p class="copy">Uma assinatura. Um símbolo master. Nove vasos de igual importância. Um sistema de transformação.</p><p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p></div></div></section>
@@ -193,9 +202,10 @@ header.top nav a{flex-shrink:0}
 <p class="copy section-lead">O M é a origem da transformação. Os nove vasos são estados equivalentes do mesmo sistema vetorial.</p>
 <div class="state-explorer" aria-label="Explorar os estados vetoriais">
 <div class="state-heading"><span class="detail">EXPLORAR O SISTEMA</span><span class="detail" id="state-name" aria-live="polite">SÍMBOLO MASTER / M</span></div>
-<div class="state-preview" id="state-preview" aria-live="off"><img src="/identidade/M.svg" alt="Símbolo master M" /></div>
+<div class="state-preview" id="state-preview" aria-live="off"><svg id="state-morph-svg" viewBox="0 0 600 460" role="img" aria-label="Visualização vetorial do símbolo" preserveAspectRatio="xMidYMid meet"><g id="state-morph-paths" fill="currentColor"></g></svg></div>
+<div class="state-transport"><button id="state-play" type="button" aria-label="Reproduzir transformação">REPRODUZIR</button><label for="state-progress">TRANSFORMAÇÃO <output id="state-progress-value">0%</output></label><input id="state-progress" type="range" min="0" max="100" value="0" step="1" aria-label="Progresso da transformação vetorial"/><button type="button" id="state-reset">REINICIAR</button></div>
 <div class="state-picker" role="group" aria-label="Selecionar símbolo ou vaso"><button type="button" class="active" data-state="0" aria-pressed="true">M / MASTER</button><button type="button" data-state="1" aria-pressed="false">01</button><button type="button" data-state="2" aria-pressed="false">02</button><button type="button" data-state="3" aria-pressed="false">03</button><button type="button" data-state="4" aria-pressed="false">04</button><button type="button" data-state="5" aria-pressed="false">05</button><button type="button" data-state="6" aria-pressed="false">06</button><button type="button" data-state="7" aria-pressed="false">07</button><button type="button" data-state="8" aria-pressed="false">08</button><button type="button" data-state="9" aria-pressed="false">09</button></div>
-<p class="state-help">Selecione um estado para comparar sua forma com a matriz M. Os vetores originais são preservados, sem deformação.</p>
+<p class="state-help">Escolha um vaso e mova o controle para acompanhar a interpolação vetorial. A demonstração usa amostragem de contornos; os SVGs originais permanecem intactos. Para editar correspondências precisas e exportar, abra a matriz vetorial.</p>
 </div><div class="editorial-interval"></div>
 <div class="transformation-editorial"><div class="transform-hero"><span class="detail">01 / SÍMBOLO MASTER</span><svg aria-hidden="true" class="artwork" fill="none" height="627" viewbox="0 0 822 627" width="822" xmlns="http://www.w3.org/2000/svg">
 <path d="M0 627H235.926C249.16 627 268.861 620.689 279.704 612.978L391.286 533.606C402.129 525.894 419.871 525.894 430.714 533.606L542.296 612.978C553.139 620.689 572.84 627 586.074 627H822L771.813 0H530.723C517.489 0 501.034 9.40694 494.16 20.8978L423.499 139.054C416.625 150.545 405.375 150.545 398.501 139.054L327.84 20.8978C320.966 9.40694 304.511 0 291.277 0H50.1873L0 627Z" fill="#CE211A"></path>
@@ -221,17 +231,49 @@ header.top nav a{flex-shrink:0}
 (function(){const titles=[...document.querySelectorAll('.title')];function fit(){for(const t of titles){t.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(t).fontSize),width=t.getBoundingClientRect().width;const lines=[...t.querySelectorAll('.line')];const maximum=Math.max(...lines.map(l=>{let range=document.createRange();range.selectNodeContents(l);return range.getBoundingClientRect().width}));if(maximum>width-3){t.style.fontSize=Math.max(1,size*(width-4)/maximum)+'px'}}}window.addEventListener("resize",fit,{passive:true});document.fonts?.ready.then(fit);fit()})();
 </script><script id="manual-states-script">
 (function(){
-const picker=document.querySelector('.state-picker'),preview=document.querySelector('#state-preview img'),name=document.querySelector('#state-name');
-if(!picker||!preview||!name)return;
-const buttons=[...picker.querySelectorAll('button')];
-function choose(n){
-const file=n===0?'M.svg':'vaso_'+String(n).padStart(2,'0')+'.svg';
-const label=n===0?'SÍMBOLO MASTER / M':'ESTADO VETORIAL / '+String(n).padStart(2,'0');
-preview.style.opacity='0';preview.style.transform='scale(.96)';
-const next=new Image();next.onload=function(){preview.src=next.src;preview.alt=label;name.textContent=label;requestAnimationFrame(()=>{preview.style.opacity='1';preview.style.transform='scale(1)'})};next.onerror=function(){preview.style.opacity='1';name.textContent='ARQUIVO INDISPONÍVEL'};
-next.src='/identidade/'+file;
-buttons.forEach(b=>{const active=Number(b.dataset.state)===n;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+const picker=document.querySelector('.state-picker'),stage=document.querySelector('#state-morph-paths'),svg=document.querySelector('#state-morph-svg'),name=document.querySelector('#state-name'),range=document.querySelector('#state-progress'),output=document.querySelector('#state-progress-value'),play=document.querySelector('#state-play'),reset=document.querySelector('#state-reset');
+if(!picker||!stage||!svg||!range)return;
+const buttons=[...picker.querySelectorAll('button')],cache=new Map(),NS='http://www.w3.org/2000/svg',COUNT=180;
+let selected=0,progress=0,playing=false,frame=0,started=0,from=0;
+function file(n){return '/identidade/'+(n===0?'M.svg':'vaso_'+String(n).padStart(2,'0')+'.svg')}
+function len(points){let out=0;for(let i=1;i<points.length;i++)out+=Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y);return out}
+async function load(n){
+if(cache.has(n))return cache.get(n);
+const response=await fetch(file(n));if(!response.ok)throw new Error('Vetor indisponível');
+const doc=new DOMParser().parseFromString(await response.text(),'image/svg+xml');
+const source=doc.documentElement;
+const box=(source.getAttribute('viewBox')||'0 0 822 627').split(/[ ,]+/).map(Number);
+const holder=document.createElementNS(NS,'svg');holder.setAttribute('viewBox',box.join(' '));holder.setAttribute('width','600');holder.setAttribute('height','460');holder.style.cssText='position:absolute;visibility:hidden;pointer-events:none';
+const all=[...source.querySelectorAll('path')];
+if(!all.length)throw new Error('SVG sem contornos');
+const paths=all.map(p=>{const q=document.createElementNS(NS,'path');q.setAttribute('d',p.getAttribute('d')||'');holder.appendChild(q);return q});
+document.body.appendChild(holder);
+const shapes=paths.map(p=>{const total=p.getTotalLength();const points=Array.from({length:COUNT},(_,i)=>{const v=p.getPointAtLength(total*i/COUNT);return {x:v.x,y:v.y}});return {points,length:total}});
+holder.remove();
+shapes.sort((a,b)=>b.length-a.length);
+const normalized=shapes.map(shape=>({points:shape.points.map(p=>({x:(p.x-box[0])/box[2]*450+75,y:(p.y-box[1])/box[3]*400+30})),length:shape.length}));
+cache.set(n,normalized);return normalized;
 }
+function polygon(a,b,t){const p=a||b,q=b||a;if(!p||!q)return '';return p.points.map((v,i)=>{const w=q.points[i];return (i?'L':'M')+(v.x+(w.x-v.x)*t).toFixed(2)+' '+(v.y+(w.y-v.y)*t).toFixed(2)}).join(' ')+' Z'}
+function paint(a,b,t){
+const count=Math.max(a.length,b.length);stage.replaceChildren();
+for(let i=0;i<count;i++){
+const pa=a[i],pb=b[i];const shape=document.createElementNS(NS,'path');
+shape.setAttribute('d',polygon(pa,pb,t));
+if(!pa)shape.setAttribute('opacity',String(t));else if(!pb)shape.setAttribute('opacity',String(1-t));
+stage.appendChild(shape);
+}
+}
+async function render(){
+const n=selected,t=progress;try{const [a,b]=await Promise.all([load(0),load(n)]);if(n!==selected||t!==progress)return;paint(a,b,t);svg.setAttribute('aria-label',n===0?'Símbolo master M':'Transição vetorial M para vaso '+String(n).padStart(2,'0'))}catch(e){name.textContent='NÃO FOI POSSÍVEL CARREGAR O VETOR';console.error(e)}
+}
+function stop(){playing=false;cancelAnimationFrame(frame);play.textContent='REPRODUZIR';play.setAttribute('aria-label','Reproduzir transformação')}
+function setProgress(value){progress=Math.max(0,Math.min(1,value));range.value=String(Math.round(progress*100));output.textContent=Math.round(progress*100)+'%';render()}
+function choose(n){stop();selected=n;name.textContent=n===0?'SÍMBOLO MASTER / M':'M → ESTADO VETORIAL / '+String(n).padStart(2,'0');buttons.forEach(b=>{const active=Number(b.dataset.state)===n;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});setProgress(n===0?0:progress===1?1:0)}
 picker.addEventListener('click',e=>{const b=e.target.closest('button[data-state]');if(b)choose(Number(b.dataset.state))});
+range.addEventListener('input',()=>{stop();setProgress(Number(range.value)/100)});
+reset.addEventListener('click',()=>{stop();setProgress(0)});
+play.addEventListener('click',()=>{if(playing){stop();return}if(selected===0)choose(1);if(progress>=1)setProgress(0);playing=true;play.textContent='PAUSAR';from=progress;started=performance.now();const duration=2600;function tick(now){if(!playing)return;setProgress(Math.min(1,from+(now-started)/duration));if(progress>=1)stop();else frame=requestAnimationFrame(tick)}frame=requestAnimationFrame(tick)});
+render();
 })();
 </script></body></html>

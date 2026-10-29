@@ -7,6 +7,9 @@ page.on('pageerror',error=>errors.push(error.message));
 try{
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  await page.locator('#sheet').waitFor();
+ const initialState=await page.locator('#sheet').evaluate(el=>({source:el.classList.contains('ed-source-page'),media:el.dataset.mediaState,background:getComputedStyle(el).backgroundColor}));
+ if(!initialState.source)throw new Error('Original renderer must remain active on every page: '+JSON.stringify(initialState));
+
  const official=await page.evaluate(async()=>{await document.fonts.load('300 20px "LM Univers Official"');await document.fonts.load('300 20px "LM Perpetua Official"');return {univers:document.fonts.check('300 20px "LM Univers Official"'),perpetua:document.fonts.check('300 20px "LM Perpetua Official"'),assets:await Promise.all(['/fonts/univers-lt-std-45-light.otf','/fonts/perpetua-titling-light.ttf'].map(async p=>{const r=await fetch(p);return {status:r.status,type:r.headers.get('content-type'),bytes:(await r.arrayBuffer()).byteLength}}))}});
  if(!official.univers||!official.perpetua||official.assets.some(a=>a.status!==200||a.bytes<3000))throw new Error('Fontes oficiais nao carregadas: '+JSON.stringify(official));
 

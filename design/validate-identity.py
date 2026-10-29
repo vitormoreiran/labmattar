@@ -48,10 +48,10 @@ for key in ("fitBoard()","openTool(entry)","startStudio()","stopStudio()","labSt
 assert 'grid-template-columns:repeat(3,minmax(0,1fr))' in studio_css
 assert "innerDimensions(stage)" in studio_js
 assert "m-publicado.svg" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
-assert 'id="aplicacoes-do-m"' in composition, "M application guide missing"
-for mode in ("janela","corte","sutil"):
- assert 'data-lab-choice="mMode" data-value="'+mode+'"' in composition,f"Missing approved M study: {mode}"
- assert 'data-m-mode='+mode in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+assert 'id="regras-de-composicao"' in composition, "Composition rules section missing"
+for rule in ("Régua","Margem","Eixo","Alinhamento","Espaçamento","Adaptação"):
+ assert rule in composition,f"Missing composition rule: {rule}"
+assert 'data-lab-choice="mMode"' not in composition, "Invented M usage modes must not be exposed"
 assert "mountFlatImage()" in studio_js and "restoreFlatImage()" in studio_js
 # The inspector is spatially continuous: a property expands under the full
 # tool index rather than replacing or covering the original menu.
@@ -69,7 +69,7 @@ assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
 for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
-for key in ("format","placement","relation","type","image","mMode","photo","mPosition","bodyMode"):
+for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 # The inspector has three focused work areas; every approved control remains.

@@ -14,14 +14,14 @@
 
   const fieldsByPanel={
     pagina:["labFormat","labMargin","labColor","labGuides"],
-    texto:["labPlacement","labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
-    imagem:["labImage","labMMode","labPhoto","labRelation","labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
+    texto:["labTextX","labTextY","labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
+    imagem:["labImage","labPhoto","labRelation","labMX","labMY","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
   };
   const label={
     labFormat:"Formato",labMargin:"Margem",labColor:"Fundo",labGuides:"Guias",
-    labPlacement:"Posição",labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
+    labTextX:"Texto X",labTextY:"Texto Y",labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
     labBodyMode:"Leitura",labTitleInput:"Editar título",labBodyInput:"Editar texto",
-    labImage:"Aplicação",labMMode:"Uso do M",labPhoto:"Fotografia",labRelation:"Relação",labMPosition:"Posição M",
+    labImage:"Aplicação",labPhoto:"Fotografia",labRelation:"Relação",labMX:"M X",labMY:"M Y",
     labMScale:"Escala M",labFocalPreview:"Enquadrar",labFocusX:"Foco X",
     labFocusY:"Foco Y",labSymbol:"Assinatura"
   };

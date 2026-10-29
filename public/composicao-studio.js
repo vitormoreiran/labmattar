@@ -76,7 +76,7 @@
   }
   function registerTool(panelName,id,menu,detail){
     const input=by(id);
-    const field=input?.closest(".lm-lab-field");
+    const field=input?.closest(".lm-lab-field,.lm-ctrl-focus-field");
     if(!input||!field)throw Error("Missing composition tool "+id);
     const marker=document.createComment("Original field: "+id);
     field.before(marker);

@@ -1010,3 +1010,107 @@
 @media(prefers-reduced-motion:reduce){
   .lm-help-trigger{transition:none}
 }
+
+/* Three ways to apply the original M: no alternate vector, no added effects. */
+.lm-m-modes .lm-ctrl-choice{min-height:106px}
+.lm-m-mode-figure{
+  position:relative;display:block;
+  width:64px;height:43px;overflow:hidden;
+  background:#eae7e0;border:1px solid #a6a198;
+}
+.lm-m-mode-figure i:first-child{
+  display:block;position:absolute;
+  width:44px;height:35px;left:10px;top:4px;
+  background:#77716c url('/ambiente-editorial/media/BOXDOSENTIR-64.jpg') center/cover;
+  -webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
+  mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
+}
+.lm-m-mode-figure[data-usage=corte] i:first-child{left:39px;width:50px;height:39px;top:2px}
+.lm-m-mode-figure[data-usage=sutil]{
+  background:url('/ambiente-editorial/media/BOXDOSENTIR-179.jpg') center/cover;
+}
+.lm-m-mode-figure[data-usage=sutil] i:first-child{
+  background:#f7f6f2;opacity:.25;left:12px;
+}
+.lm-m-mode-figure[data-usage=janela] i:nth-child(2),
+.lm-m-mode-figure[data-usage=corte] i:nth-child(2){
+  position:absolute;left:4px;bottom:5px;display:block;
+  width:16px;height:2px;background:#4c4942;
+}
+.lm-m-guide{padding-block:clamp(55px,7vw,100px)}
+.lm-m-guide h2{
+  margin:20px 0 23px;
+  font:300 clamp(42px,6vw,86px)/.96 UniversMattar,Arial,sans-serif;
+  letter-spacing:-.025em;
+}
+.lm-m-guide h2 .perpetua{font-family:PerpetuaMattar,Georgia,serif}
+.lm-m-guide-lead{
+  margin:0 0 37px;max-width:66ch;
+  font:300 clamp(14px,1.5vw,18px)/1.54 UniversMattar,Arial,sans-serif;
+}
+.lm-m-guide-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(14px,2.4vw,30px);
+}
+.lm-m-guide-grid article{
+  border-top:1px solid #a9a59e;
+  padding-top:16px;
+}
+.lm-m-guide-preview{
+  display:block;
+  position:relative;
+  width:100%;aspect-ratio:1.55;
+  overflow:hidden;background:#31342d;
+}
+.lm-m-guide-preview i:first-child{
+  position:absolute;display:block;
+  width:62%;height:72%;left:20%;top:14%;
+  background:url('/ambiente-editorial/media/BOXDOSENTIR-64.jpg') center/cover;
+  -webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
+  mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
+}
+.lm-m-guide-preview[data-m-example=janela]{
+  background:#252924;
+}
+.lm-m-guide-preview[data-m-example=corte]{
+  background:#2b2826;
+}
+.lm-m-guide-preview[data-m-example=corte] i:first-child{
+  width:80%;height:80%;left:55%;top:9%;
+}
+.lm-m-guide-preview[data-m-example=sutil]{
+  background:url('/ambiente-editorial/media/BOXDOSENTIR-179.jpg') center/cover;
+}
+.lm-m-guide-preview[data-m-example=sutil]::before{
+  content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);
+}
+.lm-m-guide-preview[data-m-example=sutil] i:first-child{
+  background:#f7f6f2;opacity:.20;width:65%;left:18%;
+}
+.lm-m-guide-grid h3{
+  margin:22px 0 11px;
+  font:300 clamp(21px,2.4vw,30px)/1.1 UniversMattar,Arial,sans-serif;
+}
+.lm-m-guide-grid p{
+  margin:0;
+  font:300 14px/1.55 UniversMattar,Arial,sans-serif;
+}
+.lm-m-guide-grid small{
+  display:block;margin-top:14px;
+  color:#65615b;font:300 12px/1.5 UniversMattar,Arial,sans-serif;
+}
+.lm-m-guide-rule{
+  margin:27px 0 0;border-top:1px solid #bbb7af;
+  padding-top:15px;
+  font:300 13px/1.55 UniversMattar,Arial,sans-serif;
+}
+.lm-m-guide-rule strong{font-weight:300;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:680px){
+  .lm-m-guide-grid{grid-template-columns:1fr}
+  .lm-m-guide-grid article{display:grid;grid-template-columns:42% 1fr;column-gap:15px}
+  .lm-m-guide-preview{grid-row:span 3;align-self:start}
+  .lm-m-guide-grid h3{margin:3px 0 8px}
+  .lm-m-guide-grid p{font-size:13px}
+  .lm-m-guide-grid small{margin-top:9px}
+}

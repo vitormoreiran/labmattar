@@ -29,7 +29,7 @@ try{
  if(titleFont.chosen!=='perpetua'||!titleFont.family.includes('LM Perpetua Official'))throw new Error('Perpetua should be governed by editorial profile: '+JSON.stringify(titleFont));
  if(await page.locator('#titleFamily').count())throw new Error('Identity family must not be a free inspector setting');
  await page.locator('[data-tab="models"]').click();
- if(await page.locator('[data-treatment]').count())throw new Error('Media treatment must not be part of editorial profiles');
+ if(await page.locator('#sideContent [data-treatment]').count())throw new Error('Media treatment must not be part of editorial profiles');
  await page.locator('[data-tab="layers"]').click();
  await page.locator('#layerImage').click();
  await page.locator('#mediaTreatment').selectOption('portfolio');

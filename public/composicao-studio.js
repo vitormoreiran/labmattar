@@ -138,10 +138,9 @@
   const imageBlocks=[];
   const imageSpec=[
     {name:"aplicacao",fields:["labImage"]},
-    {name:"uso",fields:["labMMode"]},
     {name:"fotografia",fields:["labPhoto"]},
     {name:"foco",fields:["labFocalPreview","labFocusX","labFocusY"]},
-    {name:"geometria",fields:["labMPosition","labMScale"]},
+    {name:"geometria",fields:["labMX","labMY","labMScale"]},
     {name:"texto",fields:["labRelation"]},
     {name:"assinatura",fields:["labSymbol"]}
   ];
@@ -150,7 +149,7 @@
     container.dataset.studioImageBlock=spec.name;
     container.setAttribute("role","group");
     const heading={
-      aplicacao:"IMAGEM",uso:"APLICAÇÃO DO M",fotografia:"FOTOGRAFIA",
+      aplicacao:"IMAGEM",fotografia:"FOTOGRAFIA",
       foco:"ENQUADRAMENTO",geometria:"GEOMETRIA DO M",
       texto:"TEXTO E IMAGEM",assinatura:"ASSINATURA"
     }[spec.name];

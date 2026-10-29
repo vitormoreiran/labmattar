@@ -34,7 +34,18 @@ assert.match(js,/\$\("previewLabel"\)\.textContent/);
 assert.doesNotMatch(js,/\$\("viewportButton"\)\.textContent=/);
 assert.doesNotMatch(js,/\$\("previewButton"\)\.textContent=/);
 assert.match(interfaceCss,/\.ui-icon\{/);
-assert.match(interfaceCss,/--ui-muted:#415047/);
+assert.match(interfaceCss,/--ui-type:LMUnivers,Arial,sans-serif/);
+assert.match(interfaceCss,/font-synthesis:none/);
+assert.match(interfaceCss,/--ui-ink:#181818/);
+assert.match(interfaceCss,/--ui-paper:#f7f6f2/);
+assert.doesNotMatch(interfaceCss,/system-ui|-apple-system|Segoe UI/,"Interface must use official Univers, not system fonts");
+assert.doesNotMatch(interfaceCss,/font-weight:\s*(?:500|600|700)|font:\s*(?:500|600|700)\b/,"Light typography may not be synthesized as bold");
+const uiColors=[...interfaceCss.matchAll(/#([0-9a-fA-F]{6})\b/g)].map(m=>m[1]);
+for(const hex of uiColors){
+  const rgb=[0,2,4].map(i=>parseInt(hex.slice(i,i+2),16));
+  assert.ok(Math.max(...rgb)-Math.min(...rgb)<=8,"Non-neutral color in editor chrome: #"+hex);
+}
+
 
 
 assert.match(html,/class="editorial-stack"/);

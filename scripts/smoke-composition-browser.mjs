@@ -210,10 +210,9 @@ try{
     "Arrow keys must navigate grouped inspector panels");
   await tab("pagina");
   // Editorial-control UI has illustrated, keyboard-focusable choices.
-  assert(await page.locator("[data-lab-choice]").count()>=30,"Illustrated choices are missing");
+  assert(await page.locator("[data-lab-choice]").count()>=20,"Illustrated choices are missing");
   assert(await page.locator("[data-choice-for]").count()===0,"Duplicated visual controls remain in the inspector");
   assert(await page.locator("[data-lab-choice='format']").count()===4,"One format group should have four options");
-  assert(await page.locator("[data-lab-choice='placement']").count()===4,"One placement group should have four options");
   assert(await page.locator("[data-lab-choice='image']").count()===3,"One image group should have three options");
   assert(await page.locator("#labFocalPreview").isDisabled(),"Focal point must be inactive without a photograph");
   assert(await page.locator("[data-control-effect]").count()===4,"Scale diagrams must match the four meaningful parameters");
@@ -238,9 +237,12 @@ try{
   assert(await page.locator("#labMargin").inputValue()==="16","Precision must respect the established margin limit");
   await range("labMargin",7);
   await tab("texto");
-  await page.locator("[data-lab-choice='placement'][data-value='central']").click();
-  assert(await page.locator("#labPlacement").inputValue()==="central","Placement illustration is inert");
-  await page.locator("[data-lab-choice='placement'][data-value='esquerda']").click();
+  await range("labTextX",4);
+  await range("labTextY",6);
+  assert(await page.locator("#labTextX").inputValue()==="4"&&await page.locator("#labTextY").inputValue()==="6",
+    "Text ruler coordinates must be independently adjustable");
+  assert(await page.locator("#labArtboard").evaluate(el=>el.style.getPropertyValue("--lab-text-x"))==="25%",
+    "Text X coordinate is not connected to the page ruler");
   await page.locator("#labPrecision-titleScale").fill("113");
   await page.locator("#labPrecision-titleScale").press("Enter");
   assert(await page.locator("#labTitleScale").inputValue()==="113",
@@ -278,8 +280,10 @@ try{
   await page.locator("[data-lab-choice='photo'][data-value='151']").click();
   assert((await read()).photoSrc.includes("BOXDOSENTIR-151.jpg"),"Thumbnail did not change the photograph");
   assert(await page.locator("#labFocusImage").evaluate(el=>getComputedStyle(el).backgroundImage.includes("151.jpg")),"Focus diagram did not follow the selected photo");
-  await page.locator("[data-lab-choice='mPosition'][data-value='esquerda']").click();
-  assert(await page.locator("#labMPosition").inputValue()==="esquerda","M-placement illustration is inert");
+  await range("labMX",4);
+  await range("labMY",8);
+  assert(await page.locator("#labMX").inputValue()==="4"&&await page.locator("#labMY").inputValue()==="8",
+    "M ruler coordinates must be independently adjustable");
   const focal=page.locator("#labFocalPreview");
   await focal.scrollIntoViewIfNeeded();
   const rect=await focal.boundingBox();
@@ -325,7 +329,7 @@ try{
   assert(data.photoText==="true"&&data.backgroundOpacity==="1","20% background veil did not activate");
   assert(data.m.mask.includes("m-publicado.svg"),"Original M geometry not used as mask");
   assert(Math.abs(data.m.width/data.m.height-990.08/743.18)<.05,"M image distorted");
-  await select("labMPosition","esquerda");
+  await range("labMX",4);
   await range("labMScale",95);
   data=await read();
   assert(data.mText==="true"&&data.m.opacity==="1","M must darken by 20% when the text intersects it");
@@ -334,7 +338,7 @@ try{
   await page.locator("#labArtboard").screenshot({path:"composition-lab-m-overlay.png"});
 
   await select("labRelation","separada");
-  await select("labMPosition","direita");
+  await range("labMX",9);
   await range("labMScale",45);
   await range("labTextWidth",40);
   data=await read();

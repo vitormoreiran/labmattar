@@ -1,0 +1,32 @@
+name: Validar Ambiente Editorial no navegador
+on:
+  pull_request:
+    paths:
+      - 'public/ambiente-editorial/**'
+      - 'scripts/smoke-editorial-browser.mjs'
+      - '.github/workflows/editorial-browser.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar Playwright e Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Validar editor publicado
+        run: node scripts/smoke-editorial-browser.mjs
+      - name: Guardar imagens de diagnostico
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: editor-browser-proof
+          path: editorial-*.png
+          if-no-files-found: ignore

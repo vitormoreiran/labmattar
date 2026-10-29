@@ -67,7 +67,7 @@ assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"
 
 
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
-for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo"):
+for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo","lm-ruler-strip"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
 for key in ("format","relation","type","image","photo","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"

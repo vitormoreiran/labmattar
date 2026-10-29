@@ -1,0 +1,45 @@
+name: Validar Laboratorio de Composicao
+
+on:
+  pull_request:
+    paths:
+      - 'design/composicao.html'
+      - 'public/composicao-lab.css'
+      - 'public/composicao-lab.js'
+      - 'scripts/smoke-composition-browser.mjs'
+      - '.github/workflows/composition-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar navegador de testes
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Preparar pagina e fontes para teste local
+        run: |
+          cp design/composicao.html public/composicao.html
+          mkdir -p public/fonts
+          curl --fail --location --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf -o public/fonts/univers-lt-std-45-light.otf
+          curl --fail --location --retry 3 https://labmattar.com/fonts/perpetua-titling-light.ttf -o public/fonts/perpetua-titling-light.ttf
+      - name: Testar composicoes no navegador
+        run: |
+          python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
+          COMPOSITION_URL=http://127.0.0.1:8765/composicao.html node scripts/smoke-composition-browser.mjs
+      - name: Salvar capturas para revisao visual
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: composition-lab-visual-proof
+          path: composition-lab-*.png
+          if-no-files-found: ignore

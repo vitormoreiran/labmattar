@@ -4,18 +4,20 @@ import re
 p=Path("public/manual.html")
 html=p.read_text(encoding="utf-8")
 assert 'id="estrutura"' in html
-assert '<div class="corners">' in html
+assert '<div class="symbol-row">' in html
 assert '<div class="center-piece">' in html
-intro='''<div class="lm-reading-intro"><h2>Assinatura e símbolo</h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal. Os nove vasos formam uma família de elementos gráficos utilizada nas aplicações da identidade.</p></div>'''
-html=html.replace('<div class="corners">',intro+'<div class="corners">',1)
-# Only the four corner notes belonging to the diagram are removed.
-start=html.index('<div class="corners">')
-end=html.index('<div class="symbol-row">',start)
-fragment=html[start:end]
-fragment,n=re.subn(r'<div class="note(?: right)?(?: bottom)?"><b>0[1-4] / [^<]+</b>[^<]*</div>',"",fragment)
-assert n==4, f"Expected exactly four peripheral captions, got {n}"
-fragment=fragment.replace('Mattar identifica. O M estrutura. Os vasos constituem estados equivalentes da marca.','Assinatura Mattar / identificação institucional.')
-html=html[:start]+fragment+html[end:]
+# Legacy layout contained a third, repeated logo in .corners.
+# Current manual intentionally uses only the two side-by-side illustrations.
+# Apply legacy migration only when that layout is still present.
+if '<div class="corners">' in html:
+    intro='''<div class="lm-reading-intro"><h2>Assinatura e símbolo</h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal. Os nove vasos formam uma família de elementos gráficos utilizada nas aplicações da identidade.</p></div>'''
+    if 'class="lm-reading-intro"' not in html:
+        html=html.replace('<div class="corners">',intro+'<div class="corners">',1)
+    start=html.index('<div class="corners">')
+    end=html.index('<div class="symbol-row">',start)
+    fragment=html[start:end]
+    fragment=re.sub(r'<div class="note(?: right)?(?: bottom)?"><b>0[1-4] / [^<]+</b>[^<]*</div>',"",fragment)
+    html=html[:start]+fragment+html[end:]
 # Keep the actual SVG markup byte-for-byte.
 title_start=html.index('<h1 class="title">')
 title_end=html.index('</h1>',title_start)+len('</h1>')
@@ -34,6 +36,6 @@ style='''<style id="lm-reading-hierarchy">
 @media(max-width:760px){#estrutura .lm-reading-intro{grid-template-columns:1fr;gap:18px;margin-bottom:25px}#estrutura .lm-reading-intro h2{font-size:clamp(35px,10vw,58px)}#estrutura .corners{padding:25px 0}#estrutura .corners .center-piece .copy{font-size:13px}}
 </style>'''
 assert '</head>' in html
-html=html.replace('</head>',style+'</head>',1)
+if 'id="lm-reading-hierarchy"' not in html:\n    html=html.replace('</head>',style+'</head>',1)
 p.write_text(html,encoding="utf-8")
 print("Symbols: heading, explanation and artwork reorganized without SVG mutation")

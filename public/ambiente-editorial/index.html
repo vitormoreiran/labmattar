@@ -1,187 +1,161 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LABMATTAR — Ambiente Editorial</title><link rel="stylesheet" href="./media/media-engine.css"><style>html,body{margin:0;min-height:100%;overflow:auto}*{box-sizing:border-box}@font-face{font-family:LMUnivers;src:local("Univers LT Std 45 Light"),url("/fonts/univers-lt-std-45-light.otf") format("opentype"),url("https://labmattar.com/fonts/univers-lt-std-45-light.otf") format("opentype");font-weight:300;font-display:swap}@font-face{font-family:LMPerpetua;src:local("Perpetua Titling MT Light"),url("/fonts/perpetua-titling-light.ttf") format("truetype"),url("https://labmattar.com/fonts/perpetua-titling-light.ttf") format("truetype");font-weight:300;font-display:swap}
-body:has(.ed-root){overflow:auto;background:#f7f6f2}.ed-root{--paper:#f7f6f2;--ink:#181818;--rule:#cbc9c4;--muted:#77736c;min-height:100dvh;display:flex;flex-direction:column;background:var(--paper);color:var(--ink);font:300 14px/1.45 LMUnivers,"Helvetica Neue",Arial,sans-serif}.ed-root *{box-sizing:border-box}.ed-root button,.ed-root input,.ed-root select,.ed-root textarea{font:inherit;color:inherit}.ed-root button{cursor:pointer;border:0;background:transparent;text-align:left}.ed-root button:disabled{opacity:.25;cursor:default}.ed-root button:focus-visible,.ed-root input:focus-visible,.ed-root textarea:focus-visible{outline:1px solid #181818;outline-offset:2px}.ed-head{height:78px;display:flex;align-items:center;gap:24px;padding:0 clamp(22px,3vw,56px);border-bottom:1px solid var(--ink)}.ed-brand{color:inherit;text-decoration:none;font-size:17px;letter-spacing:.025em}.ed-head-divider{height:22px;border-left:1px solid var(--rule)}.ed-document{display:flex;flex-direction:column;min-width:0;flex:1}.ed-document input{width:100%;max-width:420px;background:transparent;border:0;font-size:15px;outline:0}.ed-document small{font-size:9px;letter-spacing:.06em;color:var(--muted);margin-top:3px}.ed-head-actions{display:flex;align-items:center;gap:22px}.ed-head-actions button{font-size:10px;letter-spacing:.065em;white-space:nowrap}.ed-head-actions button:hover,.ed-linkbtn:hover{opacity:.55}.ed-main{display:grid;grid-template-columns:minmax(195px,245px) minmax(0,1fr) minmax(190px,250px);flex:1;min-height:calc(100dvh - 78px)}.ed-side{border-right:1px solid var(--rule);min-width:0}.ed-side-nav{display:flex;gap:14px;padding:22px 17px 18px;border-bottom:1px solid var(--rule)}.ed-side-nav button{font-size:10px;letter-spacing:.055em;position:relative;padding:0 0 5px}.ed-side-nav button.current{border-bottom:1px solid var(--ink)}.ed-side-content{padding:25px 17px}.ed-section-heading{display:flex;justify-content:space-between;gap:12px;font-size:10px;letter-spacing:.06em;margin-bottom:26px}.ed-section-heading button{font-size:10px}.ed-page-item{display:grid;grid-template-columns:25px 1fr 14px;gap:8px;align-items:start;width:100%;padding:14px 4px;border-bottom:1px solid var(--rule)!important;font-size:13px}.ed-page-item.active{border-bottom-color:var(--ink)!important}.ed-page-item small{display:block;font-size:11px;margin-top:5px;color:var(--muted)}.ed-page-num,.ed-page-arrow{font-size:10px;color:var(--muted)}.ed-side-help,.ed-small{font-size:11px;line-height:1.6;color:var(--muted);margin-top:24px}.ed-solid{padding:12px 10px!important;background:var(--ink)!important;color:var(--paper)!important;font-size:10px!important;width:100%;text-align:center!important}.ed-label{font-size:10px;display:block;margin-top:25px;margin-bottom:9px}.ed-input{background:transparent;border:1px solid var(--rule);width:100%;padding:10px}.ed-linkbtn{margin-top:12px;font-size:11px!important}.ed-media-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:20px}.ed-media{position:relative}.ed-media img{display:block;width:100%;height:100px;object-fit:cover}.ed-media button{position:absolute;right:0;top:0;background:var(--paper);padding:3px 8px}.ed-model{width:100%;display:grid;grid-template-columns:65px 1fr 13px;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--rule)!important;font-size:12px}.ed-model.active{border-color:var(--ink)!important}.ed-model-diagram{width:65px;height:45px;background:#e9e6df;padding:7px;display:flex;flex-direction:column;gap:3px}.ed-model-diagram i{display:block;background:#85817a;width:70%;height:3px}.ed-model-diagram i:nth-child(2){width:100%;height:14px;background:#c4bfb6}.ed-model-diagram.gallery{flex-direction:row}.ed-model-diagram.gallery i{width:30%;height:100%}.ed-model-diagram.cover{justify-content:center}.ed-stage{min-width:0;display:flex;flex-direction:column;background:#efede7}.ed-stage-bar,.ed-stage-bottom{display:flex;justify-content:space-between;gap:12px;padding:22px 25px;font-size:10px;letter-spacing:.06em;color:#595650}.ed-stage-bottom{margin-top:auto;align-items:center}.ed-stage-bottom button{font-size:10px}.ed-sheet-wrap{padding:20px 6% 35px;display:flex;align-items:center;justify-content:center;min-width:0}.ed-sheet{width:min(100%,900px);min-height:510px;background:var(--paper);padding:33px clamp(28px,5%,55px) 25px;display:flex;flex-direction:column;box-shadow:0 14px 40px #18181813}.ed-sheet-top,.ed-sheet-bottom{display:flex;justify-content:space-between;border-bottom:1px solid var(--ink);padding-bottom:13px;font-size:10px;letter-spacing:.05em}.ed-sheet-bottom{border-bottom:0;border-top:1px solid var(--ink);padding:13px 0 0;margin-top:auto}.ed-sheet-content{display:grid;grid-template-columns:1fr 1fr;gap:6%;align-items:center;flex:1;padding:40px 0}.ed-texts{display:flex;flex-direction:column;gap:22px;min-width:0}.ed-text-node{outline:0;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;padding:4px 5px;margin:-4px -5px}.ed-text-node.selected:not([contenteditable=false]){outline:1px solid #77736c}.role-title{font:300 clamp(27px,3.4vw,56px)/.97 LMUnivers,Arial,sans-serif;letter-spacing:-.035em;text-transform:uppercase}.role-subtitle{font-size:12px;letter-spacing:.05em;order:-1}.role-body{font-size:16px;line-height:1.5;max-width:65ch}.ed-image-field{min-height:300px;display:flex;overflow:hidden;gap:9px;align-items:stretch}.ed-image-field img{width:100%;min-width:0;object-fit:cover;flex:1}.ed-image-field.empty{background:#e6dbcf;align-items:center;justify-content:center}.ed-image-empty{display:flex;flex-direction:column;gap:22px;align-items:center;color:#655b50;font-size:11px;letter-spacing:.07em}.ed-image-empty button{font-size:10px;border-bottom:1px solid;padding:4px}.mode-cover .ed-sheet-content{grid-template-columns:1fr;align-items:end}.mode-cover .ed-texts{max-width:750px}.mode-cover .role-title{font-size:clamp(46px,7vw,105px)}.mode-cover .ed-image-field{display:none}.mode-gallery .ed-sheet-content{grid-template-columns:1fr}.mode-gallery .ed-image-field{min-height:250px}.mode-gallery .ed-image-field img{max-width:50%}.mode-essay .ed-sheet-content{grid-template-columns:1fr}.mode-essay .ed-texts{max-width:680px}.ed-sheet-wrap.mobile .ed-sheet{width:min(100%,365px);min-height:640px;padding:22px}.ed-sheet-wrap.mobile .ed-sheet-content{display:flex;flex-direction:column;align-items:stretch;gap:28px;padding:30px 0}.ed-sheet-wrap.mobile .ed-image-field{min-height:210px}.ed-sheet-wrap.mobile .role-title{font-size:36px}.ed-sheet-wrap.mobile .role-body{font-size:16px}.ed-sheet-wrap.mobile .mode-cover .role-title{font-size:45px}.ed-inspector{padding:26px 19px;border-left:1px solid var(--rule)}.ed-prop p{font-size:11px;margin:0 0 26px}.ed-prop label{display:block;font-size:10px;letter-spacing:.055em;color:var(--muted);margin:22px 0 8px}.ed-prop input,.ed-prop select,.ed-prop textarea{width:100%;background:transparent;border:1px solid var(--rule);padding:10px;font-size:12px;line-height:1.5}.ed-prop strong{font-weight:300;font-size:15px}.ed-prop-note{font-size:11px;line-height:1.55;color:var(--muted);margin-top:28px;border-top:1px solid var(--rule);padding-top:15px}.ed-prop-buttons{display:flex;gap:10px}.ed-prop-buttons button{font-size:10px;border-bottom:1px solid var(--ink);padding:5px 0}.is-preview .ed-side,.is-preview .ed-inspector,.is-preview .ed-stage-bar,.is-preview .ed-stage-bottom{display:none}.is-preview .ed-main{display:block}.is-preview .ed-sheet-wrap{min-height:calc(100dvh - 78px)}.is-preview .ed-sheet{box-shadow:none}@media(max-width:1100px){.ed-main{grid-template-columns:185px minmax(0,1fr)}.ed-inspector{display:none}.ed-sheet{min-height:475px}.ed-head{padding:0 20px}}@media(max-width:640px){.ed-head{gap:10px;height:65px}.ed-brand{font-size:13px}.ed-head-actions{gap:9px}.ed-head-actions button{font-size:9px}.ed-head-actions button:last-child{display:none}.ed-document input{font-size:12px}.ed-document small{font-size:8px}.ed-main{display:flex;flex-direction:column}.ed-side{order:2;border-top:1px solid var(--rule);border-right:0}.ed-side-nav{padding:15px}.ed-side-content{padding:15px}.ed-stage{order:1}.ed-stage-bar,.ed-stage-bottom{padding:13px}.ed-sheet-wrap{padding:10px}.ed-sheet{min-height:380px;padding:20px}.ed-sheet-content{display:flex;flex-direction:column;align-items:stretch;gap:20px;padding:26px 0}.role-title{font-size:35px}.ed-image-field{min-height:170px}.ed-sheet-wrap.mobile .ed-sheet{width:min(100%,330px)}}
-/* Ambiente Editorial: system extracted from the published LABMATTAR code. */
-.ed-sheet.ed-original-media{position:relative;isolation:isolate;overflow:hidden;background:#151915;color:#fff}
-.ed-sheet.ed-original-media:before{content:"";position:absolute;inset:-6%;background-image:var(--ed-photo);background-position:center;background-size:cover;filter:blur(24px) saturate(.82) brightness(.6);transform:scale(1.06);z-index:-1}
-.ed-sheet.ed-original-media .ed-sheet-top,.ed-sheet.ed-original-media .ed-sheet-bottom{color:#fff;border-color:#ffffff99;position:relative;z-index:5}
-.ed-sheet.ed-original-media .ed-text-node{color:#fff}
-.ed-sheet.ed-original-media .ed-image-field{background:transparent;border:0;position:relative;overflow:visible}
-.ed-sheet.ed-original-media .ed-original-image{width:100%;height:100%;aspect-ratio:990.08 / 743.18;-webkit-mask:url("./media/m-publicado.svg") center / contain no-repeat;mask:url("./media/m-publicado.svg") center / contain no-repeat}
-.ed-sheet.ed-original-media .ed-original-image img{width:100%;height:100%;display:block;object-fit:cover;max-width:none}
-.ed-sheet.ed-original-cover .ed-sheet-content{position:static;display:block;padding:0}
-.ed-sheet.ed-original-cover .ed-image-field{position:absolute;inset:0;min-height:0;height:100%;width:100%;z-index:1}
-.ed-sheet.ed-original-cover .ed-original-image{position:absolute;inset:0;height:100%;width:100%;aspect-ratio:auto;-webkit-mask-size:100% 100%;mask-size:100% 100%}
-.ed-sheet.ed-original-cover .ed-texts{position:absolute;inset:0;display:block;z-index:3;pointer-events:none}
-.ed-sheet.ed-original-cover .ed-text-node{position:absolute;left:7%;width:75%;pointer-events:auto;margin:0;padding:0}
-.ed-sheet.ed-original-cover .role-subtitle{top:18%}
-.ed-sheet.ed-original-cover .role-title{top:28%;font-size:clamp(45px,7cqw,110px);line-height:.9}
-.ed-sheet.ed-original-cover .role-body{top:75%;max-width:48ch}
-.ed-sheet.ed-original-editorial .ed-sheet-content{position:relative;z-index:2;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
-.ed-sheet.ed-original-editorial .ed-image-field{min-height:370px;align-self:stretch}
-.ed-sheet.ed-original-editorial .ed-original-image{position:absolute;inset:0}
-@media(max-width:640px){.ed-sheet.ed-original-cover .role-title{font-size:clamp(34px,10vw,65px)}.ed-sheet.ed-original-cover .ed-text-node{width:85%}.ed-sheet.ed-original-editorial .ed-sheet-content{display:flex;flex-direction:column}.ed-sheet.ed-original-editorial .ed-image-field{min-height:240px}}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <title>LABMATTAR — Ambiente Editorial</title>
+  <link rel="stylesheet" href="./editorial-v2.css">
+  <script defer src="./editorial-v2.js"></script>
+</head>
+<body>
+<div class="editor" id="editor" data-viewport="desktop">
+  <header class="editor-header">
+    <a class="editor-brand" href="/manual.html" title="Abrir manual de identidade">LABMATTAR</a>
+    <span class="header-divider" aria-hidden="true"></span>
+    <div class="document-heading">
+      <label class="sr-only" for="documentTitle">Nome da apresentação</label>
+      <input id="documentTitle" value="Cada Corpo Abre um Mundo" aria-label="Nome da apresentação">
+      <span class="save-status" id="saveStatus" role="status">DOCUMENTO LOCAL</span>
+    </div>
+    <div class="header-actions">
+      <button id="undoButton" type="button" title="Desfazer (Ctrl+Z)" aria-label="Desfazer">↶ <span>DESFAZER</span></button>
+      <button id="redoButton" type="button" title="Refazer (Ctrl+Shift+Z)" aria-label="Refazer">↷ <span>REFAZER</span></button>
+      <span class="header-divider thin" aria-hidden="true"></span>
+      <button id="viewportButton" type="button" aria-pressed="false">MOBILE</button>
+      <button id="previewButton" type="button" aria-pressed="false">VISUALIZAR</button>
+      <button id="importButton" type="button">IMPORTAR</button>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+      <button class="header-export" id="exportButton" type="button">EXPORTAR JSON ↗</button>
+    </div>
+  </header>
 
-/* ESTRUTURAS EDITORIAIS DO PORTFÓLIO — palco, não grid genérico.
-   Geometria e camadas referenciadas em chapter2-stage-stack,
-   chapter2-m-image e chapter2-ambient-image do site publicado. */
-.ed-sheet[data-treatment]{container-type:inline-size}
-.ed-sheet.ed-original-media{padding:0;min-height:530px;aspect-ratio:16 / 10}
-.ed-sheet.ed-original-media:before{z-index:0;background-position:var(--ed-focus-x,50%) var(--ed-focus-y,50%);filter:blur(var(--ed-ambient-blur,24px)) saturate(.82) brightness(.6)}
-.ed-sheet.ed-original-media .ed-sheet-top,.ed-sheet.ed-original-media .ed-sheet-bottom{position:absolute;z-index:8;left:4%;right:4%;width:92%;margin:0}
-.ed-sheet.ed-original-media .ed-sheet-top{top:4%}
-.ed-sheet.ed-original-media .ed-sheet-bottom{bottom:4%}
-.ed-sheet.ed-original-media .ed-sheet-content{position:absolute;inset:0;z-index:2;display:block!important;padding:0;margin:0}
-.ed-sheet.ed-original-media .ed-image-field{position:absolute;inset:0;display:block!important;min-height:0!important;width:100%;height:100%;z-index:1;pointer-events:none}
-.ed-sheet.ed-original-media .ed-original-image{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:90%;height:auto;aspect-ratio:990.08 / 743.18;overflow:hidden;-webkit-mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat}
-.ed-sheet.ed-original-media .ed-original-image img{width:100%;height:100%;display:block;object-fit:cover;object-position:var(--ed-focus-x,50%) var(--ed-focus-y,50%);transform:scale(var(--ed-scale,1));filter:brightness(.66)}
-.ed-sheet.ed-original-media .ed-texts{position:absolute;inset:0;z-index:4;display:block;pointer-events:none;max-width:none}
-.ed-sheet.ed-original-media .ed-text-node{position:absolute;left:8%;margin:0;padding:4px;width:min(77%,700px);height:auto;max-width:none;pointer-events:auto;text-shadow:0 1px 8px #0003}
-.ed-sheet.ed-original-media .role-subtitle{top:19%;font-size:clamp(11px,1.5cqw,18px)}
-.ed-sheet.ed-original-media .role-title{top:29%;font-size:clamp(37px,7.8cqw,100px);line-height:.91;max-width:86%;letter-spacing:-.04em}
-.ed-sheet.ed-original-media .role-body{top:auto;bottom:13%;font-size:clamp(12px,1.6cqw,20px);line-height:1.2;max-width:50%}
-.ed-sheet.ed-original-media[data-treatment="opening"] .ed-original-image{width:100%;height:100%;aspect-ratio:auto;-webkit-mask-size:100% 100%;mask-size:100% 100%}
-.ed-sheet.ed-original-media[data-treatment="portfolio"] .ed-original-image{width:92%;max-width:920px;height:auto}
-.ed-sheet.ed-original-media[data-treatment="detail"] .ed-original-image{left:53%;top:52%;width:115%;max-width:none;aspect-ratio:990.08 / 743.18;-webkit-mask-size:100% 100%;mask-size:100% 100%}
-.ed-sheet.ed-original-media[data-treatment="detail"] .role-title{top:26%;width:65%}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media{aspect-ratio:9/16;min-height:580px;max-width:365px}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media[data-treatment="portfolio"] .ed-original-image{width:145%;max-width:none}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media[data-treatment="detail"] .ed-original-image{width:195%}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .role-title{font-size:clamp(36px,10cqw,60px);top:32%}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .role-body{max-width:80%}
-.ed-sheet:not(.ed-original-media)[data-treatment="opening"] .ed-image-field{display:flex}
+  <div class="editor-workspace">
+    <aside class="editor-sidebar" aria-label="Navegação editorial">
+      <div class="sidebar-tabs" role="tablist" aria-label="Navegação">
+        <button type="button" class="active" role="tab" id="pagesTab" aria-selected="true" aria-controls="pagesPanel" data-side-tab="pages">PÁGINAS</button>
+        <button type="button" role="tab" id="assetsTab" aria-selected="false" aria-controls="assetsPanel" data-side-tab="assets">ACERVO</button>
+      </div>
+      <section id="pagesPanel" role="tabpanel" aria-labelledby="pagesTab" class="sidebar-panel">
+        <div class="section-label"><span>SEQUÊNCIA</span><span id="pagesTotal">07 PÁGINAS</span></div>
+        <div class="pages-list" id="pagesList" aria-label="Ordem das páginas"></div>
+        <button type="button" class="outlined-action" id="addPageButton">+ ADICIONAR PÁGINA</button>
+        <div class="sequence-actions" aria-label="Organização de páginas">
+          <button id="movePageUp" type="button">↑ SUBIR</button>
+          <button id="movePageDown" type="button">↓ DESCER</button>
+        </div>
+        <p class="small-note">Selecione, duplique ou reordene páginas. A composição permanece vinculada às regras da identidade.</p>
+      </section>
+      <section id="assetsPanel" role="tabpanel" aria-labelledby="assetsTab" class="sidebar-panel" hidden>
+        <div class="section-label"><span>ACERVO / PROJETO</span><span id="assetsTotal"></span></div>
+        <p class="small-note">Imagens originais de <em>Cada Corpo Abre um Mundo</em>. Selecione uma para aplicá-la à página.</p>
+        <div class="assets-list" id="assetsList"></div>
+        <button id="addAssetButton" class="outlined-action" type="button">+ IMAGEM LOCAL</button>
+        <input id="assetFile" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <p class="small-note">Os arquivos adicionados ficam no navegador. Exportar JSON inclui essas referências.</p>
+      </section>
+      <div class="sidebar-foot">
+        <button id="resetButton" type="button">RESTAURAR PROJETO-BASE</button>
+        <button id="recoverLegacyButton" type="button" hidden>RECUPERAR RASCUNHO ANTERIOR</button>
+      </div>
+    </aside>
 
-/* Workspace contracts: direct geometry and page management, scoped to the editor */
-.ed-root .ed-head-actions button:disabled{opacity:.25}
-.ed-filmstrip{display:flex;gap:8px;overflow-x:auto;border-top:1px solid #cbc9c4;padding:12px 22px 16px;max-width:100%;background:#f2f0ea}
-.ed-filmstrip button{flex:0 0 105px;padding:8px!important;background:#e8e4db!important;border:1px solid transparent!important;min-height:68px;display:flex;flex-direction:column;justify-content:space-between;font-size:10px;gap:5px}
-.ed-filmstrip button.current{border-color:#181818!important;background:#faf9f6!important}
-.ed-filmstrip small{opacity:.55}.ed-filmstrip .ed-addpage{flex-basis:75px;justify-content:center;align-items:center}
-.ed-sheet.ed-original-media .ed-text-node{touch-action:none;user-select:text;min-width:80px;z-index:5}
-.ed-text-node .ed-grip{display:none;position:absolute;right:-22px;top:0;background:#f7f6f2;color:#181818;border:1px solid #181818;width:20px;height:20px;font-size:11px;text-align:center;line-height:17px;cursor:move;touch-action:none;user-select:none;pointer-events:auto}
-.ed-text-node.selected .ed-grip{display:block}
-.ed-sheet.ed-original-media .ed-text-node.selected{outline:1px solid #fff9}
-.ed-inspector .ed-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ed-inspector input[type=range]{padding:0}
-.ed-inspector .ed-control-note{font-size:11px;opacity:.55;margin-top:7px}
-.ed-side-nav{flex-wrap:wrap}
-@media(max-width:720px){.ed-filmstrip{padding:8px;gap:6px}.ed-filmstrip button{flex-basis:85px;min-height:55px}.ed-head-actions button{font-size:9px}}
+    <main class="editor-stage" aria-label="Página atual">
+      <div class="stage-topline">
+        <span id="compositionLabel">COMPOSIÇÃO / 01</span>
+        <span id="editorialRoleLabel">ABERTURA</span>
+      </div>
+      <div id="stageViewport" class="stage-viewport">
+        <article class="artboard" id="artboard" data-profile="opening" data-treatment="m-central" data-has-media="true" aria-label="Prévia da página">
+          <div class="media-scene" id="mediaScene" aria-hidden="true">
+            <img id="ambientPhoto" class="ambient-photo" alt="">
+            <div class="scene-veil"></div>
+            <div class="masked-photo"><img id="primaryPhoto" alt=""></div>
+          </div>
+          <div class="editorial-content" id="editorialContent">
+            <p class="content-subtitle" data-content-slot="subtitle" data-role="subtitle" contenteditable="true" spellcheck="true"></p>
+            <h1 class="content-title" data-content-slot="title" data-role="title" contenteditable="true" spellcheck="true"></h1>
+            <div class="content-body" data-content-slot="body" data-role="body" contenteditable="true" spellcheck="true"></div>
+            <p class="content-caption" data-content-slot="caption" data-role="caption" contenteditable="true" spellcheck="true"></p>
+            <div class="content-credits" data-content-slot="credits" data-role="credits" contenteditable="true" spellcheck="true"></div>
+          </div>
+        </article>
+      </div>
+      <div class="stage-footline">
+        <div class="pagination">
+          <button id="previousButton" type="button" aria-label="Página anterior">← ANTERIOR</button>
+          <span id="stageCount">01 / 07</span>
+          <button id="nextButton" type="button" aria-label="Próxima página">PRÓXIMA →</button>
+        </div>
+        <span id="layoutStatus" role="status">IDENTIDADE APLICADA AUTOMATICAMENTE</span>
+      </div>
+    </main>
 
-/* PÁGINA EDITORIAL — composição LABMATTAR, não uma folha com cabeçalho.
-   O chrome (nome, número e ações) pertence ao ambiente de edição. */
-.ed-root{--ed-canvas-gap:clamp(18px,3vw,48px);--ed-composition-inset:clamp(24px,5.5cqw,86px)}
-.ed-stage{background:#e8e6e0;min-width:0}
-.ed-stage-bar,.ed-stage-bottom{padding:14px clamp(18px,2vw,32px);letter-spacing:.035em}
-.ed-sheet-wrap{flex:1;align-items:center;padding:clamp(18px,3vw,48px);min-height:0}
-.ed-sheet{position:relative;isolation:isolate;container-type:inline-size;width:min(100%,1080px);min-height:0;aspect-ratio:16/9;padding:0;background:#f5f3ec;box-shadow:none;overflow:hidden}
-.ed-sheet-top,.ed-sheet-bottom{display:none!important}
-.ed-sheet-content{position:absolute;inset:0;display:block;padding:0;margin:0}
-.ed-texts{position:absolute;inset:0;display:block;z-index:3;pointer-events:none}
-.ed-text-node{position:absolute;left:8%;margin:0;padding:0;width:76%;max-width:none;pointer-events:auto;font-family:LMUnivers,Arial,sans-serif;font-weight:300;letter-spacing:-.014em}
-.ed-text-node.role-subtitle{top:17%;font-size:clamp(10px,1.5cqw,16px);line-height:1.1;letter-spacing:.05em;order:unset}
-.ed-text-node.role-title{top:28%;font-size:clamp(40px,7.6cqw,105px);line-height:.91;letter-spacing:-.048em;text-transform:uppercase}
-.ed-text-node.role-body{top:76%;font-size:clamp(12px,1.65cqw,21px);line-height:1.3;width:46%;max-width:49ch}
-.ed-image-field{position:absolute;inset:0;display:block;height:100%;min-height:0;border:0;pointer-events:none}
-.ed-image-field.empty{position:absolute;inset:13% 8%;width:auto;height:auto;min-height:0;display:flex;border:1px solid #b6b2a8;background:transparent;pointer-events:auto}
-.ed-sheet.ed-original-media{min-height:0;aspect-ratio:16/9}
-.ed-sheet.ed-original-media .ed-sheet-content{inset:0}
-.ed-sheet.ed-original-media .ed-original-image{width:90%}
-.ed-sheet.ed-original-media .ed-text-node{left:8%;padding:0}
-.ed-sheet.ed-original-media .role-subtitle{top:17%}
-.ed-sheet.ed-original-media .role-title{top:28%;font-size:clamp(40px,7.6cqw,105px)}
-.ed-sheet.ed-original-media .role-body{bottom:auto;top:76%;max-width:46%;font-size:clamp(12px,1.65cqw,21px)}
-.ed-sheet-wrap.mobile{padding:24px}
-.ed-sheet-wrap.mobile .ed-sheet{aspect-ratio:9/16;width:min(100%,365px);min-height:0;padding:0}
-.ed-sheet-wrap.mobile .ed-sheet-content{position:absolute;inset:0;display:block;padding:0}
-.ed-sheet-wrap.mobile .ed-text-node{position:absolute;width:84%;left:8%}
-.ed-sheet-wrap.mobile .role-subtitle{top:19%;font-size:11px}
-.ed-sheet-wrap.mobile .role-title{top:30%;font-size:clamp(35px,10cqw,58px)}
-.ed-sheet-wrap.mobile .role-body{top:76%;width:80%;font-size:14px}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media{aspect-ratio:9/16;min-height:0}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .ed-text-node{left:8%;width:84%}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .role-title{top:30%;font-size:clamp(35px,10cqw,58px)}
-.ed-sheet-wrap.mobile .ed-sheet.ed-original-media .role-body{top:76%;max-width:80%;font-size:14px}
-.is-preview .ed-sheet-wrap{padding:0;min-height:calc(100dvh - 78px)}
-.is-preview .ed-sheet{width:min(100%,1600px);box-shadow:none}
-@media(max-width:640px){.ed-sheet-wrap{padding:12px}.ed-sheet{aspect-ratio:9/16}.ed-text-node.role-title{font-size:clamp(30px,9cqw,54px)}.ed-text-node.role-body{width:80%}}
-
-/* Identidade LABMATTAR: papel editorial independente do tratamento imagético. */
-.ed-sheet[data-editorial-role="opening"] .role-title{font-size:clamp(42px,7.7cqw,102px)!important;line-height:.91}
-.ed-sheet[data-editorial-role="project"] .role-title{font-size:clamp(42px,10.5cqw,170px)!important;line-height:.86}
-.ed-sheet[data-editorial-role="section"] .role-title{font-size:clamp(42px,8.8cqw,126px)!important;line-height:.89}
-.ed-sheet[data-editorial-role="development"] .role-title{font-size:clamp(36px,5.7cqw,75px)!important;line-height:.93}
-.ed-sheet[data-editorial-role="closing"] .role-title{font-size:clamp(42px,7.7cqw,102px)!important;line-height:.91}
-.ed-sheet .role-body{font-family:LMUnivers,Arial,sans-serif;font-weight:300;line-height:1.45;font-size:clamp(14px,1.6cqw,18px);max-width:65ch;hyphens:none;text-align:left}
-.ed-sheet .role-subtitle{font-family:LMUnivers,Arial,sans-serif;font-size:clamp(12px,1.1cqw,13px);line-height:1.35;letter-spacing:.045em}
-.ed-sheet .role-title{overflow-wrap:normal;word-break:normal;hyphens:none;font-weight:300}
-.ed-sheet[data-treatment="none"] .ed-image-field{display:none!important}
-.ed-sheet[data-treatment="plain"] .ed-original-image{-webkit-mask:none!important;mask:none!important;width:100%!important;height:100%!important;aspect-ratio:auto!important;left:50%;top:50%}
-.ed-sheet.ed-original-media[data-treatment="plain"] .ed-original-image img{filter:none}
-.ed-sheet-wrap.mobile .ed-sheet[data-editorial-role="opening"] .role-title,.ed-sheet-wrap.mobile .ed-sheet[data-editorial-role="project"] .role-title,.ed-sheet-wrap.mobile .ed-sheet[data-editorial-role="section"] .role-title{font-size:clamp(42px,11cqw,64px)!important;line-height:.9}
-
-/* Final identity correction: the deployed preview hosts the official fonts at /fonts.
-   Titles must use the original Univers, with optional editorial Perpetua, never faux bold. */
-.ed-root{font-family:LMUnivers,Arial,sans-serif;font-weight:300}
-.ed-sheet .ed-text-node{font-family:LMUnivers,Arial,sans-serif;font-weight:300!important;font-synthesis:none}
-.ed-sheet .role-title{font-family:LMUnivers,Arial,sans-serif!important;font-weight:300!important;font-synthesis:none;letter-spacing:-.025em!important;line-height:.90!important;white-space:pre-wrap;overflow-wrap:normal;word-break:normal}
-.ed-sheet .role-title[data-family="perpetua"]{font-family:LMPerpetua,Georgia,serif!important;letter-spacing:-.01em!important;line-height:.94!important}
-.ed-sheet .role-body{font-size:clamp(14px,1.6cqw,18px)!important;line-height:1.45!important;max-width:65ch!important}
-.ed-sheet .role-subtitle{font-size:clamp(11px,1.15cqw,13px)!important;line-height:1.35!important;letter-spacing:.045em!important}
-.ed-sheet{background:#f7f6f2}
-.ed-sheet .ed-text-node{overflow:visible}
-.ed-sheet .role-title{max-width:88%;text-transform:uppercase}
-.ed-sheet[data-editorial-role="project"] .role-title{letter-spacing:-.035em!important}
-.ed-sheet[data-editorial-role="development"] .role-body{width:min(64%,65ch)}
-.ed-sheet-wrap.mobile .ed-sheet .role-body{font-size:16px!important;line-height:1.5!important}
-.ed-sheet-wrap.mobile .ed-sheet .role-subtitle{font-size:12px!important}
-</style><link rel="stylesheet" href="./portfolio-renderer.css"><link rel="stylesheet" href="./editorial-official.css"><link rel="stylesheet" href="./original-layout-bridge.css"></head><body><main class="ed-root"><header class="ed-head"><a class="ed-brand" href="/manual">LABMATTAR</a><span class="ed-head-divider"></span><div class="ed-document"><input id="docTitle" aria-label="Nome da apresentação" value="Cada corpo abre um mundo"><small id="status">RASCUNHO LOCAL</small></div><div class="ed-head-actions"><button id="undo" title="Desfazer (Ctrl+Z)">↶ DESFAZER</button><button id="redo" title="Refazer (Ctrl+Shift+Z)">↷ REFAZER</button><button id="device">MOBILE</button><button id="preview">VISUALIZAR</button><button id="importDoc">ABRIR JSON</button><input id="importFile" type="file" accept=".json,application/json" hidden><button id="download">EXPORTAR JSON ↗</button></div></header><div class="ed-main"><aside class="ed-side"><nav class="ed-side-nav"><button data-tab="pages" class="current">PÁGINAS</button><button data-tab="insert">INSERIR</button><button data-tab="layers">CAMADAS</button><button data-tab="library">ACERVO</button><button data-tab="models">MODELOS</button></nav><div id="sideContent" class="ed-side-content"></div></aside><section class="ed-stage"><div class="ed-stage-bar"><span id="pageIndex">COMPOSIÇÃO / 01</span><span id="viewMode">VISUALIZAÇÃO HORIZONTAL</span></div><div id="sheetWrap" class="ed-sheet-wrap"><article class="ed-sheet" id="sheet"><div class="ed-sheet-top"><span>LABMATTAR</span><span id="sheetCounter">01 / 02</span></div><div class="ed-sheet-content"><div class="ed-texts" id="texts"></div><div class="ed-image-field" id="imageField"></div></div><div class="ed-sheet-bottom"><span>LABMATTAR / IDENTIDADE VISUAL</span><span>2026</span></div></article></div><div class="ed-stage-bottom"><button id="prev">← ANTERIOR</button><span>EDIÇÃO DIRETA / TEXTO E COMPOSIÇÃO</span><button id="next">PRÓXIMA →</button></div><div class="ed-filmstrip" id="filmstrip" aria-label="Sequência de páginas"></div></section><aside class="ed-inspector"><div class="ed-section-heading">PROPRIEDADES <span>↗</span></div><div id="inspector" class="ed-prop"></div></aside></div></main><script>
-const makeId=()=>Math.random().toString(36).slice(2,10);
-const starter=[{id:"p1",name:"Abertura",mode:"opening",treatment:"opening",nodes:[{id:"a1",role:"title",text:"CADA CORPO ABRE UM MUNDO"},{id:"a2",role:"subtitle",text:"GASTROPERFORMANCE"},{id:"a3",role:"body",text:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo."}],images:["./media/BOXDOSENTIR-64.jpg"]},{id:"p2",name:"Desenvolvimento",mode:"project",treatment:"portfolio",nodes:[{id:"b1",role:"title",text:"CORPO, IMAGEM E MEMÓRIA"},{id:"b2",role:"subtitle",text:"01 / INVESTIGAÇÃO SENSÍVEL"},{id:"b3",role:"body",text:"A composição articula texto, matéria, imagens e gestos em uma narrativa que se transforma ao longo da experiência."}],images:["./media/BOXDOSENTIR-179.jpg"]},{id:"p3",name:"Detalhe",mode:"development",treatment:"detail",nodes:[{id:"c1",role:"title",text:"FORMAS DE SENTIR"},{id:"c2",role:"subtitle",text:"02 / MATÉRIA E PAISAGEM"},{id:"c3",role:"body",text:"Um recorte da imagem amplia a composição e transforma o espaço de leitura."}],images:["./media/BOXDOSENTIR-151.jpg"]}];
-const models={opening:"Abertura",project:"Projeto",section:"Categoria / seção",development:"Desenvolvimento",closing:"Encerramento"};
-const treatments={opening:"M imersivo",portfolio:"M integral do portfólio",detail:"Recorte ampliado",plain:"Imagem integral",none:"Sem imagem"};
-const modeMap={cover:"opening",editorial:"project",gallery:"development",essay:"development",portfolio:"project",detail:"development"};
-const normalizeMode=m=>models[m]?m:modeMap[m]||"development";
-const treatment=p=>p.treatment||({opening:"opening",project:"portfolio",section:"none",development:"detail",closing:"none"}[p.mode]||"plain");
-const roleGeometry={opening:{title:[7,30,86],subtitle:[7,16,65],body:[7,76,48]},project:{title:[7,35,87],subtitle:[7,17,65],body:[7,78,47]},section:{title:[7,36,88],subtitle:[7,16,65],body:[7,78,47]},development:{title:[7,20,80],subtitle:[7,12,65],body:[7,51,62]},closing:{title:[7,35,85],subtitle:[7,17,65],body:[7,77,48]}};
-const geometryFor=(p,n)=>{const [x,y,w]=(roleGeometry[normalizeMode(p.mode)]||roleGeometry.development)[n.role]||[7,55,60];return {x,y,w,...n.geometry}};
-const samples=[{label:"Abertura com imagem ambiente",mode:"opening",treatment:"opening",url:"./media/BOXDOSENTIR-64.jpg"},{label:"Projeto no M integral",mode:"project",treatment:"portfolio",url:"./media/BOXDOSENTIR-179.jpg"},{label:"Detalhe / recorte editorial",mode:"development",treatment:"detail",url:"./media/BOXDOSENTIR-151.jpg"}];
-
-let doc={title:"Cada corpo abre um mundo",pages:structuredClone(starter)};try{const a=JSON.parse(localStorage.getItem("labmattar-editorial-v1")||"null");if(a&&Array.isArray(a.pages)&&a.pages.length)doc={title:a.title||doc.title,pages:a.pages}}catch{}
-doc.pages.forEach(p=>{const old=p.mode;p.mode=normalizeMode(old);p.treatment=p.treatment||({portfolio:"portfolio",detail:"detail",opening:"opening"}[old]||treatment(p));p.images=(p.images||[]).map(img=>{const media={"aleteia":"BOXDOSENTIR-64","concha-y-toro":"BOXDOSENTIR-179","dadiva":"BOXDOSENTIR-151"};const translate=url=>typeof url==="string"?url.replace(/^https:\/\/labmattar\.com\/assets\/chapter2\/(aleteia|concha-y-toro|dadiva)\.jpg$/,(_,name)=>"./media/"+media[name]+".jpg"):url;return typeof img==="string"?translate(img):img&&typeof img==="object"?{...img,src:translate(img.src)}:img})});
-let selected=doc.pages[0].id,tab="pages",nodeId=null,mobile=false,preview=false;
-const history={past:[],future:[]};let selectedImage=false;let saveTimer;
-function snapshot(){return JSON.stringify(doc)}
-function checkpoint(){history.past.push(snapshot());if(history.past.length>80)history.past.shift();history.future=[];updateHistory()}
-function restoreHistory(side,other){if(!history[side].length)return;history[other].push(snapshot());doc=JSON.parse(history[side].pop());selected=doc.pages.find(p=>p.id===selected)?.id||doc.pages[0].id;nodeId=null;selectedImage=false;store();draw();updateHistory()}
-function updateHistory(){const u=el("undo"),r=el("redo");if(u)u.disabled=!history.past.length;if(r)r.disabled=!history.future.length}
-const el=id=>document.getElementById(id),page=()=>doc.pages.find(p=>p.id===selected)||doc.pages[0],escape=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const store=()=>{try{localStorage.setItem("labmattar-editorial-v1",JSON.stringify(doc));el("status").textContent="SALVO NESTE NAVEGADOR"}catch{el("status").textContent="SEM ESPAÇO PARA SALVAR"}};
-function draw(){const p=page();p.mode=normalizeMode(p.mode);el("docTitle").value=doc.title;el("pageIndex").textContent="COMPOSIÇÃO / "+String(doc.pages.indexOf(p)+1).padStart(2,"0");el("viewMode").textContent=(mobile?"VISUALIZAÇÃO VERTICAL":"VISUALIZAÇÃO HORIZONTAL")+" · "+models[p.mode];el("sheetCounter").textContent=String(doc.pages.indexOf(p)+1).padStart(2,"0")+" / "+String(doc.pages.length).padStart(2,"0");
-el("sheet").className="ed-sheet mode-"+p.mode;el("sheetWrap").classList.toggle("mobile",mobile);document.querySelector(".ed-root").classList.toggle("is-preview",preview);el("device").textContent=mobile?"DESKTOP":"MOBILE";el("preview").textContent=preview?"EDITAR":"VISUALIZAR";
-el("texts").innerHTML=p.nodes.map(n=>'<div class="ed-text-node role-'+n.role+(n.id===nodeId?' selected':'')+'" contenteditable="'+(!preview)+'" role="textbox" data-node="'+n.id+'" data-family="'+escape(n.family||((p.mode==="project"||p.mode==="section")&&n.role==="title"?"perpetua":"univers"))+'" aria-label="'+n.role+'">'+escape(n.text)+'</div>').join("");
-const field=el("imageField");field.classList.toggle("empty",!p.images.length);const first=p.images[0];const src=first&&(typeof first==="string"?first:first.src);const sheet=el("sheet");sheet.classList.toggle("ed-original-media",!!src&&treatment(p)!=="none");sheet.classList.toggle("ed-original-cover",!!src&&treatment(p)==="opening");sheet.classList.toggle("ed-original-editorial",!!src&&treatment(p)!=="opening");sheet.dataset.treatment=treatment(p);sheet.dataset.editorialRole=p.mode;sheet.style.setProperty("--ed-photo",src?"url("+JSON.stringify(src)+")":"none");sheet.dataset.mediaState=src&&treatment(p)!=="none"?"photo":"empty";sheet.classList.toggle("ed-source-page",true);sheet.classList.toggle("ed-has-photo",!!src&&treatment(p)!=="none");field.innerHTML=src?'<div class="chapter2-ambient"><img class="chapter2-ambient-image" alt="" aria-hidden="true" src="'+escape(src)+'"></div><div class="chapter2-shade"></div><div class="chapter2-stage"><div class="chapter2-stage-stack"><div class="chapter2-stable-frame"><img class="chapter2-m-image" alt="Imagem do projeto recortada pela geometria M" src="'+escape(src)+'"></div></div></div>':'<div class="ed-image-empty"><span>IMAGEM</span><button id="addFromSheet">+ INSERIR DO ACERVO</button></div>';
-document.querySelectorAll("[data-node]").forEach(e=>{e.onclick=()=>{nodeId=e.dataset.node;drawInspector()};e.onblur=()=>{const n=p.nodes.find(n=>n.id===e.dataset.node);if(n){const copy=e.cloneNode(true);copy.querySelectorAll(".ed-grip").forEach(x=>x.remove());const txt=copy.innerText;if(n.text!==txt){checkpoint();n.text=txt;store();drawInspector()}}}});if(el("addFromSheet"))el("addFromSheet").onclick=()=>{tab="library";drawSide()};
-drawSide();drawInspector();attachCanvas();applyImageControls();verifyEditorialFonts();requestAnimationFrame(measureEditorialType);drawFilmstrip();updateHistory();el("prev").disabled=doc.pages.indexOf(p)===0;el("next").disabled=doc.pages.indexOf(p)===doc.pages.length-1}
-function drawSide(){document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("current",b.dataset.tab===tab));const p=page(),out=el("sideContent");
-if(tab==="insert"){out.innerHTML='<div class="ed-section-heading">INSERIR ELEMENTO</div><button class="ed-solid" id="addTitle">+ TÍTULO</button><button class="ed-linkbtn" id="addSubtitle">+ SUBTÍTULO</button><button class="ed-linkbtn" id="addBody">+ CORPO DE TEXTO</button><button class="ed-linkbtn" id="insertImage">+ IMAGEM</button><p class="ed-small">Clique para inserir. Selecione e arraste pelo marcador para posicionar.</p>';for(const [id,role,label] of [["addTitle","title","NOVO TÍTULO"],["addSubtitle","subtitle","Subtítulo"],["addBody","body","Escreva aqui"]])el(id).onclick=()=>{checkpoint();let n={id:makeId(),role,text:label,geometry:{x:8,y:role==="body"?72:role==="subtitle"?18:34,w:role==="title"?77:52}};p.nodes.push(n);nodeId=n.id;store();draw()};el("insertImage").onclick=()=>{tab="library";drawSide()}}
-if(tab==="layers"){out.innerHTML='<div class="ed-section-heading">CAMADAS DA PÁGINA</div>'+p.nodes.map((n,i)=>'<button class="ed-page-item" data-layer="'+n.id+'"><span class="ed-page-num">'+String(i+1).padStart(2,"0")+'</span><span>'+escape(n.role.toUpperCase())+'<small>'+escape(n.text.slice(0,42))+'</small></span><span>↗</span></button>').join("")+'<button class="ed-page-item" id="layerImage">IMAGEM / M</button>';out.querySelectorAll("[data-layer]").forEach(b=>b.onclick=()=>{nodeId=b.dataset.layer;selectedImage=false;drawInspector();document.querySelector('[data-node="'+nodeId+'"]')?.focus()});el("layerImage").onclick=()=>{selectedImage=true;nodeId=null;drawInspector()}}
-if(tab==="pages"){out.innerHTML='<div class="ed-section-heading"><span>SEQUÊNCIA / '+String(doc.pages.length).padStart(2,"0")+'</span><button id="newPage">+ NOVA</button></div>'+doc.pages.map((q,i)=>'<button class="ed-page-item '+(q.id===selected?'active':'')+'" data-page="'+q.id+'"><span class="ed-page-num">'+String(i+1).padStart(2,"0")+'</span><span>'+escape(q.name)+'<small>'+models[q.mode]+'</small></span><span class="ed-page-arrow">↗</span></button>').join("")+'<p class="ed-side-help">Selecione uma página para compor, editar e reorganizar.</p>';el("newPage").onclick=()=>{const id=makeId();checkpoint();doc.pages.push({id,name:"Nova página",mode:"portfolio",nodes:["title","subtitle","body"].map((role,i)=>({id:makeId(),role,text:["NOVO TÍTULO","SUBTÍTULO","Escreva o conteúdo da página."][i]})),images:[]});selected=id;nodeId=null;store();draw()};out.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{selected=b.dataset.page;nodeId=null;selectedImage=false;draw()})}
-if(tab==="models"){out.innerHTML='<div class="ed-section-heading">FUNÇÃO EDITORIAL DA PÁGINA</div>'+Object.entries(models).map(([id,label])=>'<button class="ed-model '+(p.mode===id?'active':'')+'" data-model="'+id+'"><span class="ed-model-diagram '+id+'"><i></i><i></i><i></i></span><span>'+label+'</span><span>↗</span></button>').join("")+'<p class="ed-small">Os perfis definem a organização do conteúdo. Tipografia, espaçamento e sistema vetorial pertencem à identidade LABMATTAR.</p>';out.querySelectorAll("[data-model]").forEach(b=>b.onclick=()=>{checkpoint();p.mode=b.dataset.model;nodeId=null;selectedImage=false;store();draw()})}
-if(tab==="library"){out.innerHTML='<div class="ed-section-heading">IMAGENS</div><p class="ed-small">Insira uma imagem local ou uma URL de mídia. A imagem será usada nesta página.</p><input type="file" id="upload" accept="image/*" hidden><button id="uploadButton" class="ed-solid">+ ADICIONAR IMAGEM</button><label class="ed-label" for="imageUrl">OU INSERIR URL DA IMAGEM</label><input class="ed-input" id="imageUrl" placeholder="https://..."><button class="ed-linkbtn" id="addUrl">INSERIR ↗</button><div class="ed-media-list">'+p.images.map((img,i)=>'<div class="ed-media"><img alt="Imagem" src="'+escape(img)+'"><button data-remove="'+i+'">×</button></div>').join("")+'</div><p class="ed-small">Acervo ainda local: sem sincronização institucional.</p>';el("uploadButton").onclick=()=>el("upload").click();el("upload").onchange=e=>{const file=e.target.files?.[0];if(!file)return;if(file.size>1500000){alert("Imagem de até 1,5 MB nesta versão local.");return}const rd=new FileReader();rd.onload=()=>{checkpoint();p.images.push(String(rd.result));store();draw()};rd.readAsDataURL(file)};el("addUrl").onclick=()=>{const v=el("imageUrl").value.trim();if(!/^https:\/\//.test(v))return alert("Insira uma URL HTTPS.");checkpoint();p.images.push(v);store();draw()};out.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{checkpoint();p.images.splice(Number(b.dataset.remove),1);store();draw()})}}
-function drawInspector(){const p=page(),n=p.nodes.find(n=>n.id===nodeId),ins=el("inspector");if(n){ins.innerHTML='<p>ELEMENTO / '+n.role.toUpperCase()+'</p><label>FUNÇÃO EDITORIAL</label><strong>'+({title:"TÍTULO",subtitle:"SUBTÍTULO",body:"CORPO"}[n.role])+'</strong><label>CONTEÚDO</label><textarea id="editText" rows="7">'+escape(n.text)+'</textarea><p class="ed-prop-note">Texto editável diretamente sobre a página, com alinhamento e fontes do sistema.</p>';el("editText").onfocus=()=>checkpoint();el("editText").oninput=e=>{n.text=e.target.value;const item=document.querySelector('[data-node="'+n.id+'"]');if(item)item.textContent=n.text;store()}}
-else{ins.innerHTML='<p>SUPERFÍCIE / '+escape(p.name.toUpperCase())+'</p><label>NOME DA PÁGINA</label><input id="pageName" value="'+escape(p.name)+'"><label>ESTRUTURA</label><select id="pageMode">'+Object.entries(models).map(([id,name])=>'<option value="'+id+'" '+(p.mode===id?'selected':'')+'>'+name+'</option>').join("")+'</select><label>ORGANIZAÇÃO</label><div class="ed-prop-buttons"><button id="duplicate">DUPLICAR</button><button id="removePage">EXCLUIR</button></div><p class="ed-prop-note">Conteúdo preservado ao alterar modelos.</p>';el("pageName").oninput=e=>{p.name=e.target.value;store();drawSide()};el("pageMode").onchange=e=>{checkpoint();p.mode=e.target.value;store();draw()};el("duplicate").onclick=()=>{const copy=structuredClone(p);copy.id=makeId();copy.name+=" — cópia";copy.nodes.forEach(n=>n.id=makeId());checkpoint();doc.pages.splice(doc.pages.indexOf(p)+1,0,copy);selected=copy.id;store();draw()};el("removePage").onclick=()=>{if(doc.pages.length<2)return;if(!confirm("Excluir esta página?"))return;checkpoint();doc.pages.splice(doc.pages.indexOf(p),1);selected=doc.pages[0].id;nodeId=null;store();draw()}}}
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;drawSide()});el("docTitle").oninput=e=>{doc.title=e.target.value;store()};el("device").onclick=()=>{mobile=!mobile;draw()};el("preview").onclick=()=>{preview=!preview;draw()};el("prev").onclick=()=>{const i=doc.pages.indexOf(page());if(i>0){selected=doc.pages[i-1].id;nodeId=null;draw()}};el("next").onclick=()=>{const i=doc.pages.indexOf(page());if(i<doc.pages.length-1){selected=doc.pages[i+1].id;nodeId=null;draw()}};el("download").onclick=()=>{const blob=new Blob([JSON.stringify({schemaVersion:1,...doc},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="labmattar-apresentacao.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)};draw();
-
-function measureEditorialType(){const sh=el("sheet");if(!sh)return;const bounds=sh.getBoundingClientRect();for(const n of page().nodes){if(n.role!=="title")continue;const e=sh.querySelector('[data-node="'+n.id+'"]');if(!e)continue;const chosen=Number.parseFloat(getComputedStyle(e).fontSize)||48;let size=chosen;const min=sh.closest(".mobile")?32:30;const availableWidth=Math.max(90,bounds.width*geometryFor(page(),n).w/100);const remaining=Math.max(90,bounds.bottom-e.getBoundingClientRect().top-24);while(size>min&&(e.scrollWidth>availableWidth+2||e.scrollHeight>remaining)){size-=2;e.style.fontSize=size+"px"}if(size===min&&(e.scrollWidth>availableWidth+2||e.scrollHeight>remaining))e.dataset.overflow="true";else delete e.dataset.overflow}}
-function verifyEditorialFonts(){document.fonts.ready.then(()=>{const ok=document.fonts.check('300 16px "LM Univers Official"')&&document.fonts.check('300 16px "LM Perpetua Official"');el("status").dataset.fonts=ok?"loaded":"fallback";requestAnimationFrame(measureEditorialType)}).catch(()=>{el("status").dataset.fonts="fallback"})}
-function drawFilmstrip(){const out=el("filmstrip");out.innerHTML=doc.pages.map((p,i)=>'<button draggable="true" data-film="'+p.id+'" class="'+(p.id===selected?"current":"")+'" title="Arraste para ordenar"><small>'+String(i+1).padStart(2,"0")+' / '+escape(models[p.mode]||p.mode)+'</small><span>'+escape(p.name)+'</span></button>').join("")+'<button class="ed-addpage" id="addFilm">+ PÁGINA</button>';out.querySelectorAll("[data-film]").forEach(b=>{b.onclick=()=>{selected=b.dataset.film;nodeId=null;selectedImage=false;draw()};b.ondragstart=e=>e.dataTransfer.setData("text/plain",b.dataset.film);b.ondragover=e=>e.preventDefault();b.ondrop=e=>{e.preventDefault();const id=e.dataTransfer.getData("text/plain"),a=doc.pages.findIndex(q=>q.id===id),t=doc.pages.findIndex(q=>q.id===b.dataset.film);if(a<0||t<0||a===t)return;checkpoint();doc.pages.splice(t,0,doc.pages.splice(a,1)[0]);store();draw()}});el("addFilm").onclick=()=>{tab="pages";drawSide();el("newPage").click()}}
-function attachCanvas(){const p=page(),sheet=el("sheet");p.nodes.forEach(n=>{const element=sheet.querySelector('[data-node="'+n.id+'"]');if(!element)return;const g=geometryFor(p,n);if(sheet.classList.contains("ed-original-media")){element.style.setProperty("--lm-node-x",g.x+"%");element.style.setProperty("--lm-node-y",g.y+"%");element.style.setProperty("--lm-node-width",g.w+"%");element.style.bottom="auto";element.style.zIndex=String(g.z??5)}if(!preview){element.insertAdjacentHTML("beforeend",'<span class="ed-grip" contenteditable="false" title="Arrastar elemento">✥</span>');const grip=element.querySelector(".ed-grip");grip.onpointerdown=e=>{e.preventDefault();e.stopPropagation();nodeId=n.id;selectedImage=false;sheet.querySelectorAll(".ed-text-node").forEach(x=>x.classList.toggle("selected",x===element));checkpoint();const rect=sheet.getBoundingClientRect(),startX=e.clientX,startY=e.clientY,g0={x:g.x??8,y:g.y??(n.role==="title"?29:n.role==="subtitle"?19:72),w:g.w??77};const move=ev=>{const x=Math.max(0,Math.min(95,g0.x+(ev.clientX-startX)/rect.width*100)),y=Math.max(0,Math.min(95,g0.y+(ev.clientY-startY)/rect.height*100));n.geometry={...n.geometry,x,y,w:g0.w};element.style.left=x+"%";element.style.top=y+"%"};const up=()=>{window.removeEventListener("pointermove",move);window.removeEventListener("pointerup",up);store();drawInspector()};window.addEventListener("pointermove",move);window.addEventListener("pointerup",up)};}});
-const img=sheet.querySelector(".chapter2-stage");if(img&&!preview){img.style.pointerEvents="auto";img.style.cursor="pointer";img.onclick=()=>{selectedImage=true;nodeId=null;drawInspector()}}}
-function addImageControls(ins,p){const g=p.imageSettings||(p.imageSettings={x:50,y:50,scale:100,blur:16});ins.insertAdjacentHTML("beforeend",'<p class="ed-prop-note">MÍDIA / INSTÂNCIA DA PÁGINA</p><label>APRESENTAÇÃO DA IMAGEM</label><select id="mediaTreatment">'+Object.entries(treatments).map(([id,name])=>'<option value="'+id+'" '+(treatment(p)===id?'selected':'')+'>'+name+'</option>').join("")+'</select><label>FOCO HORIZONTAL</label><input data-image-prop="x" type="range" min="0" max="100" value="'+g.x+'"><label>FOCO VERTICAL</label><input data-image-prop="y" type="range" min="0" max="100" value="'+g.y+'"><p class="ed-control-note">O enquadramento pertence à imagem nesta página. A geometria do M, o desfoque de identidade e as fontes não são alterados aqui.</p>');el("mediaTreatment").onchange=e=>{checkpoint();p.treatment=e.target.value;store();draw()};ins.querySelectorAll("[data-image-prop]").forEach(x=>{x.onpointerdown=()=>checkpoint();x.oninput=()=>{g[x.dataset.imageProp]=Number(x.value);applyImageControls();store()}})}
-function applyImageControls(){const p=page(),g=p.imageSettings||{x:50,y:50,scale:100,blur:24},sheet=el("sheet");sheet.style.setProperty("--ed-focus-x",g.x+"%");sheet.style.setProperty("--ed-focus-y",g.y+"%");sheet.style.setProperty("--ed-scale",g.scale/100);sheet.style.setProperty("--ed-ambient-blur",g.blur+"px")}
-function enhanceInspector(){const p=page(),n=p.nodes.find(n=>n.id===nodeId),ins=el("inspector");if(n){ins.insertAdjacentHTML("beforeend",'<p class="ed-prop-note">IDENTIDADE VISUAL / AUTOMÁTICA</p><p class="ed-control-note">Univers LT Std 45 Light e Perpetua Titling MT Light seguem a função editorial e o manual. Alinhamento, margens e escala são propriedades da composição original.</p><div class="ed-prop-buttons"><button id="duplicateText">DUPLICAR TEXTO</button><button id="deleteText">EXCLUIR TEXTO</button></div>');el("duplicateText").onclick=()=>{checkpoint();const copy=structuredClone(n);copy.id=makeId();p.nodes.push(copy);nodeId=copy.id;store();draw()};el("deleteText").onclick=()=>{checkpoint();p.nodes=p.nodes.filter(x=>x.id!==n.id);nodeId=null;store();draw()}}else if(selectedImage){ins.innerHTML='<p>IMAGEM / ACERVO</p><strong>'+escape(models[p.mode]||p.mode)+'</strong>';addImageControls(ins,p)}else if(p.images.length){addImageControls(ins,p)}}
-const originalInspector=drawInspector;drawInspector=function(){originalInspector();enhanceInspector()};
-el("importDoc").onclick=()=>el("importFile").click();el("importFile").onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!data||!Array.isArray(data.pages)||!data.pages.length||!data.pages.every(p=>Array.isArray(p.nodes)&&Array.isArray(p.images)))throw new Error("Estrutura de documento inválida");checkpoint();doc={title:String(data.title||"Documento"),pages:data.pages.map(p=>({...p,mode:normalizeMode(p.mode)}))};selected=doc.pages[0].id;nodeId=null;selectedImage=false;store();draw()}catch(err){alert("Não foi possível importar o documento: "+err.message)}e.target.value=""};
-el("undo").onclick=()=>restoreHistory("past","future");el("redo").onclick=()=>restoreHistory("future","past");
-draw();
-document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();restoreHistory(e.shiftKey?"future":"past",e.shiftKey?"past":"future")}});
-</script></body></html>
+    <aside class="editor-inspector" aria-label="Propriedades da página">
+      <div class="inspector-heading">
+        <span>EDIÇÃO DA PÁGINA</span>
+        <span class="inspector-page" id="inspectorPage">01 / 07</span>
+      </div>
+      <div class="inspector-tabs" role="tablist" aria-label="Tipo de edição">
+        <button type="button" class="active" data-inspector-tab="content" id="contentTab" role="tab" aria-controls="contentPanel" aria-selected="true">CONTEÚDO</button>
+        <button type="button" data-inspector-tab="structure" id="structureTab" role="tab" aria-controls="structurePanel" aria-selected="false">ESTRUTURA</button>
+        <button type="button" data-inspector-tab="media" id="mediaTab" role="tab" aria-controls="mediaPanel" aria-selected="false">MÍDIA</button>
+      </div>
+      <section class="inspector-panel" id="contentPanel" role="tabpanel" aria-labelledby="contentTab">
+        <div id="contentFields"></div>
+        <p class="small-note">Edite aqui ou diretamente na página. A tipografia e a posição seguem o perfil editorial.</p>
+      </section>
+      <section class="inspector-panel" id="structurePanel" role="tabpanel" aria-labelledby="structureTab" hidden>
+        <label for="pageName">NOME DA PÁGINA</label>
+        <input id="pageName" type="text">
+        <label for="pageProfile">PERFIL EDITORIAL</label>
+        <select id="pageProfile">
+          <option value="opening">Abertura</option>
+          <option value="project">Projeto</option>
+          <option value="development">Desenvolvimento</option>
+          <option value="gallery">Galeria</option>
+          <option value="text">Texto</option>
+          <option value="closing">Encerramento</option>
+          <option value="credits">Créditos</option>
+        </select>
+        <p class="control-help" id="profileDescription"></p>
+        <label for="pageStatus">STATUS EDITORIAL</label>
+        <select id="pageStatus">
+          <option value="draft">Rascunho</option>
+          <option value="review">Em revisão</option>
+          <option value="ready">Pronta</option>
+        </select>
+        <div class="section-label space-top">BLOCOS VISÍVEIS</div>
+        <div id="visibilityFields" class="visibility-fields"></div>
+        <div class="inspector-actions">
+          <button id="duplicateButton" type="button">DUPLICAR PÁGINA</button>
+          <button id="deleteButton" type="button">EXCLUIR PÁGINA</button>
+        </div>
+        <p class="small-note identity-note">IDENTIDADE / AUTOMÁTICA<br>Univers, Perpetua, margens, alinhamentos, M e responsividade não são controles editáveis.</p>
+      </section>
+      <section class="inspector-panel" id="mediaPanel" role="tabpanel" aria-labelledby="mediaTab" hidden>
+        <label for="mediaAssetSelect">IMAGEM DO ACERVO</label>
+        <select id="mediaAssetSelect"></select>
+        <label for="mediaTreatment">TRATAMENTO DE MÍDIA</label>
+        <select id="mediaTreatment">
+          <option value="m-central">M central</option>
+          <option value="m-detalhe">M detalhe</option>
+          <option value="fundo-com-blur">Fundo com blur</option>
+          <option value="imagem-livre">Imagem livre</option>
+          <option value="sem-imagem">Sem imagem</option>
+        </select>
+        <div class="focus-label"><label for="focusX">FOCO HORIZONTAL</label><output id="focusXValue">50%</output></div>
+        <input id="focusX" type="range" min="0" max="100" step="1" value="50">
+        <div class="focus-label"><label for="focusY">FOCO VERTICAL</label><output id="focusYValue">50%</output></div>
+        <input id="focusY" type="range" min="0" max="100" step="1" value="50">
+        <div id="galleryControls" hidden>
+          <div class="section-label space-top">SEQUÊNCIA DA GALERIA</div>
+          <div id="galleryAssets" class="gallery-assets"></div>
+        </div>
+        <p class="small-note">O enquadramento é específico desta página. A geometria do M e o comportamento responsivo pertencem ao sistema.</p>
+      </section>
+    </aside>
+  </div>
+</div>
+</body>
+</html>

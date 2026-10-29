@@ -743,3 +743,44 @@ body.lm-studio-open .lm-studio-detail-body textarea{
     grid-template-columns:repeat(3,minmax(0,1fr));
   }
 }
+
+
+/* Small screens: preserve the illustrative icons without letting their
+   intrinsic SVG/mini-sheet size collide with labels below the grid. */
+@media(max-width:850px){
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-choice{
+    min-height:79px;
+    padding:5px 3px;
+    gap:3px;
+    justify-content:center;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-visual{
+    height:38px;
+    flex:none;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-mini-sheet,
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-placement,
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-mini-image,
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-mini-relation,
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-mini-type{
+    transform:scale(.79);
+    transform-origin:center center;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-name{
+    font-size:11px;line-height:1.12;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-meta{
+    font-size:10px;line-height:1.12;
+  }
+}
+@media(max-width:850px) and (max-height:740px){
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-choice{
+    min-height:66px;
+    gap:2px;
+    padding:4px 3px;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-visual{
+    height:34px;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-meta{display:none}
+}

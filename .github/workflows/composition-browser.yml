@@ -6,6 +6,9 @@ on:
       - 'design/composicao.html'
       - 'public/composicao-lab.css'
       - 'public/composicao-lab.js'
+      - 'public/composicao-studio.css'
+      - 'public/composicao-studio.js'
+      - 'scripts/smoke-composition-studio.mjs'
       - 'scripts/smoke-composition-browser.mjs'
       - '.github/workflows/composition-browser.yml'
   workflow_dispatch:
@@ -44,10 +47,11 @@ jobs:
         run: |
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
           COMPOSITION_URL=http://127.0.0.1:8765/composicao.html node scripts/smoke-composition-browser.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/composicao.html node scripts/smoke-composition-studio.mjs
       - name: Salvar capturas para revisao visual
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: composition-lab-visual-proof
-          path: composition-lab-*.png
+          path: composition-*.png
           if-no-files-found: ignore

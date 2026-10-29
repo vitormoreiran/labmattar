@@ -753,7 +753,7 @@
       "O enquadramento pode ser ajustado sem modificar o arquivo fotográfico."],
     labRelation:["Relação texto + M",
       "Define a relação estrutural entre o bloco tipográfico e o M: lado a lado, alinhados pelo topo, centro, base ou sobrepostos.",
-      "A relação move o M em resposta ao texto; não altera a escala de nenhum dos dois."],
+      "A relação move o M em resposta ao texto sem alterar a escala. Quando texto e fotografia se sobrepõem, o preto 20% continua automático."],
     labGap:["Distância texto / M",
       "Ajusta apenas o intervalo entre texto e M nas relações lado a lado e alinhadas.",
       "Distância não muda escala, tipografia ou margem."],

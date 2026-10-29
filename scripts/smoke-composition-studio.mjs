@@ -51,6 +51,45 @@ async function assertEditorialTitleGroups(label){
     lines.every(line=>line.fragments===1),
     label+": editorial title groups unexpectedly wrap: "+JSON.stringify(lines));
 }
+/* Editorial integrity: the browser zoom must not become a typography
+   parameter. All roles share the same left ruler in every artboard ratio. */
+async function editorialMetrics(label){
+  await page.waitForTimeout(80);
+  const m=await page.evaluate(()=>{
+    const board=document.querySelector("#labArtboard");
+    const b=board.getBoundingClientRect();
+    const safe=document.querySelector("#labReading").getBoundingClientRect();
+    const copy=document.querySelector("#labCopy").getBoundingClientRect();
+    const title=document.querySelector("#labRenderedTitle");
+    const body=document.querySelector("#labRenderedBody");
+    const kicker=document.querySelector("#labKicker");
+    const footer=document.querySelector(".lm-lab-bottom");
+    const tr=title.getBoundingClientRect(),br=body.getBoundingClientRect();
+    const kr=kicker.getBoundingClientRect(),fr=footer.getBoundingClientRect();
+    const styles={
+      title:getComputedStyle(title),body:getComputedStyle(body),
+      kicker:getComputedStyle(kicker),copy:getComputedStyle(document.querySelector("#labCopy"))
+    };
+    return {
+      format:board.dataset.format,state:board.dataset.state,width:b.width,
+      titleRatio:parseFloat(styles.title.fontSize)/b.width,
+      bodyRatio:parseFloat(styles.body.fontSize)/b.width,
+      detailRatio:parseFloat(styles.kicker.fontSize)/b.width,
+      leftAligned:styles.copy.textAlign==="left"&&
+        styles.body.textAlign!=="center"&&Math.abs(tr.left-br.left)<2,
+      safe:{
+        copyLeft:copy.left>=safe.left-1.5,copyRight:copy.right<=safe.right+1.5,
+        copyTop:copy.top>=kr.bottom-2,copyBottom:copy.bottom<=fr.top+2,
+        kicker:kr.top>=safe.top-1.5,footer:fr.bottom<=safe.bottom+1.5
+      },
+      titleBreak:board.dataset.titleBreak
+    };
+  });
+  assert(m.leftAligned,label+": title and body diverged from the left ruler "+JSON.stringify(m));
+  assert(Object.values(m.safe).every(Boolean),label+": text is outside the useful area "+JSON.stringify(m));
+  assert(m.titleBreak==="normal",label+": words fragmented instead of keeping editorial groups "+JSON.stringify(m));
+  return m;
+}
 async function proveBoard(label){
   await page.waitForTimeout(110);
   const g=await geometry();
@@ -175,6 +214,17 @@ try{
     "All previous tools and the new M-use control must retain one canonical input");
   await page.screenshot({path:"composition-studio-desktop-initial-review.png",fullPage:false});
   const baseline=await proveBoard("Desktop horizontal 1440x900");
+  const initialType=await editorialMetrics("Desktop horizontal typography");
+  await page.setViewportSize({width:1280,height:850});
+  await page.waitForTimeout(180);
+  const resizedType=await editorialMetrics("Resized horizontal typography");
+  for(const role of ["titleRatio","bodyRatio","detailRatio"]){
+    assert(Math.abs(initialType[role]-resizedType[role])<.002,
+      "Resizing the studio must change zoom, not typography: "+role+" / "+
+      JSON.stringify({initialType,resizedType}));
+  }
+  await page.setViewportSize({width:1440,height:900});
+  await page.waitForTimeout(130);
   assert(baseline.board.width>720,"Horizontal composition should receive the remaining desktop width");
   assert(await page.locator(".lm-inspector-head>span").textContent()==="AJUSTES",
     "Inspector hierarchy should be concise");
@@ -207,16 +257,19 @@ try{
   await clickCard("format","vertical");
   const portrait=await proveBoard("Desktop vertical 1440x900");
   await assertEditorialTitleGroups("Vertical title group");
+  await editorialMetrics("Vertical editorial ruler");
   assert(portrait.board.height>500&&portrait.board.width>250,
     "Portrait layout should grow to use the available height");
   await page.screenshot({path:"composition-studio-desktop-portrait.png"});
   await clickCard("format","quadrado");
   const square=await proveBoard("Desktop square 1440x900");
   await assertEditorialTitleGroups("Square title group");
+  await editorialMetrics("Square editorial ruler");
   assert(approx(square.board.width,square.board.height,1),"Square was not rendered 1:1");
   await page.screenshot({path:"composition-studio-desktop-square.png"});
   await clickCard("format","editorial");
   await proveBoard("Desktop editorial 1440x900");
+  await editorialMetrics("Editorial format ruler");
   await clickCard("format","horizontal");
   await tool("labFormat").click();
   await menuVisible("Page menu restored without scrolling");

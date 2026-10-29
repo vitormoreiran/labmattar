@@ -86,7 +86,7 @@ function renderSidebar(env){
         const section=doc.pages[to].sectionId;
         const [moving]=doc.pages.splice(from,1);
         const targetIndex=doc.pages.findIndex(p=>p.id===target);
-        doc.pages.splice(targetIndex,0,moving);
+        doc.pages.splice(from<to?targetIndex+1:targetIndex,0,moving);
         moving.sectionId=section;
         selectPage(moving.id,false);
       });

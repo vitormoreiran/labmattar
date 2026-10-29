@@ -13,24 +13,24 @@
   const presets={
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"esquerda",relation:"separada",textWidth:61,titleScale:100,type:"alternada",
-      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
+      placement:"esquerda",textX:1,textY:5,relation:"separada",textWidth:61,titleScale:100,type:"alternada",
+      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",mX:8,mY:8,mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"esquerda",relation:"separada",textWidth:40,titleScale:95,type:"alternada",
-      image:"recorte",mMode:"janela",photo:"64",mPosition:"direita",mScale:50,focusX:50,focusY:50,symbol:"none",
+      placement:"esquerda",textX:1,textY:4,relation:"separada",textWidth:40,titleScale:95,type:"alternada",
+      image:"recorte",mMode:"janela",photo:"64",mPosition:"centro",mX:8,mY:8,mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
     },
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"inferior",relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
-      image:"inteira",mMode:"janela",photo:"179",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
+      placement:"esquerda",textX:1,textY:8,relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
+      image:"inteira",mMode:"janela",photo:"179",mPosition:"centro",mX:8,mY:8,mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -38,13 +38,13 @@
   };
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
-    placement:"labPlacement",relation:"labRelation",textWidth:"labTextWidth",
+    placement:"labPlacement",textX:"labTextX",textY:"labTextY",relation:"labRelation",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
-    mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
+    mPosition:"labMPosition",mX:"labMX",mY:"labMY",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
+  const numeric=new Set(["margin","textX","textY","textWidth","titleScale","mX","mY","mScale","focusX","focusY"]);
   const palette={
     neutral:["#f7f6f2","#181818"],
     beige:["#e6dbcf","#181818"],
@@ -147,9 +147,9 @@
       (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
     by("labTabMeta-imagem").textContent=
       state.image==="nenhuma"?"Sem fotografia":
-      state.image==="recorte"?{janela:"M / janela",corte:"M / corte",sutil:"M / sutil"}[state.mMode]:
+      state.image==="recorte"?"M / régua "+state.mX+"×"+state.mY:
       "Imagem integral";
-    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
+    for(const key of ["margin","textX","textY","textWidth","titleScale","mX","mY","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -250,19 +250,20 @@
     board.style.setProperty("--lab-pad",state.margin+"%");
     board.style.setProperty("--lab-title-scale",String(state.titleScale/100));
     board.style.setProperty("--lab-text-width",state.textWidth+"%");
-    const fullMask=state.image==="recorte"&&state.mMode==="janela";
-    // Janela must remain completely inside the reading surface; corte
-    // deliberately bleeds and marca sutil becomes a quiet overlay.
-    const effectiveMScale=fullMask?
-      Math.min(state.mScale,Math.max(25,100-2*state.margin)):state.mScale;
+    const gridX=n=>((n-1)/12)*100;
+    const gridCenter=n=>((n-.5)/12)*100;
+    board.style.setProperty("--lab-text-x",gridX(state.textX)+"%");
+    board.style.setProperty("--lab-text-y",gridCenter(state.textY)+"%");
+    const usable=100-2*state.margin;
+    const mAnchorX=state.margin+usable*(state.mX-.5)/12;
+    const mAnchorY=state.margin+usable*(state.mY-.5)/12;
+    const horizontalRoom=2*Math.min(mAnchorX-state.margin,100-state.margin-mAnchorX);
+    const effectiveMScale=Math.max(25,Math.min(state.mScale,horizontalRoom));
     board.style.setProperty("--lab-m-size",effectiveMScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
-    const half=effectiveMScale/2,pad=state.margin;
-    const anchors=state.mMode==="corte"?
-      {esquerda:pad+effectiveMScale*.18,centro:50,direita:100-pad-effectiveMScale*.18}:
-      {esquerda:pad+half,centro:50,direita:100-pad-half};
-    board.style.setProperty("--lab-m-x",anchors[state.mPosition]+"%");
+    board.style.setProperty("--lab-m-x",mAnchorX+"%");
+    board.style.setProperty("--lab-m-y",mAnchorY+"%");
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);

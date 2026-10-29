@@ -29,7 +29,7 @@
 .lm-case-symbol .lm-case-image{position:relative;width:min(100%,133.2cqh);height:auto;aspect-ratio:990.08 / 743.18;overflow:hidden;-webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat}
 .lm-case-symbol .lm-case-image img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .lm-case-symbol .lm-case-image::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
-.lm-case-frame[data-step="completa"] .lm-case-image::after{opacity:1}
+.lm-case-frame[data-step="completa"][data-contrast="on"] .lm-case-image::after{opacity:1}
 .lm-case-content{position:absolute;inset:var(--lm-safe);z-index:3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;align-items:start;gap:12px;pointer-events:none}
 .lm-case-kicker{font:300 clamp(9px,1.15cqw,13px)/1.35 UniversMattar,Arial,sans-serif;letter-spacing:.065em}
 .lm-case-reading{min-width:0;max-width:100%;align-self:center}
@@ -62,6 +62,7 @@
 .lm-case-facts h3{font-weight:300;font-size:clamp(18px,1.7vw,24px);letter-spacing:-.02em;line-height:1.18;margin:0 0 12px}
 .lm-case-facts p{font:300 14px/1.5 UniversMattar,Arial,sans-serif;margin:0}
 
+.lm-case-contrast-status{margin-top:24px!important;border-top:1px solid var(--line);padding-top:15px;font:300 12px/1.45 UniversMattar,Arial,sans-serif!important;letter-spacing:.015em}
 .lm-case-contrast{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(25px,5vw,85px);border-top:1px solid var(--ink);margin-top:clamp(65px,7vw,110px);padding-top:clamp(24px,3vw,42px)}
 .lm-case-contrast h3{font-weight:300;font-size:clamp(34px,4.6vw,66px);line-height:.96;letter-spacing:-.035em;margin:30px 0 0}
 .lm-case-contrast p:not(.eyebrow){font-size:clamp(14px,1.2vw,17px);line-height:1.55;margin:0 0 16px;max-width:64ch}
@@ -106,13 +107,18 @@
       <button type="button" data-case-format="desktop" aria-pressed="true">Horizontal</button>
       <button type="button" data-case-format="mobile" aria-pressed="false">Vertical</button>
     </div>
+    <div class="lm-case-control" role="group" aria-label="Comparar 0% e 20% de preto com a mesma imagem e texto">
+      <span>CONTRASTE / COMPARAR</span>
+      <button type="button" data-case-contrast="off" aria-pressed="false">0%</button>
+      <button type="button" data-case-contrast="on" aria-pressed="true">20%</button>
+    </div>
     <div class="lm-case-control" role="group" aria-label="Guias de leitura">
       <button type="button" id="caseGuides" aria-pressed="false">Exibir área de leitura</button>
     </div>
   </div>
   <div class="lm-case-layout">
     <div class="lm-case-stage">
-      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-guides="false" role="img" aria-label="Estudo de composição com fotografia de Cada Corpo Abre um Mundo, máscara M e título sobrepostos">
+      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-guides="false" data-contrast="on" role="img" aria-label="Estudo de composição com fotografia de Cada Corpo Abre um Mundo, máscara M e título sobrepostos">
         <img class="lm-case-ambient" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
         <div class="lm-case-veil" aria-hidden="true"></div>
         <div class="lm-case-symbol" aria-hidden="true"><div class="lm-case-image"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div></div>
@@ -129,7 +135,7 @@
     </div>
     <aside class="lm-case-aside" aria-live="polite">
       <p class="eyebrow">LEITURA DA COMPOSIÇÃO</p>
-      <div><span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span><h3 id="caseStepTitle">As camadas passam a funcionar juntas.</h3><p id="caseStepBody">Com texto sobre o M, a fotografia dentro da máscara recebe 20% de preto; o título permanece em uma camada editorial independente. A atmosfera da imagem de fundo não altera essa regra de contraste.</p></div>
+      <div><span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span><h3 id="caseStepTitle">As camadas passam a funcionar juntas.</h3><p id="caseStepBody">Com texto sobre o M, a fotografia dentro da máscara recebe 20% de preto; o título permanece em uma camada editorial independente. A atmosfera da imagem de fundo não altera essa regra de contraste.</p><p class="lm-case-contrast-status" id="caseContrastNote">CONTRASTE ATIVO / Preto 20% no M, aplicado abaixo do texto.</p></div>
     </aside>
   </div>
   <div class="lm-case-facts">
@@ -144,7 +150,7 @@
       <p>Quando um texto é composto sobre uma fotografia, aplicar sobre a imagem um véu preto de <strong>20% de opacidade</strong> para sustentar a leitura. A regra vale tanto para o campo fotográfico integral quanto para a fotografia recortada no M.</p>
       <p>O tratamento acompanha a <strong>área fotográfica sob o texto</strong>, não o texto em si. No M, o véu utiliza a mesma máscara e a mesma geometria do recorte; quando não existe sobreposição tipográfica, não é aplicado automaticamente.</p>
       <div class="lm-case-contrast-facts"><span>IMAGEM SEM TEXTO<br><b>PRETO 0%</b></span><span>IMAGEM COM TEXTO<br><b>PRETO 20%</b></span><span>IMPLEMENTAÇÃO<br><code>rgba(0,0,0,.20)</code></span></div>
-      <p class="lm-case-contrast-note">Compare as etapas 02 / Máscara e 03 / Página no estudo acima. A camada de contraste é independente de efeitos de atmosfera, desfoque ou ajustes de cor da fotografia.</p>
+      <p class="lm-case-contrast-note">Na etapa 03 / Página, alterne entre 0% e 20% para comparar o mesmo enquadramento, mantendo o texto visível. A camada de contraste é independente dos efeitos de atmosfera, desfoque ou cor da fotografia.</p>
     </div>
   </div>
   <div class="lm-case-validation">
@@ -186,11 +192,24 @@
     frame.dataset.step=value;
     document.querySelectorAll("[data-case-step]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.caseStep===value)));
     const d=data[value];document.getElementById("caseStepNumber").textContent=d[0];document.getElementById("caseStepTitle").textContent=d[1];document.getElementById("caseStepBody").textContent=d[2];
+    updateContrastNote();
   }
   function format(value){
     frame.classList.toggle("is-mobile",value==="mobile");
     document.querySelectorAll("[data-case-format]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.caseFormat===value)));
   }
+  function updateContrastNote(){
+    document.getElementById("caseContrastNote").textContent=frame.dataset.step!=="completa"?
+      "O véu de contraste só aparece na etapa 03 / Página, junto com a tipografia.":
+      frame.dataset.contrast==="on"?
+      "CONTRASTE ATIVO / Preto 20% sobre a fotografia no M, abaixo do texto.":
+      "COMPARAÇÃO 0% / Véu temporariamente oculto para avaliar o efeito, sem alterar a norma.";
+  }
+  document.querySelectorAll("[data-case-contrast]").forEach(b=>b.addEventListener("click",()=>{
+    frame.dataset.contrast=b.dataset.caseContrast;
+    document.querySelectorAll("[data-case-contrast]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    updateContrastNote();
+  }));
   document.querySelectorAll("[data-case-step]").forEach(b=>b.addEventListener("click",()=>step(b.dataset.caseStep)));
   document.querySelectorAll("[data-case-format]").forEach(b=>b.addEventListener("click",()=>format(b.dataset.caseFormat)));
   document.getElementById("caseGuides").addEventListener("click",e=>{

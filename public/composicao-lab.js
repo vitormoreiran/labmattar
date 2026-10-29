@@ -62,6 +62,9 @@
     horizontal:"HORIZONTAL / 16:9",vertical:"VERTICAL / 9:16",
     quadrado:"QUADRADO / 1:1",editorial:"EDITORIAL / √2:1"
   };
+  const formatRatio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
+  const mAspect=990.08/743.18;
+  const maxMScale=format=>Math.min(95,Math.floor(100*mAspect/formatRatio[format]));
   let activePreset="tipografia",frame=0;
   const copy=v=>({...v});
   function sanitize(data){
@@ -243,6 +246,12 @@
     footerRight.textContent=state.footerRight;
   }
   function render(){
+    const mMax=maxMScale(state.format);
+    if(state.mScale>mMax)state.mScale=mMax;
+    const mScaleInput=by("labMScale");
+    mScaleInput.max=String(mMax);
+    const mPrecision=by("labPrecision-mScale");
+    if(mPrecision)mPrecision.max=String(mMax);
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.placement=state.placement;
@@ -259,8 +268,10 @@
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
     const [mV,mH]=state.mPosition.split("-");
-    const x={esquerda:25,centro:50,direita:75}[mH||mV]||50;
-    const y={superior:25,centro:50,inferior:75}[mV]||50;
+    const halfW=state.mScale/2;
+    const halfH=state.mScale*formatRatio[state.format]/mAspect/2;
+    const x={esquerda:halfW,centro:50,direita:100-halfW}[mH||mV]||50;
+    const y={superior:halfH,centro:50,inferior:100-halfH}[mV]||50;
     board.style.setProperty("--lab-m-x",x+"%");
     board.style.setProperty("--lab-m-y",y+"%");
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];

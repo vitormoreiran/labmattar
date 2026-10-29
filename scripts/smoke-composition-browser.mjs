@@ -98,6 +98,13 @@ try{
   assert(await page.locator("#labHelp-overview").isVisible()&&
     await page.locator("#labOverviewHelp").getAttribute("aria-expanded")==="true",
     "Help must survive routine page scrolling and remain attached to its trigger");
+  const overviewDimensions=await page.locator("#labHelp-overview").evaluate(el=>({
+    height:el.getBoundingClientRect().height,
+    fontSize:parseFloat(getComputedStyle(el.querySelector(".lm-help-popover-effect")).fontSize),
+    intro:el.querySelector(".lm-help-popover-effect").textContent
+  }));
+  assert(overviewDimensions.height<=515&&overviewDimensions.fontSize<=13,
+    "General help is too large and interferes with the composition: "+JSON.stringify(overviewDimensions));
   await page.screenshot({path:"composition-lab-help-overview.png",fullPage:false});
   await page.keyboard.press("Escape");
   assert(await page.locator("#labHelp-overview").isHidden()&&

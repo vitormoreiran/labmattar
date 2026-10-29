@@ -628,6 +628,37 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(#labFocusY)::before{
   content:"Y";font:300 11px/1 UniversMattar,Arial,sans-serif;color:#6e6e68
 }
+/* A single segmented control is calmer than a row of individual boxes. */
+body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-choice-grid,
+body.lm-studio-open #laboratorio .lm-studio-image-block:not(.lm-studio-image-block--fotografia) .lm-ctrl-choice-grid{
+  gap:2px;
+  padding:3px;
+  border-radius:6px;
+  background:#ededeb;
+}
+body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-choice,
+body.lm-studio-open #laboratorio .lm-studio-image-block:not(.lm-studio-image-block--fotografia) .lm-ctrl-choice{
+  border:0!important;
+  border-radius:4px;
+  background:transparent;
+  box-shadow:none;
+}
+body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-choice[aria-pressed=true],
+body.lm-studio-open #laboratorio .lm-studio-image-block:not(.lm-studio-image-block--fotografia) .lm-ctrl-choice[aria-pressed=true]{
+  border:0!important;
+  background:#fafaf9;
+  box-shadow:0 1px 3px rgba(0,0,0,.075);
+}
+body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-choice::after{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-studio-image-block--texto,
+body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura{
+  grid-column:1/-1;
+}
+body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
+  width:100%;
+}
 @media(max-width:1160px) and (min-width:851px){
   body.lm-studio-open #laboratorio .lm-lab-workspace{
     grid-template-columns:minmax(0,1fr) 306px;
@@ -654,6 +685,20 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(
   }
 }
 @media(max-width:850px){
+  /* Each format receives deliberate workspace geometry, while the artboard
+     itself still fits proportionally via the existing contain calculation. */
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=horizontal]){
+    grid-template-rows:minmax(0,38dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=editorial]){
+    grid-template-rows:minmax(0,41dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=quadrado]){
+    grid-template-rows:minmax(0,50dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=vertical]){
+    grid-template-rows:minmax(0,53dvh) minmax(0,1fr);
+  }
   body.lm-studio-open #laboratorio.lm-lab{
     grid-template-rows:46px minmax(0,1fr);
   }
@@ -741,6 +786,10 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(
   }
   body.lm-studio-open #laboratorio .lm-studio-image-block--geometria{
     grid-column:1/-1;
+  }
+  body.lm-studio-open #laboratorio .lm-studio-image-block--texto,
+  body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura{
+    grid-column:auto;
   }
   body.lm-studio-open #laboratorio .lm-studio-image-block-label{
     font-size:10px;

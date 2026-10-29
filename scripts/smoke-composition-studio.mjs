@@ -70,7 +70,7 @@ async function proveBoard(label){
 async function menuVisible(label){
   const g=await geometry();
   assert(g.toolRects.length>=2,label+": tool menu missing");
-  assert(g.toolRects.every(t=>t.visible&&t.w>75&&t.h>40&&
+  assert(g.toolRects.every(t=>t.visible&&t.w>75&&t.h>30&&
     t.y>=g.panel.top-1&&t.bottom<=g.panel.bottom+1.5&&
     t.x>=g.inspector.left-1&&t.right<=g.inspector.right+1.5),
     label+": some controls require scrolling or are clipped: "+JSON.stringify(g.toolRects));
@@ -98,14 +98,18 @@ async function expandedBelow(panelName,label){
       })
     };
   },panelName);
-  assert(state.menuVisible&&state.detailVisible,label+": menu must remain on-screen alongside options "+JSON.stringify(state));
-  assert(state.menu.bottom<=state.detail.top+2,label+": options must open BELOW the complete menu "+JSON.stringify(state));
+  assert(state.menuVisible&&state.detailVisible,label+": menu must remain visible with its inline options "+JSON.stringify(state));
   assert(state.detail.bottom<=state.panel.bottom+2,label+": options are clipped below inspector "+JSON.stringify(state));
   assert(state.inspector.scrollHeight<=state.inspector.height+3,label+": showing options requires scrolling "+JSON.stringify(state));
-  assert(state.buttons.every(b=>b.top>=state.panel.top-2&&b.bottom<=state.detail.top+1),
-    label+": original menu was replaced or obscured "+JSON.stringify(state));
-  assert(state.buttons.filter(b=>b.expanded==="true").length===1,
-    label+": exactly one property should indicate expanded state "+JSON.stringify(state));
+  assert(state.buttons.every(b=>b.top>=state.panel.top-2&&b.bottom<=state.panel.bottom+2),
+    label+": a property disappeared or was pushed below the inspector "+JSON.stringify(state));
+  const activeRow=state.buttons.find(b=>b.expanded==="true");
+  assert(activeRow&&state.buttons.filter(b=>b.expanded==="true").length===1,
+    label+": only the selected property should be expanded "+JSON.stringify(state));
+  assert(state.detail.top>=activeRow.bottom-2&&state.detail.top<=activeRow.bottom+8,
+    label+": options should open IMMEDIATELY below the chosen property "+JSON.stringify(state));
+  assert(state.buttons.filter(b=>b.top>activeRow.top).every(b=>b.top>=state.detail.bottom-1),
+    label+": the remaining list must continue below the inline options "+JSON.stringify(state));
   return state;
 }
 async function flatImageVisible(label){
@@ -170,6 +174,16 @@ try{
     "All previous tools and the new M-use control must retain one canonical input");
   const baseline=await proveBoard("Desktop horizontal 1440x900");
   assert(baseline.board.width>720,"Horizontal composition should receive the remaining desktop width");
+  assert(await page.locator(".lm-inspector-head>span").textContent()==="AJUSTES",
+    "Inspector hierarchy should be concise");
+  const studioStyling=await page.evaluate(()=>({
+    backdrop:getComputedStyle(document.querySelector(".lm-lab-stage")).backgroundColor,
+    pane:getComputedStyle(document.querySelector(".lm-lab-inspector")).backgroundColor,
+    rowDirection:getComputedStyle(document.querySelector('[data-studio-tool="labFormat"]')).flexDirection,
+    itemCount:document.querySelectorAll('[data-studio-tool="labFormat"] .lm-ctrl-visual').length
+  }));
+  assert(studioStyling.rowDirection==="row"&&!studioStyling.itemCount,
+    "Property tools should be quiet label/value rows, not decorative cards "+JSON.stringify(studioStyling));
   await menuVisible("Desktop page properties");
   await page.screenshot({path:"composition-studio-desktop-horizontal.png"});
 
@@ -183,6 +197,8 @@ try{
   await tool("labMargin").click();
   await expandedBelow("pagina","Switched to margin without losing menu");
   assert(await page.locator("#labMargin").isVisible(),"Newly selected property was not placed below the list");
+  assert(await page.locator('.lm-studio-tools[data-studio-tools="pagina"] .lm-studio-detail').count()===1,
+    "Inline detail must remain inside the selected menu hierarchy");
   assert(await page.locator("#labFormat").isHidden(),"Previous property should close when another is selected");
   await tool("labFormat").click();
   await expandedBelow("pagina","Format restored below menu");

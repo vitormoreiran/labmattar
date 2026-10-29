@@ -237,10 +237,8 @@ try{
   assert(await page.locator("#labMargin").inputValue()==="16","Precision must respect the established margin limit");
   await range("labMargin",7);
   await tab("texto");
-  await page.locator("[data-lab-choice='placement'][data-value='superior']").click();
-  assert(await page.locator("#labPlacement").inputValue()==="superior",
-    "Text height control must move the block without changing its horizontal ruler");
-  await page.locator("[data-lab-choice='placement'][data-value='central']").click();
+  assert(await page.locator("[data-lab-choice='placement']").count()===0,
+    "Text position must not be exposed as an independent layout control");
   await page.locator("#labPrecision-titleScale").fill("113");
   await page.locator("#labPrecision-titleScale").press("Enter");
   assert(await page.locator("#labTitleScale").inputValue()==="113",
@@ -279,11 +277,14 @@ try{
   assert((await read()).photoSrc.includes("BOXDOSENTIR-151.jpg"),"Thumbnail did not change the photograph");
   assert(await page.locator("#labFocusImage").evaluate(el=>getComputedStyle(el).backgroundImage.includes("151.jpg")),"Focus diagram did not follow the selected photo");
   const mScaleBefore=await page.locator("#labMScale").inputValue();
-  await page.locator("[data-lab-choice='mPosition'][data-value='superior-esquerda']").click();
-  assert(await page.locator("#labMPosition").inputValue()==="superior-esquerda",
-    "M structural position control is inert");
+  await page.locator("[data-lab-choice='relation'][data-value='topo']").click();
+  assert(await page.locator("#labRelation").inputValue()==="topo",
+    "Text + M relationship control is inert");
   assert(await page.locator("#labMScale").inputValue()===mScaleBefore,
-    "Changing M position must never change its scale");
+    "Changing the text + M relationship must never change M scale");
+  await range("labGap",7);
+  assert(await page.locator("#labGap").inputValue()==="7",
+    "Text + M distance must be independently adjustable");
   const focal=page.locator("#labFocalPreview");
   await focal.scrollIntoViewIfNeeded();
   const rect=await focal.boundingBox();
@@ -331,7 +332,7 @@ try{
   assert(data.photoText==="true"&&data.backgroundOpacity==="1","20% background veil did not activate");
   assert(data.m.mask.includes("m-publicado.svg"),"Original M geometry not used as mask");
   assert(Math.abs(data.m.width/data.m.height-990.08/743.18)<.05,"M image distorted");
-  await page.locator("[data-lab-choice='mPosition'][data-value='centro-esquerda']").click();
+  await page.locator("[data-lab-choice='relation'][data-value='sobreposta']").click();
   await range("labMScale",Number(await page.locator("#labMScale").getAttribute("max")));
   data=await read();
   assert(data.mText==="true"&&data.m.opacity==="1","M must darken by 20% when the text intersects it");
@@ -339,8 +340,8 @@ try{
   assert(color.includes("0.2")||color.includes("0.20"),"M overlay is not 20% opaque black");
   await page.locator("#labArtboard").screenshot({path:"composition-lab-m-overlay.png"});
 
-  await select("labRelation","separada");
-  await page.locator("[data-lab-choice='mPosition'][data-value='centro-direita']").click();
+  await select("labRelation","lado-a-lado");
+  await range("labGap",4);
   await range("labMScale",45);
   await range("labTextWidth",40);
   data=await read();

@@ -256,9 +256,22 @@
       applied=searchTitle(3);
     }
     if(applied===null){
-      // Maximum 140-character titles and 380-character bodies normally fit
-      // after emergency reflow, but retain a final non-clipping contingency.
-      applied=searchTitle(1);
+      // In a very small horizontal canvas viewed on a phone, hundreds of body
+      // characters can still fill all available height. Shrink the reading
+      // text as well; then flag illegibility rather than allowing any overflow.
+      board.dataset.titleBreak="emergency";
+      emergency=true;
+      if(!body.hidden){
+        bodyReduced=true;
+        for(const size of [4,3,2,1]){
+          body.style.fontSize=size+"px";
+          applied=searchTitle(3);
+          if(applied===null)applied=searchTitle(1);
+          if(applied!==null)break;
+        }
+      }else{
+        applied=searchTitle(1);
+      }
     }
     if(applied!==null&&bodyReduced&&!body.hidden){
       const requestedBody=bodyRequested;
@@ -274,20 +287,24 @@
     }
     const ok=fits();
     const real=parseFloat(getComputedStyle(title).fontSize)||applied||requested;
+    const actualBody=parseFloat(getComputedStyle(body).fontSize)||bodyRequested;
+    const lowLegibility=real<14||(!body.hidden&&actualBody<10);
     const adjusted=real<requested-.6||bodyReduced||emergency;
     const info=by("labTitleFitInfo");
     if(info){
       info.dataset.adjusted=String(adjusted);
       info.textContent=!ok?
         "Revisar o conteúdo: a área útil está no limite.":
+        lowLegibility?
+        "Margens preservadas, mas o conteúdo está denso demais: revise o texto ou a largura da coluna.":
         emergency?
         "Título excepcionalmente longo: quebra de segurança para preservar a margem.":
         real<requested-.6?
         "Escala ajustada automaticamente para "+Math.round(real)+" px, sem sair das margens.":
         "Escala aplicada: "+Math.round(real)+" px · margens preservadas.";
     }
-    board.dataset.typeFit=ok?(adjusted?"adjusted":"natural"):"review";
-    return {ok,adjusted,emergency,requested,applied:real};
+    board.dataset.typeFit=ok?(lowLegibility?"compromised":adjusted?"adjusted":"natural"):"review";
+    return {ok,adjusted,lowLegibility,emergency,requested,applied:real};
   }
 
   function measure(){
@@ -312,6 +329,7 @@
     const status=by("labStatus");
     const desc=invalid?"REVER / CONTEÚDO EXCEDE A ÁREA ÚTIL":
       collision?"REVER / TEXTO E M CRUZAM EM CAMPOS SEPARADOS":
+      titleFit.lowLegibility?"REVER LEGIBILIDADE / MARGENS PRESERVADAS":
       titleFit.adjusted?"ESCALA AUTOAJUSTADA / MARGENS PRESERVADAS":
       hasPhoto?"ESTUDO / COMPOSIÇÃO COM IMAGEM":
       "ESTUDO / SUPERFÍCIE TIPOGRÁFICA";

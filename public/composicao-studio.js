@@ -15,13 +15,13 @@
   const fieldsByPanel={
     pagina:["labFormat","labMargin","labColor","labGuides"],
     texto:["labPlacement","labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
-    imagem:["labImage","labPhoto","labRelation","labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
+    imagem:["labImage","labMMode","labPhoto","labRelation","labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
   };
   const label={
     labFormat:"Formato",labMargin:"Margem",labColor:"Fundo",labGuides:"Guias",
     labPlacement:"Posição",labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
     labBodyMode:"Leitura",labTitleInput:"Editar título",labBodyInput:"Editar texto",
-    labImage:"Aplicação",labPhoto:"Fotografia",labRelation:"Relação",labMPosition:"Posição M",
+    labImage:"Aplicação",labMMode:"Uso do M",labPhoto:"Fotografia",labRelation:"Relação",labMPosition:"Posição M",
     labMScale:"Escala M",labFocalPreview:"Enquadrar",labFocusX:"Foco X",
     labFocusY:"Foco Y",labSymbol:"Assinatura"
   };
@@ -32,7 +32,8 @@
     placement:{esquerda:"Esquerda",central:"Centro",superior:"Superior",inferior:"Inferior"},
     type:{alternada:"U + P",univers:"Univers",perpetua:"Perpetua"},
     bodyMode:{oculto:"Só título",visivel:"Título + texto"},
-    image:{nenhuma:"Sem foto",recorte:"Máscara M",inteira:"Integral"},
+    image:{nenhuma:"Sem foto",recorte:"Com M",inteira:"Integral"},
+    mMode:{janela:"Janela",corte:"Corte lateral",sutil:"Marca sutil"},
     photo:{"64":"Imagem 01","179":"Imagem 02","151":"Imagem 03"},
     relation:{separada:"Separados",sobreposta:"Sobrepostos"},
     mPosition:{esquerda:"Esquerda",centro:"Centro",direita:"Direita"},
@@ -119,6 +120,61 @@
     back.addEventListener("click",()=>closeTool({focus:true}));
   }
 
+  /*
+   * Image / M is an editorial decision, not a folder tree.
+   * The existing fields are temporarily lifted into one compact visible
+   * surface while the studio is active, then restored to the manual in order.
+   * We do not clone inputs, SVGs, or state.
+   */
+  const imageLayout=layouts.get("imagem");
+  const imageFlat=make("div","lm-studio-image-flat");
+  imageFlat.id="labStudioImageFlat";
+  imageFlat.setAttribute("aria-label","Composição de fotografia e M");
+  imageLayout.panel.insertBefore(imageFlat,imageLayout.menu);
+  const imageBlocks=[];
+  const imageSpec=[
+    {name:"aplicacao",fields:["labImage"]},
+    {name:"uso",fields:["labMMode"]},
+    {name:"fotografia",fields:["labPhoto"]},
+    {name:"foco",fields:["labFocalPreview","labFocusX","labFocusY"]},
+    {name:"geometria",fields:["labMPosition","labMScale"]},
+    {name:"texto",fields:["labRelation"]},
+    {name:"assinatura",fields:["labSymbol"]}
+  ];
+  for(const spec of imageSpec){
+    const container=make("div","lm-studio-image-block lm-studio-image-block--"+spec.name);
+    container.dataset.studioImageBlock=spec.name;
+    container.setAttribute("role","group");
+    const heading={
+      aplicacao:"IMAGEM",uso:"APLICAÇÃO DO M",fotografia:"FOTOGRAFIA",
+      foco:"ENQUADRAMENTO",geometria:"GEOMETRIA DO M",
+      texto:"TEXTO E IMAGEM",assinatura:"ASSINATURA"
+    }[spec.name];
+    container.append(make("span","lm-studio-image-block-label",heading));
+    imageFlat.append(container);
+    imageBlocks.push({spec,container});
+  }
+  function mountFlatImage(){
+    for(const {spec,container} of imageBlocks)
+      for(const id of spec.fields)container.append(entries.get(id).field);
+  }
+  function restoreFlatImage(){
+    for(const {spec} of imageBlocks)
+      for(const id of spec.fields){
+        const entry=entries.get(id);
+        entry.marker.after(entry.field);
+      }
+  }
+  function syncFlatImage(){
+    if(!active)return;
+    for(const {spec,container} of imageBlocks){
+      container.hidden=spec.fields.every(id=>{
+        const entry=entries.get(id);
+        return entry.field.hidden||entry.input.disabled;
+      });
+    }
+  }
+
   function restoreField(entry){
     entry.marker.after(entry.field);
     entry.button.setAttribute("aria-expanded","false");
@@ -158,6 +214,7 @@
       entry.value.textContent=fieldValue(entry.id);
       entry.button.setAttribute("aria-label",label[entry.id]+": "+entry.value.textContent);
     }
+    syncFlatImage();
     if(currentEntry){
       if(currentEntry.field.hidden||currentEntry.input.disabled||
          layouts.get(currentEntry.panelName)?.panel.hidden){
@@ -218,6 +275,7 @@
     if(active)return;
     lastFocus=document.activeElement;
     active=true;
+    mountFlatImage();
     document.body.classList.add("lm-studio-open");
     lab.dataset.studio="true";
     if(overview)toolbar.insertBefore(overview,launch);
@@ -237,6 +295,7 @@
   function stopStudio(){
     if(!active)return;
     closeTool();
+    restoreFlatImage();
     active=false;
     document.body.classList.remove("lm-studio-open");
     lab.dataset.studio="false";

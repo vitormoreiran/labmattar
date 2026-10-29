@@ -90,7 +90,7 @@ body.lm-studio-open .lm-help-trigger-overview>span:first-child{width:21px;height
 body.lm-studio-open .lm-help-trigger-overview .lm-help-trigger-text{display:none}
 body.lm-studio-open #laboratorio .lm-lab-workspace{
   display:grid!important;
-  grid-template-columns:minmax(0,1fr) 355px;
+  grid-template-columns:minmax(0,1fr) 378px;
   grid-template-areas:"page inspector";
   gap:13px;min-height:0;height:100%;width:100%;
   margin:0;align-items:stretch;
@@ -275,7 +275,7 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
 }
 @media(max-width:1200px){
   body.lm-studio-open #laboratorio .lm-lab-workspace{
-    grid-template-columns:minmax(0,1fr) 326px;gap:10px;
+    grid-template-columns:minmax(0,1fr) 344px;gap:10px;
   }
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
     padding-left:10px;
@@ -392,4 +392,209 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
 }
 @media(prefers-reduced-motion:reduce){
   body.lm-studio-open .lm-studio-tool{transition:none}
+}
+
+/* IMAGE / M — all decisions visible in one place, no folder-per-control.
+   The normal manual continues to use its existing field order and disclosure. */
+.lm-studio-image-flat{display:none}
+body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem] .lm-studio-tools,
+body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem] .lm-studio-detail{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem]{
+  padding-top:8px;
+}
+body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem] .lm-inspector-panel-heading{
+  margin-bottom:8px;
+}
+body.lm-studio-open .lm-studio-image-flat{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-content:start;
+  gap:7px 9px;
+  min-width:0;min-height:0;
+  width:100%;
+}
+body.lm-studio-open .lm-studio-image-block{
+  display:flex;flex-direction:column;align-items:stretch;
+  min-width:0;min-height:0;gap:5px;
+  border-top:1px solid #cbc7bf;
+  padding-top:7px;
+}
+body.lm-studio-open .lm-studio-image-block[hidden]{display:none!important}
+body.lm-studio-open .lm-studio-image-block-label{
+  font:300 10px/1.2 UniversMattar,Arial,sans-serif;
+  letter-spacing:.055em;color:#716d66;
+}
+body.lm-studio-open .lm-studio-image-block .lm-lab-field{
+  display:flex;flex-direction:column;gap:4px;
+  min-width:0;margin:0;
+}
+body.lm-studio-open .lm-studio-image-block .lm-lab-field[hidden]{display:none!important}
+body.lm-studio-open .lm-studio-image-block .lm-lab-field-title,
+body.lm-studio-open .lm-studio-image-block .lm-help-label-inline>label,
+body.lm-studio-open .lm-studio-image-block .lm-lab-value-row>label{
+  display:none;
+}
+body.lm-studio-open .lm-studio-image-block .lm-help-trigger{
+  width:17px;height:17px;min-height:17px;
+  font-size:10px;margin:0;
+}
+body.lm-studio-open .lm-studio-image-block .lm-help-label-inline{
+  justify-content:flex-end;
+  min-height:15px;
+  position:absolute;top:-23px;right:0;
+}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice-grid{
+  gap:3px;grid-template-columns:repeat(3,minmax(0,1fr));
+}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-columns-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:63px!important;
+  justify-content:center;gap:2px;
+  padding:6px 1px 5px!important;
+}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-visual{height:29px}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-name{
+  font-size:11px;line-height:1.15;text-align:center;
+}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-meta{display:none}
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-mini-image,
+body.lm-studio-open .lm-studio-image-block .lm-m-mode-figure,
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-mini-position,
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-mini-relation{
+  transform:scale(.68);transform-origin:center;
+}
+body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-photos .lm-ctrl-choice{
+  min-height:71px!important;padding:3px!important;
+}
+body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-visual{height:37px!important}
+body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-mini-photo{
+  width:100%;height:35px;max-width:none;
+}
+body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-choice .lm-ctrl-name{
+  font-size:10px;
+}
+body.lm-studio-open .lm-studio-image-block--foco{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:4px 6px;
+}
+body.lm-studio-open .lm-studio-image-block--foco>.lm-studio-image-block-label{
+  grid-column:1/-1;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-ctrl-focus-field{
+  display:block;grid-column:1/-1;
+}
+body.lm-studio-open .lm-studio-image-block--foco #labFocalPreview{
+  grid-column:1/-1;
+  height:76px;
+  min-height:0!important;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-ctrl-focus-label{
+  font-size:8px;bottom:3px;left:4px;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-lab-field{
+  display:flex;flex-direction:row;align-items:center;
+  gap:2px;min-height:27px;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-lab-value-row{
+  display:flex;align-items:center;flex:1;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-lab-value-row label{
+  display:none;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-lab-field:nth-of-type(2)::before{
+  content:"X";font:300 10px/1 UniversMattar,Arial,sans-serif;color:#716d66
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-lab-field:nth-of-type(3)::before{
+  content:"Y";font:300 10px/1 UniversMattar,Arial,sans-serif;color:#716d66
+}
+body.lm-studio-open .lm-studio-image-block--foco input[type=range],
+body.lm-studio-open .lm-studio-image-block--foco .lm-ctrl-range-limits{
+  display:none!important;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-inspector-precision{
+  min-width:0;justify-content:flex-start;
+}
+body.lm-studio-open .lm-studio-image-block--foco .lm-inspector-precision input{
+  width:33px!important;max-width:33px;height:22px!important;min-height:22px!important;
+  font-size:12px!important;
+}
+body.lm-studio-open .lm-studio-image-block--geometria{
+  grid-column:1/-1;
+  display:grid;grid-template-columns:1.05fr .95fr;
+  gap:5px 9px;
+}
+body.lm-studio-open .lm-studio-image-block--geometria>.lm-studio-image-block-label{
+  grid-column:1/-1;
+}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-ctrl-choice{min-height:52px!important}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-ctrl-visual{display:none}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-ctrl-name{font-size:10px!important}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-lab-field:has(#labMScale){
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-lab-value-row{min-height:24px}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-lab-value-row:before{
+  content:"Escala";font:300 11px/1.2 UniversMattar,Arial,sans-serif;
+  color:#56534e;
+}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-lab-field input[type=range]{
+  margin:0;height:19px;
+}
+body.lm-studio-open .lm-studio-image-block--geometria .lm-ctrl-range-limits,
+body.lm-studio-open .lm-studio-image-block--geometria .lm-inspector-precision{
+  font-size:9px;
+}
+body.lm-studio-open .lm-studio-image-block--texto .lm-ctrl-choice{
+  min-height:52px!important;
+}
+body.lm-studio-open .lm-studio-image-block--texto .lm-ctrl-visual{display:none}
+body.lm-studio-open .lm-studio-image-block--assinatura .lm-ctrl-signature-title{
+  display:none;
+}
+body.lm-studio-open .lm-studio-image-block--assinatura select{
+  display:block;
+  width:100%;height:40px;min-height:40px;
+  padding:7px 10px;font-size:11px;
+}
+body.lm-studio-open .lm-studio-image-block .lm-lab-fit-info,
+body.lm-studio-open .lm-studio-image-block .lm-ctrl-helper{
+  display:none!important;
+}
+/* When no photograph is selected, the image panel should not look empty. */
+body.lm-studio-open .lm-studio-image-flat:has(.lm-studio-image-block--uso[hidden])
+ .lm-studio-image-block--aplicacao{
+  grid-column:1/-1;
+}
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])){
+    grid-template-rows:minmax(0,42dvh) minmax(0,1fr);
+  }
+  body.lm-studio-open .lm-studio-image-flat{
+    gap:4px 7px;
+  }
+  body.lm-studio-open .lm-studio-image-block{
+    padding-top:4px;gap:3px;
+  }
+  body.lm-studio-open .lm-studio-image-block-label{font-size:8px}
+  body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice{
+    min-height:47px!important;padding:4px 0 3px!important;
+  }
+  body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-visual{height:20px}
+  body.lm-studio-open .lm-studio-image-block .lm-ctrl-choice .lm-ctrl-name{font-size:9px}
+  body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-photos .lm-ctrl-choice{
+    min-height:57px!important;
+  }
+  body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-mini-photo{height:24px}
+  body.lm-studio-open .lm-studio-image-block--fotografia .lm-ctrl-visual{height:27px!important}
+  body.lm-studio-open .lm-studio-image-block--foco #labFocalPreview{height:56px}
+  body.lm-studio-open .lm-studio-image-block--foco .lm-lab-field{min-height:20px}
+  body.lm-studio-open .lm-studio-image-block--geometria .lm-ctrl-choice{min-height:37px!important}
+  body.lm-studio-open .lm-studio-image-block--geometria .lm-lab-field input[type=range]{height:15px}
+  body.lm-studio-open .lm-studio-image-block--texto .lm-ctrl-choice{min-height:35px!important}
+  body.lm-studio-open .lm-studio-image-block--assinatura select{height:30px;min-height:30px}
 }

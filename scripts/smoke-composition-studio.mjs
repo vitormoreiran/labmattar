@@ -76,6 +76,48 @@ async function menuVisible(label){
     label+": some controls require scrolling or are clipped: "+JSON.stringify(g.toolRects));
   return g;
 }
+async function flatImageVisible(label){
+  await page.waitForTimeout(90);
+  const g=await page.evaluate(()=>{
+    const flat=document.querySelector("#labStudioImageFlat");
+    const panel=document.querySelector("#labPanel-imagem");
+    const f=flat.getBoundingClientRect(),p=panel.getBoundingClientRect();
+    return {
+      flatVisible:getComputedStyle(flat).display!=="none",
+      menuHidden:getComputedStyle(panel.querySelector(".lm-studio-tools")).display==="none",
+      flat:{top:f.top,bottom:f.bottom,height:f.height,scrollHeight:flat.scrollHeight},
+      panel:{top:p.top,bottom:p.bottom,height:p.height},
+      groups:[...flat.querySelectorAll(".lm-studio-image-block")].filter(el=>!el.hidden).map(el=>{
+        const r=el.getBoundingClientRect();
+        return {key:el.dataset.studioImageBlock,top:r.top,bottom:r.bottom,height:r.height,width:r.width}
+      })
+    };
+  });
+  assert(g.flatVisible&&g.menuHidden,label+": image editor remains a folder menu: "+JSON.stringify(g));
+  assert(g.groups.length>=2&&g.groups.every(x=>x.top>=g.panel.top-2&&x.bottom<=g.panel.bottom+3),
+    label+": some Image/M controls are clipped or demand scrolling: "+JSON.stringify(g));
+  assert(g.flat.bottom<=g.panel.bottom+3,label+": image controls exceed visible panel: "+JSON.stringify(g));
+  return g;
+}
+async function mGeometry(){
+  return page.evaluate(()=>{
+    const b=document.querySelector("#labArtboard").getBoundingClientRect();
+    const m=document.querySelector("#labMask").getBoundingClientRect();
+    const board=document.querySelector("#labArtboard");
+    return {
+      board:{left:b.left,right:b.right,top:b.top,bottom:b.bottom},
+      m:{left:m.left,right:m.right,top:m.top,bottom:m.bottom},
+      mode:board.dataset.mMode,
+      break:board.dataset.titleBreak,
+      contentStatus:board.dataset.state,
+      veil:getComputedStyle(document.querySelector(".lm-lab-photo-contrast")).backgroundColor,
+      veilOpacity:getComputedStyle(document.querySelector(".lm-lab-photo-contrast")).opacity,
+      mOpacity:getComputedStyle(document.querySelector("#labMask")).opacity,
+      imageHidden:getComputedStyle(document.querySelector("#labMaskPhoto")).display==="none",
+      vector:getComputedStyle(document.querySelector("#labMask")).maskImage
+    };
+  });
+}
 async function tab(name){
   await page.locator('[data-lab-tab="'+name+'"]').click();
   await page.waitForTimeout(35);
@@ -92,8 +134,8 @@ try{
     "Focused mode did not open from its direct URL");
   assert(await page.locator("#labStudioToggleText").textContent()==="VOLTAR AO MANUAL",
     "Exit from focus mode is not visible");
-  assert(await page.locator("[data-studio-tool]").count()===20,
-    "All 20 existing properties must remain reachable without duplication");
+  assert(await page.locator("[data-studio-tool]").count()===21,
+    "All previous tools and the new M-use control must retain one canonical input");
   const baseline=await proveBoard("Desktop horizontal 1440x900");
   assert(baseline.board.width>720,"Horizontal composition should receive the remaining desktop width");
   await menuVisible("Desktop page properties");
@@ -139,32 +181,81 @@ try{
     "Page copy no longer synchronizes with inspector");
 
   await tab("imagem");
-  await menuVisible("Image tools before photography");
-  await tool("labImage").click();
+  assert(await page.locator("#labStudioImageFlat").isVisible(),
+    "Image / M must be a single flat editing surface");
+  await flatImageVisible("Photo panel without image");
   await clickCard("image","recorte");
-  await proveBoard("M mask still contained in horizontal canvas");
-  assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).maskImage.includes("m-publicado.svg")),
-    "Canonical M mask must not be replaced");
-  await page.locator("#labStudioDetail-imagem .lm-studio-back").click();
-  const imageTools=await menuVisible("All relevant image / M controls accessible");
-  assert(imageTools.toolRects.length>=7,"M mode should expose all applicable controls");
-  await tool("labMScale").click();
+  assert(await page.locator("#labMMode").isVisible(),"M-use modes must be visible without opening a folder");
+  await flatImageVisible("Full M controls visible");
+  await clickCard("mMode","janela");
+  let mask=await mGeometry();
+  assert(mask.mode==="janela"&&mask.vector.includes("m-publicado.svg"),
+    "Window mode must use the original M SVG");
+  assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2,
+    "Window M must fit completely inside the page: "+JSON.stringify(mask));
+  assert(mask.veil.includes("0.2")&&mask.veilOpacity==="1",
+    "Photo text contrast must remain an automatic 20% black veil");
+  assert(await page.locator("#labRelation").inputValue()==="separada"&&
+    await page.locator("#labArtboard").getAttribute("data-m-text")==="false",
+    "Window mode should start with distinct typography and M fields");
+  await page.screenshot({path:"composition-studio-m-janela.png"});
+
   await page.locator("#labPrecision-mScale").fill("88");
   await page.locator("#labPrecision-mScale").press("Enter");
-  assert(await page.locator("#labMScale").inputValue()==="88","M control was lost");
-  await page.locator("#labStudioDetail-imagem .lm-studio-back").click();
-  await tool("labFocalPreview").click();
+  mask=await mGeometry();
+  assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2,
+    "Increasing window scale must not crop the M: "+JSON.stringify(mask));
+  await clickCard("mMode","corte");
+  mask=await mGeometry();
+  assert(mask.mode==="corte"&&mask.m.right>mask.board.right+8,
+    "Lateral cut must be deliberate and visibly bleed beyond the page: "+JSON.stringify(mask));
+  await page.screenshot({path:"composition-studio-m-corte.png"});
+
+  await clickCard("mMode","sutil");
+  mask=await mGeometry();
+  assert(mask.mode==="sutil"&&mask.imageHidden&&Number(mask.mOpacity)<.25,
+    "Subtle mode must become a quiet M over a full photograph: "+JSON.stringify(mask));
+  await page.screenshot({path:"composition-studio-m-sutil.png"});
+
+  await clickCard("mMode","janela");
+  await clickCard("photo","151");
   const focal=page.locator("#labFocalPreview");
   const rect=await focal.boundingBox();
   await focal.click({position:{x:rect.width*.8,y:rect.height*.3}});
   assert(await page.locator("#labFocusX").inputValue()==="80"&&
-    await page.locator("#labFocusY").inputValue()==="30","Direct focal editing stopped working");
-  await page.locator("#labStudioDetail-imagem .lm-studio-back").click();
+    await page.locator("#labFocusY").inputValue()==="30",
+    "Direct photo-focus adjustment must remain available without a subfolder");
+  await flatImageVisible("Image / M with changed photograph and focus");
   await page.screenshot({path:"composition-studio-desktop-image.png"});
+
+  await tab("pagina");
+  await tool("labFormat").click();
+  await clickCard("format","quadrado");
+  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tab("texto");
+  await tool("labTitleInput").click();
+  await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
+  await page.waitForTimeout(200);
+  const longWord=await page.evaluate(()=>{
+    const board=document.querySelector("#labArtboard");
+    const line=document.querySelector("#labRenderedTitle .lm-lab-title-line");
+    const rects=(()=>{const r=document.createRange();r.selectNodeContents(line);return [...r.getClientRects()]})();
+    return {break:board.dataset.titleBreak,state:board.dataset.state,fragments:rects.length,font:getComputedStyle(line).fontSize};
+  });
+  assert(longWord.break==="normal"&&longWord.fragments===1&&longWord.state!=="overflow",
+    "Long title must be scaled, never scattered into single-letter lines: "+JSON.stringify(longWord));
+  await page.screenshot({path:"composition-studio-m-square-title.png"});
+  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tab("pagina");
+  await tool("labFormat").click();
+  await clickCard("format","horizontal");
+  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tab("imagem");
+  await flatImageVisible("Image / M after direct title editing");
 
   await page.setViewportSize({width:1366,height:768});
   await proveBoard("Laptop viewport 1366x768");
-  await menuVisible("Laptop all image controls");
+  await flatImageVisible("Laptop flat Image / M controls");
   await page.screenshot({path:"composition-studio-laptop.png"});
 
   await page.setViewportSize({width:390,height:844});
@@ -175,7 +266,7 @@ try{
     "Horizontal mobile sheet must not leave an excessive empty letterbox");
   assert(await page.locator("#labStudioQuickReset").isVisible(),
     "Mobile studio must keep restore action within the viewport");
-  await menuVisible("Mobile complete image controls");
+  await flatImageVisible("Mobile flat Image / M controls");
   await page.screenshot({path:"composition-studio-mobile.png"});
   await tab("pagina");
   await menuVisible("Mobile all page tools");
@@ -194,7 +285,7 @@ try{
   await proveBoard("Short mobile 390x700");
   await menuVisible("Short mobile all text tools");
   await tab("imagem");
-  await menuVisible("Short mobile all M controls");
+  await flatImageVisible("Short mobile flat Image / M controls");
 
   await page.locator("#labStudioToggle").click();
   assert(await page.locator("body").evaluate(el=>!el.classList.contains("lm-studio-open")),
@@ -205,6 +296,10 @@ try{
     "Mobile reset button must not intrude on the original manual");
   assert(await page.locator("#labArtboard").isVisible(),"Original applied page disappeared");
   assert(await page.locator("#construcao").count()===1,"The existing applied study was removed");
+  assert(await page.locator("#aplicacoes-do-m").count()===1,"Three original-M applications need an accompanying guide");
+  assert(await page.locator("#labMMode").count()===1&&
+    await page.locator("#labMMode").evaluate(el=>Boolean(el.closest(".lm-inspector-primary"))),
+    "M use control must return to the original manual without duplication");
   await page.locator("#labStudioToggle").click();
   assert(await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
     "The studio cannot be reopened");

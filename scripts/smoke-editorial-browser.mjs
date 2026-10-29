@@ -89,6 +89,43 @@ try{
   if(!(await page.locator('#previewIconUse').getAttribute('href')).includes('ui-eye'))throw Error('Incorrect initial preview icon');
   console.log('UI CONTRAST',JSON.stringify(uiCheck.pairs));
 
+  const typography=await page.evaluate(()=>{
+    const selectors=[
+      '.editor-header .editor-brand',
+      '#documentTitle',
+      '.sidebar-tabs button',
+      '.page-section-head strong',
+      '.editor-sidebar .page-meta strong',
+      '.inspector-tabs button',
+      '.inspector-panel .field-group label',
+      '.inspector-panel textarea',
+      '.editor-stage .stage-topline'
+    ];
+    const values=selectors.map(selector=>{
+      const node=document.querySelector(selector);
+      const s=getComputedStyle(node);
+      return {selector,family:s.fontFamily,weight:s.fontWeight,synthesis:s.fontSynthesis,
+        size:s.fontSize,color:s.color};
+    });
+    const backgrounds=['.editor-header','.editor-sidebar','.editor-inspector',
+      '.page-section-head','.editor-stage .stage-topline']
+      .map(selector=>({selector,background:getComputedStyle(document.querySelector(selector)).backgroundColor}));
+    const flag=getComputedStyle(document.querySelector('.editor-header .save-status'),'::before').display;
+    return {values,backgrounds,statusDot:flag};
+  });
+  for(const entry of typography.values){
+    if(!entry.family.includes('LMUnivers')||entry.weight!=='300'||entry.synthesis!=='none')
+      throw Error('Univers Light mismatch on editor chrome: '+JSON.stringify(entry));
+  }
+  for(const item of typography.backgrounds){
+    const channels=item.background.match(/[\d.]+/g)?.slice(0,3).map(Number);
+    if(!channels||Math.max(...channels)-Math.min(...channels)>10)
+      throw Error('Decorative color in editor chrome: '+JSON.stringify(item));
+  }
+  if(typography.statusDot!=='none')throw Error('Decorative colored status marker remains');
+  console.log('UI TYPE',JSON.stringify(typography.values));
+
+
   // Contrast is not a permanently darkened photo: test the actual on/off
   // state by moving the original M behind the title, then restore geometry.
   const initialContrast=await page.evaluate(()=>{

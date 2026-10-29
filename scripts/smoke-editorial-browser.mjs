@@ -63,6 +63,31 @@ try{
   });
   if(fonts.some(x=>!x))throw Error('Official fonts are not available');
   await geometry('opening edit',{expectedLayout:'compact'});
+  // Contrast is not a permanently darkened photo: test the actual on/off
+  // state by moving the original M behind the title, then restore geometry.
+  const initialContrast=await page.evaluate(()=>{
+    const art=document.querySelector('#artboard');
+    return {background:art.dataset.contrastBackground,m:art.dataset.contrastM};
+  });
+  if(initialContrast.background!=='true'||initialContrast.m!=='false')
+    throw Error('Unexpected automatic contrast in separated desktop layout: '+JSON.stringify(initialContrast));
+  await page.evaluate(()=>{
+    document.querySelector('.masked-photo').style.left='7cqw';
+    window.dispatchEvent(new Event('resize'));
+  });
+  await page.waitForFunction(()=>document.querySelector('#artboard')?.dataset.contrastM==='true');
+  const maskShade=await page.evaluate(()=>({
+    background:getComputedStyle(document.querySelector('.masked-photo'),'::after').backgroundColor,
+    opacity:getComputedStyle(document.querySelector('.masked-photo'),'::after').opacity
+  }));
+  if(!maskShade.background.includes('0.2')||maskShade.opacity!=='1')
+    throw Error('20% black veil missing when text overlaps M: '+JSON.stringify(maskShade));
+  await page.evaluate(()=>{
+    document.querySelector('.masked-photo').style.removeProperty('left');
+    window.dispatchEvent(new Event('resize'));
+  });
+  await page.waitForFunction(()=>document.querySelector('#artboard')?.dataset.contrastM==='false');
+  await geometry('restored after overlap test',{expectedLayout:'compact'});
   for(let i=0;i<7;i++){
     await page.locator('.page-entry').nth(i).click();
     await geometry('edit page '+(i+1));

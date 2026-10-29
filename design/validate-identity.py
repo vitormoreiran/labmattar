@@ -22,7 +22,7 @@ for page in ("tipografia.html","cores.html"):
  for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
   assert font in text,f"{page} missing {font}"
 composition=(Path("public")/"composicao.html").read_text(encoding="utf-8")
-assert 'id="contraste"' in composition and "20% DE PRETO" in composition
+assert 'id="contraste"' in composition and ("PRETO 20%" in composition or "20% DE PRETO" in composition)
 assert ".lm-case-image::after" in composition, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in composition and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition

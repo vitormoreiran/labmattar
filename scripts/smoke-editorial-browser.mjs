@@ -7,6 +7,9 @@ page.on('pageerror',error=>errors.push(error.message));
 try{
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  await page.locator('#sheet').waitFor();
+ const baseline=await page.locator('#sheet').evaluate(sheet=>{const a=sheet.getBoundingClientRect();const nodes=[...sheet.querySelectorAll('.ed-text-node')].map(el=>{const r=el.getBoundingClientRect();return {role:el.className,top:r.top,bottom:r.bottom,left:r.left,right:r.right,inside:r.left>=a.left-2&&r.right<=a.right+2&&r.top>=a.top-2&&r.bottom<=a.bottom+2}});return {nodes,ratio:a.width/a.height}});
+ if(baseline.nodes.some(n=>!n.inside))throw new Error('Text overflow on initial page: '+JSON.stringify(baseline));
+
  const initialState=await page.locator('#sheet').evaluate(el=>({source:el.classList.contains('ed-source-page'),media:el.dataset.mediaState,background:getComputedStyle(el).backgroundColor}));
  if(!initialState.source)throw new Error('Original renderer must remain active on every page: '+JSON.stringify(initialState));
 

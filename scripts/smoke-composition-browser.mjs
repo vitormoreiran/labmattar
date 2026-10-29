@@ -296,9 +296,11 @@ try{
   assert(await page.locator("#labFocusX").inputValue()==="75"&&await page.locator("#labFocusY").inputValue()==="30",
     "Focal point arrow keys must change the live X/Y values");
   assert((await read()).photoSrc.includes("151.jpg"),"Focal editing must preserve the photo selection");
-  await range("labMScale",85);
-  assert(await page.locator('[data-control-effect="mask"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-mask-scale"))==="0.85",
-    "M scale diagram must follow the original M scale slider");
+  const mMax=Number(await page.locator("#labMScale").getAttribute("max"));
+  await range("labMScale",Math.min(85,mMax));
+  const mScaleNow=Number(await page.locator("#labMScale").inputValue());
+  assert(await page.locator('[data-control-effect="mask"]').evaluate(e=>e.style.getPropertyValue("--lm-mini-mask-scale"))===String(mScaleNow/100),
+    "M scale diagram must follow the actual format-aware M scale");
   await page.evaluate(()=>{
     const el=document.querySelector("#labPanel-imagem");
     window.scrollTo({top:window.scrollY+el.getBoundingClientRect().top-65,behavior:"instant"});
@@ -330,7 +332,7 @@ try{
   assert(data.m.mask.includes("m-publicado.svg"),"Original M geometry not used as mask");
   assert(Math.abs(data.m.width/data.m.height-990.08/743.18)<.05,"M image distorted");
   await page.locator("[data-lab-choice='mPosition'][data-value='centro-esquerda']").click();
-  await range("labMScale",95);
+  await range("labMScale",Number(await page.locator("#labMScale").getAttribute("max")));
   data=await read();
   assert(data.mText==="true"&&data.m.opacity==="1","M must darken by 20% when the text intersects it");
   const color=await page.locator("#labMask").evaluate(el=>getComputedStyle(el,"::after").backgroundColor);

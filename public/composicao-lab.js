@@ -187,22 +187,30 @@
     function fits(){
       const safe=reading.getBoundingClientRect();
       const column=copyArea.getBoundingClientRect();
-      const top=kicker.getBoundingClientRect().bottom;
-      const bottom=footer.getBoundingClientRect().top;
+      const kickerRect=kicker.getBoundingClientRect();
+      const footerRect=footer.getBoundingClientRect();
+      const top=kickerRect.bottom;
+      const bottom=footerRect.top;
       if(!safe.width||!safe.height||column.width<4||column.height<1)return false;
+      // The footer can itself be displaced by overgrown flex content.
+      // Compare against the actual safe region, not only sibling positions.
+      if(kickerRect.top<safe.top-sideRoom||footerRect.bottom>safe.bottom+sideRoom)return false;
       if(column.left<safe.left-sideRoom||column.right>safe.right+sideRoom)return false;
+      if(column.top<safe.top-sideRoom||column.bottom>safe.bottom+sideRoom)return false;
       if(column.top<top+2||column.bottom>bottom-2)return false;
       for(const node of lines){
         if(node.scrollWidth>node.clientWidth+1.5)return false;
         for(const rect of rects(node)){
           if(rect.left<column.left-sideRoom||rect.right>column.right+sideRoom||
-             rect.left<safe.left-sideRoom||rect.right>safe.right+sideRoom)return false;
+             rect.left<safe.left-sideRoom||rect.right>safe.right+sideRoom||
+             rect.top<safe.top-sideRoom||rect.bottom>safe.bottom+sideRoom)return false;
         }
       }
       if(!body.hidden){
         const b=body.getBoundingClientRect();
         if(body.scrollWidth>body.clientWidth+2||
            b.left<safe.left-sideRoom||b.right>safe.right+sideRoom||
+           b.top<safe.top-sideRoom||b.bottom>safe.bottom+sideRoom||
            b.bottom>bottom-2)return false;
       }
       return true;

@@ -21,7 +21,7 @@
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"esquerda",relation:"separada",textWidth:43,titleScale:95,type:"alternada",
+      placement:"esquerda",relation:"separada",textWidth:40,titleScale:95,type:"alternada",
       image:"recorte",mMode:"janela",photo:"64",mPosition:"direita",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
@@ -260,7 +260,7 @@
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
     const half=effectiveMScale/2,pad=state.margin;
     const anchors=state.mMode==="corte"?
-      {esquerda:pad+effectiveMScale*.27,centro:50,direita:100-pad-effectiveMScale*.27}:
+      {esquerda:pad+effectiveMScale*.18,centro:50,direita:100-pad-effectiveMScale*.18}:
       {esquerda:pad+half,centro:50,direita:100-pad-half};
     board.style.setProperty("--lab-m-x",anchors[state.mPosition]+"%");
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
@@ -898,7 +898,30 @@
   for(const id of Object.values(fields)){
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
-      readInputs();activePreset="";render();save();
+      const previousImage=state.image,previousMode=state.mMode;
+      readInputs();
+      // An application is a compositional decision. Entering M mode gives
+      // the word and the whole letter separate readable fields, preserving
+      // the user's actual content, fonts, format and selected photograph.
+      if(id==="labImage"&&previousImage!=="recorte"&&state.image==="recorte"){
+        state.mMode="janela";
+        state.mPosition="direita";
+        state.mScale=50;
+        state.textWidth=Math.min(state.textWidth,40);
+        state.relation="separada";
+      }
+      if(id==="labMMode"&&previousMode!==state.mMode){
+        if(state.mMode==="janela"){
+          state.mScale=Math.min(state.mScale,55);
+          state.relation="separada";
+        }else if(state.mMode==="corte"){
+          state.mScale=Math.max(70,state.mScale);
+        }else if(state.mMode==="sutil"){
+          state.mScale=Math.min(62,state.mScale);
+          state.relation="sobreposta";
+        }
+      }
+      activePreset="";render();save();
     });
   }
   document.querySelectorAll("[data-lab-preset]").forEach(b=>

@@ -76,7 +76,7 @@ async function editorialMetrics(label){
       bodyRatio:parseFloat(styles.body.fontSize)/b.width,
       detailRatio:parseFloat(styles.kicker.fontSize)/b.width,
       leftAligned:styles.copy.textAlign==="left"&&
-        styles.body.textAlign!=="center"&&Math.abs(tr.left-br.left)<2,
+        styles.body.textAlign!=="center"&&(body.hidden||Math.abs(tr.left-br.left)<2),
       safe:{
         copyLeft:copy.left>=safe.left-1.5,copyRight:copy.right<=safe.right+1.5,
         copyTop:copy.top>=kr.bottom-2,copyBottom:copy.bottom<=fr.top+2,

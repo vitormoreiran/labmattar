@@ -1,0 +1,67 @@
+name: Validar Tipografia
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, fix/typography-three-roles]
+    paths:
+      - 'design/tipografia.html'
+      - 'scripts/smoke-typography-browser.mjs'
+      - '.github/workflows/typography-browser.yml'
+  workflow_run:
+    workflows: ['Publicar previa LABMATTAR']
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: typography-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar navegador isolado
+        run: |
+          mkdir -p /tmp/typography-check
+          npm install --prefix /tmp/typography-check playwright@1.58.2
+          /tmp/typography-check/node_modules/.bin/playwright install --with-deps chromium
+          cp scripts/smoke-typography-browser.mjs /tmp/typography-check/test.mjs
+      - name: Preparar pagina com navegacao e fontes oficiais
+        if: github.event_name != 'workflow_run'
+        run: |
+          for page in tipografia cores composicao imagem; do cp "design/$page.html" "public/$page.html"; done
+          python3 design/integrate-areas.py
+          mkdir -p public/fonts
+          curl --fail --location --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf -o public/fonts/univers-lt-std-45-light.otf
+          curl --fail --location --retry 3 https://labmattar.com/fonts/perpetua-titling-light.ttf -o public/fonts/perpetua-titling-light.ttf
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('public/tipografia.html')
+          p.write_text(p.read_text().replace('https://labmattar.com/fonts/','/fonts/'))
+          PY
+      - name: Testar pagina preparada
+        if: github.event_name != 'workflow_run'
+        run: |
+          python3 -m http.server 8766 --directory public > /tmp/typography-http.log 2>&1 &
+          TYPOGRAPHY_URL=http://127.0.0.1:8766/tipografia.html node /tmp/typography-check/test.mjs
+      - name: Testar pagina publicada
+        if: github.event_name == 'workflow_run'
+        env:
+          TYPOGRAPHY_URL: https://labmattar-identidade-previa.vitormoreiran.workers.dev/tipografia?typography=${{ github.event.workflow_run.head_sha }}
+        run: node /tmp/typography-check/test.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typography-${{ github.event_name }}-${{ github.sha }}
+          path: typography-proof/
+          if-no-files-found: warn

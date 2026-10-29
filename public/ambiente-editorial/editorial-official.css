@@ -22,3 +22,7 @@
 .ed-sheet-wrap.mobile .ed-sheet .role-title{font-size:clamp(42px,12cqw,64px)!important}
 .ed-sheet-wrap.mobile .ed-sheet .role-body{font-size:16px!important;line-height:1.5!important}
 .ed-sheet-wrap.mobile .ed-sheet .role-subtitle{font-size:12px!important}
+
+/* Resolve legacy source renderer selectors. */
+.ed-sheet.ed-source-page .role-title[data-family="univers"]{font-family:"LM Univers Official",Arial,sans-serif!important}
+.ed-sheet.ed-source-page .role-title[data-family="perpetua"]{font-family:"LM Perpetua Official",Georgia,serif!important}

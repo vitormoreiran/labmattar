@@ -843,13 +843,15 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
     grid-template-rows:minmax(0,1fr) minmax(270px,49dvh);
   }
 }
-/* At short mobile heights, retain every tool and its opened options
-   within one screen. A 33px property row is still a generous touch target
-   once the entire inspector is the active editing surface. */
+/* Eight typography properties and an opened detail must remain usable
+   on 390x700, without scrolling or covering the artwork. */
 @media(max-width:850px) and (max-height:735px){
   body.lm-studio-open #laboratorio .lm-inspector-panel .lm-studio-tool{
-    height:33px;
-    min-height:33px;
+    height:30px;
+    min-height:30px;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-texto:not([hidden]) .lm-studio-detail:not([hidden])){
+    grid-template-rows:minmax(0,1fr) minmax(390px,60dvh);
   }
   body.lm-studio-open #laboratorio .lm-studio-detail{
     padding:6px 6px 8px;

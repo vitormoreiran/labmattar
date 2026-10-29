@@ -63,14 +63,15 @@ async function proveBoard(label){
     label+": page escapes stage vertically: "+JSON.stringify(g));
   assert(g.stage.bottom<=page.viewportSize().height+1.5,label+": stage clips the screen");
   assert(g.inspector.bottom<=page.viewportSize().height+1.5,label+": inspector clips the screen");
-  assert(g.inspector.scrollHeight<=g.inspector.height+3,label+": inspector requires vertical scrolling");
+  assert(g.inspector.scrollHeight<=g.inspector.height+3,
+    label+": inspector requires vertical scrolling "+JSON.stringify(g));
   assert(g.bodyOverflow==="hidden",label+": page background is scrollable");
   return g;
 }
 async function menuVisible(label){
   const g=await geometry();
   assert(g.toolRects.length>=2,label+": tool menu missing");
-  assert(g.toolRects.every(t=>t.visible&&t.w>75&&t.h>40&&
+  assert(g.toolRects.every(t=>t.visible&&t.w>75&&t.h>30&&
     t.y>=g.panel.top-1&&t.bottom<=g.panel.bottom+1.5&&
     t.x>=g.inspector.left-1&&t.right<=g.inspector.right+1.5),
     label+": some controls require scrolling or are clipped: "+JSON.stringify(g.toolRects));
@@ -98,14 +99,18 @@ async function expandedBelow(panelName,label){
       })
     };
   },panelName);
-  assert(state.menuVisible&&state.detailVisible,label+": menu must remain on-screen alongside options "+JSON.stringify(state));
-  assert(state.menu.bottom<=state.detail.top+2,label+": options must open BELOW the complete menu "+JSON.stringify(state));
+  assert(state.menuVisible&&state.detailVisible,label+": menu must remain visible with its inline options "+JSON.stringify(state));
   assert(state.detail.bottom<=state.panel.bottom+2,label+": options are clipped below inspector "+JSON.stringify(state));
   assert(state.inspector.scrollHeight<=state.inspector.height+3,label+": showing options requires scrolling "+JSON.stringify(state));
-  assert(state.buttons.every(b=>b.top>=state.panel.top-2&&b.bottom<=state.detail.top+1),
-    label+": original menu was replaced or obscured "+JSON.stringify(state));
-  assert(state.buttons.filter(b=>b.expanded==="true").length===1,
-    label+": exactly one property should indicate expanded state "+JSON.stringify(state));
+  assert(state.buttons.every(b=>b.top>=state.panel.top-2&&b.bottom<=state.panel.bottom+2),
+    label+": a property disappeared or was pushed below the inspector "+JSON.stringify(state));
+  const activeRow=state.buttons.find(b=>b.expanded==="true");
+  assert(activeRow&&state.buttons.filter(b=>b.expanded==="true").length===1,
+    label+": only the selected property should be expanded "+JSON.stringify(state));
+  assert(state.detail.top>=activeRow.bottom-2&&state.detail.top<=activeRow.bottom+8,
+    label+": options should open IMMEDIATELY below the chosen property "+JSON.stringify(state));
+  assert(state.buttons.filter(b=>b.top>activeRow.top).every(b=>b.top>=state.detail.bottom-1),
+    label+": the remaining list must continue below the inline options "+JSON.stringify(state));
   return state;
 }
 async function flatImageVisible(label){
@@ -168,8 +173,19 @@ try{
     "Exit from focus mode is not visible");
   assert(await page.locator("[data-studio-tool]").count()===21,
     "All previous tools and the new M-use control must retain one canonical input");
+  await page.screenshot({path:"composition-studio-desktop-initial-review.png",fullPage:false});
   const baseline=await proveBoard("Desktop horizontal 1440x900");
   assert(baseline.board.width>720,"Horizontal composition should receive the remaining desktop width");
+  assert(await page.locator(".lm-inspector-head>span").textContent()==="AJUSTES",
+    "Inspector hierarchy should be concise");
+  const studioStyling=await page.evaluate(()=>({
+    backdrop:getComputedStyle(document.querySelector(".lm-lab-stage")).backgroundColor,
+    pane:getComputedStyle(document.querySelector(".lm-lab-inspector")).backgroundColor,
+    rowDirection:getComputedStyle(document.querySelector('[data-studio-tool="labFormat"]')).flexDirection,
+    itemCount:document.querySelectorAll('[data-studio-tool="labFormat"] .lm-ctrl-visual').length
+  }));
+  assert(studioStyling.rowDirection==="row"&&!studioStyling.itemCount,
+    "Property tools should be quiet label/value rows, not decorative cards "+JSON.stringify(studioStyling));
   await menuVisible("Desktop page properties");
   await page.screenshot({path:"composition-studio-desktop-horizontal.png"});
 
@@ -183,6 +199,8 @@ try{
   await tool("labMargin").click();
   await expandedBelow("pagina","Switched to margin without losing menu");
   assert(await page.locator("#labMargin").isVisible(),"Newly selected property was not placed below the list");
+  assert(await page.locator('.lm-studio-tools[data-studio-tools="pagina"] .lm-studio-detail').count()===1,
+    "Inline detail must remain inside the selected menu hierarchy");
   assert(await page.locator("#labFormat").isHidden(),"Previous property should close when another is selected");
   await tool("labFormat").click();
   await expandedBelow("pagina","Format restored below menu");
@@ -200,7 +218,7 @@ try{
   await clickCard("format","editorial");
   await proveBoard("Desktop editorial 1440x900");
   await clickCard("format","horizontal");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await menuVisible("Page menu restored without scrolling");
 
   await tab("texto");
@@ -212,7 +230,7 @@ try{
   await page.locator("#labPrecision-titleScale").press("Enter");
   assert(await page.locator("#labTitleScale").inputValue()==="120",
     "The focused palette must preserve exact scale values");
-  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tool("labTitleScale").click();
   await page.locator("#labRenderedTitle").click();
   assert(await page.locator('[data-lab-tab="texto"]').getAttribute("aria-selected")==="true",
     "Direct title editing should keep Typography active");
@@ -272,7 +290,7 @@ try{
   await tab("pagina");
   await tool("labFormat").click();
   await clickCard("format","quadrado");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tab("texto");
   await tool("labTitleInput").click();
   await expandedBelow("texto","Desktop direct text field below menu");
@@ -287,11 +305,11 @@ try{
   assert(longWord.break==="normal"&&longWord.fragments===1&&longWord.state!=="overflow",
     "Long title must be scaled, never scattered into single-letter lines: "+JSON.stringify(longWord));
   await page.screenshot({path:"composition-studio-m-square-title.png"});
-  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tool("labTitleInput").click();
   await tab("pagina");
   await tool("labFormat").click();
   await clickCard("format","horizontal");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tab("imagem");
   await flatImageVisible("Image / M after direct title editing");
 
@@ -326,12 +344,26 @@ try{
   await page.screenshot({path:"composition-studio-mobile-expanded-below.png"});
   await clickCard("format","vertical");
   await proveBoard("Mobile portrait");
+  const portraitTitle=await page.evaluate(()=>{
+    const b=document.querySelector("#labArtboard");
+    const title=document.querySelector("#labRenderedTitle");
+    const line=title.querySelector(".lm-lab-title-line")||title;
+    const range=document.createRange();range.selectNodeContents(line);
+    return {text:title.textContent.trim(),break:b.dataset.titleBreak,
+      fragments:range.getClientRects().length,
+      width:title.getBoundingClientRect().width,
+      font:parseFloat(getComputedStyle(title).fontSize)};
+  });
+  assert(portraitTitle.text==="GASTROPERFORMANCE"&&portraitTitle.break==="normal"&&
+    portraitTitle.fragments===1&&portraitTitle.font>=12,
+    "Portrait M composition must keep long words intact on a usable full-width title axis: "+
+    JSON.stringify(portraitTitle));
   await page.screenshot({path:"composition-studio-mobile-portrait.png"});
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tool("labFormat").click();
   await clickCard("format","quadrado");
   await proveBoard("Mobile square");
-  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
+  await tool("labFormat").click();
   await tab("texto");
   await menuVisible("Mobile all text properties");
   await page.setViewportSize({width:390,height:700});
@@ -339,7 +371,7 @@ try{
   await menuVisible("Short mobile all text tools");
   await tool("labType").click();
   await expandedBelow("texto","Short mobile 390x700 text options below persistent menu");
-  await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tool("labType").click();
   await menuVisible("Short mobile text tools restored");
   await tab("imagem");
   await flatImageVisible("Short mobile flat Image / M controls");

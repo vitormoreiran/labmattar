@@ -12,6 +12,7 @@ on:
       - 'vite.matrix.config.ts'
       - 'scripts/smoke-symbols-browser.mjs'
       - 'scripts/smoke-matrix-browser.mjs'
+      - 'scripts/smoke-composition-studio.mjs'
       - 'scripts/wait-symbols-preview.mjs'
       - 'package.json'
       - 'package-lock.json'

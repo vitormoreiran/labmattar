@@ -1,0 +1,18 @@
+/* Integration bridge: preserve the official portfolio engine and keep content flow separate.
+   No new responsive ratios, no replacement for existing composition rules. */
+.ed-sheet.ed-source-page{position:relative;isolation:isolate}
+.ed-sheet.ed-source-page[data-media-state="empty"]{background:#f7f6f2;color:#181818}
+.ed-sheet.ed-source-page[data-media-state="empty"] .ed-image-field{display:none!important}
+.ed-sheet.ed-source-page[data-media-state="empty"] .ed-texts{color:#181818}
+.ed-sheet.ed-source-page[data-media-state="photo"]{color:#f7f6f2}
+.ed-sheet.ed-source-page[data-media-state="photo"] .ed-texts{color:inherit}
+.ed-sheet.ed-source-page .ed-texts{pointer-events:none}
+.ed-sheet.ed-source-page .ed-text-node{pointer-events:auto}
+.ed-sheet.ed-source-page .ed-text-node.role-subtitle{top:var(--lm-node-y,16%)!important}
+.ed-sheet.ed-source-page .ed-text-node.role-title{top:var(--lm-node-y,30%)!important}
+.ed-sheet.ed-source-page .ed-text-node.role-body{top:var(--lm-node-y,76%)!important}
+.ed-sheet.ed-source-page .ed-text-node{left:var(--lm-node-x,7%)!important;width:var(--lm-node-width,80%)!important}
+.ed-sheet.ed-source-page .role-title{white-space:pre-wrap;overflow-wrap:normal;hyphens:none}
+.ed-sheet.ed-source-page .role-body{max-width:65ch}
+.ed-sheet.ed-source-page .chapter2-stage-stack{aspect-ratio:990.08/743.18}
+.ed-sheet.ed-source-page .chapter2-m-image{mask-size:100% 100%;-webkit-mask-size:100% 100%}

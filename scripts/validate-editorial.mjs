@@ -11,6 +11,18 @@ new Script(js,{filename:"editorial-v2.js"});
 assert.match(html,/editorial-v2\.js/);
 assert.match(html,/editorial-v2\.css/);
 assert.match(html,/editorial-composition\.css/);
+assert.match(html,/editorial-interface\.css/);
+const interfaceCss=readFileSync(base+"editorial-interface.css","utf8");
+assert.match(interfaceCss,/\.editor-header/);
+assert.match(interfaceCss,/\.page-thumb/);
+assert.match(interfaceCss,/\.editor-inspector/);
+assert.doesNotMatch(interfaceCss,/\.artboard\b/,"UI stylesheet must not override the editorial composition");
+for(const id of ["togglePagesButton","toggleInspectorButton","fileActions","mediaPreviewImage","inspectorPageName"]){
+  assert.ok(html.includes('id="'+id+'"'),"Missing editor UI control: "+id);
+}
+assert.match(js,/dragstart/);
+assert.match(js,/panelStateKey/);
+
 assert.match(html,/class="editorial-stack"/);
 const composition=readFileSync(base+"editorial-composition.css","utf8");
 assert.match(composition,/\.editorial-content\{/);

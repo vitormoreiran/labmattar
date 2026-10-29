@@ -173,6 +173,7 @@ try{
     "Exit from focus mode is not visible");
   assert(await page.locator("[data-studio-tool]").count()===21,
     "All previous tools and the new M-use control must retain one canonical input");
+  await page.screenshot({path:"composition-studio-desktop-initial-review.png",fullPage:false});
   const baseline=await proveBoard("Desktop horizontal 1440x900");
   assert(baseline.board.width>720,"Horizontal composition should receive the remaining desktop width");
   assert(await page.locator(".lm-inspector-head>span").textContent()==="AJUSTES",

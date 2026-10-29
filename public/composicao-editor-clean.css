@@ -853,6 +853,22 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-texto:not([hidden]) .lm-studio-detail:not([hidden])){
     grid-template-rows:minmax(0,1fr) minmax(390px,60dvh);
   }
+  /* The compact media surface needs more inspector space than page controls;
+     otherwise focus and M coordinates slip underneath the viewport. */
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])){
+    grid-template-rows:minmax(0,1fr) minmax(430px,63dvh);
+  }
+  body.lm-studio-open #laboratorio .lm-studio-image-flat{
+    gap:2px 8px;
+  }
+  body.lm-studio-open #laboratorio .lm-studio-image-block{
+    gap:2px;
+    padding:2px 0;
+  }
+  body.lm-studio-open #laboratorio .lm-studio-image-block--foco #labFocalPreview{
+    height:43px!important;
+    min-height:43px!important;
+  }
   body.lm-studio-open #laboratorio .lm-studio-detail{
     padding:6px 6px 8px;
   }

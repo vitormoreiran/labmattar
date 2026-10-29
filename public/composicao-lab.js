@@ -459,6 +459,13 @@
     const mask=by("labMask");
     const overlap=hasPhoto&&state.image==="recorte"&&state.mMode!=="sutil"&&
       textNodes.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
+    // Footer and kicker are metadata, not the primary editorial column. They
+    // still receive the 20% photographic treatment, but do not create a false
+    // "separate image/text" conflict beside an otherwise intact title.
+    const editorialText=[...board.querySelectorAll(".lm-lab-title-line")];
+    if(!body.hidden)editorialText.push(body);
+    const editorialOverlap=state.image==="recorte"&&state.mMode!=="sutil"&&
+      editorialText.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
     board.dataset.mText=String(overlap);
     const rect=board.getBoundingClientRect();
     const copyRect=copyArea.getBoundingClientRect();
@@ -468,7 +475,7 @@
     const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
-    const collision=overlap&&state.relation==="separada";
+    const collision=editorialOverlap&&state.relation==="separada";
     board.dataset.state=invalid?"overflow":"ok";
     const status=by("labStatus");
     const desc=invalid?"REVER / CONTEÚDO EXCEDE A ÁREA ÚTIL":
@@ -912,7 +919,7 @@
       }
       if(id==="labMMode"&&previousMode!==state.mMode){
         if(state.mMode==="janela"){
-          state.mScale=Math.min(state.mScale,55);
+          state.mScale=Math.min(state.mScale,50);
           state.relation="separada";
         }else if(state.mMode==="corte"){
           state.mScale=Math.max(70,state.mScale);

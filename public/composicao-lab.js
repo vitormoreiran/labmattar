@@ -296,6 +296,32 @@
   }
 
   /*
+   * Keep the editorial block on the same twelve-step ruler in every format.
+   * The selected row is a preferred center; if its text would collide with
+   * kicker or footer, constrain the whole block inside the useful text band.
+   * This never splits a word, changes fonts, or moves individual lines.
+   */
+  function positionCopyOnRuler(){
+    const safe=by("labReading").getBoundingClientRect();
+    const kickerRect=kicker.getBoundingClientRect();
+    const footerRect=board.querySelector(".lm-lab-bottom").getBoundingClientRect();
+    const copyHeight=copyArea.getBoundingClientRect().height;
+    const gap=safe.width*.012;
+    const minTop=kickerRect.bottom+gap;
+    const maxTop=footerRect.top-gap-copyHeight;
+    const preferredTop=safe.top+safe.height*(state.textY-.5)/12-copyHeight/2;
+    const actualTop=maxTop>=minTop?
+      Math.min(maxTop,Math.max(minTop,preferredTop)):minTop;
+    if(safe.height>0){
+      copyArea.style.top=((actualTop-safe.top)/safe.height*100).toFixed(5)+"%";
+      copyArea.style.transform="none";
+    }
+    const adjusted=Math.abs(actualTop-preferredTop)>safe.width*.001;
+    copyArea.dataset.rulerAdjusted=String(adjusted);
+    return {adjusted,room:maxTop>=minTop};
+  }
+
+  /*
    * An entered scale is a requested maximum, never a license to cross a margin.
    * Measure rendered line boxes after fonts and layout resolve; reduce the title
    * only as far as necessary. Long unbreakable words are preserved first.
@@ -311,7 +337,7 @@
     board.dataset.titleBreak="normal";
     const requested=parseFloat(getComputedStyle(title).fontSize)||36;
     const bodyRequested=parseFloat(getComputedStyle(body).fontSize)||14;
-    const sideRoom=2;
+    const sideRoom=Math.max(.5,board.getBoundingClientRect().width*.001);
     function fits(){
       const safe=reading.getBoundingClientRect();
       const column=copyArea.getBoundingClientRect();
@@ -325,7 +351,8 @@
       if(kickerRect.top<safe.top-sideRoom||footerRect.bottom>safe.bottom+sideRoom)return false;
       if(column.left<safe.left-sideRoom||column.right>safe.right+sideRoom)return false;
       if(column.top<safe.top-sideRoom||column.bottom>safe.bottom+sideRoom)return false;
-      if(column.top<top+2||column.bottom>bottom-2)return false;
+      const gutter=safe.width*.012;
+      if(column.top<top+gutter-sideRoom||column.bottom>bottom-gutter+sideRoom)return false;
       if(title.scrollWidth>title.clientWidth+1.5)return false;
       // Editing can temporarily replace the precomposed title spans with
       // plain text or a BR. The complete range must still obey the margins.
@@ -354,6 +381,7 @@
     function searchTitle(floor){
       const candidate=size=>{
         title.style.fontSize=size.toFixed(3)+"px";
+        positionCopyOnRuler();
         return fits();
       };
       if(candidate(requested))return requested;
@@ -370,8 +398,10 @@
     // An editorial surface must not silently turn approved typography into
     // microscopic type. A dense configuration is a validation failure, not a
     // successful layout merely because every glyph fits inside its margins.
-    const titleFloor=Math.min(14,requested);
-    const bodyFloor=Math.min(10,bodyRequested);
+    // Both the desired size and its lower bound are proportional to the
+    // artwork. A preview resized to 350px must not retain a 14px hard floor.
+    const titleFloor=requested*.60;
+    const bodyFloor=bodyRequested*.85;
     let applied=null,emergency=false,bodyReduced=false;
     applied=searchTitle(titleFloor);
     if(applied===null&&!body.hidden){
@@ -385,6 +415,7 @@
       // Preserve readable typography. A blocked composition must be corrected
       // through text, column, format or margins; never force 1px text.
       title.style.fontSize=titleFloor+"px";
+      positionCopyOnRuler();
       applied=titleFloor;
       board.dataset.titleBreak="normal";
       emergency=true;
@@ -399,11 +430,12 @@
       }
       body.style.fontSize=low.toFixed(3)+"px";
     }
+    positionCopyOnRuler();
     const ok=fits();
     const real=parseFloat(getComputedStyle(title).fontSize)||applied||requested;
     const actualBody=parseFloat(getComputedStyle(body).fontSize)||bodyRequested;
-    const lowLegibility=real<14||(!body.hidden&&actualBody<10);
-    const adjusted=real<requested-.6||bodyReduced||emergency;
+    const lowLegibility=real<requested*.60-0.05||(!body.hidden&&actualBody<bodyRequested*.85-0.05);
+    const adjusted=real<requested*.98||bodyReduced||emergency;
     const info=by("labTitleFitInfo");
     if(info){
       info.dataset.adjusted=String(adjusted||!ok||lowLegibility);
@@ -412,10 +444,10 @@
         lowLegibility?
         "Margens preservadas, mas o conteúdo está denso demais: revise o texto ou a largura da coluna.":
         emergency?
-        "Título excepcionalmente longo: quebra de segurança para preservar a margem.":
-        real<requested-.6?
-        "Escala ajustada automaticamente para "+Math.round(real)+" px, sem sair das margens.":
-        "Escala aplicada: "+Math.round(real)+" px · margens preservadas.";
+        "Composição incompatível com esta coluna: reveja texto, largura ou formato.":
+        real<requested*.98?
+        "Escala proporcional ajustada para "+Math.round(real/requested*100)+"% do tamanho solicitado.":
+        "Escala proporcional aplicada · margens preservadas.";
     }
     board.dataset.typeFit=ok?(lowLegibility?"compromised":adjusted?"adjusted":"natural"):"review";
     board.setAttribute("aria-invalid",String(!ok||lowLegibility));

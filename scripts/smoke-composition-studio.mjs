@@ -195,6 +195,9 @@ try{
     "Window M must fit completely inside the page: "+JSON.stringify(mask));
   assert(mask.veil.includes("0.2")&&mask.veilOpacity==="1",
     "Photo text contrast must remain an automatic 20% black veil");
+  assert(await page.locator("#labRelation").inputValue()==="separada"&&
+    await page.locator("#labArtboard").getAttribute("data-m-text")==="false",
+    "Window mode should start with distinct typography and M fields");
   await page.screenshot({path:"composition-studio-m-janela.png"});
 
   await page.locator("#labPrecision-mScale").fill("88");
@@ -225,6 +228,10 @@ try{
   await flatImageVisible("Image / M with changed photograph and focus");
   await page.screenshot({path:"composition-studio-desktop-image.png"});
 
+  await tab("pagina");
+  await tool("labFormat").click();
+  await clickCard("format","quadrado");
+  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
   await tab("texto");
   await tool("labTitleInput").click();
   await page.locator("#labTitleInput").fill("GASTROPERFORMANCE");
@@ -237,7 +244,12 @@ try{
   });
   assert(longWord.break==="normal"&&longWord.fragments===1&&longWord.state!=="overflow",
     "Long title must be scaled, never scattered into single-letter lines: "+JSON.stringify(longWord));
+  await page.screenshot({path:"composition-studio-m-square-title.png"});
   await page.locator("#labStudioDetail-texto .lm-studio-back").click();
+  await tab("pagina");
+  await tool("labFormat").click();
+  await clickCard("format","horizontal");
+  await page.locator("#labStudioDetail-pagina .lm-studio-back").click();
   await tab("imagem");
   await flatImageVisible("Image / M after direct title editing");
 

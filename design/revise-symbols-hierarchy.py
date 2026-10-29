@@ -9,7 +9,7 @@ assert 'id="estrutura"' in html and '<div class="symbol-row">' in html
 
 a = html.index('<section class="chapter" id="estrutura">')
 b = html.index('<div class="symbol-row">', a)
-intro = '<div class="lm-reading-intro"><h2>Assinatura e símbolo</h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal. Os nove vasos formam uma família de elementos gráficos utilizada nas aplicações da identidade.</p></div>'
+intro = '<div class="lm-reading-intro"><h2>Assinatura e símbolo</h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal, também utilizado como máscara e elemento de composição.</p></div>'
 html = html[:a] + '<section class="chapter" id="estrutura"><div class="inner">' + intro + html[b:]
 html = re.sub(r'<h1 class="title">.*?</h1>', '<h1 class="title"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></h1>', html, count=1, flags=re.S)
 html = html.replace('Sistema de identidade / Elementos gráficos / 2026', 'LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS', 1)
@@ -33,7 +33,7 @@ for n in range(10):
 section = '''<section class="chapter chapter-spacious" id="transformacao"><div class="inner">
 <p class="eyebrow">03 / Sistema de transformação</p>
 <h2 class="title"><span class="line">UM SÍMBOLO</span><span class="line perpetua">MÚLTIPLOS</span><span class="line">ESTADOS</span></h2>
-<p class="copy section-lead">O M é a origem da transformação. Os nove vasos são estados equivalentes do mesmo sistema vetorial.</p>
+<p class="copy section-lead">O M gira e se transforma em vaso. Rotação e mudança de forma acontecem em um movimento contínuo.</p>
 <div class="state-explorer" data-symbols-version="20261029-verified" data-ready="false" aria-label="Transformação vetorial interativa">
 <div class="state-heading"><span class="detail">TRANSFORMAÇÃO VETORIAL</span><span class="detail" id="state-name" aria-live="polite">M / SÍMBOLO MASTER</span></div>
 <div class="state-preview"><svg id="state-morph-svg" viewBox="0 0 600 460" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Símbolo master M"><g id="state-morph-paths" fill="currentColor"></g></svg></div>
@@ -62,9 +62,30 @@ if rules:
     html = html[:rules.start()]+html[rules.end():]
     pos = html.index('<section class="chapter" id="ferramenta">')
     html = html[:pos]+rule_text+html[pos:]
+
+# Approved concise copy. Change only editorial text; preserve SVGs and controls.
+copy = {
+    'principio': 'Uma assinatura, um símbolo principal e nove vasos.',
+    'vasos': 'Os nove vasos integram a identidade e têm a mesma importância. Nenhum é principal.',
+    'ferramenta': 'Organize os estados, ajuste as transições e exporte animações.',
+}
+for section_id, text in copy.items():
+    pattern = r'(<section\b[^>]*id="'+section_id+r'"[^>]*>.*?<p class="copy">).*?(</p>)'
+    html, count = re.subn(pattern, lambda m: m.group(1)+text+m.group(2), html, count=1, flags=re.S)
+    assert count == 1, f'Missing copy paragraph: {section_id}'
+
+rules_copy = 'Nas aplicações estáticas, preserve os desenhos e as proporções originais. Nas animações, siga o princípio de rotação e transformação.'
+rules = re.search(r'<section class="chapter" id="regras">.*?</section>', html, re.S)
+assert rules and '<div class="rules">' in rules.group(), 'Missing usage rules'
+rule_text = rules.group().split('<div class="rules">', 1)[0]+'<div class="rules"><p class="copy">'+rules_copy+'</p></div></div></section>'
+html = html[:rules.start()]+rule_text+html[rules.end():]
+html = re.sub(r'<p class="detail"[^>]*>EDITOR INTEGRAL / BACKUP ORIGINAL V72</p>', '', html)
+html = html.replace('>Símbolo master<', '>Símbolo principal<')
+html = html.replace('01—09 / MESMO PESO', '01—09 / VASOS')
+
 assert html.count('id="state-morph-svg"') == 1
 assert html.count('id="manual-states-script"') == 0
 assert html.count('class="lm-reading-intro"') == 1
 html = re.sub(r'\n*(<link rel="stylesheet" href="/manual-symbols)', r'\n\1', html)
 p.write_text(html, encoding='utf-8')
-print('Symbols: two original illustrations, responsive layout and native Bezier morph ready')
+print('Symbols: concise approved copy; original artwork and controls preserved')

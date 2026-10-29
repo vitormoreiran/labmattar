@@ -82,7 +82,7 @@
 @media(max-width:700px){.lm-case-intro{grid-template-columns:1fr}.lm-case-intro h2{font-size:clamp(42px,10vw,70px)}.lm-case-stage{padding:8px}.lm-case-layout{gap:18px}.lm-case-aside{display:block}.lm-case-aside .eyebrow{margin-bottom:10px}.lm-case-frame:not(.is-mobile){--lm-safe:clamp(10px,5.2cqw,28px)}.lm-case-frame:not(.is-mobile) .lm-case-reading h3{font-size:clamp(23px,6cqw,37px)}.lm-case-frame:not(.is-mobile) .lm-case-reading p{font-size:10px}.lm-case-frame:not(.is-mobile) .lm-case-footer,.lm-case-frame:not(.is-mobile) .lm-case-kicker{font-size:8px}.lm-case-facts{margin-top:45px;gap:24px}.lm-case-validation{grid-template-columns:1fr;margin-top:45px}}
 @media(max-width:440px){.lm-case-facts{grid-template-columns:1fr}.lm-case-control{gap:8px}.lm-case-control button+button{margin-left:1px}.lm-case-frame.is-mobile{width:min(100%,305px)}}
 @media(prefers-reduced-motion:reduce){.lm-case-frame{transition:none}}
-</style><link rel="stylesheet" href="/composicao-lab.css"><link rel="stylesheet" href="/composicao-lab-controls.css"></head><body>
+</style><link rel="stylesheet" href="/composicao-lab.css"><link rel="stylesheet" href="/composicao-lab-controls.css"><link rel="stylesheet" href="/composicao-studio.css"></head><body>
 <nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR"><a href="/manual.html">01 / SÍMBOLOS</a><a href="/tipografia.html">02 / TIPOGRAFIA</a><a href="/cores.html">03 / CORES</a><a href="/composicao.html" aria-current="page">04 / COMPOSIÇÃO</a></nav>
 <main><section class="chapter"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 2026</p><h1 class="big">SISTEMA DE<br><span class="perpetua">COMPOSIÇÃO</span></h1><div class="intro"><p>O sistema de composição é aprofundado abaixo com um estudo aplicado de página real e, em seguida, um laboratório de testes. Os resultados ainda não constituem modelos aprovados.</p><span class="status">ESTUDO / NÃO NORMATIVO</span></div></section>
 
@@ -179,6 +179,11 @@
       <button type="button" data-lab-preset="tipografia" aria-pressed="true"><span class="lm-ctrl-preset-visual" data-preview="type" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>Tipografia</strong><small>Campo sem imagem</small></span></button>
       <button type="button" data-lab-preset="mascara" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="mask" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>M + fotografia</strong><small>Recorte e texto</small></span></button>
       <button type="button" data-lab-preset="imagem" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="full" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>Imagem integral</strong><small>Campo fotográfico</small></span></button>
+    </div>
+    <div class="lm-studio-launch">
+      <button type="button" id="labStudioToggle" aria-pressed="false" aria-controls="labArtboard">
+        <span id="labStudioToggleText">ABRIR EDITOR</span><span class="lm-studio-launch-symbol" aria-hidden="true">↗</span>
+      </button>
     </div>
   </div>
   <div class="lm-lab-workspace">
@@ -290,7 +295,7 @@ E PROCESSOS</textarea><small>As quebras indicadas aqui são editoriais. A fonte 
   </div>
   <p class="lm-lab-lead">Os exemplos são testes de composição, não novas normas. A aplicação estudada acima continua sendo a referência.</p>
 </section><section class="chapter"><p class="eyebrow">03 / O QUE AINDA PRECISA SER VALIDADO</p><div class="notes"><article><h3>Superfície e proporção</h3><p>Os formatos e margens agora podem ser testados no laboratório. Suas escalas definitivas ainda dependem de comparação visual com páginas publicadas, especialmente em telas verticais.</p></article><article><h3>Símbolo e palavra</h3><p>O M fotográfico, os nove vasos e a composição tipográfica são estudados separadamente. Posições e relações de escala só se tornam norma quando verificadas em diferentes aplicações reais.</p></article><article><h3>Imagem e campo cromático</h3><p>O véu preto de 20% em fotografias sob texto já é regra. Enquadramentos, campos azuis ou marrons e usos da cor sem imagem permanecem sujeitos à avaliação editorial.</p></article></div></section></main>
-<script src="/composicao-lab.js" defer></script>
+<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script>
 <script id="lm-case-demonstration">
 (()=>{
   const frame=document.getElementById("caseFrame");

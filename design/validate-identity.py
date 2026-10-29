@@ -34,6 +34,15 @@ for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm
 for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+# One illustrated action for each state; duplicated controls undermine clarity.
+assert "data-choice-for=" not in composition
+for key,count in (("format",4),("placement",4),("image",3)):
+ assert composition.count('data-lab-choice="'+key+'"')==count,f"Duplicate UI in {key}"
+for kind in ("margin","width","title","mask"):
+ assert 'data-control-effect="'+kind+'"' in composition,f"Missing scale diagram: {kind}"
+assert 'id="labFocalPreview"' in composition
+assert "const illustrated=" not in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+
 
 lab_css=(Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")

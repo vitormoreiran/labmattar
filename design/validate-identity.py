@@ -69,7 +69,7 @@ assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
 for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
-for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
+for key in ("format","relation","type","image","photo","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 # The inspector has three focused work areas; every approved control remains.
@@ -78,9 +78,9 @@ for key in ("pagina","texto","imagem"):
  assert 'data-lab-panel="'+key+'"' in composition,f"Missing panel: {key}"
  assert 'data-lab-more="'+key+'"' in composition,f"Advanced options not discoverable: {key}"
 for control in ("labFormat","labColor","labMargin","labGuides",
-                "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
+                "labTextX","labTextY","labType","labTitleScale","labTextWidth","labBodyMode",
                 "labTitleInput","labBodyInput","labImage","labMMode","labPhoto","labRelation",
-                "labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
+                "labMPosition","labMX","labMY","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
  assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
@@ -88,8 +88,8 @@ assert "setFieldVisible" in lab_js and "sessionStorage" in lab_js
 # Guidance is contextual; no instructions or numbered pseudo-steps clutter the UI.
 assert 'id="labOverviewHelp"' in composition
 assert '<strong>01 / Tipografia</strong>' not in composition
-for field in ("labFormat","labMargin","labTitleScale","labType","labImage",
-              "labMMode","labRelation","labMScale","labFocalPreview","labSymbol"):
+for field in ("labFormat","labMargin","labTextX","labTextY","labTitleScale","labType","labImage",
+              "labRelation","labMX","labMY","labMScale","labFocalPreview","labSymbol"):
  assert field+':["' in lab_js,f"Missing contextual help for {field}"
 assert "showHelp(trigger,panel)" in lab_js
 assert "trigger.dataset.labHelp=id" in lab_js and 'aria-expanded' in lab_js, "Help triggers must expose contextual targets and accessible state"
@@ -100,6 +100,9 @@ assert "labHelp-overview" in lab_js
 assert "const inlineEditors=" in lab_js
 assert "rgba(0,0,0,.20)" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 
+assert 'id="labTextX"' in composition and 'id="labTextY"' in composition
+assert 'id="labMX"' in composition and 'id="labMY"' in composition
+assert "12 x 12" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 for key in ("title","body","kicker","footerLeft","footerRight"):
  assert 'data-lab-inline="'+key+'"' in composition,f"Missing editable text layer: {key}"
 assert 'contenteditable="plaintext-only"' in composition
@@ -121,7 +124,7 @@ lab_css=(Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 for selector in ('lm-lab-workspace','lm-lab-m-photo','lm-lab-main-copy','lm-lab-photo-contrast'):
  assert selector in lab_css,f"Missing lab element: {selector}"
-for action in ('labFormat','labMPosition','labFocusX','labTitleScale','labTitleInput','labBodyInput','labReset'):
+for action in ('labFormat','labMX','labMY','labTextX','labTextY','labFocusX','labTitleScale','labTitleInput','labBodyInput','labReset'):
  assert action in composition and action in lab_js,f"Unwired lab control: {action}"
 for variant in ('tipografia','mascara','imagem'):
  assert 'data-lab-preset="'+variant+'"' in composition

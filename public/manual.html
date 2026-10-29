@@ -40,18 +40,59 @@
 #regras .rules{margin-top:clamp(70px,9vw,135px)}
 #regras .rule{padding:clamp(25px,3vw,42px) 0}
 @media(max-width:760px){.chapter{padding-block:clamp(90px,18vw,135px)}.editorial-interval{height:95px}.transformation-editorial{grid-template-columns:1fr;gap:70px}.transform-hero{align-items:center;gap:25px}.transform-hero .detail{align-self:flex-start}.transform-hero svg{height:260px;max-width:290px}.transform-rule{margin:35px 0}.transform-shift{padding:22px 0}.chapter .title{margin-bottom:45px}#vasos .vase{padding:18px;min-height:300px}#vasos .vase .art{height:220px}#estrutura .corners{min-height:660px}}
-</style><style>.manual-open-editor{display:inline-block;padding:17px 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;color:inherit;font:300 clamp(18px,2.3vw,33px)/1.3 UniversMattar,Arial,sans-serif;text-decoration:none;letter-spacing:-.02em}.manual-open-editor:hover{opacity:.65}</style></head><body>
+</style><style>.manual-open-editor{display:inline-block;padding:17px 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;color:inherit;font:300 clamp(18px,2.3vw,33px)/1.3 UniversMattar,Arial,sans-serif;text-decoration:none;letter-spacing:-.02em}.manual-open-editor:hover{opacity:.65}</style><style id="manual-responsive-fix">
+html,body{max-width:100%;overflow-x:clip}
+header.top{flex-wrap:wrap;row-gap:14px}
+header.top nav{max-width:100%;min-width:0}
+.chapter{scroll-margin-top:85px}
+.chapter .title{max-width:100%;overflow-wrap:normal}
+.cover .inner{display:flex;flex-direction:column;justify-content:space-between;flex:1;min-height:0}
+.cover .title{max-width:100%}
+#estrutura .structure-intro{margin:0 0 clamp(35px,6vw,100px)}
+#estrutura .symbol-row{margin-top:0}
+#estrutura .symbol .art-zone{min-width:0}
+#estrutura .symbol .art-zone svg{max-width:100%}
+.state-explorer{margin-top:clamp(55px,8vw,110px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0 32px}
+.state-heading{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.state-preview{height:clamp(220px,34vw,460px);display:flex;align-items:center;justify-content:center;padding:35px 0}
+.state-preview img{display:block;width:100%;height:100%;max-width:min(70%,450px);object-fit:contain;transition:opacity .2s ease,transform .2s ease}
+.state-picker{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+.state-picker button{min-width:0;min-height:46px;border:1px solid var(--line);background:transparent;color:inherit;font:300 12px var(--u);cursor:pointer}
+.state-picker button:first-child{grid-column:span 1}
+.state-picker button.active,.state-picker button:hover{background:var(--ink);color:var(--paper)}
+.state-picker button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.state-help{font:300 13px/1.5 var(--u);max-width:60ch;margin:18px 0 0}
+@media(max-width:760px){
+header.top{align-items:flex-start;flex-direction:column;padding:13px var(--gutter)}
+header.top nav{display:flex;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap;width:100%;gap:20px;padding-bottom:5px;scrollbar-width:thin}
+header.top nav a{flex-shrink:0}
+.chapter{padding-inline:var(--gutter);padding-block:70px}
+.cover{min-height:calc(100svh - 110px)}
+.cover .title{margin:auto 0;padding-block:70px 35px}
+.cover .bottomline{align-items:flex-start;flex-direction:column;gap:22px}
+#estrutura .symbol-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#estrutura .symbol .art-zone{height:clamp(150px,32vw,260px);margin:15px 0}
+#estrutura .symbol .art-zone.m svg{width:85%}
+#estrutura .symbol .eyebrow{font-size:10px}
+#estrutura .symbol .meta{font-size:10px}
+.state-picker{grid-template-columns:repeat(5,minmax(0,1fr))}
+.state-picker button:first-child{grid-column:span 1}
+.state-preview{height:300px}
+}
+@media(max-width:420px){
+:root{--gutter:18px}
+.cover .title{font-size:clamp(29px,9vw,42px)}
+.cover .title .line{white-space:normal}
+.chapter .title .line{white-space:normal}
+#estrutura .symbol-row{gap:12px}
+#estrutura .symbol .art-zone{height:155px}
+.state-picker button{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.state-preview img{transition:none}}
+</style></head><body>
 <header class="top"><span>LABMATTAR / IDENTIDADE VISUAL</span><nav aria-label="Seções"><a href="#principio">Princípio</a><a href="#estrutura">Elementos</a><a href="#vasos">Vasos</a><a href="#transformacao">Transformação</a><a href="#regras">Regras</a><a href="#ferramenta">Ferramenta</a></nav></header>
 <main><section class="chapter cover" id="principio"><div class="inner"><p class="eyebrow">Sistema de identidade / Elementos gráficos / 2026</p><h1 class="title"><span class="line">DA FORMA</span><span class="line perpetua">AO ESTADO</span><span class="line">LABMATTAR</span></h1><div class="bottomline"><p class="copy">Uma assinatura. Um símbolo master. Nove vasos de igual importância. Um sistema de transformação.</p><p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p></div></div></section>
-<section class="chapter" id="estrutura"><div class="inner"><p class="eyebrow">01 / Organização do sistema vetorial</p><div class="corners"><div class="note"><b>01 / ASSINATURA</b>Mattar é a identificação institucional principal.</div><div class="note right"><b>02 / SÍMBOLO MASTER</b>O M atua de forma autônoma, em escala e como máscara.</div><div class="center-piece"><svg aria-hidden="true" class="artwork" fill="none" height="199" viewbox="0 0 822 199" width="822" xmlns="http://www.w3.org/2000/svg">
-<path d="M561.647 46.2084H530.071V0H516.864V46.2084H485.3C472.479 46.2084 461.991 56.6967 461.991 69.517V103.646C461.991 116.466 472.479 126.954 485.3 126.954H516.864V198.218H530.071V126.954H561.647C574.467 126.954 584.955 116.466 584.955 103.646V69.517C584.955 56.6967 574.467 46.2084 561.647 46.2084Z" fill="#CE211A"></path>
-<path d="M427.722 46.2084H396.146V0H382.939V46.2084H351.374C338.554 46.2084 328.066 56.6967 328.066 69.517V103.646C328.066 116.466 338.554 126.954 351.374 126.954H382.939V198.218H396.146V126.954H427.722C440.542 126.954 451.03 116.466 451.03 103.646V69.517C451.03 56.6967 440.542 46.2084 427.722 46.2084Z" fill="#CE211A"></path>
-<path d="M821.946 182.479L748.793 136.857C748.793 136.857 749.224 139.885 748.937 139.885L798.516 139.741C811.336 139.741 821.824 129.253 821.824 116.433V69.5059C821.824 56.6856 811.336 46.1973 798.516 46.1973H747.886C735.066 46.1973 724.578 56.6856 724.578 69.5059V197.764H737.763V163.039C737.763 157.734 736.746 148.019 745.532 151.456L821.846 197.864L821.935 182.479H821.946ZM757.458 106.342H785.762C802.063 106.364 809.07 111.349 809.07 117.483C809.07 123.616 803.058 128.944 785.762 128.623H757.458C741.3 128.944 734.149 123.616 734.149 117.483C734.149 111.349 742.04 106.121 757.458 106.342Z" fill="#CE211A"></path>
-<path d="M194.659 45.1799H155.822C155.822 45.1799 147.456 53.06 139.001 62.6973L112.741 92.6261C108.597 96.4501 103.126 98.4063 97.6113 98.539C97.5781 98.539 97.5559 98.539 97.5228 98.539C97.4896 98.539 97.4676 98.539 97.4344 98.539C91.9084 98.4063 86.4376 96.4501 82.3042 92.6261L56.0446 62.6973C47.5898 53.06 39.2235 45.1799 39.2235 45.1799H0.386793L0.143681 140.293C0.0552654 141.365 0 142.449 0 143.543V198.195H13.2071V143.543C13.2071 133.706 18.91 128.004 23.7618 126.843C37.7647 123.494 43.7216 132.999 51.889 141.83L77.2424 169.239C82.5031 174.919 89.5211 178.158 97.1028 178.478V178.533C97.2465 178.533 97.3902 178.511 97.5338 178.511C97.6775 178.511 97.8212 178.533 97.9538 178.533V178.478C105.535 178.169 112.553 174.919 117.814 169.239L143.168 141.83C151.335 132.999 157.292 123.494 171.295 126.843C176.147 128.004 181.85 133.695 181.85 143.543V198.195H195.057V143.543C195.057 142.437 195.001 141.354 194.913 140.293L194.67 45.1799H194.659Z" fill="#CE211A"></path>
-<path d="M213.717 46.2112C213.717 46.2112 213.75 46.2885 213.728 46.3438C212.778 48.9963 213.385 56.6885 237.014 56.3016L273.773 56.0585C286.594 55.9701 297.137 56.2132 297.027 63.0213C296.916 69.4535 286.594 70.9566 273.773 70.9566H237.014C224.194 70.9566 213.706 81.4449 213.706 94.2652V174.912C213.706 187.732 224.194 198.22 237.014 198.22H287.644C300.464 198.22 310.952 187.732 310.952 180.548V46.2112H213.717ZM276.039 106.268H247.735C234.915 106.268 223.398 103.438 224.426 95.1273C225.509 86.4625 234.915 83.9869 247.735 83.9869H276.039C288.859 83.9869 299.071 86.982 299.348 95.1273C299.613 103.129 288.859 106.268 276.039 106.268Z" fill="#CE211A"></path>
-<path d="M605.451 46.2112C605.451 46.2112 605.484 46.2885 605.462 46.3438C604.511 48.9963 605.119 56.6885 628.749 56.3016L665.507 56.0585C678.328 55.9701 688.871 56.2132 688.761 63.0213C688.65 69.4535 678.328 70.9566 665.507 70.9566H628.749C615.928 70.9566 605.44 81.4449 605.44 94.2652V174.912C605.44 187.732 615.928 198.22 628.749 198.22H679.378C692.198 198.22 702.686 187.732 702.686 180.548V46.2112H605.451ZM667.773 106.268H639.469C626.649 106.268 615.132 103.438 616.16 95.1273C617.243 86.4625 626.649 83.9869 639.469 83.9869H667.773C680.593 83.9869 690.805 86.982 691.082 95.1273C691.347 103.129 680.593 106.268 667.773 106.268Z" fill="#CE211A"></path>
-</svg>
-<p class="copy">Mattar identifica. O M estrutura. Os vasos constituem estados equivalentes da marca.</p></div><div class="note bottom"><b>03 / NOVE VASOS</b>Formas distintas, com o mesmo peso dentro da família.</div><div class="note right bottom"><b>04 / TRANSFORMAÇÃO</b>O movimento revela a continuidade entre as formas.</div></div>
+<section class="chapter" id="estrutura"><div class="inner"><p class="eyebrow">01 / Organização do sistema vetorial</p><p class="copy structure-intro">A assinatura identifica a instituição. O M é o símbolo principal; os nove vasos constituem seus estados gráficos.</p>
 <div class="symbol-row"><article class="symbol"><p class="eyebrow">Assinatura principal</p><div class="art-zone word"><svg aria-hidden="true" class="artwork" fill="none" height="199" viewbox="0 0 822 199" width="822" xmlns="http://www.w3.org/2000/svg">
 <path d="M561.647 46.2084H530.071V0H516.864V46.2084H485.3C472.479 46.2084 461.991 56.6967 461.991 69.517V103.646C461.991 116.466 472.479 126.954 485.3 126.954H516.864V198.218H530.071V126.954H561.647C574.467 126.954 584.955 116.466 584.955 103.646V69.517C584.955 56.6967 574.467 46.2084 561.647 46.2084Z" fill="#CE211A"></path>
 <path d="M427.722 46.2084H396.146V0H382.939V46.2084H351.374C338.554 46.2084 328.066 56.6967 328.066 69.517V103.646C328.066 116.466 338.554 126.954 351.374 126.954H382.939V198.218H396.146V126.954H427.722C440.542 126.954 451.03 116.466 451.03 103.646V69.517C451.03 56.6967 440.542 46.2084 427.722 46.2084Z" fill="#CE211A"></path>
@@ -150,7 +191,12 @@
 <p class="eyebrow">03 / Sistema de transformação</p>
 <h2 class="title"><span class="line">UM SÍMBOLO</span><span class="line perpetua">MÚLTIPLOS</span><span class="line">ESTADOS</span></h2>
 <p class="copy section-lead">O M é a origem da transformação. Os nove vasos são estados equivalentes do mesmo sistema vetorial.</p>
-<div class="editorial-interval"></div>
+<div class="state-explorer" aria-label="Explorar os estados vetoriais">
+<div class="state-heading"><span class="detail">EXPLORAR O SISTEMA</span><span class="detail" id="state-name" aria-live="polite">SÍMBOLO MASTER / M</span></div>
+<div class="state-preview" id="state-preview" aria-live="off"><img src="/identidade/M.svg" alt="Símbolo master M" /></div>
+<div class="state-picker" role="group" aria-label="Selecionar símbolo ou vaso"><button type="button" class="active" data-state="0" aria-pressed="true">M / MASTER</button><button type="button" data-state="1" aria-pressed="false">01</button><button type="button" data-state="2" aria-pressed="false">02</button><button type="button" data-state="3" aria-pressed="false">03</button><button type="button" data-state="4" aria-pressed="false">04</button><button type="button" data-state="5" aria-pressed="false">05</button><button type="button" data-state="6" aria-pressed="false">06</button><button type="button" data-state="7" aria-pressed="false">07</button><button type="button" data-state="8" aria-pressed="false">08</button><button type="button" data-state="9" aria-pressed="false">09</button></div>
+<p class="state-help">Selecione um estado para comparar sua forma com a matriz M. Os vetores originais são preservados, sem deformação.</p>
+</div><div class="editorial-interval"></div>
 <div class="transformation-editorial"><div class="transform-hero"><span class="detail">01 / SÍMBOLO MASTER</span><svg aria-hidden="true" class="artwork" fill="none" height="627" viewbox="0 0 822 627" width="822" xmlns="http://www.w3.org/2000/svg">
 <path d="M0 627H235.926C249.16 627 268.861 620.689 279.704 612.978L391.286 533.606C402.129 525.894 419.871 525.894 430.714 533.606L542.296 612.978C553.139 620.689 572.84 627 586.074 627H822L771.813 0H530.723C517.489 0 501.034 9.40694 494.16 20.8978L423.499 139.054C416.625 150.545 405.375 150.545 398.501 139.054L327.84 20.8978C320.966 9.40694 304.511 0 291.277 0H50.1873L0 627Z" fill="#CE211A"></path>
 </svg></div>
@@ -173,4 +219,19 @@
 </div></div></section></main><footer class="foot"><span>LABMATTAR — ELEMENTOS GRÁFICOS / SISTEMA VETORIAL</span><span>IDENTIDADE VISUAL / 2026</span></footer>
 <script>
 (function(){const titles=[...document.querySelectorAll('.title')];function fit(){for(const t of titles){t.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(t).fontSize),width=t.getBoundingClientRect().width;const lines=[...t.querySelectorAll('.line')];const maximum=Math.max(...lines.map(l=>{let range=document.createRange();range.selectNodeContents(l);return range.getBoundingClientRect().width}));if(maximum>width-3){t.style.fontSize=Math.max(1,size*(width-4)/maximum)+'px'}}}window.addEventListener("resize",fit,{passive:true});document.fonts?.ready.then(fit);fit()})();
+</script><script id="manual-states-script">
+(function(){
+const picker=document.querySelector('.state-picker'),preview=document.querySelector('#state-preview img'),name=document.querySelector('#state-name');
+if(!picker||!preview||!name)return;
+const buttons=[...picker.querySelectorAll('button')];
+function choose(n){
+const file=n===0?'M.svg':'vaso_'+String(n).padStart(2,'0')+'.svg';
+const label=n===0?'SÍMBOLO MASTER / M':'ESTADO VETORIAL / '+String(n).padStart(2,'0');
+preview.style.opacity='0';preview.style.transform='scale(.96)';
+const next=new Image();next.onload=function(){preview.src=next.src;preview.alt=label;name.textContent=label;requestAnimationFrame(()=>{preview.style.opacity='1';preview.style.transform='scale(1)'})};next.onerror=function(){preview.style.opacity='1';name.textContent='ARQUIVO INDISPONÍVEL'};
+next.src='/identidade/'+file;
+buttons.forEach(b=>{const active=Number(b.dataset.state)===n;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});
+}
+picker.addEventListener('click',e=>{const b=e.target.closest('button[data-state]');if(b)choose(Number(b.dataset.state))});
+})();
 </script></body></html>

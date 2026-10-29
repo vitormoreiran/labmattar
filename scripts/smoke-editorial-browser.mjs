@@ -7,6 +7,9 @@ page.on('pageerror',error=>errors.push(error.message));
 try{
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  await page.locator('#sheet').waitFor();
+ const projectMedia=await page.evaluate(async()=>{const names=['BOXDOSENTIR-64','BOXDOSENTIR-179','BOXDOSENTIR-151'];return await Promise.all(names.map(async name=>{const res=await fetch('./media/'+name+'.jpg');return {name,status:res.status,bytes:(await res.arrayBuffer()).byteLength}}))});
+ if(projectMedia.some(x=>x.status!==200||x.bytes<20000))throw new Error('Cada Corpo Abre um Mundo assets missing: '+JSON.stringify(projectMedia));
+
  const baseline=await page.locator('#sheet').evaluate(sheet=>{const a=sheet.getBoundingClientRect();const nodes=[...sheet.querySelectorAll('.ed-text-node')].map(el=>{const r=el.getBoundingClientRect();return {role:el.className,top:r.top,bottom:r.bottom,left:r.left,right:r.right,inside:r.left>=a.left-2&&r.right<=a.right+2&&r.top>=a.top-2&&r.bottom<=a.bottom+2}});return {nodes,ratio:a.width/a.height}});
  if(baseline.nodes.some(n=>!n.inside))throw new Error('Text overflow on initial page: '+JSON.stringify(baseline));
 

@@ -14,15 +14,15 @@
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"esquerda",relation:"separada",textWidth:61,titleScale:100,type:"alternada",
-      image:"nenhuma",photo:"64",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
+      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"esquerda",relation:"sobreposta",textWidth:77,titleScale:100,type:"alternada",
-      image:"recorte",photo:"64",mPosition:"centro",mScale:85,focusX:50,focusY:50,symbol:"none",
+      placement:"esquerda",relation:"separada",textWidth:43,titleScale:95,type:"alternada",
+      image:"recorte",mMode:"janela",photo:"64",mPosition:"direita",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -30,7 +30,7 @@
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"inferior",relation:"sobreposta",textWidth:80,titleScale:95,type:"alternada",
-      image:"inteira",photo:"179",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
+      image:"inteira",mMode:"janela",photo:"179",mPosition:"direita",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -39,7 +39,7 @@
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
     placement:"labPlacement",relation:"labRelation",textWidth:"labTextWidth",
-    titleScale:"labTitleScale",type:"labType",image:"labImage",photo:"labPhoto",
+    titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
     mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
@@ -133,7 +133,7 @@
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
-    for(const key of ["mPosition","mScale"])by(fields[key]).disabled=!mask;
+    for(const key of ["mPosition","mScale","mMode"])by(fields[key]).disabled=!mask;
     by("labColor").disabled=activeImage;
     by("labRelation").disabled=!activeImage;
     // Controls follow the page's actual state. An absent photograph does not
@@ -141,12 +141,14 @@
     setFieldVisible("labColor",!activeImage);
     for(const id of ["labPhoto","labRelation","labFocalPreview","labFocusX","labFocusY"])
       setFieldVisible(id,activeImage);
-    for(const id of ["labMPosition","labMScale"])setFieldVisible(id,mask);
+    for(const id of ["labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
     by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
     by("labTabMeta-texto").textContent=
       (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
     by("labTabMeta-imagem").textContent=
-      state.image==="nenhuma"?"Sem fotografia":state.image==="recorte"?"Máscara M":"Imagem integral";
+      state.image==="nenhuma"?"Sem fotografia":
+      state.image==="recorte"?{janela:"M / janela",corte:"M / corte",sutil:"M / sutil"}[state.mMode]:
+      "Imagem integral";
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
@@ -241,18 +243,25 @@
     board.dataset.placement=state.placement;
     board.dataset.relation=state.relation;
     board.dataset.image=state.image;
+    board.dataset.mMode=state.mMode;
     board.dataset.guide=state.guides;
     board.dataset.photoText="false";
     board.dataset.mText="false";
     board.style.setProperty("--lab-pad",state.margin+"%");
     board.style.setProperty("--lab-title-scale",String(state.titleScale/100));
     board.style.setProperty("--lab-text-width",state.textWidth+"%");
-    board.style.setProperty("--lab-m-size",state.mScale+"%");
+    const fullMask=state.image==="recorte"&&state.mMode==="janela";
+    // Janela must remain completely inside the reading surface; corte
+    // deliberately bleeds and marca sutil becomes a quiet overlay.
+    const effectiveMScale=fullMask?
+      Math.min(state.mScale,Math.max(25,100-2*state.margin)):state.mScale;
+    board.style.setProperty("--lab-m-size",effectiveMScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
-    const anchors=state.relation==="sobreposta"?
-      {esquerda:32,centro:53,direita:72}:
-      {esquerda:24,centro:50,direita:76};
+    const half=effectiveMScale/2,pad=state.margin;
+    const anchors=state.mMode==="corte"?
+      {esquerda:pad+effectiveMScale*.27,centro:50,direita:100-pad-effectiveMScale*.27}:
+      {esquerda:pad+half,centro:50,direita:100-pad-half};
     board.style.setProperty("--lab-m-x",anchors[state.mPosition]+"%");
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
@@ -359,20 +368,28 @@
     }
     const minReadable=Math.min(12,requested);
     let applied=null,emergency=false,bodyReduced=false;
-    for(const wrap of ["normal","emergency"]){
-      board.dataset.titleBreak=wrap;
+    // Editorial breaks are intentional: favor reducing the whole line rather
+    // than fragmenting a long word into single letters beside the M.
+    board.dataset.titleBreak="normal";
+    applied=searchTitle(minReadable);
+    if(applied===null)applied=searchTitle(7);
+    if(applied===null){
+      board.dataset.titleBreak="emergency";
       applied=searchTitle(minReadable);
-      if(applied!==null){emergency=wrap==="emergency";break;}
+      emergency=applied!==null;
     }
     if(applied===null&&!body.hidden){
       // On unusually dense pages, reclaim vertical space from the body before
       // allowing title or body to leave the approved reading area.
       body.style.fontSize="8px";
       bodyReduced=true;
-      for(const wrap of ["normal","emergency"]){
-        board.dataset.titleBreak=wrap;
+      board.dataset.titleBreak="normal";
+      applied=searchTitle(minReadable);
+      if(applied===null)applied=searchTitle(7);
+      if(applied===null){
+        board.dataset.titleBreak="emergency";
         applied=searchTitle(minReadable);
-        if(applied!==null){emergency=wrap==="emergency";break;}
+        emergency=applied!==null;
       }
     }
     if(applied===null){
@@ -440,7 +457,7 @@
     if(!body.hidden)textNodes.push(body);
     board.dataset.photoText=String(hasPhoto&&textNodes.some(n=>n.textContent.trim()));
     const mask=by("labMask");
-    const overlap=hasPhoto&&state.image==="recorte"&&
+    const overlap=hasPhoto&&state.image==="recorte"&&state.mMode!=="sutil"&&
       textNodes.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
     board.dataset.mText=String(overlap);
     const rect=board.getBoundingClientRect();
@@ -679,8 +696,11 @@
       "Edite o parágrafo no painel ou clique nele diretamente na página.",
       "A largura de leitura e os limites da superfície continuam aplicados durante a edição."],
     labImage:["Modo de imagem",
-      "Alterna entre campo sem foto, fotografia recortada no M e fotografia de página inteira.",
-      "A máscara utiliza o vetor oficial, sem distorção. A fotografia original permanece intacta."],
+      "Escolha campo sem fotografia, fotografia integral ou composição a partir do M.",
+      "A imagem não altera o vetor oficial. Com texto sobre foto, o contraste preto de 20% é automático."],
+    labMMode:["Uso do M",
+      "Janela apresenta a forma inteira, Corte lateral permite uma sangria intencional e Marca sutil é uma presença discreta sobre a imagem.",
+      "São três relações experimentais do mesmo vetor M. A forma não é deformada e o preto de 20% sob texto não é editável."],
     labPhoto:["Fotografia",
       "Experimente diferentes registros de Cada Corpo Abre um Mundo mantendo a mesma composição.",
       "O enquadramento pode ser ajustado sem modificar o arquivo fotográfico."],
@@ -688,11 +708,11 @@
       "Define se texto e fotografia dividem campos distintos ou aparecem sobrepostos.",
       "Onde houver texto sobre fotografia, aplica-se automaticamente preto a 20% abaixo da tipografia."],
     labMPosition:["Posição do M",
-      "Desloca o recorte para esquerda, centro ou direita.",
-      "A posição muda, mas a proporção e o desenho original do M permanecem intactos."],
+      "Desloca o M para esquerda, centro ou direita. Janela mantém a silhueta inteira; Corte lateral admite sangria.",
+      "Não altera o desenho do M. A margem continua protegendo todos os textos."],
     labMScale:["Escala do M",
-      "Amplia ou reduz o campo fotográfico recortado no M.",
-      "É uma mudança proporcional: a máscara mantém sua geometria e o véu preto de 20% quando há texto sobre ela."],
+      "Dimensiona o M proporcionalmente. Na aplicação Janela, o limite útil impede que a letra seja cortada.",
+      "O vetor é único. Corte lateral admite sangria intencional; preto 20% acompanha fotografia sob texto."],
     labFocalPreview:["Foco da fotografia",
       "Clique ou arraste na imagem para escolher o centro de enquadramento. Use as setas para movimentos de 5%.",
       "O foco age na fotografia dentro da superfície ou da máscara, nunca na geometria do M."],

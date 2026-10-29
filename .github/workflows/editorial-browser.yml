@@ -21,6 +21,11 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           npx playwright install --with-deps chromium
+      - name: Provisionar fontes oficiais para teste local
+        run: |
+          mkdir -p public/fonts
+          curl --fail --location --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf -o public/fonts/univers-lt-std-45-light.otf
+          curl --fail --location --retry 3 https://labmattar.com/fonts/perpetua-titling-light.ttf -o public/fonts/perpetua-titling-light.ttf
       - name: Validar editor publicado
         run: |
           python3 -m http.server 8765 --directory public > /tmp/editorial-http.log 2>&1 &

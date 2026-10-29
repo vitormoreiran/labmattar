@@ -22,7 +22,9 @@ jobs:
           npm install --no-save --no-package-lock playwright@1.58.2
           npx playwright install --with-deps chromium
       - name: Validar editor publicado
-        run: node scripts/smoke-editorial-browser.mjs
+        run: |
+          python3 -m http.server 8765 --directory public > /tmp/editorial-http.log 2>&1 &
+          EDITORIAL_URL=http://127.0.0.1:8765/ambiente-editorial/ node scripts/smoke-editorial-browser.mjs
       - name: Guardar imagens de diagnostico
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,0 +1,20 @@
+/* Fonte: LABMATTAR publicado, Capítulo 2 — index-DaKY3Ax1.css.
+   Geometria e camadas transpostas para um canvas de edição, sem alterar o vetor. */
+.ed-sheet.ed-source-page{container-type:size;isolation:isolate;background:#10150f;color:#f7f6f2}
+.ed-sheet.ed-source-page .ed-image-field{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden;pointer-events:none;z-index:0}
+.ed-sheet.ed-source-page .chapter2-ambient{position:absolute;inset:-5%;overflow:hidden;transform:scale(1.045);z-index:0}
+.ed-sheet.ed-source-page .chapter2-ambient-image{object-fit:cover;filter:blur(var(--ed-ambient-blur,16px)) saturate(1.02) brightness(.78);width:100%;height:100%;position:absolute;inset:0;transform:scale(1.045);object-position:var(--ed-focus-x,50%) var(--ed-focus-y,50%)}
+.ed-sheet.ed-source-page .chapter2-shade{position:absolute;inset:0;background:linear-gradient(90deg,#080c0614,#080c061a 65%,#080c064d);z-index:1}
+.ed-sheet.ed-source-page .chapter2-stage{position:absolute;inset:0;display:grid;place-items:center;z-index:2}
+.ed-sheet.ed-source-page .chapter2-stage-stack{aspect-ratio:990.08/743.18;width:min(100%,133.2cqh);height:auto;position:relative}
+.ed-sheet.ed-source-page .chapter2-stable-frame{width:100%;height:100%;position:absolute;inset:0}
+.ed-sheet.ed-source-page .chapter2-m-image{object-fit:cover;object-position:var(--ed-focus-x,50%) var(--ed-focus-y,50%);filter:brightness(.66);width:100%;height:100%;position:absolute;inset:0;transform:scale(var(--ed-scale,1));-webkit-mask:url("./media/m-publicado.svg") center/100% 100% no-repeat;mask:url("./media/m-publicado.svg") center/100% 100% no-repeat}
+.ed-sheet.ed-source-page .ed-texts{z-index:5}
+.ed-sheet.ed-source-page .role-title{font-family:LMPerpetua,Georgia,serif!important;font-weight:300!important;letter-spacing:-.025em!important;line-height:.82!important;font-synthesis:none}
+.ed-sheet.ed-source-page .role-title[data-family="univers"]{font-family:LMUnivers,Arial,sans-serif!important}
+.ed-sheet.ed-source-page[data-treatment="plain"] .chapter2-m-image{-webkit-mask:none;mask:none}
+.ed-sheet.ed-source-page[data-treatment="none"] .ed-image-field{display:none}
+.ed-sheet.ed-source-page[data-treatment="opening"] .chapter2-stage-stack{width:100%;height:100%;aspect-ratio:auto}
+.ed-sheet.ed-source-page[data-treatment="detail"] .chapter2-stage-stack{width:120%}
+.ed-sheet-wrap.mobile .ed-sheet.ed-source-page .chapter2-stage-stack{width:143.9%;max-width:none}
+.ed-sheet.ed-source-page .ed-image-field .chapter2-stage{pointer-events:auto;cursor:pointer}

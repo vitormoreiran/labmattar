@@ -12,9 +12,10 @@ try{
  const count=await page.locator('#filmstrip [data-film]').count();
  if(count<3)throw new Error('Exige ao menos 3 paginas ilustradas: '+count);
  await page.locator('[data-tab="models"]').click();
- await page.locator('[data-model="portfolio"]').click();
+ await page.locator('[data-model="project"]').click();
+ await page.locator('[data-treatment="portfolio"]').click();
  await page.locator('[data-example="1"]').click();
- await page.locator('#sheet.ed-original-media[data-treatment="portfolio"]').waitFor();
+ await page.locator('#sheet.ed-original-media[data-editorial-role="project"][data-treatment="portfolio"]').waitFor();
  const src=await page.locator('#sharp').count();
  if(src)throw new Error('Editor deve usar renderizador principal, nao demo');
  await page.locator('[data-tab="insert"]').click();
@@ -32,6 +33,6 @@ try{
  await page.locator('#preview').click();
  await page.screenshot({path:'editorial-desktop-smoke.png',fullPage:true});
  if(errors.length)throw new Error('Erros JavaScript: '+errors.join(' | '));
- console.log('PASS: 3 paginas, modelos, exemplo real, inserir, historico, camadas, focal point, responsividade, preview');
+ console.log('PASS: 3 paginas, estrutura editorial independente do M, exemplo real, inserir, historico, camadas, focal point, responsividade, preview');
 }catch(e){await page.screenshot({path:'editorial-browser-failure.png',fullPage:true}).catch(()=>{});console.error(e);process.exitCode=1}
 finally{await browser.close()}

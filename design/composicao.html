@@ -94,7 +94,7 @@
     </div>
     <p>Superfície, fotografia, M e texto funcionam como partes de uma mesma composição.</p>
   </div>
-  <div class="lm-case-trace"><span><strong>CASO 01</strong> / CADA CORPO ABRE UM MUNDO — acervo original da performance</span><span><strong>BASE DE ANÁLISE</strong> / composição fotográfica do capítulo 2, transposta do site publicado</span></div>
+  <div class="lm-case-trace"><span><strong>EXEMPLO</strong> / CADA CORPO ABRE UM MUNDO</span><span><strong>APLICAÇÃO</strong> / FOTOGRAFIA + M + TEXTO</span></div>
   <div class="lm-case-controls" aria-label="Visualização das relações da página">
     <div class="lm-case-control" role="group" aria-label="Etapa da composição">
       <span>CAMADAS</span>
@@ -145,16 +145,16 @@
     <article><b>04 / ADAPTAÇÃO</b><h3>Adaptação</h3><p>Ao mudar o formato, a composição é refeita. Não se reduz a página inteira proporcionalmente.</p></article>
   </div>
   <div class="lm-case-contrast" id="contraste">
-    <div><p class="eyebrow">REGRA / TEXTO SOBRE FOTOGRAFIA</p><h3>20% DE PRETO<br><span class="perpetua">SOBRE A IMAGEM</span></h3></div>
+    <div><p class="eyebrow">REGRA / TEXTO SOBRE FOTOGRAFIA</p><h3>PRETO<br><span class="perpetua">20%</span></h3></div>
     <div>
-      <p>Quando um texto é composto sobre uma fotografia, aplicar sobre a imagem um véu preto de <strong>20% de opacidade</strong> para sustentar a leitura. A regra vale tanto para o campo fotográfico integral quanto para a fotografia recortada no M.</p>
-      <p>O tratamento acompanha a <strong>área fotográfica sob o texto</strong>, não o texto em si. No M, o véu utiliza a mesma máscara e a mesma geometria do recorte; quando não existe sobreposição tipográfica, não é aplicado automaticamente.</p>
+      <p>Quando houver texto sobre fotografia, aplicar <strong>preto 20%</strong> sobre a imagem sob o texto.</p>
+      <p>A regra vale para imagem integral e para fotografia recortada no M. Sem sobreposição, não há tratamento.</p>
       <div class="lm-case-contrast-facts"><span>IMAGEM SEM TEXTO<br><b>PRETO 0%</b></span><span>IMAGEM COM TEXTO<br><b>PRETO 20%</b></span><span>IMPLEMENTAÇÃO<br><code>rgba(0,0,0,.20)</code></span></div>
       <p class="lm-case-contrast-note">Compare 0% e 20% mantendo a mesma imagem e o mesmo texto.</p>
     </div>
   </div>
   <div class="lm-case-validation">
-    <h3>COMO AVALIAR<br><span class="perpetua">UMA NOVA PÁGINA</span></h3>
+    <h3>COMO<br><span class="perpetua">COMPOR</span></h3>
     <div>
       <p>Comece pela estrutura da página. Depois ajuste escala, relação entre elementos e enquadramento.</p>
       <ul>
@@ -164,13 +164,13 @@
         <li>O M, a imagem e a palavra possuem uma hierarquia intencional?</li><li>O véu preto de 20% foi aplicado somente quando existe texto sobre a área fotográfica?</li>
         <li>O comportamento vertical foi recomposto, em vez de apenas reduzido?</li>
       </ul>
-      <p style="font-size:12px;margin-top:20px">FONTES TÉCNICAS / <code>public/ambiente-editorial/portfolio-renderer.css</code>, <code>original-layout-bridge.css</code>, <code>media/m-publicado.svg</code> e imagens BOXDOSENTIR. Regras aprovadas de identidade não foram alteradas. Status: estudo de aplicação, sujeito à comparação visual com o site oficial.</p>
+      <p style="font-size:12px;margin-top:20px">Preservar margem, proporção do M, legibilidade e relação entre os elementos.</p>
     </div>
   </div>
 </section>
 <section class="chapter lm-lab" id="laboratorio">
   <div class="lm-lab-heading">
-    <div><p class="eyebrow">02 / FERRAMENTA DE COMPOSIÇÃO</p><h2>TESTAR<br><span class="perpetua">RELAÇÕES</span></h2></div>
+    <div><p class="eyebrow">02 / FERRAMENTA DE COMPOSIÇÃO</p><h2>COMPOR</h2></div>
     <div class="lm-lab-heading-aside"><p>Ajuste a relação entre texto, imagem e M.</p><button type="button" class="lm-help-trigger lm-help-trigger-overview" id="labOverviewHelp" aria-expanded="false" aria-label="Dúvidas: como funciona o laboratório" aria-controls="labHelp-overview"><span aria-hidden="true">?</span><span class="lm-help-trigger-text">Como funciona</span></button></div>
   </div>
   <div class="lm-lab-prep">
@@ -278,13 +278,13 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"><div class="lm-control-effect" data-control-effect="mask" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">Ajusta a escala do M.</span></div></div>
         <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button><small class="lm-ctrl-helper">Ajuste o foco da fotografia.</small></div></div>
         <details class="lm-inspector-more" data-lab-more="imagem">
-          <summary><span>Posição precisa e assinatura</span><span class="lm-inspector-more-count">3 opções</span></summary>
+          <summary><span>Foco e assinatura</span><span class="lm-inspector-more-count">3 opções</span></summary>
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusX">Foco horizontal da fotografia</label><output id="labFocusXValue" for="labFocusX">50%</output></div><input id="labFocusX" type="range" min="0" max="100" step="5" value="50"></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusY">Foco vertical da fotografia</label><output id="labFocusYValue" for="labFocusY">50%</output></div><input id="labFocusY" type="range" min="0" max="100" step="5" value="50"></div>
         <div class="lm-lab-field lm-ctrl-signature-field"><div class="lm-ctrl-signature-title"><label for="labSymbol">Símbolo de assinatura</label><span class="lm-ctrl-signature-figure" aria-hidden="true"><img id="labSymbolPreview" src="/identidade/M.svg" alt=""></span></div><select id="labSymbol"><option value="none">Sem assinatura adicional</option><option value="M.svg">M / master</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select><small class="lm-ctrl-helper">Assinatura independente da máscara M.</small></div></div>
         </details>
       </section>
-      <div class="lm-lab-mini-actions"><button type="button" id="labReset"><span aria-hidden="true" class="lm-ctrl-reset-icon">↺</span> RESTAURAR ESTUDO</button><span class="lm-lab-local" id="labSaveState">Ferramenta de composição.</span></div>
+      <div class="lm-lab-mini-actions"><button type="button" id="labReset"><span aria-hidden="true" class="lm-ctrl-reset-icon">↺</span> RESTAURAR ESTUDO</button><span class="lm-lab-local" id="labSaveState">Rascunho local.</span></div>
     </aside>
     <div class="lm-lab-preview">
       <div class="lm-lab-preview-head"><span>PROVA DE PÁGINA / CADA CORPO ABRE UM MUNDO</span><span class="lm-lab-preview-edit-note">CLIQUE NO TEXTO PARA EDITAR</span><span id="labFormatLabel">HORIZONTAL / 16:9</span></div>

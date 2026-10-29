@@ -347,7 +347,8 @@ try{
   const portraitTitle=await page.evaluate(()=>{
     const b=document.querySelector("#labArtboard");
     const title=document.querySelector("#labRenderedTitle");
-    const range=document.createRange();range.selectNodeContents(title);
+    const line=title.querySelector(".lm-lab-title-line")||title;
+    const range=document.createRange();range.selectNodeContents(line);
     return {text:title.textContent.trim(),break:b.dataset.titleBreak,
       fragments:range.getClientRects().length,
       width:title.getBoundingClientRect().width,

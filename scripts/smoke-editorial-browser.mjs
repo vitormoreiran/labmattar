@@ -22,17 +22,11 @@ try{
  if(count<3)throw new Error('Exige ao menos 3 paginas ilustradas: '+count);
  await page.locator('[data-tab="models"]').click();
  await page.locator('[data-model="project"]').click();
- await page.locator('[data-treatment="portfolio"]').click();
- await page.locator('[data-example="1"]').click();
- const titleFont=await page.locator('#sheet .role-title').evaluate(el=>({family:getComputedStyle(el).fontFamily,chosen:el.dataset.family,left:getComputedStyle(el).left,top:getComputedStyle(el).top}));
- if(titleFont.chosen!=='perpetua'||!titleFont.family.includes('LM Perpetua Official'))throw new Error('Perpetua nao aplicada ao titulo de projeto: '+JSON.stringify(titleFont));
- await page.locator('#sheet .role-title').click();
- const familyControl=page.locator('#titleFamily');
- await familyControl.selectOption('univers');
- const universFont=await page.locator('#sheet .role-title').evaluate(el=>getComputedStyle(el).fontFamily);
- if(!universFont.includes('LM Univers Official'))throw new Error('Univers nao aplicada ao titulo: '+universFont);
- await familyControl.selectOption('perpetua');
-
+ const titleFont=await page.locator('#sheet .role-title').evaluate(el=>({family:getComputedStyle(el).fontFamily,chosen:el.dataset.family}));
+ if(titleFont.chosen!=='perpetua'||!titleFont.family.includes('LM Perpetua Official'))throw new Error('Perpetua should be governed by editorial profile: '+JSON.stringify(titleFont));
+ if(await page.locator('#titleFamily').count())throw new Error('Identity family must not be a free inspector setting');
+ await page.locator('[data-tab="models"]').click();
+ if(await page.locator('[data-treatment]').count())throw new Error('Media treatment must not be part of editorial profiles');
  await page.locator('#sheet.ed-source-page[data-editorial-role="project"][data-treatment="portfolio"] .chapter2-stage-stack .chapter2-m-image').waitFor();
  const ratio=await page.locator('.chapter2-stage-stack').evaluate(el=>{const r=el.getBoundingClientRect();return r.width/r.height});
  if(Math.abs(ratio-990.08/743.18)>.03)throw new Error('M distorcido: '+ratio);
@@ -53,6 +47,6 @@ try{
  await page.locator('#preview').click();
  await page.screenshot({path:'editorial-desktop-smoke.png',fullPage:true});
  if(errors.length)throw new Error('Erros JavaScript: '+errors.join(' | '));
- console.log('PASS: 3 paginas, estrutura editorial independente do M, exemplo real, inserir, historico, camadas, focal point, responsividade, preview');
+ console.log('PASS: 3 paginas, estrutura editorial independente do M, perfis independentes da identidade, inserir, historico, camadas, focal point, responsividade, preview');
 }catch(e){await page.screenshot({path:'editorial-browser-failure.png',fullPage:true}).catch(()=>{});console.error(e);process.exitCode=1}
 finally{await browser.close()}

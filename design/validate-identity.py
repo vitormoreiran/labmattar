@@ -54,7 +54,7 @@ for field in ("labFormat","labMargin","labTitleScale","labType","labImage",
               "labRelation","labMScale","labFocalPreview","labSymbol"):
  assert field+':["' in lab_js,f"Missing contextual help for {field}"
 assert "showHelp(trigger,panel)" in lab_js
-assert 'data-lab-help' in lab_js and 'aria-expanded' in lab_js
+assert "trigger.dataset.labHelp=id" in lab_js and 'aria-expanded' in lab_js, "Help triggers must expose contextual targets and accessible state"
 assert ".lm-help-popover[hidden]" in controls
 assert ".lm-lab>.lm-lab-legend" in controls
 assert "labHelp-overview" in lab_js

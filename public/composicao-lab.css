@@ -225,20 +225,19 @@
 @media(max-width:540px){.lm-lab-inspector{grid-template-columns:1fr}.lm-lab-stage{min-height:455px;padding:8px}.lm-lab-board[data-format=vertical]{width:min(100%,315px)}.lm-lab-legend{grid-template-columns:1fr}.lm-lab-prep{align-items:start}.lm-lab-presets{gap:8px 20px}}
 @media(prefers-reduced-motion:reduce){.lm-lab-board{transition:none}}
 
-/* Fixed ruler alignment: text and M snap to the 12 x 12 useful-area ruler. */
+/* Structural alignment: the text keeps one horizontal ruler; only its height changes.
+   M position and M scale are independent controls. */
 .lm-lab-reading{position:absolute;inset:var(--lab-pad)}
 .lm-lab-main-copy{
-  position:absolute;
-  left:var(--lab-text-x);
-  top:var(--lab-text-y);
-  transform:translateY(-50%);
-  width:min(var(--lab-text-width),calc(100% - var(--lab-text-x)));
-  max-width:calc(100% - var(--lab-text-x));
-  margin:0!important;
-  align-self:auto!important;
+  align-self:flex-start!important;
   text-align:left!important;
+  width:min(100%,var(--lab-text-width));
+  max-width:100%;
 }
 .lm-lab-main-copy .lm-lab-body{margin-inline:0!important}
+.lm-lab-board[data-placement=central] .lm-lab-main-copy{margin:auto 0}
+.lm-lab-board[data-placement=superior] .lm-lab-main-copy{margin-top:clamp(24px,7cqh,85px);margin-bottom:auto}
+.lm-lab-board[data-placement=inferior] .lm-lab-main-copy{margin-top:auto;margin-bottom:4%}
 .lm-lab-m-photo{
   left:var(--lab-m-x)!important;
   top:var(--lab-m-y)!important;

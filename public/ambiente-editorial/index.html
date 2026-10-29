@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="./editorial-composition.css">
   <link rel="stylesheet" href="./editorial-interface.css">
   <link rel="stylesheet" href="./editorial-inspector.css">
+  <link rel="stylesheet" href="./editorial-sequences.css">
+  <script defer src="./editorial-sequences.js"></script>
   <script defer src="./editorial-inspector.js"></script>
   <script defer src="./editorial-v2.js"></script>
 </head>
@@ -63,10 +65,11 @@
       </div>
       <section id="pagesPanel" role="tabpanel" aria-labelledby="pagesTab" class="sidebar-panel">
         <div class="page-section-head">
-          <div>
-            <strong id="pagesTotal">07 páginas</strong>
+          <div><strong id="pagesTotal">07 páginas</strong><small id="areasTotal">4 áreas</small></div>
+          <div class="page-add-actions">
+            <button type="button" id="addAreaButton" title="Criar uma nova área editorial"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg><span>Área</span></button>
+            <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página na área selecionada"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg><span>Página</span></button>
           </div>
-          <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página após a selecionada"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg> <span>Página</span></button>
         </div>
         <div class="sequence-actions" aria-label="Organização de páginas">
           <span>Sequência</span>
@@ -119,6 +122,7 @@
             </div>
           </div>
         </article>
+        <div id="storyViewer" class="story-viewer" hidden aria-label="Percurso contínuo das áreas editoriais"></div>
       </div>
       <div class="stage-footline">
         <div class="pagination">
@@ -168,7 +172,30 @@
           <input id="pageName" type="text" autocomplete="off">
         </div>
         <div class="inspector-section-row">
-          <h3>Perfil editorial</h3>
+          <h3>Área do projeto</h3>
+          <span id="areaPageCount">1 página</span>
+        </div>
+        <div class="inspector-property">
+          <label for="pageSectionSelect">Pertence à área</label>
+          <select id="pageSectionSelect" aria-label="Área editorial da página"></select>
+        </div>
+        <div class="inspector-property">
+          <label for="sectionName">Título da área</label>
+          <input id="sectionName" type="text" autocomplete="off">
+        </div>
+        <div class="area-shared-surface">
+          <div class="area-shared-image">
+            <img id="sectionBackgroundImage" alt="Imagem de fundo compartilhada">
+          </div>
+          <div class="area-shared-details">
+            <span class="inspector-note-label">FUNDO COMPARTILHADO</span>
+            <label for="sectionBackgroundSelect">Imagem da área</label>
+            <select id="sectionBackgroundSelect"></select>
+          </div>
+        </div>
+        <p class="inspector-explanation">O fundo permanece estático enquanto o conteúdo desta área passa durante a rolagem. Fonte, peso e alinhamento seguem as regras da identidade.</p>
+        <div class="inspector-section-row">
+          <h3>Perfil da página</h3>
           <span>7 modelos</span>
         </div>
         <div id="profileLibrary" class="profile-library" role="group" aria-label="Selecionar perfil editorial"></div>

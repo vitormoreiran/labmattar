@@ -1,0 +1,50 @@
+name: Verificar manual publicado
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/symbols-live-check.yml']
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Conferir respostas das rotas publicadas
+        run: |
+          mkdir -p symbols-proof
+          python3 - <<'PY'
+          import urllib.request,json,time,hashlib
+          from pathlib import Path
+          base='https://labmattar-identidade-previa.vitormoreiran.workers.dev'
+          report=[]
+          for path in ['/manual','/manual.html','/manual-symbols.js','/manual-symbols.css','/vendor/MorphSVGPlugin.js','/editor']:
+              request=urllib.request.Request(base+path+'?check='+str(time.time_ns()),headers={'Cache-Control':'no-cache'})
+              with urllib.request.urlopen(request,timeout=30) as r:
+                  data=r.read()
+                  report.append({'path':path,'status':r.status,'url':r.url,'headers':dict(r.headers),'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'revision':b'20261029-verified' in data,'sampler':b'manual-states-script' in data})
+                  if path in ['/manual','/manual.html']: Path('symbols-proof/'+path.strip('/').replace('.','-')+'-response.txt').write_bytes(data)
+          Path('symbols-proof/routes.json').write_text(json.dumps(report,indent=2))
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar navegador isolado
+        run: |
+          mkdir -p /tmp/symbols-browser
+          npm install --prefix /tmp/symbols-browser --no-package-lock playwright@1.58.2
+          /tmp/symbols-browser/node_modules/.bin/playwright install --with-deps chromium
+          cp scripts/smoke-symbols-browser.mjs /tmp/symbols-browser/check.mjs
+      - name: Testar manual e matriz publicados
+        env:
+          MANUAL_URL: https://labmattar-identidade-previa.vitormoreiran.workers.dev/manual?check=${{ github.sha }}
+          CHECK_EDITOR: '1'
+        run: node /tmp/symbols-browser/check.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: symbols-live-check-${{ github.sha }}
+          path: symbols-proof/

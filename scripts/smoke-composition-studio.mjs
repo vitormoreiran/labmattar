@@ -314,6 +314,15 @@ try{
   await menuVisible("Mobile all page tools");
   await tool("labFormat").click();
   await expandedBelow("pagina","Mobile menu remains visible with format options");
+  const illustratedOptions=await page.locator("#labStudioDetail-pagina .lm-ctrl-choice").evaluateAll(cards=>
+    cards.map(card=>{
+      const visual=card.querySelector(".lm-ctrl-visual"),name=card.querySelector(".lm-ctrl-name");
+      const art=visual?.firstElementChild;
+      return {name:name?.textContent||"",iconBottom:art?.getBoundingClientRect().bottom||0,
+        labelTop:name?.getBoundingClientRect().top||0};
+    }));
+  assert(illustratedOptions.length===4&&illustratedOptions.every(x=>x.iconBottom<=x.labelTop+1),
+    "Mobile icons and labels should not overlap in the expanded section: "+JSON.stringify(illustratedOptions));
   await page.screenshot({path:"composition-studio-mobile-expanded-below.png"});
   await clickCard("format","vertical");
   await proveBoard("Mobile portrait");

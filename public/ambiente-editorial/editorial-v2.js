@@ -35,7 +35,7 @@ function render(){
 const p=page(),i=doc.pages.indexOf(p),a=asset(p.media.assetId),art=$("artboard");
 $("pagesList").innerHTML=doc.pages.map((q,j)=>{
  const thumb=q.treatment!=="sem-imagem"?asset(q.media.assetId):null;
- const image=thumb?'<img loading="lazy" src="'+escape(thumb.src)+'" alt="">':'<span class="thumb-empty">TEXTO</span>';
+ const image=thumb?'<img loading="lazy" draggable="false" src="'+escape(thumb.src)+'" alt="">':'<span class="thumb-empty">TEXTO</span>';
  const status=({draft:"Rascunho",review:"Em revisão",ready:"Pronta"}[q.status]||"Rascunho");
  return '<button type="button" draggable="true" class="page-entry '+(q.id===selected?"selected":"")+'" data-p="'+escape(q.id)+'" aria-current="'+(q.id===selected?"page":"false")+'" title="Selecionar ou arrastar para ordenar a página '+String(j+1)+'"><span class="page-thumb">'+image+'<span class="page-number">'+String(j+1).padStart(2,"0")+'</span></span><span class="page-meta"><strong>'+escape(q.name)+'</strong><small>'+profiles[q.profile][0]+' · '+status+'</small></span><span class="page-handle" aria-hidden="true">⋮</span></button>';
 }).join("");

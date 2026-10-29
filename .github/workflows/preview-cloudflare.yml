@@ -56,7 +56,6 @@ jobs:
               print(name, len(data), 'bytes OK')
           PY
           python3 design/localize-fonts.py
-          bash scripts/prepare-editorial-media.sh
       - name: Verificar disponibilidade das fontes oficiais
         shell: bash
         run: |

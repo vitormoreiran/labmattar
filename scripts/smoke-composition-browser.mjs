@@ -138,7 +138,7 @@ try{
   await page.locator("#labReset").click();
   data=await read();
   assert(data.image==="nenhuma"&&data.format==="horizontal"&&data.lines===3,"Restore does not recover the original study");
-  assert(await page.locator("#labSymbol").inputValue()==="M.svg","Restore lost original brand M signature");
+  assert(await page.locator("#labSymbol").inputValue()==="none","Restore should preserve the original no-symbol state");
   assert(failures.length===0,"Javascript/browser errors: "+failures.join(" / "));
   console.log("LABMATTAR composition lab browser check OK");
 }catch(e){

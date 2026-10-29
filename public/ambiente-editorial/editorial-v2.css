@@ -31,3 +31,65 @@
 @media(max-width:1180px){.editor-workspace{grid-template-columns:200px minmax(0,1fr) 240px}.editor-header{padding:0 18px;gap:15px}.header-actions{gap:11px}.editor-inspector .inspector-tabs{gap:9px;padding-left:13px;padding-right:13px}}
 @media(max-width:960px){.editor-workspace{grid-template-columns:180px minmax(0,1fr)}.editor-inspector{grid-column:2;border-left:0;border-top:1px solid var(--line)}.header-actions button span{display:none}.stage-viewport{padding:16px}.editor-stage{min-height:540px}}
 @media(max-width:650px){.editor-header{height:auto;min-height:64px;flex-wrap:wrap;padding:12px 14px;gap:12px}.document-heading{min-width:40%;max-width:65%}.header-divider{display:none}.header-actions{width:100%;justify-content:space-between}.editor-workspace{display:flex;flex-direction:column}.editor-sidebar{order:2;border-top:1px solid var(--line);border-right:0}.editor-stage{order:1;min-height:520px}.editor-inspector{order:3;border-left:0}.stage-topline,.stage-footline{padding:14px}.stage-viewport{padding:12px}.artboard{aspect-ratio:9/16;max-width:385px}.artboard .content-title{font-size:clamp(27px,9cqw,57px)}.artboard .content-body{font-size:clamp(12px,3.7cqw,16px);width:80%}.artboard .content-subtitle{font-size:11px}.artboard .masked-photo img{width:140%;height:75%}.editor.is-preview .editor-stage,.editor.is-preview .stage-viewport{min-height:calc(100dvh - 115px)}}
+
+/*
+ * Canvas is the work surface, not a 16:9 slide thumbnail.
+ * In desktop editing it fills the middle workspace. In preview it fills
+ * the entire available viewport below the header, without letterboxing.
+ * Internal imagery remains cropped by the official M mask (contain).
+ */
+.editor[data-viewport="desktop"] .stage-viewport{
+  padding:0;
+  align-items:stretch;
+  justify-content:stretch;
+  min-height:0;
+}
+.editor[data-viewport="desktop"] .artboard{
+  width:100%;
+  max-width:none;
+  min-width:0;
+  min-height:0;
+  flex:1 1 auto;
+  align-self:stretch;
+  aspect-ratio:auto;
+  box-shadow:none;
+}
+.editor.is-preview{
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+.editor.is-preview .editor-workspace{
+  flex:1 1 auto;
+  height:auto;
+  min-height:0;
+  display:block;
+}
+.editor.is-preview .editor-stage{
+  height:100%;
+  min-height:0;
+}
+.editor.is-preview .stage-viewport{
+  flex:1 1 auto;
+  height:100%;
+  min-height:0;
+  padding:0;
+}
+.editor.is-preview[data-viewport="desktop"] .artboard{
+  width:100%;
+  max-width:none;
+  height:100%;
+  min-height:0;
+  aspect-ratio:auto;
+}
+.editor.is-preview[data-viewport="mobile"] .stage-viewport{
+  padding:0;
+}
+@media(max-width:650px){
+  /* On physical phones, the available viewport—not a static slide ratio—
+     determines the composition's surface. */
+  .editor[data-viewport="desktop"] .artboard{
+    max-width:none;
+    aspect-ratio:auto;
+  }
+}

@@ -169,7 +169,7 @@ body.lm-studio-open #laboratorio .lm-lab-preview-foot span:last-child{
 body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
   grid-area:inspector;
   display:grid!important;
-  grid-template-rows:48px 44px minmax(0,1fr) 44px;
+  grid-template-rows:48px 44px minmax(0,1fr);
   padding:0 18px;
   border:0;border-left:1px solid var(--studio-line);
   background:var(--studio-surface);
@@ -330,8 +330,10 @@ body.lm-studio-open #laboratorio .lm-studio-detail-body>.lm-lab-field{
   width:100%;margin:0;
   gap:8px;
 }
+/* Restore lives in the main toolbar. A second action bar was redundant
+   and consumed a bottom row even when there was nothing to configure. */
 body.lm-studio-open #laboratorio .lm-lab-mini-actions{
-  display:flex!important;
+  display:none!important;
   align-items:center;justify-content:space-between;
   border:0;border-top:1px solid var(--studio-line);
   padding:7px 0;
@@ -611,7 +613,7 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(
   body.lm-studio-open #laboratorio .lm-lab-prep{height:45px;min-height:45px}
   body.lm-studio-open #laboratorio.lm-lab{grid-template-rows:45px minmax(0,1fr)}
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
-    grid-template-rows:39px 40px minmax(0,1fr) 37px;
+    grid-template-rows:39px 40px minmax(0,1fr);
   }
   body.lm-studio-open #laboratorio .lm-inspector-head{height:39px}
   body.lm-studio-open #laboratorio .lm-inspector-tabs{height:40px;min-height:40px}

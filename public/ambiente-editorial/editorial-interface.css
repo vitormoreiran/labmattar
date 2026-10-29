@@ -162,3 +162,8 @@
 .editor-sidebar .asset-entry{border-color:var(--ui-line)}
 .editor-inspector .inspector-tabs button.active{border-bottom-color:var(--ui-ink)}
 .editor.is-preview .editor-workspace{min-height:0}
+
+/* Os comandos de sequencia ficam ao alcance mesmo com varias paginas. */
+.page-section-head{position:sticky;top:0;z-index:4;background:var(--ui-panel);padding-bottom:12px}
+.editor-sidebar .sequence-actions{position:sticky;top:68px;z-index:3;margin:0;padding:8px 16px 12px;border-top:0;border-bottom:1px solid var(--ui-line);background:var(--ui-panel)}
+.editor-sidebar .page-entry{scroll-margin-top:124px}

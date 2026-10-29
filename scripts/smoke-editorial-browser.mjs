@@ -13,7 +13,7 @@ async function geometry(label,{expectedLayout,fullBleed=false,portrait=false}={}
     const art=document.querySelector('#artboard'),stack=document.querySelector('#editorialStack');
     const rect=e=>{const a=e.getBoundingClientRect();return {x:a.x,y:a.y,w:a.width,h:a.height,right:a.right,bottom:a.bottom}};
     const a=rect(art),s=rect(stack),v=rect(document.querySelector('#stageViewport'));
-    const content=[...stack.querySelectorAll('[data-content-slot]')].filter(n=>!n.hidden&&n.dataset.empty!=='true').map(n=>({role:n.dataset.contentSlot,rect:rect(n),scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,font:getComputedStyle(n).fontFamily,text:n.innerText.slice(0,32)}));
+    const content=[...stack.querySelectorAll('[data-content-slot]')].filter(n=>!n.hidden&&n.dataset.empty!=='true').map(n=>({role:n.dataset.contentSlot,rect:rect(n),scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,overflowY:getComputedStyle(n).overflowY,font:getComputedStyle(n).fontFamily,text:n.innerText.slice(0,32)}));
     const m=document.querySelector('.masked-photo'),ms=getComputedStyle(m),mr=rect(m);
     return{board:a,stage:v,stack:s,content,m:{rect:mr,display:ms.display,mask:ms.maskImage},overflow:art.dataset.overflow,profile:art.dataset.profile,layout:art.dataset.layout,treatment:art.dataset.treatment,hasMedia:art.dataset.hasMedia,viewportWidth:window.innerWidth,stackScrollHeight:stack.scrollHeight,stackClientHeight:stack.clientHeight};
   });
@@ -28,7 +28,8 @@ async function geometry(label,{expectedLayout,fullBleed=false,portrait=false}={}
     const n=data.content[i],r=n.rect;
     if(r.w<10||r.h<5)fail('empty text box: '+n.role);
     if(r.x<data.board.x-3||r.right>data.board.right+3||r.y<data.board.y-3||r.bottom>data.board.bottom+3)fail('text outside canvas: '+n.role);
-    if(n.scrollWidth>n.clientWidth+3||n.scrollHeight>n.clientHeight+4)fail('word or paragraph clipped: '+n.role);
+    if(n.scrollWidth>n.clientWidth+3)fail('word outside text column: '+n.role);
+    if(n.overflowY!=='visible'&&n.scrollHeight>n.clientHeight+4)fail('paragraph clipped vertically: '+n.role);
     for(let j=0;j<i;j++){
       const o=data.content[j].rect;
       if(r.x<o.right-2&&r.right>o.x+2&&r.y<o.bottom-2&&r.bottom>o.y+2)fail('content collision: '+n.role+' / '+data.content[j].role);

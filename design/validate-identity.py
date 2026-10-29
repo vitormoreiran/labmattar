@@ -40,11 +40,20 @@ for key in ("fitBoard()","openTool(entry)","startStudio()","stopStudio()","labSt
 assert 'grid-template-columns:repeat(3,minmax(0,1fr))' in studio_css
 assert "innerDimensions(stage)" in studio_js
 assert "m-publicado.svg" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+assert 'id="aplicacoes-do-m"' in composition, "M application guide missing"
+for mode in ("janela","corte","sutil"):
+ assert 'data-lab-choice="mMode" data-value="'+mode+'"' in composition,f"Missing approved M study: {mode}"
+ assert 'data-m-mode='+mode in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+assert "mountFlatImage()" in studio_js and "restoreFlatImage()" in studio_js
+assert "lm-studio-image-flat" in studio_css, "Image controls still use nested studio folders"
+assert "state.mMode" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
+assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"), "Fixed 20% must be preserved"
+
 
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
 for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
-for key in ("format","placement","relation","type","image","photo","mPosition","bodyMode"):
+for key in ("format","placement","relation","type","image","mMode","photo","mPosition","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 # The inspector has three focused work areas; every approved control remains.
@@ -54,7 +63,7 @@ for key in ("pagina","texto","imagem"):
  assert 'data-lab-more="'+key+'"' in composition,f"Advanced options not discoverable: {key}"
 for control in ("labFormat","labColor","labMargin","labGuides",
                 "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
-                "labTitleInput","labBodyInput","labImage","labPhoto","labRelation",
+                "labTitleInput","labBodyInput","labImage","labMMode","labPhoto","labRelation",
                 "labMPosition","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
  assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
@@ -64,7 +73,7 @@ assert "setFieldVisible" in lab_js and "sessionStorage" in lab_js
 assert 'id="labOverviewHelp"' in composition
 assert '<strong>01 / Tipografia</strong>' not in composition
 for field in ("labFormat","labMargin","labTitleScale","labType","labImage",
-              "labRelation","labMScale","labFocalPreview","labSymbol"):
+              "labMMode","labRelation","labMScale","labFocalPreview","labSymbol"):
  assert field+':["' in lab_js,f"Missing contextual help for {field}"
 assert "showHelp(trigger,panel)" in lab_js
 assert "trigger.dataset.labHelp=id" in lab_js and 'aria-expanded' in lab_js, "Help triggers must expose contextual targets and accessible state"

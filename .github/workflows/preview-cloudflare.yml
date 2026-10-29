@@ -9,7 +9,10 @@ on:
       - 'app/**'
       - 'public/**'
       - 'design/**'
+      - 'vite.matrix.config.ts'
       - 'scripts/smoke-symbols-browser.mjs'
+      - 'scripts/smoke-matrix-browser.mjs'
+      - 'scripts/wait-symbols-preview.mjs'
       - 'package.json'
       - 'package-lock.json'
 
@@ -70,24 +73,29 @@ jobs:
           node --check public/manual-symbols.js
           node --check scripts/smoke-symbols-browser.mjs
           npm run build
+          npx vite build --config vite.matrix.config.ts
+          mkdir -p dist/client/editor
+          cp dist/matrix/design/matrix/index.html dist/client/editor/index.html
+          cp -R dist/matrix/matrix-assets dist/client/matrix-assets
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           npx playwright install --with-deps chromium
-      - name: Validar pagina compilada antes de publicar
+      - name: Validar manual e matriz compilados antes de publicar
         shell: bash
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
+          EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash
         run: |
           test -f dist/server/index.js
-          test -d dist/client
+          test -f dist/client/editor/index.html
           cat > dist/server/worker-entry.js <<'JS'
           import handleRequest from './index.js';
-          export default { fetch(request, env, ctx) { return handleRequest(request, env, ctx); } };
+          export default { fetch(request, env, ctx) { return handleRequest(request, ctx); } };
           JS
           cat > wrangler.preview.jsonc <<'JSON'
           {
@@ -114,7 +122,9 @@ jobs:
         env:
           MANUAL_URL: https://labmattar-identidade-previa.vitormoreiran.workers.dev/manual?verify=${{ github.sha }}
           CHECK_EDITOR: '1'
-        run: node scripts/smoke-symbols-browser.mjs
+        run: |
+          node scripts/wait-symbols-preview.mjs
+          node scripts/smoke-symbols-browser.mjs
       - name: Salvar evidencias visuais e relatorio
         if: always()
         uses: actions/upload-artifact@v4

@@ -28,6 +28,19 @@ assert 'id="construcao"' in composition and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition
 assert 'src="/composicao-lab.js"' in composition
 assert 'href="/composicao-lab-controls.css"' in composition, "Illustrated control stylesheet missing"
+assert 'href="/composicao-studio.css"' in composition, "Viewport studio stylesheet missing"
+assert 'src="/composicao-studio.js"' in composition, "Viewport studio behavior missing"
+assert 'id="labStudioToggle"' in composition, "Focused editing entry must be visible"
+studio_css=(Path("public")/"composicao-studio.css").read_text(encoding="utf-8")
+studio_js=(Path("public")/"composicao-studio.js").read_text(encoding="utf-8")
+for key in ("lm-studio-tools","lm-studio-detail","lm-studio-open","data-format"):
+ assert key in studio_css or key in studio_js,f"Studio integration missing: {key}"
+for key in ("fitBoard()","openTool(entry)","startStudio()","stopStudio()","labStudioToggle"):
+ assert key in studio_js,f"Studio control not connected: {key}"
+assert 'grid-template-columns:repeat(3,minmax(0,1fr))' in studio_css
+assert "innerDimensions(stage)" in studio_js
+assert "m-publicado.svg" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
 for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-position","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"

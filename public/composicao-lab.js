@@ -418,7 +418,7 @@
     const adjusted=real<requested-.6||bodyReduced||emergency;
     const info=by("labTitleFitInfo");
     if(info){
-      info.dataset.adjusted=String(adjusted);
+      info.dataset.adjusted=String(adjusted||!ok||lowLegibility);
       info.textContent=!ok?
         "Revisar o conteúdo: a área útil está no limite.":
         lowLegibility?
@@ -638,6 +638,217 @@
     number.addEventListener("keydown",e=>{
       if(e.key==="Enter"){number.blur();}
     });
+  }
+  /*
+   * Contextual help: permanent explanations and demonstration diagrams live
+   * behind small, keyboard-accessible ? triggers. No state or identity rule
+   * is changed by reading help; a single help panel is open at a time.
+   */
+  const helpContent={
+    labFormat:["Formato da página",
+      "Altera as proporções da superfície; texto, imagem e M se reorganizam na prévia.",
+      "O formato não altera o desenho vetorial do M. Observe também a versão vertical."],
+    labMargin:["Margem de leitura",
+      "Define a área interna protegida nos quatro lados. O desenho ao lado acompanha o percentual.",
+      "Entre 4% e 16%. Se necessário, o título diminui automaticamente — nunca ultrapassa a margem."],
+    labColor:["Campo cromático",
+      "Escolhe a cor da superfície quando a composição não usa fotografia.",
+      "Papel e bege são neutros; verde e vermelho são acentos validados. Azul e marrom continuam em estudo."],
+    labGuides:["Guias de construção",
+      "Sobrepõe a área útil ou a divisão em colunas para conferir os alinhamentos.",
+      "As guias não são impressas nem representam um grid obrigatório da marca."],
+    labPlacement:["Posição do título",
+      "Move o bloco de texto para esquerda, centro, parte superior ou inferior da superfície.",
+      "A posição muda; o título continua limitado pela margem e pelo espaço disponível."],
+    labType:["Tratamento tipográfico",
+      "Escolhe como Univers e Perpetua aparecem no título. Na opção alternada, a Perpetua é aplicada a uma das linhas.",
+      "São tratamentos de um único tipo de título, não categorias diferentes de página."],
+    labTitleScale:["Escala do título",
+      "Define o tamanho desejado do título e permite comparar pesos de composição.",
+      "O valor é um limite superior: se a palavra não couber, a ferramenta reduz a fonte sem cortar o texto."],
+    labTextWidth:["Largura do texto",
+      "Controla a largura máxima do bloco editorial dentro da área útil.",
+      "Uma coluna mais estreita produz outras quebras. O sistema mantém todas as palavras dentro da página."],
+    labBodyMode:["Presença do parágrafo",
+      "Escolhe se a página contém somente título ou título acompanhado de texto de leitura.",
+      "Você pode editar o parágrafo diretamente sobre a prévia, quando estiver visível."],
+    labTitleInput:["Editar título pelo painel",
+      "Use este campo para revisar o título sem digitar na própria página. Uma linha corresponde a um grupo editorial.",
+      "Enter define uma quebra; a tipografia e o ajuste automático às margens permanecem ativos."],
+    labBodyInput:["Editar texto de leitura",
+      "Edite o parágrafo no painel ou clique nele diretamente na página.",
+      "A largura de leitura e os limites da superfície continuam aplicados durante a edição."],
+    labImage:["Modo de imagem",
+      "Alterna entre campo sem foto, fotografia recortada no M e fotografia de página inteira.",
+      "A máscara utiliza o vetor oficial, sem distorção. A fotografia original permanece intacta."],
+    labPhoto:["Fotografia",
+      "Experimente diferentes registros de Cada Corpo Abre um Mundo mantendo a mesma composição.",
+      "O enquadramento pode ser ajustado sem modificar o arquivo fotográfico."],
+    labRelation:["Texto e fotografia",
+      "Define se texto e fotografia dividem campos distintos ou aparecem sobrepostos.",
+      "Onde houver texto sobre fotografia, aplica-se automaticamente preto a 20% abaixo da tipografia."],
+    labMPosition:["Posição do M",
+      "Desloca o recorte para esquerda, centro ou direita.",
+      "A posição muda, mas a proporção e o desenho original do M permanecem intactos."],
+    labMScale:["Escala do M",
+      "Amplia ou reduz o campo fotográfico recortado no M.",
+      "É uma mudança proporcional: a máscara mantém sua geometria e o véu preto de 20% quando há texto sobre ela."],
+    labFocalPreview:["Foco da fotografia",
+      "Clique ou arraste na imagem para escolher o centro de enquadramento. Use as setas para movimentos de 5%.",
+      "O foco age na fotografia dentro da superfície ou da máscara, nunca na geometria do M."],
+    labFocusX:["Foco horizontal",
+      "Move o ponto de interesse da imagem da esquerda (0%) para a direita (100%).",
+      "Você também pode fazer esse ajuste diretamente no pequeno visor de enquadramento."],
+    labFocusY:["Foco vertical",
+      "Move o ponto de interesse da imagem do alto (0%) para baixo (100%).",
+      "O vetor do M permanece estático; apenas o enquadramento da fotografia muda."],
+    labSymbol:["Símbolo de assinatura",
+      "Acrescenta uma assinatura independente: o M mestre ou um dos nove vasos.",
+      "Essa assinatura não é a máscara fotográfica. São aplicações diferentes do sistema de identidade."]
+  };
+  let openHelp=null;
+  function dismissHelp(){
+    if(!openHelp)return;
+    openHelp.panel.hidden=true;
+    openHelp.trigger.setAttribute("aria-expanded","false");
+    openHelp=null;
+  }
+  function showHelp(trigger,panel){
+    if(openHelp?.trigger===trigger){dismissHelp();return}
+    dismissHelp();
+    panel.hidden=false;
+    trigger.setAttribute("aria-expanded","true");
+    const anchor=trigger.getBoundingClientRect();
+    const width=Math.min(325,window.innerWidth-24);
+    panel.style.width=width+"px";
+    panel.style.left=Math.max(12,Math.min(window.innerWidth-width-12,anchor.right-width))+"px";
+    panel.style.maxHeight=Math.max(100,window.innerHeight-24)+"px";
+    const height=panel.getBoundingClientRect().height;
+    let top=anchor.bottom+10;
+    if(top+height>window.innerHeight-12){
+      top=anchor.top-height-10>=12?anchor.top-height-10:
+        Math.max(12,window.innerHeight-height-12);
+    }
+    panel.style.top=top+"px";
+    openHelp={trigger,panel};
+  }
+  function helpNode(tag,className,text){
+    const el=document.createElement(tag);
+    el.className=className;
+    if(text!==undefined)el.textContent=text;
+    return el;
+  }
+  function addHelp({host,buttonHost,id,subject,effect,rule,overview=false}){
+    const trigger=document.createElement("button");
+    trigger.type="button";
+    trigger.className="lm-help-trigger"+(overview?" lm-help-trigger-overview":"");
+    trigger.dataset.labHelp=id;
+    trigger.setAttribute("aria-label","Ajuda: "+subject);
+    trigger.setAttribute("aria-expanded","false");
+    trigger.setAttribute("aria-controls","labHelp-"+id);
+    trigger.textContent="?";
+    buttonHost.append(trigger);
+    const panel=helpNode("section","lm-help-popover");
+    panel.id="labHelp-"+id;
+    panel.hidden=true;
+    panel.setAttribute("role","region");
+    panel.setAttribute("aria-label","Ajuda: "+subject);
+    panel.append(helpNode("h4","lm-help-popover-title",subject));
+    if(effect)panel.append(helpNode("p","lm-help-popover-effect",effect));
+    if(rule){
+      const note=helpNode("p","lm-help-popover-rule");
+      note.append(helpNode("strong","", "Regra. "),document.createTextNode(rule));
+      panel.append(note);
+    }
+    host.append(panel);
+    trigger.addEventListener("click",e=>{
+      e.stopPropagation();
+      showHelp(trigger,panel);
+    });
+    return panel;
+  }
+  // Each command retains the same input and editing behavior. Only the
+  // nonessential explanations and miniature diagrams move into its help.
+  for(const [id,[subject,effect,rule]] of Object.entries(helpContent)){
+    const input=by(id);
+    const field=input?.closest(".lm-lab-field,.lm-ctrl-focus-field");
+    if(!field)continue;
+    let header=field.querySelector(".lm-lab-field-title,.lm-lab-value-row,.lm-ctrl-signature-title,.lm-help-label-row");
+    let buttonHost=header;
+    if(header?.classList.contains("lm-lab-value-row")){
+      const label=header.querySelector("label");
+      buttonHost=document.createElement("span");
+      buttonHost.className="lm-help-label-inline";
+      if(label){header.insertBefore(buttonHost,label);buttonHost.append(label)}
+    }else if(header?.classList.contains("lm-ctrl-signature-title")){
+      const label=header.querySelector("label");
+      buttonHost=document.createElement("span");
+      buttonHost.className="lm-help-label-inline";
+      if(label){header.insertBefore(buttonHost,label);buttonHost.append(label)}
+    }else if(!header){
+      const label=field.querySelector(":scope > label");
+      buttonHost=document.createElement("div");
+      buttonHost.className="lm-help-label-inline";
+      field.insertBefore(buttonHost,field.firstChild);
+      if(label)buttonHost.append(label);
+      else buttonHost.append(helpNode("span","lm-help-field-name",subject));
+    }
+    const panel=addHelp({host:field,buttonHost,id,subject,effect,rule});
+    // Keep the authored explanations in the manual, but show them only if
+    // requested. The functional mini-diagram remains live in the popup.
+    for(const child of [...field.children]){
+      if(child===panel||child===buttonHost)continue;
+      if(child.classList.contains("lm-ctrl-helper")||
+         (child.tagName==="SMALL"&&!child.classList.contains("lm-lab-fit-info"))||
+         child.classList.contains("lm-control-effect")){
+        panel.append(child);
+      }
+    }
+  }
+  // The three illustrated examples are alternatives, not numbered steps.
+  // The original Construct / Compare / Validate guidance lives here.
+  const overviewTrigger=by("labOverviewHelp");
+  if(overviewTrigger){
+    const wrapper=overviewTrigger.parentElement;
+    const panel=helpNode("section","lm-help-popover lm-help-popover-overview");
+    panel.id="labHelp-overview";
+    panel.hidden=true;
+    panel.setAttribute("role","region");
+    panel.setAttribute("aria-label","Como funciona o laboratório");
+    panel.append(helpNode("h4","lm-help-popover-title","Como usar este laboratório"));
+    panel.append(helpNode("p","lm-help-popover-effect",
+      "Escolha um exemplo, ajuste Página, Texto e Imagem / M e compare a prova ao lado. Os exemplos não são etapas obrigatórias."));
+    const guide=document.querySelector(".lm-lab-legend");
+    const limits=document.querySelector(".lm-lab-lead");
+    if(guide)panel.append(guide);
+    if(limits)panel.append(limits);
+    wrapper.append(panel);
+    overviewTrigger.addEventListener("click",e=>{
+      e.stopPropagation();
+      showHelp(overviewTrigger,panel);
+    });
+  }
+  document.addEventListener("pointerdown",e=>{
+    if(openHelp&&!openHelp.trigger.contains(e.target)&&!openHelp.panel.contains(e.target))dismissHelp();
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&openHelp){
+      e.preventDefault();
+      const trigger=openHelp.trigger;
+      dismissHelp();
+      trigger.focus();
+    }
+  });
+  window.addEventListener("scroll",dismissHelp,{passive:true});
+  window.addEventListener("resize",dismissHelp,{passive:true});
+  for(const tab of editorTabs){
+    tab.addEventListener("click",dismissHelp);
+    tab.addEventListener("keydown",e=>{
+      if(["ArrowRight","ArrowLeft","Home","End"].includes(e.key))dismissHelp();
+    });
+  }
+  for(const more of document.querySelectorAll("[data-lab-more]")){
+    more.addEventListener("toggle",dismissHelp);
   }
   // Sliders show both endpoints and the current value without adding another
   // state system. The endpoints are ordinary labels, not draggable controls.

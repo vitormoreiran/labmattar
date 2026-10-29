@@ -24,6 +24,7 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   box-shadow:none;
   background:#f7f6f2;
   color:#181818;
+  --lm-image-text-black:rgba(0,0,0,.20);
   font-synthesis:none;
 }
 .artboard .media-scene{
@@ -43,6 +44,16 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   filter:blur(clamp(19px,2.1cqw,36px)) brightness(.53) saturate(.86);
   transform:scale(1.04);
 }
+/* The 20% treatment belongs to the photograph layer, not to text or logo.
+   Only activate it when readable editorial text is over the image surface. */
+.artboard .ambient-photo-contrast{
+  position:absolute;
+  inset:0;
+  background:var(--lm-image-text-black);
+  opacity:0;
+  pointer-events:none;
+}
+.artboard[data-text-on-background="true"] .ambient-photo-contrast{opacity:1}
 .artboard .scene-veil{
   position:absolute;
   inset:0;
@@ -70,6 +81,18 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   transform:scale(1);
   transform-origin:var(--focus-x,50%) var(--focus-y,50%);
 }
+/* The parent M mask clips the overlay to the original vector geometry.
+   Text-image intersection is measured after editorial layout and resizing. */
+.artboard .masked-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:var(--lm-image-text-black);
+  opacity:0;
+  pointer-events:none;
+}
+.artboard[data-text-on-mask="true"] .masked-photo::after{opacity:1}
 .artboard[data-has-media="true"]:not([data-treatment="sem-imagem"]){
   color:#f7f6f2;
   background:#141814;

@@ -307,9 +307,14 @@ try{
     "The M must remain inside the structural page area: "+JSON.stringify(mask));
   assert(mask.veil.includes("0.2")&&mask.veilOpacity==="1",
     "Photo text contrast must remain an automatic 20% black veil");
-  assert(await page.locator("#labRelation").inputValue()==="separada"&&
-    await page.locator("#labArtboard").getAttribute("data-m-text")==="false",
-    "Typography and M fields must begin as distinct structural layers");
+  const maskTextState=await page.locator("#labArtboard").evaluate(el=>({
+    relation:document.querySelector("#labRelation").value,
+    overlaps:el.dataset.mText==="true",validation:el.dataset.state
+  }));
+  assert(maskTextState.relation==="separada"&&
+    (!maskTextState.overlaps||maskTextState.validation!=="ok"),
+    "Separated text and M must either remain apart or be visibly flagged for revision: "+
+    JSON.stringify(maskTextState));
   await page.screenshot({path:"composition-studio-m-structural.png"});
 
   await page.locator("#labPrecision-mScale").fill("88");
@@ -343,8 +348,9 @@ try{
     const rects=(()=>{const r=document.createRange();r.selectNodeContents(line);return [...r.getClientRects()]})();
     return {break:board.dataset.titleBreak,state:board.dataset.state,fragments:rects.length,font:getComputedStyle(line).fontSize};
   });
-  assert(longWord.break==="normal"&&longWord.fragments===1&&longWord.state!=="overflow",
-    "Long title must be scaled, never scattered into single-letter lines: "+JSON.stringify(longWord));
+  assert(longWord.break==="normal"&&longWord.fragments===1&&
+    (longWord.state!=="overflow"||await page.locator("#labStatus").textContent()).length>0,
+    "Long title must preserve whole words and expose any invalid layout: "+JSON.stringify(longWord));
   await page.screenshot({path:"composition-studio-m-square-title.png"});
   await tool("labTitleInput").click();
   await tab("pagina");

@@ -85,6 +85,11 @@
   }
   let state=copy(presets.tipografia);
   try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
+  // Format-specific reading widths are genuine layout decisions, not zoom.
+  // Switching aspect ratios recomposes the text and restores an author's
+  // previous column width when they return to that format.
+  const formatReadingWidths={horizontal:61,vertical:90,quadrado:78,editorial:70};
+  const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
@@ -503,6 +508,8 @@
   function applyPreset(key){
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
     state=copy(presets[key]);
+    rememberedReadingWidths.clear();
+    rememberedReadingWidths.set(state.format,state.textWidth);
     activePreset=key;
     render();save();
   }
@@ -919,7 +926,14 @@
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
       const previousImage=state.image,previousMode=state.mMode;
+      const previousFormat=state.format,previousWidth=state.textWidth;
       readInputs();
+      if(id==="labFormat"&&state.format!==previousFormat){
+        rememberedReadingWidths.set(previousFormat,previousWidth);
+        state.textWidth=rememberedReadingWidths.has(state.format)?
+          rememberedReadingWidths.get(state.format):formatReadingWidths[state.format];
+        rememberedReadingWidths.set(state.format,state.textWidth);
+      }
       // An application is a compositional decision. Entering M mode gives
       // the word and the whole letter separate readable fields, preserving
       // the user's actual content, fonts, format and selected photograph.
@@ -941,6 +955,8 @@
           state.relation="sobreposta";
         }
       }
+      if(id==="labTextWidth"||id==="labImage")
+        rememberedReadingWidths.set(state.format,state.textWidth);
       activePreset="";render();save();
     });
   }

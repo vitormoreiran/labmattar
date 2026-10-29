@@ -55,7 +55,7 @@ assert.doesNotMatch(interfaceCss,/\.artboard\b/,"UI stylesheet must not override
 for(const id of ["togglePagesButton","toggleInspectorButton","fileActions","mediaPreviewImage","inspectorPageName"]){
   assert.ok(html.includes('id="'+id+'"'),"Missing editor UI control: "+id);
 }
-assert.match(js,/dragstart/);
+assert.match(sequencesJs,/dragstart/);
 assert.match(js,/panelStateKey/);
 assert.match(html,/class="ui-icon-sprite"/);
 for(const icon of ["undo","redo","panel-left","panel-right","smartphone","monitor","eye","pencil","folder","chevron-down","files","images","plus","arrow-up","arrow-down","file-text","layers","image","grip","copy","trash"]){

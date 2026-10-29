@@ -1,0 +1,18 @@
+/* LABMATTAR published media system — extracted from
+ * public/assets/index-DaKY3Ax1.css (chapter 2/4) and
+ * public/assets/simposio-final-identity.css
+ * on acervo-publicado-2026-10-28.
+ * Only scoped to .lm-media, never the existing manual/site.
+ */
+.lm-media{position:relative;isolation:isolate;overflow:hidden;width:100%;height:100%;min-height:380px;background:#121713;color:#fff;--lm-m:url("./m-publicado.svg");--lm-focus-x:50%;--lm-focus-y:50%;--lm-blur:24px;--lm-dim:.6;--lm-m-width:75%;--lm-m-height:75%;--lm-m-x:50%;--lm-m-y:50%}
+.lm-media,.lm-media *{box-sizing:border-box}
+.lm-media__ambient{position:absolute;inset:-7%;width:114%;height:114%;object-fit:cover;object-position:var(--lm-focus-x) var(--lm-focus-y);filter:blur(var(--lm-blur)) saturate(.82) brightness(var(--lm-dim));transform:scale(1.06);pointer-events:none}
+.lm-media__veil{position:absolute;inset:0;background:linear-gradient(90deg,#07090632,transparent 58%,#07090650);pointer-events:none}
+.lm-media__sharp{position:absolute;left:var(--lm-m-x);top:var(--lm-m-y);width:var(--lm-m-width);height:var(--lm-m-height);transform:translate(-50%,-50%);aspect-ratio:990.08/743.18;overflow:hidden;-webkit-mask:var(--lm-m) center / contain no-repeat;mask:var(--lm-m) center / contain no-repeat}
+.lm-media__sharp img{width:100%;height:100%;display:block;object-fit:cover;object-position:var(--lm-focus-x) var(--lm-focus-y)}
+.lm-media__content{position:absolute;inset:0;pointer-events:none;z-index:2}
+.lm-media__content>*{position:absolute;pointer-events:auto;margin:0}
+.lm-media--cover .lm-media__sharp{width:100%;height:100%;aspect-ratio:auto;-webkit-mask-size:100% 100%;mask-size:100% 100%}
+.lm-media--central .lm-media__sharp{width:min(85%,1120px);height:85%}
+.lm-media--editorial .lm-media__sharp{width:min(62%,720px);height:72%;left:33%}
+@media(max-width:760px){.lm-media--central .lm-media__sharp{width:120%;height:66%}.lm-media--editorial .lm-media__sharp{width:90%;height:56%;top:42%;left:50%}}

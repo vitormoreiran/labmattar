@@ -7,7 +7,7 @@
 (()=>{
 "use strict";
 const $=id=>document.getElementById(id);
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;":"&#39;"}[c]));
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const defaults=[
  {id:"intro",name:"Introdução",backgroundAssetId:"64"},
  {id:"sobre",name:"Sobre",backgroundAssetId:"179"},

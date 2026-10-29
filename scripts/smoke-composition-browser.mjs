@@ -71,6 +71,65 @@ try{
   assert(original.photoText==="false"&&original.mText==="false","No-image mode should not use a darkening veil");
   assert(await page.locator("#construcao").count()===1,"Applied study removed");
   assert(original.state==="ok","Original typographic composition overflows its page");
+  // Clear editing surface: explanations, examples and editorial rules are
+  // reachable through help instead of occupying permanent canvas space.
+  assert(await page.locator(".lm-help-trigger").count()>=20,"Tool-specific question buttons are missing");
+  assert(await page.locator(".lm-help-popover").count()>=20,"Contextual explanations are missing");
+  assert(await page.locator(".lm-help-popover:visible").count()===0,"Help must be closed by default");
+  assert(await page.locator(".lm-lab-inspector .lm-lab-field > .lm-ctrl-helper").count()===0,
+    "Instruction text still occupies a permanent inspector row");
+  assert(await page.locator(".lm-lab-inspector .lm-lab-field > .lm-control-effect").count()===0,
+    "Functional mini-diagrams must be moved behind help");
+  assert(await page.locator(".lm-lab-fit-info").isHidden(),
+    "An unadjusted title should not have an intrusive success message");
+  const presetsText=await page.locator(".lm-lab-presets").innerText();
+  assert(!presetsText.includes("01 /")&&!presetsText.includes("02 /")&&!presetsText.includes("03 /"),
+    "Alternatives must not be represented as consecutive numbered steps");
+  await page.locator("#labOverviewHelp").click();
+  assert(await page.locator("#labOverviewHelp").getAttribute("aria-expanded")==="true",
+    "Overview question control is inert");
+  assert(await page.locator("#labHelp-overview").isVisible()&&
+    await page.locator("#labHelp-overview .lm-lab-legend>div").count()===3,
+    "Original Construct / Compare / Validate guidance must stay reachable");
+  await page.screenshot({path:"composition-lab-help-overview.png",fullPage:false});
+  await page.keyboard.press("Escape");
+  assert(await page.locator("#labHelp-overview").isHidden()&&
+    await page.locator("#labOverviewHelp").getAttribute("aria-expanded")==="false",
+    "Escape should close the help and restore its inactive state");
+  await page.locator('[data-lab-help="labMargin"]').click();
+  assert(await page.locator("#labHelp-labMargin").isVisible()&&
+    (await page.locator("#labHelp-labMargin").innerText()).includes("quatro lados"),
+    "Margin question must explain its actual effect");
+  assert(await page.locator("#labHelp-labMargin [data-control-effect='margin']").count()===1,
+    "Live margin diagram must be inside contextual help");
+  await range("labMargin",10);
+  assert(await page.locator("#labHelp-labMargin [data-control-effect='margin']").evaluate(e=>
+    e.style.getPropertyValue("--lm-mini-margin"))==="10%",
+    "Diagram must remain live inside its help");
+  await page.locator('[data-lab-help="labFormat"]').click();
+  assert(await page.locator("#labHelp-labMargin").isHidden()&&
+    await page.locator("#labHelp-labFormat").isVisible(),
+    "Opening a second help must close the previous one");
+  await page.locator("#labFormatLabel").click();
+  assert(await page.locator("#labHelp-labFormat").isHidden(),
+    "Clicking away must dismiss help without altering the page");
+  await tab("texto");
+  await page.locator('[data-lab-help="labTitleScale"]').click();
+  assert((await page.locator("#labHelp-labTitleScale").innerText()).includes("nunca ultrapassa"),
+    "Title scale help must explain the margin invariant");
+  assert(await page.locator("#labHelp-labTitleScale [data-control-effect='title']").count()===1,
+    "Title scale diagram must be available only on demand");
+  await page.screenshot({path:"composition-lab-help-title.png",fullPage:false});
+  await tab("imagem");
+  assert(await page.locator("#labHelp-labTitleScale").isHidden(),
+    "Switching tabs must dismiss the prior tool's help");
+  await page.locator('[data-lab-choice="image"][data-value="recorte"]').click();
+  await page.locator('[data-lab-help="labRelation"]').click();
+  assert((await page.locator("#labHelp-labRelation").innerText()).includes("20%"),
+    "Photographic text-overlap help must explain the fixed contrast rule");
+  await page.keyboard.press("Escape");
+  await tab("pagina");
+  await range("labMargin",7);
   assert(await page.locator("[data-lab-tab]").count()===3,"Inspector must have three functional work areas");
   assert(await page.locator("[data-lab-panel]").count()===3,"Grouped inspector panels are missing");
   assert(await page.locator('[data-lab-tab="pagina"]').getAttribute("aria-selected")==="true","Page tab should open by default");

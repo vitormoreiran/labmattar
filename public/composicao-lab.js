@@ -133,7 +133,7 @@
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
-    for(const key of ["mPosition","mScale","mMode"])by(fields[key]).disabled=!mask;
+    for(const key of ["mPosition","mX","mY","mScale","mMode"])by(fields[key]).disabled=!mask;
     by("labColor").disabled=activeImage;
     by("labRelation").disabled=!activeImage;
     // Controls follow the page's actual state. An absent photograph does not
@@ -141,7 +141,7 @@
     setFieldVisible("labColor",!activeImage);
     for(const id of ["labPhoto","labRelation","labFocalPreview","labFocusX","labFocusY"])
       setFieldVisible(id,activeImage);
-    for(const id of ["labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
+    for(const id of ["labMMode","labMPosition","labMX","labMY","labMScale"])setFieldVisible(id,mask);
     by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
     by("labTabMeta-texto").textContent=
       (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";

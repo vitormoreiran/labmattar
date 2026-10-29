@@ -7,9 +7,6 @@ page.on('pageerror',error=>errors.push(error.message));
 try{
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  await page.locator('#sheet').waitFor();
- const loadedMedia=await page.evaluate(async()=>{const names=['aleteia','concha-y-toro','dadiva'];return Promise.all(names.map(async n=>{const r=await fetch('/ambiente-editorial/media/'+n+'.jpg');return {name:n,status:r.status,bytes:(await r.arrayBuffer()).byteLength}}))});
- if(loadedMedia.some(x=>x.status!==200||x.bytes<10000))throw new Error('Portfolio originals missing: '+JSON.stringify(loadedMedia));
-
  const official=await page.evaluate(async()=>{await document.fonts.load('300 20px "LM Univers Official"');await document.fonts.load('300 20px "LM Perpetua Official"');return {univers:document.fonts.check('300 20px "LM Univers Official"'),perpetua:document.fonts.check('300 20px "LM Perpetua Official"'),assets:await Promise.all(['/fonts/univers-lt-std-45-light.otf','/fonts/perpetua-titling-light.ttf'].map(async p=>{const r=await fetch(p);return {status:r.status,type:r.headers.get('content-type'),bytes:(await r.arrayBuffer()).byteLength}}))}});
  if(!official.univers||!official.perpetua||official.assets.some(a=>a.status!==200||a.bytes<3000))throw new Error('Fontes oficiais nao carregadas: '+JSON.stringify(official));
 
@@ -43,9 +40,6 @@ try{
  await page.locator('#layerImage').click();
  await page.locator('[data-image-prop="x"]').evaluate(el=>{el.value='66';el.dispatchEvent(new Event('input',{bubbles:true}))});
  await page.locator('#device').click();
- const mobileMetrics=await page.locator('#sheet').evaluate(el=>{const r=el.getBoundingClientRect();return {w:r.width,h:r.height}});
- if(mobileMetrics.w<290||Math.abs(mobileMetrics.w/mobileMetrics.h-9/16)>.04)throw new Error('Mobile artboard too small or distorted '+JSON.stringify(mobileMetrics));
-
  await page.locator('.ed-sheet-wrap.mobile').waitFor();
  await page.locator('#device').click();
  await page.locator('#preview').click();

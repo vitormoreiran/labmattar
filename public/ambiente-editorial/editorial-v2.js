@@ -75,6 +75,35 @@ function fitComposition(){
   $("layoutStatus").textContent=overflow?
     "REVISAR CONTEÚDO / ÁREA DE LEITURA EXCEDIDA":
     "COMPOSIÇÃO AJUSTADA / IDENTIDADE PRESERVADA";
+  applyImageTextContrast(art,visible);
+}
+
+/**
+ * Image/text contrast is part of the LABMATTAR composition contract:
+ * a separate opaque-black-at-20%-opacity veil belongs above the photograph
+ * and below the typography. It is not a filter applied to the text or SVG.
+ */
+function applyImageTextContrast(art,visibleNodes){
+  const hasPhoto=art.dataset.hasMedia==="true"&&art.dataset.treatment!=="sem-imagem";
+  const textNodes=visibleNodes.filter(n=>n.textContent.trim().length>0);
+  const textPresent=textNodes.length>0;
+  // The ambient image fills the page; any text visually sits over this layer.
+  art.dataset.textOnBackground=String(hasPhoto&&textPresent);
+  const mask=art.querySelector(".masked-photo");
+  const maskVisible=hasPhoto&&textPresent&&mask&&getComputedStyle(mask).display!=="none";
+  if(!maskVisible){art.dataset.textOnMask="false";return}
+  const photoRect=mask.getBoundingClientRect();
+  const intersects=r=>r.width>0&&r.height>0&&
+    r.left<photoRect.right&&r.right>photoRect.left&&
+    r.top<photoRect.bottom&&r.bottom>photoRect.top;
+  // Measure actual line boxes, not the whole editorial column; resize and
+  // editing re-run this check, so the M is darkened only when text crosses it.
+  const overlaps=textNodes.some(node=>{
+    const range=document.createRange();
+    range.selectNodeContents(node);
+    return Array.from(range.getClientRects()).some(intersects);
+  });
+  art.dataset.textOnMask=String(overlaps);
 }
 
 function shift(n){const i=doc.pages.indexOf(page()),t=i+n;if(t<0||t>=doc.pages.length)return;change(()=>{const [p]=doc.pages.splice(i,1);doc.pages.splice(t,0,p)})}

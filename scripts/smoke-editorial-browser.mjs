@@ -63,6 +63,38 @@ try{
   });
   if(fonts.some(x=>!x))throw Error('Official fonts are not available');
   await geometry('opening edit',{expectedLayout:'compact'});
+  if(await page.locator('.area-group').count()!==4)throw Error('Editor must start with four editorial areas');
+  if(await page.locator('.area-group[data-area-group="atos"] .page-entry').count()!==3)throw Error('Atos should group three pages in initial data');
+  if(await page.locator('.page-entry').count()!==7)throw Error('No page may be lost during migration');
+  await page.locator('#structureTab').click();
+  if(await page.locator('.profile-choice').count()!==7)throw Error('Seven structural models must be visually demonstrated');
+  if(await page.locator('#pageSectionSelect').inputValue()!=='intro')throw Error('Opening must belong to introduction');
+  await page.screenshot({path:'editorial-inspector-structure.png',fullPage:true});
+  await page.locator('#contentTab').click();
+  if(await page.locator('#textFlowOverview .reading-role').count()<3)throw Error('Reading hierarchy not shown');
+  if(await page.locator('.field-metrics').count()<3)throw Error('Text metrics not shown');
+  await page.screenshot({path:'editorial-inspector-text.png',fullPage:true});
+  await page.locator('#mediaTab').click();
+  if(await page.locator('#mediaLibrary .media-library-item').count()!==3)throw Error('Three Cada Corpo images must be in integrated library');
+  if(await page.locator('#treatmentCards .treatment-choice').count()!==5)throw Error('Five media treatments must be demonstrated');
+  await page.locator('#librarySearch').fill('Detalhe');
+  if(await page.locator('#mediaLibrary .media-library-item').count()!==1)throw Error('Media library search is not filtering');
+  await page.locator('#librarySearch').fill('');
+  await page.screenshot({path:'editorial-inspector-library.png',fullPage:true});
+  await page.locator('#structureTab').click();
+  await page.locator('.page-entry').nth(2).click();
+  if(await page.locator('#pageSectionSelect').inputValue()!=='atos')throw Error('Development must belong to Atos');
+  await page.locator('#sectionBackgroundSelect').selectOption('179');
+  await page.locator('.page-entry').nth(3).click();
+  if(!(await page.locator('#ambientPhoto').getAttribute('src')).includes('BOXDOSENTIR-179.jpg'))
+    throw Error('Background did not persist across pages in same area');
+  await page.locator('#sectionBackgroundSelect').selectOption('151');
+  await page.locator('.page-entry').first().click();
+  await page.locator('#addAreaButton').click();
+  if(await page.locator('.area-group').count()!==5)throw Error('Adding editorial area failed');
+  await page.locator('#undoButton').click();
+  if(await page.locator('.area-group').count()!==4)throw Error('Undo did not restore four areas');
+  await page.locator('.page-entry').first().click();
 
   // The UI icon language must render from symbols, not from missing-font glyphs.
   const uiCheck=await page.evaluate(()=>{
@@ -188,12 +220,12 @@ try{
   await page.locator('#fileActions summary').click();
   if(!(await page.locator('#importButton').isVisible()))throw Error('File menu is inaccessible');
   await page.locator('#fileActions summary').click();
-  const firstPage=await page.locator('.page-entry').nth(0).getAttribute('data-p');
-  const secondPage=await page.locator('.page-entry').nth(1).getAttribute('data-p');
-  await page.locator('.page-entry').nth(1).dragTo(page.locator('.page-entry').nth(0));
-  if((await page.locator('.page-entry').nth(0).getAttribute('data-p'))!==secondPage)throw Error('Drag and drop did not reorder pages');
-  await page.locator('.page-entry').nth(0).dragTo(page.locator('.page-entry').nth(1));
-  if((await page.locator('.page-entry').nth(0).getAttribute('data-p'))!==firstPage)throw Error('Drag and drop did not restore pages');
+  const firstPage=await page.locator('.page-entry').nth(2).getAttribute('data-p');
+  const secondPage=await page.locator('.page-entry').nth(3).getAttribute('data-p');
+  await page.locator('.page-entry').nth(3).dragTo(page.locator('.page-entry').nth(2));
+  if((await page.locator('.page-entry').nth(2).getAttribute('data-p'))!==secondPage)throw Error('Drag and drop did not reorder pages inside area');
+  await page.locator('.page-entry').nth(2).dragTo(page.locator('.page-entry').nth(3));
+  if((await page.locator('.page-entry').nth(2).getAttribute('data-p'))!==firstPage)throw Error('Drag and drop did not restore area order');
   await page.locator('.page-entry').first().click();
   await page.screenshot({path:'editorial-interface-panels.png',fullPage:true});
   await page.screenshot({path:'editorial-composition-edit.png',fullPage:true});
@@ -202,6 +234,30 @@ try{
   if(await page.locator('#previewLabel').textContent()!=='Editar')throw Error('Preview label was not updated');
   if(await page.locator('#previewIconUse').getAttribute('href')!=='#ui-pencil')throw Error('Preview icon disappeared while switching mode');
   await geometry('opening full bleed',{expectedLayout:'wide',fullBleed:true});
+  if(!(await page.locator('#storyViewer').isVisible()))throw Error('Continuous reading viewport is hidden');
+  if(await page.locator('#storyViewer .story-area').count()!==4)throw Error('Reading preview must contain the four areas');
+  const readingPages=await page.locator('#storyViewer .story-page').count();
+  if(readingPages!==7)throw Error('Continuous reading lost some page content: '+readingPages);
+  if(await page.locator('#storyViewer .story-area[data-story-area-id="atos"] .story-page').count()!==3)
+    throw Error('Atos must be continuous inside one background region');
+  const fixed=await page.evaluate(async()=>{
+    const view=document.querySelector('#storyViewer');
+    const area=view.querySelector('[data-story-area-id="atos"]');
+    const top=area.getBoundingClientRect().top-view.getBoundingClientRect().top+view.scrollTop;
+    view.scrollTop=top+70;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const backdrop=area.querySelector('.story-area-backdrop');
+    const text=area.querySelector('.story-page-copy');
+    const initial={back:backdrop.getBoundingClientRect().top,text:text.getBoundingClientRect().top};
+    view.scrollTop+=180;
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const after={back:backdrop.getBoundingClientRect().top,text:text.getBoundingClientRect().top};
+    return {initial,after,areaHeight:area.getBoundingClientRect().height,viewportHeight:view.clientHeight};
+  });
+  if(Math.abs(fixed.after.back-fixed.initial.back)>4 || Math.abs(fixed.after.text-fixed.initial.text+180)>6)
+    throw Error('Area background must stay fixed while content scrolls: '+JSON.stringify(fixed));
+  await page.screenshot({path:'editorial-sequence-sticky-background.png',fullPage:true});
+  await page.evaluate(()=>{document.querySelector('#storyViewer').scrollTop=0});
   await page.screenshot({path:'editorial-composition-wide.png',fullPage:true});
   for(let i=1;i<7;i++){
     await page.evaluate(i=>document.querySelectorAll('.page-entry')[i].click(),i);
@@ -220,13 +276,16 @@ try{
   await page.locator('#viewportButton').click();
   await page.locator('#previewButton').click();
   await page.locator('#structureTab').click();
-  await page.locator('#pageProfile').selectOption('development');
+  await page.locator('.profile-choice[data-profile-choice="development"]').click();
   await geometry('changed editorial profile');
   await page.locator('#mediaTab').click();
-  await page.locator('#mediaTreatment').selectOption('m-detalhe');
+  await page.locator('.treatment-choice[data-treatment-choice="m-detalhe"]').click();
   await geometry('changed media treatment');
-  await page.locator('#mediaAssetSelect').selectOption('151');
+  await page.locator('.media-library-item[data-library-id="151"]').click();
   if(!(await page.locator('#mediaPreviewImage').getAttribute('src')).includes('BOXDOSENTIR-151.jpg'))throw Error('Contextual media preview did not update');
+  await page.locator('#mediaZoom').fill('135');
+  if(await page.locator('#mediaZoomValue').textContent()!=='135%')throw Error('Media zoom is not reflected in inspector');
+  if(await page.locator('#mediaAlt').isDisabled())throw Error('Image accessibility fields should be editable');
   await page.screenshot({path:'editorial-interface-media.png',fullPage:true});
   await page.locator('#undoButton').click();
   await page.locator('#redoButton').click();

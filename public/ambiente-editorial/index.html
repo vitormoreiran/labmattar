@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="./editorial-v2.css">
   <link rel="stylesheet" href="./editorial-composition.css">
   <link rel="stylesheet" href="./editorial-interface.css">
+  <link rel="stylesheet" href="./editorial-inspector.css">
+  <link rel="stylesheet" href="./editorial-sequences.css">
+  <script defer src="./editorial-sequences.js"></script>
+  <script defer src="./editorial-inspector.js"></script>
   <script defer src="./editorial-v2.js"></script>
 </head>
 <body>
@@ -61,10 +65,11 @@
       </div>
       <section id="pagesPanel" role="tabpanel" aria-labelledby="pagesTab" class="sidebar-panel">
         <div class="page-section-head">
-          <div>
-            <strong id="pagesTotal">07 páginas</strong>
+          <div><strong id="pagesTotal">07 páginas</strong><small id="areasTotal">4 áreas</small></div>
+          <div class="page-add-actions">
+            <button type="button" id="addAreaButton" title="Criar uma nova área editorial"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg><span>Área</span></button>
+            <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página na área selecionada"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg><span>Página</span></button>
           </div>
-          <button type="button" class="add-page-action" id="addPageButton" title="Adicionar página após a selecionada"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg> <span>Página</span></button>
         </div>
         <div class="sequence-actions" aria-label="Organização de páginas">
           <span>Sequência</span>
@@ -117,6 +122,7 @@
             </div>
           </div>
         </article>
+        <div id="storyViewer" class="story-viewer" hidden aria-label="Percurso contínuo das áreas editoriais"></div>
       </div>
       <div class="stage-footline">
         <div class="pagination">
@@ -142,15 +148,58 @@
         <button type="button" data-inspector-tab="media" id="mediaTab" role="tab" aria-controls="mediaPanel" aria-selected="false"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-image"></use></svg><span>Mídia</span></button>
       </div>
       <section class="inspector-panel" id="contentPanel" role="tabpanel" aria-labelledby="contentTab">
-        <div class="panel-section-heading"><span>Blocos de texto</span></div>
-        <div id="contentFields"></div>
-        <p class="small-note">Você também pode editar o texto diretamente na página.</p>
+        <div class="inspector-section-intro">
+          <span class="inspector-overline">CONTEÚDO / 01</span>
+          <h2>Texto da página</h2>
+          <p>Organize a leitura sem alterar a tipografia da identidade.</p>
+        </div>
+        <div id="textFlowOverview" class="text-flow-overview" aria-label="Ordem editorial dos blocos"></div>
+        <div id="contentFields" class="inspector-text-fields"></div>
+        <div class="inspector-rule-note">
+          <span class="inspector-note-label">TIPOGRAFIA DO SISTEMA</span>
+          <span id="textIdentityNote">Univers Light / hierarquia automática</span>
+          <span id="textLayoutHealth" role="status"></span>
+        </div>
       </section>
       <section class="inspector-panel" id="structurePanel" role="tabpanel" aria-labelledby="structureTab" hidden>
-        <label for="pageName">NOME DA PÁGINA</label>
-        <input id="pageName" type="text">
-        <label for="pageProfile">PERFIL EDITORIAL</label>
-        <select id="pageProfile">
+        <div class="inspector-section-intro">
+          <span class="inspector-overline">ESTRUTURA / 02</span>
+          <h2>Organização editorial</h2>
+          <p>Escolha a função da página. Os modelos organizam o conteúdo; não alteram a identidade.</p>
+        </div>
+        <div class="inspector-property">
+          <label for="pageName">Nome na sequência</label>
+          <input id="pageName" type="text" autocomplete="off">
+        </div>
+        <div class="inspector-section-row">
+          <h3>Área do projeto</h3>
+          <span id="areaPageCount">1 página</span>
+        </div>
+        <div class="inspector-property">
+          <label for="pageSectionSelect">Pertence à área</label>
+          <select id="pageSectionSelect" aria-label="Área editorial da página"></select>
+        </div>
+        <div class="inspector-property">
+          <label for="sectionName">Título da área</label>
+          <input id="sectionName" type="text" autocomplete="off">
+        </div>
+        <div class="area-shared-surface">
+          <div class="area-shared-image">
+            <img id="sectionBackgroundImage" alt="Imagem de fundo compartilhada">
+          </div>
+          <div class="area-shared-details">
+            <span class="inspector-note-label">FUNDO COMPARTILHADO</span>
+            <label for="sectionBackgroundSelect">Imagem da área</label>
+            <select id="sectionBackgroundSelect"></select>
+          </div>
+        </div>
+        <p class="inspector-explanation">O fundo permanece estático enquanto o conteúdo desta área passa durante a rolagem. Fonte, peso e alinhamento seguem as regras da identidade.</p>
+        <div class="inspector-section-row">
+          <h3>Perfil da página</h3>
+          <span>7 modelos</span>
+        </div>
+        <div id="profileLibrary" class="profile-library" role="group" aria-label="Selecionar perfil editorial"></div>
+        <select id="pageProfile" class="inspector-native-fallback" aria-label="Perfil editorial">
           <option value="opening">Abertura</option>
           <option value="project">Projeto</option>
           <option value="development">Desenvolvimento</option>
@@ -159,45 +208,110 @@
           <option value="closing">Encerramento</option>
           <option value="credits">Créditos</option>
         </select>
-        <p class="control-help" id="profileDescription"></p>
-        <label for="pageStatus">STATUS EDITORIAL</label>
-        <select id="pageStatus">
+        <p class="inspector-profile-description" id="profileDescription"></p>
+        <div class="inspector-section-row">
+          <h3>Revisão</h3>
+          <span id="statusSummary">Rascunho</span>
+        </div>
+        <div id="statusCards" class="editorial-status-options" role="group" aria-label="Status editorial"></div>
+        <select id="pageStatus" class="inspector-native-fallback" aria-label="Status editorial">
           <option value="draft">Rascunho</option>
           <option value="review">Em revisão</option>
           <option value="ready">Pronta</option>
         </select>
-        <div class="section-label space-top">BLOCOS VISÍVEIS</div>
+        <div class="inspector-section-row">
+          <h3>Blocos da página</h3>
+          <span>Visibilidade</span>
+        </div>
         <div id="visibilityFields" class="visibility-fields"></div>
+        <p class="inspector-explanation">A ordem e os espaçamentos acompanham o perfil selecionado.</p>
         <div class="inspector-actions">
           <button id="duplicateButton" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-copy"></use></svg> Duplicar</button>
           <button id="deleteButton" type="button"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-trash"></use></svg> Excluir</button>
         </div>
-        <p class="small-note identity-note"><svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-check"></use></svg> Identidade aplicada automaticamente.</p>
+        <div class="inspector-rule-note">
+          <span class="inspector-note-label">IDENTIDADE</span>
+          <span>Univers, Perpetua, grid e alinhamentos aplicados automaticamente.</span>
+        </div>
       </section>
       <section class="inspector-panel" id="mediaPanel" role="tabpanel" aria-labelledby="mediaTab" hidden>
+        <div class="inspector-section-intro">
+          <span class="inspector-overline">MÍDIA / 03</span>
+          <h2>Imagem e enquadramento</h2>
+          <p>Selecione uma imagem do acervo e defina como ela participa da página.</p>
+        </div>
         <div class="media-preview" id="mediaPreview">
           <img id="mediaPreviewImage" alt="">
-          <div class="media-preview-detail"><strong id="mediaPreviewName">Imagem selecionada</strong><span>ACERVO DO PROJETO</span></div>
+          <div class="media-preview-detail">
+            <span class="inspector-note-label">EM USO NESTA PÁGINA</span>
+            <strong id="mediaPreviewName">Imagem selecionada</strong>
+          </div>
         </div>
-        <label for="mediaAssetSelect">IMAGEM DO ACERVO</label>
-        <select id="mediaAssetSelect"></select>
-        <label for="mediaTreatment">TRATAMENTO DE MÍDIA</label>
-        <select id="mediaTreatment">
+        <div class="inspector-section-row">
+          <h3>Biblioteca de imagens</h3>
+          <span id="libraryCount">3 imagens</span>
+        </div>
+        <div class="library-search">
+          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-image"></use></svg>
+          <input id="librarySearch" type="search" autocomplete="off" placeholder="Buscar no acervo" aria-label="Buscar imagens do acervo">
+        </div>
+        <div id="libraryFilters" class="library-filters" role="group" aria-label="Filtrar imagens por orientação">
+          <button type="button" data-orientation="all" aria-pressed="true">Todas</button>
+          <button type="button" data-orientation="landscape" aria-pressed="false">Horizontais</button>
+          <button type="button" data-orientation="portrait" aria-pressed="false">Verticais</button>
+          <button type="button" data-orientation="square" aria-pressed="false">Quadradas</button>
+        </div>
+        <div id="mediaLibrary" class="media-library" role="listbox" aria-label="Imagens disponíveis"></div>
+        <button id="mediaAddAsset" type="button" class="library-add-action">
+          <svg class="ui-icon" aria-hidden="true" focusable="false"><use href="#ui-plus"></use></svg>
+          Adicionar à biblioteca
+        </button>
+        <select id="mediaAssetSelect" class="inspector-native-fallback" aria-label="Imagem selecionada"></select>
+        <div class="inspector-section-row">
+          <h3>Tratamento da imagem</h3>
+          <span>5 opções</span>
+        </div>
+        <div id="treatmentCards" class="treatment-cards" role="group" aria-label="Selecionar tratamento de mídia"></div>
+        <select id="mediaTreatment" class="inspector-native-fallback" aria-label="Tratamento de mídia">
           <option value="m-central">M central</option>
           <option value="m-detalhe">M detalhe</option>
           <option value="fundo-com-blur">Fundo com blur</option>
           <option value="imagem-livre">Imagem livre</option>
           <option value="sem-imagem">Sem imagem</option>
         </select>
-        <div class="focus-label"><label for="focusX">FOCO HORIZONTAL</label><output id="focusXValue">50%</output></div>
-        <input id="focusX" type="range" min="0" max="100" step="1" value="50">
-        <div class="focus-label"><label for="focusY">FOCO VERTICAL</label><output id="focusYValue">50%</output></div>
-        <input id="focusY" type="range" min="0" max="100" step="1" value="50">
+        <div class="inspector-section-row">
+          <h3>Enquadramento</h3>
+          <button id="resetMediaCrop" type="button" class="subtle-action">Recentrar</button>
+        </div>
+        <div class="editorial-slider">
+          <div class="focus-label"><label for="focusX">Posição horizontal</label><output id="focusXValue">50%</output></div>
+          <input id="focusX" type="range" min="0" max="100" step="1" value="50">
+        </div>
+        <div class="editorial-slider">
+          <div class="focus-label"><label for="focusY">Posição vertical</label><output id="focusYValue">50%</output></div>
+          <input id="focusY" type="range" min="0" max="100" step="1" value="50">
+        </div>
+        <div class="editorial-slider">
+          <div class="focus-label"><label for="mediaZoom">Ampliação</label><output id="mediaZoomValue">100%</output></div>
+          <input id="mediaZoom" type="range" min="100" max="175" step="5" value="100">
+        </div>
         <div id="galleryControls" hidden>
-          <div class="section-label space-top">SEQUÊNCIA DA GALERIA</div>
+          <div class="inspector-section-row"><h3>Imagens da galeria</h3></div>
           <div id="galleryAssets" class="gallery-assets"></div>
         </div>
-        <p class="small-note">O enquadramento é específico desta página.</p>
+        <div class="inspector-section-row"><h3>Informações da imagem</h3></div>
+        <div class="inspector-property">
+          <label for="mediaAlt">Descrição acessível</label>
+          <textarea id="mediaAlt" rows="2" placeholder="Descreva o que a imagem apresenta"></textarea>
+        </div>
+        <div class="inspector-property">
+          <label for="mediaCredit">Crédito da imagem</label>
+          <input id="mediaCredit" type="text" placeholder="Autoria / fonte">
+        </div>
+        <div class="inspector-rule-note">
+          <span class="inspector-note-label">ORIGEM E EDIÇÃO</span>
+          <span>O arquivo original permanece intacto. O foco e a ampliação são específicos desta página.</span>
+        </div>
       </section>
     </aside>
   </div>

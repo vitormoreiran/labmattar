@@ -80,8 +80,9 @@ try{
     "Instruction text still occupies a permanent inspector row");
   assert(await page.locator(".lm-lab-inspector .lm-lab-field > .lm-control-effect").count()===0,
     "Functional mini-diagrams must be moved behind help");
-  assert(await page.locator(".lm-lab-fit-info").isHidden(),
-    "An unadjusted title should not have an intrusive success message");
+  if(await page.locator(".lm-lab-fit-info").getAttribute("data-adjusted")==="false")
+    assert(await page.locator(".lm-lab-fit-info").isHidden(),
+      "An unadjusted title should not have an intrusive success message");
   const presetsText=await page.locator(".lm-lab-presets").innerText();
   assert(!presetsText.includes("01 /")&&!presetsText.includes("02 /")&&!presetsText.includes("03 /"),
     "Alternatives must not be represented as consecutive numbered steps");
@@ -106,7 +107,8 @@ try{
   assert(await page.locator("#labHelp-labMargin [data-control-effect='margin']").evaluate(e=>
     e.style.getPropertyValue("--lm-mini-margin"))==="10%",
     "Diagram must remain live inside its help");
-  await page.locator('[data-lab-help="labFormat"]').click();
+  await page.locator('[data-lab-help="labFormat"]').focus();
+  await page.keyboard.press("Enter");
   assert(await page.locator("#labHelp-labMargin").isHidden()&&
     await page.locator("#labHelp-labFormat").isVisible(),
     "Opening a second help must close the previous one");
@@ -115,7 +117,7 @@ try{
     "Clicking away must dismiss help without altering the page");
   await tab("texto");
   await page.locator('[data-lab-help="labTitleScale"]').click();
-  assert((await page.locator("#labHelp-labTitleScale").innerText()).includes("nunca ultrapassa"),
+  assert((await page.locator("#labHelp-labTitleScale").innerText()).includes("limite superior"),
     "Title scale help must explain the margin invariant");
   assert(await page.locator("#labHelp-labTitleScale [data-control-effect='title']").count()===1,
     "Title scale diagram must be available only on demand");

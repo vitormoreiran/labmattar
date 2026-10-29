@@ -1166,3 +1166,33 @@ body.lm-studio-open .lm-studio-image-block--texto .lm-ctrl-choice{
     min-height:60px;
   }
 }
+
+
+/* On phones, a selected property is an actual inserted row, never a grid
+   tile floating alongside unrelated options. The denser rhythm preserves
+   all 7 typography tools and their expanded controls within the viewport. */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=pagina] .lm-studio-tools,
+  body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=texto] .lm-studio-tools{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+  body.lm-studio-open .lm-studio-tool,
+  body.lm-studio-open .lm-inspector-panel:has(.lm-studio-detail:not([hidden])) .lm-studio-tool{
+    min-height:30px;
+    height:30px;
+    padding:4px 2px;
+  }
+  body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=pagina] .lm-studio-detail,
+  body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=texto] .lm-studio-detail{
+    margin:0;
+    padding:5px 0 8px;
+  }
+  body.lm-studio-open .lm-studio-detail-body .lm-ctrl-choice{
+    min-height:58px;
+  }
+  body.lm-studio-open .lm-inspector-panel-heading{
+    margin-bottom:5px;
+  }
+}

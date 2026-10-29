@@ -344,6 +344,19 @@ try{
   await page.screenshot({path:"composition-studio-mobile-expanded-below.png"});
   await clickCard("format","vertical");
   await proveBoard("Mobile portrait");
+  const portraitTitle=await page.evaluate(()=>{
+    const b=document.querySelector("#labArtboard");
+    const title=document.querySelector("#labRenderedTitle");
+    const range=document.createRange();range.selectNodeContents(title);
+    return {text:title.textContent.trim(),break:b.dataset.titleBreak,
+      fragments:range.getClientRects().length,
+      width:title.getBoundingClientRect().width,
+      font:parseFloat(getComputedStyle(title).fontSize)};
+  });
+  assert(portraitTitle.text==="GASTROPERFORMANCE"&&portraitTitle.break==="normal"&&
+    portraitTitle.fragments===1&&portraitTitle.font>=12,
+    "Portrait M composition must keep long words intact on a usable full-width title axis: "+
+    JSON.stringify(portraitTitle));
   await page.screenshot({path:"composition-studio-mobile-portrait.png"});
   await tool("labFormat").click();
   await tool("labFormat").click();

@@ -963,6 +963,18 @@
   color:#57534c;
   margin:4px 0 0;
 }
+/* The heading's generic editorial paragraph rule is deliberately larger;
+   help content must have its own smaller reading scale. */
+.lm-lab-heading .lm-help-popover .lm-help-popover-effect{
+  font:300 12px/1.5 UniversMattar,Arial,sans-serif;
+  max-width:none;
+  margin:0 0 12px;
+}
+.lm-lab-heading .lm-help-popover .lm-lab-lead{
+  font:300 11px/1.5 UniversMattar,Arial,sans-serif;
+  max-width:none;
+  margin:12px 0 0;
+}
 .lm-help-popover-overview .lm-lab-lead{
   display:block!important;
   font:300 11px/1.52 UniversMattar,Arial,sans-serif;

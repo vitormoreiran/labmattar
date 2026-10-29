@@ -26,7 +26,10 @@
 .lm-case-ambient{position:absolute;inset:-7%;width:114%;height:114%;object-fit:cover;object-position:50% 50%;filter:blur(23px) saturate(.82) brightness(.52);transform:scale(1.06);z-index:0}
 .lm-case-veil{position:absolute;inset:0;background:linear-gradient(90deg,#080a081f,#080a0812 55%,#080a085a);z-index:1}
 .lm-case-symbol{position:absolute;inset:0;display:grid;place-items:center;z-index:2;pointer-events:none}
-.lm-case-symbol img{width:min(100%,133.2cqh);height:auto;aspect-ratio:990.08 / 743.18;object-fit:cover;object-position:center;-webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat}
+.lm-case-symbol-frame{position:relative;width:min(100%,133.2cqh);aspect-ratio:990.08/743.18;min-width:0;overflow:hidden;-webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat}
+.lm-case-symbol-frame img{width:100%;height:100%;object-fit:cover;object-position:center}
+.lm-case-symbol-frame::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none}
+.lm-case-frame[data-step="completa"][data-contrast="on"] .lm-case-symbol-frame::after{opacity:1}
 .lm-case-content{position:absolute;inset:var(--lm-safe);z-index:3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;align-items:start;gap:12px;pointer-events:none}
 .lm-case-kicker{font:300 clamp(9px,1.15cqw,13px)/1.35 UniversMattar,Arial,sans-serif;letter-spacing:.065em}
 .lm-case-reading{min-width:0;max-width:100%;align-self:center}
@@ -36,7 +39,7 @@
 .lm-case-reading p{font:300 clamp(11px,1.75cqw,18px)/1.45 UniversMattar,Arial,sans-serif;max-width:38ch;margin:0}
 .lm-case-footer{display:flex;justify-content:space-between;gap:14px;align-items:end;font:300 clamp(8px,1.05cqw,12px)/1.35 UniversMattar,Arial,sans-serif;letter-spacing:.035em}
 .lm-case-frame.is-mobile{--lm-safe:clamp(20px,7.2cqw,30px)}
-.lm-case-frame.is-mobile .lm-case-symbol img{width:143.9%;max-width:none}
+.lm-case-frame.is-mobile .lm-case-symbol-frame{width:143.9%;max-width:none}
 .lm-case-frame.is-mobile .lm-case-kicker{font-size:10px}
 .lm-case-frame.is-mobile .lm-case-reading{align-self:center}
 .lm-case-frame.is-mobile .lm-case-reading h3{font-size:clamp(29px,8.6cqw,48px);line-height:.94;margin-bottom:18px}
@@ -63,6 +66,13 @@
 .lm-case-validation p{font-size:15px;line-height:1.55;max-width:55ch;margin:0 0 16px}
 .lm-case-validation ul{padding-left:18px;margin:15px 0 0;font-size:14px;line-height:1.65}
 .lm-case-validation li{margin:6px 0}
+.lm-contrast-rule{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.6fr);gap:clamp(22px,4vw,70px);border-top:1px solid var(--ink);border-bottom:1px solid var(--line);padding:clamp(24px,3.4vw,48px) 0;margin:12px 0 32px}
+.lm-contrast-rule h3{font:300 clamp(36px,5vw,80px)/.94 PerpetuaMattar,Georgia,serif;letter-spacing:-.02em;margin:18px 0 0}
+.lm-contrast-rule p{margin:0 0 12px;font:300 clamp(14px,1.4vw,18px)/1.5 UniversMattar,Arial,sans-serif;max-width:64ch}
+.lm-contrast-rule .eyebrow{font-size:11px;letter-spacing:.075em}
+.lm-contrast-rule .lm-contrast-note{font-size:12px;max-width:70ch;margin-top:18px}
+.lm-case-contrast-status{margin-top:24px!important;border-top:1px solid var(--line);padding-top:14px;font-size:12px!important}
+@media(max-width:700px){.lm-contrast-rule{grid-template-columns:1fr}.lm-contrast-rule h3{margin-top:5px}}
 @media(max-width:1000px){.lm-case-layout{grid-template-columns:1fr}.lm-case-stage{min-height:0}.lm-case-aside{display:grid;grid-template-columns:1fr 2fr;gap:25px}.lm-case-aside .eyebrow{grid-row:1/-1}.lm-case-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.lm-case-intro{grid-template-columns:1fr}.lm-case-intro h2{font-size:clamp(42px,10vw,70px)}.lm-case-stage{padding:8px}.lm-case-layout{gap:18px}.lm-case-aside{display:block}.lm-case-aside .eyebrow{margin-bottom:10px}.lm-case-frame:not(.is-mobile){--lm-safe:clamp(10px,5.2cqw,28px)}.lm-case-frame:not(.is-mobile) .lm-case-reading h3{font-size:clamp(23px,6cqw,37px)}.lm-case-frame:not(.is-mobile) .lm-case-reading p{font-size:10px}.lm-case-frame:not(.is-mobile) .lm-case-footer,.lm-case-frame:not(.is-mobile) .lm-case-kicker{font-size:8px}.lm-case-facts{margin-top:45px;gap:24px}.lm-case-validation{grid-template-columns:1fr;margin-top:45px}}
 @media(max-width:440px){.lm-case-facts{grid-template-columns:1fr}.lm-case-control{gap:8px}.lm-case-control button+button{margin-left:1px}.lm-case-frame.is-mobile{width:min(100%,305px)}}
@@ -80,6 +90,12 @@
     <p>A identidade permanece a mesma. Este complemento investiga como superfície, fotografia, M e texto se organizam em conjunto. Não é uma nova família de layouts, nem substitui as regras de símbolos, tipografia ou cor.</p>
   </div>
   <div class="lm-case-trace"><span><strong>CASO 01</strong> / CADA CORPO ABRE UM MUNDO — acervo original da performance</span><span><strong>BASE DE ANÁLISE</strong> / composição fotográfica do capítulo 2, transposta do site publicado</span></div>
+  <div class="lm-contrast-rule" id="contraste">
+    <div><p class="eyebrow">REGRA DE APLICAÇÃO / CONTRASTE</p><h3>PRETO<br>20%</h3></div>
+    <div><p><strong>Imagem com sobreposição tipográfica.</strong> Quando o texto ocupa o mesmo campo visual de uma fotografia, aplicar uma camada de preto com 20% de opacidade sobre a imagem que recebe o texto.</p>
+    <p>No M, o tratamento acompanha o recorte vetorial, sem escurecer o texto nem modificar o arquivo original. Em imagem integral, acompanha o campo fotográfico. A ordem das camadas é: fotografia → preto 20% → tipografia.</p>
+    <p class="lm-contrast-note">O tratamento é obrigatório na sobreposição; não é aplicado por padrão às imagens sem texto. O valor de 20% não dispensa a verificação de contraste no enquadramento real.</p></div>
+  </div>
   <div class="lm-case-controls" aria-label="Visualização das relações da página">
     <div class="lm-case-control" role="group" aria-label="Etapa da composição">
       <span>CAMADAS</span>
@@ -92,16 +108,21 @@
       <button type="button" data-case-format="desktop" aria-pressed="true">Horizontal</button>
       <button type="button" data-case-format="mobile" aria-pressed="false">Vertical</button>
     </div>
+    <div class="lm-case-control" role="group" aria-label="Comparação do contraste na imagem com texto">
+      <span>CONTRASTE / COMPARAÇÃO</span>
+      <button type="button" data-case-contrast="off" aria-pressed="false">0%</button>
+      <button type="button" data-case-contrast="on" aria-pressed="true">Preto 20%</button>
+    </div>
     <div class="lm-case-control" role="group" aria-label="Guias de leitura">
       <button type="button" id="caseGuides" aria-pressed="false">Exibir área de leitura</button>
     </div>
   </div>
   <div class="lm-case-layout">
     <div class="lm-case-stage">
-      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-guides="false" role="img" aria-label="Estudo de composição com fotografia de Cada Corpo Abre um Mundo, máscara M e título sobrepostos">
+      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-guides="false" data-contrast="on" role="img" aria-label="Estudo de composição com fotografia de Cada Corpo Abre um Mundo, máscara M e título sobrepostos">
         <img class="lm-case-ambient" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
         <div class="lm-case-veil" aria-hidden="true"></div>
-        <div class="lm-case-symbol" aria-hidden="true"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
+        <div class="lm-case-symbol" aria-hidden="true"><div class="lm-case-symbol-frame"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div></div>
         <div class="lm-case-content">
           <div class="lm-case-kicker">LABMATTAR / GASTROPERFORMANCE</div>
           <div class="lm-case-reading">
@@ -115,12 +136,12 @@
     </div>
     <aside class="lm-case-aside" aria-live="polite">
       <p class="eyebrow">LEITURA DA COMPOSIÇÃO</p>
-      <div><span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span><h3 id="caseStepTitle">As camadas passam a funcionar juntas.</h3><p id="caseStepBody">A imagem constrói atmosfera, o M organiza um segundo enquadramento e o título constitui uma camada editorial. Nenhum deles precisa determinar a geometria dos demais.</p></div>
+      <div><span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span><h3 id="caseStepTitle">As camadas passam a funcionar juntas.</h3><p id="caseStepBody">A imagem constrói atmosfera, o M organiza um segundo enquadramento e o título constitui uma camada editorial. Nenhum deles precisa determinar a geometria dos demais.</p><p class="lm-case-contrast-status" id="caseContrastNote">TRATAMENTO ATIVO: preto 20% sobre a fotografia recortada no M, abaixo do texto.</p></div>
     </aside>
   </div>
   <div class="lm-case-facts">
     <article><b>01 / SUPERFÍCIE</b><h3>Uma área útil, não uma tela fixa</h3><p>Definir primeiro limites de leitura, alinhamento e espaços de respiro. A proporção da página pode variar sem alterar os elementos de identidade.</p></article>
-    <article><b>02 / IMAGEM E M</b><h3>Duas funções para a mesma imagem</h3><p>A fotografia ambiental ocupa a superfície. A segunda instância recebe a máscara oficial do M. O vetor mantém a proporção de 990,08 × 743,18; o enquadramento da foto pode mudar.</p></article>
+    <article><b>02 / IMAGEM E M</b><h3>Duas funções para a mesma imagem</h3><p>A fotografia ambiental ocupa a superfície. A segunda instância recebe a máscara oficial do M. O vetor mantém a proporção de 990,08 × 743,18. O preto a 20% acompanha a máscara quando o texto se sobrepõe à imagem.</p></article>
     <article><b>03 / TÍTULO</b><h3>Um papel, múltiplas composições</h3><p>O título é uma unidade editorial. Escala, quebra de linha e alternância entre Univers e Perpetua respondem ao conteúdo e à superfície; abertura, projeto e categoria não exigem títulos independentes.</p></article>
     <article><b>04 / ADAPTAÇÃO</b><h3>Recompor, não encolher tudo</h3><p>Em uma superfície estreita, rever escala, áreas de leitura e enquadramento. Manter a ordem do conteúdo e evitar distorções do M, cortes de palavras e colisões com o texto.</p></article>
   </div>
@@ -170,6 +191,13 @@
   }
   document.querySelectorAll("[data-case-step]").forEach(b=>b.addEventListener("click",()=>step(b.dataset.caseStep)));
   document.querySelectorAll("[data-case-format]").forEach(b=>b.addEventListener("click",()=>format(b.dataset.caseFormat)));
+  document.querySelectorAll("[data-case-contrast]").forEach(b=>b.addEventListener("click",()=>{
+    const value=b.dataset.caseContrast;frame.dataset.contrast=value;
+    document.querySelectorAll("[data-case-contrast]").forEach(x=>x.setAttribute("aria-pressed",String(x.dataset.caseContrast===value)));
+    document.getElementById("caseContrastNote").textContent=value==="on"?
+      "TRATAMENTO ATIVO: preto 20% sobre a fotografia recortada no M, abaixo do texto.":
+      "COMPARAÇÃO SEM VÉU: apenas para visualizar o efeito. A regra de sobreposição permanece 20% de preto.";
+  }));
   document.getElementById("caseGuides").addEventListener("click",e=>{
     const enabled=frame.dataset.guides!=="true";frame.dataset.guides=String(enabled);e.currentTarget.setAttribute("aria-pressed",String(enabled));
   });

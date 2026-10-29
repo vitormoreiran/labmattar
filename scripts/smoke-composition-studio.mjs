@@ -63,7 +63,8 @@ async function proveBoard(label){
     label+": page escapes stage vertically: "+JSON.stringify(g));
   assert(g.stage.bottom<=page.viewportSize().height+1.5,label+": stage clips the screen");
   assert(g.inspector.bottom<=page.viewportSize().height+1.5,label+": inspector clips the screen");
-  assert(g.inspector.scrollHeight<=g.inspector.height+3,label+": inspector requires vertical scrolling");
+  assert(g.inspector.scrollHeight<=g.inspector.height+3,
+    label+": inspector requires vertical scrolling "+JSON.stringify(g));
   assert(g.bodyOverflow==="hidden",label+": page background is scrollable");
   return g;
 }

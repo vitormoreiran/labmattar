@@ -210,8 +210,8 @@ try{
     "Focused mode did not open from its direct URL");
   assert(await page.locator("#labStudioToggleText").textContent()==="VOLTAR AO MANUAL",
     "Exit from focus mode is not visible");
-  assert(await page.locator("[data-studio-tool]").count()===19,
-    "All 19 page, typography and image tools must retain one canonical input");
+  assert(await page.locator("[data-studio-tool]").count()===18,
+    "All 18 page, typography and image tools must retain one canonical input");
   await page.screenshot({path:"composition-studio-desktop-initial-review.png",fullPage:false});
   const baseline=await proveBoard("Desktop horizontal 1440x900");
   const initialType=await editorialMetrics("Desktop horizontal typography");
@@ -317,11 +317,13 @@ try{
     "Photo text contrast must remain an automatic 20% black veil");
   const maskTextState=await page.locator("#labArtboard").evaluate(el=>({
     relation:document.querySelector("#labRelation").value,
-    overlaps:el.dataset.mText==="true",validation:el.dataset.state
+    marker:document.querySelector("#labMarker").value,
+    overlaps:el.dataset.mText==="true",validation:el.dataset.state,
+    mx:getComputedStyle(el).getPropertyValue("--lab-m-x").trim()
   }));
-  assert(maskTextState.relation==="lado-a-lado"&&
-    ["ok","collision","overflow"].includes(maskTextState.validation),
-    "The text/M relationship must stay selected and expose its validation state: "+
+  assert(maskTextState.relation==="central"&&maskTextState.mx==="50%"&&
+    ["ok","overflow"].includes(maskTextState.validation),
+    "The M must remain centered and expose its validation state: "+
     JSON.stringify(maskTextState));
   await page.screenshot({path:"composition-studio-m-structural.png"});
 
@@ -329,13 +331,11 @@ try{
   await page.locator("#labPrecision-mScale").fill(String(Math.min(88,formatScaleMax)));
   await page.locator("#labPrecision-mScale").press("Enter");
   const scaleBeforeMove=await page.locator("#labMScale").inputValue();
-  await page.locator('[data-lab-choice="relation"][data-value="topo"]').click();
+  await page.locator('[data-lab-choice="marker"][data-value="top"]').click();
   assert(await page.locator("#labMScale").inputValue()===scaleBeforeMove,
-    "Changing the text + M relationship must not change M scale");
-  await page.locator("#labGap").fill("7");
-  await page.locator("#labGap").dispatchEvent("input");
-  assert(await page.locator("#labMScale").inputValue()===scaleBeforeMove,
-    "Changing text + M distance must not change M scale");
+    "Changing M markers must not change M scale");
+  assert(await page.locator("#labMMarkers").getAttribute("data-marker")==="top",
+    "Upper M-tip marker must reach the canvas");
   mask=await mGeometry();
   assert(mask.m.left>=mask.board.left-2&&mask.m.right<=mask.board.right+2&&
     mask.m.top>=mask.board.top-2&&mask.m.bottom<=mask.board.bottom+2,

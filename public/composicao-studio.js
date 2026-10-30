@@ -77,11 +77,11 @@
     if(!artboard||!artboardFrame||!stage)return;
     const format=artboard.dataset.format||"horizontal";
     const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
-    artboard.style.width=logicalW+"px";
-    artboard.style.height=logicalH+"px";
-    artboard.style.maxWidth="none";
-    artboard.style.maxHeight="none";
-    artboard.style.aspectRatio="auto";
+    artboard.style.setProperty("width",logicalW+"px","important");
+    artboard.style.setProperty("height",logicalH+"px","important");
+    artboard.style.setProperty("max-width","none","important");
+    artboard.style.setProperty("max-height","none","important");
+    artboard.style.setProperty("aspect-ratio","auto","important");
 
     const compact=window.innerWidth<=1180;
     const pad=compact?16:32;
@@ -94,8 +94,8 @@
       : Math.max(120,stage.clientHeight-pad);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
 
-    artboard.style.transformOrigin="top left";
-    artboard.style.transform="scale("+scale+")";
+    artboard.style.setProperty("transform-origin","top left","important");
+    artboard.style.setProperty("transform","scale("+scale+")","important");
     artboardFrame.style.width=(logicalW*scale)+"px";
     artboardFrame.style.height=(logicalH*scale)+"px";
     artboardFrame.dataset.scale=scale.toFixed(4);

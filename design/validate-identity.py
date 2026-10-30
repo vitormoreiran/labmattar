@@ -49,7 +49,7 @@ assert 'grid-template-columns:repeat(3,minmax(0,1fr))' in studio_css
 assert "innerDimensions(stage)" in studio_js
 assert "m-publicado.svg" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 assert 'id="regras-de-composicao"' in composition, "Composition rules section missing"
-for rule in ("Régua","Margem","Eixo","Alinhamento","Espaçamento","Adaptação"):
+for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):
  assert rule in composition,f"Missing composition rule: {rule}"
 assert 'data-lab-choice="mMode"' not in composition, "Invented M usage modes must not be exposed"
 assert "mountFlatImage()" in studio_js and "restoreFlatImage()" in studio_js

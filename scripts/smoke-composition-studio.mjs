@@ -91,6 +91,13 @@ try{
     const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
     return {workspace,preview,inspector,viewport:innerHeight};
   });
+  const mobileBoard=await page.locator("#labArtboard").evaluate(el=>{
+    const r=el.getBoundingClientRect();
+    return {width:r.width,height:r.height,display:getComputedStyle(el).display};
+  });
+  assert(mobileBoard.width>120&&mobileBoard.height>70&&mobileBoard.display!=="none",
+    "Mobile artboard must remain visibly sized: "+JSON.stringify(mobileBoard));
+
   assert(mobileLayout.preview.bottom<=mobileLayout.inspector.top+2,
     "Mobile canvas and controls must not overlap");
   assert(mobileLayout.workspace.bottom<=mobileLayout.viewport+2,

@@ -103,7 +103,14 @@ try{
   assert(mobileLayout.workspace.bottom<=mobileLayout.viewport+2,
     "Mobile editor must fit inside one viewport with internal control scrolling");
 
-  for(const vp of [{width:360,height:740},{width:430,height:932}]){
+  for(const vp of [
+    {width:360,height:740},
+    {width:390,height:844},
+    {width:430,height:932},
+    {width:768,height:1024},
+    {width:834,height:1194},
+    {width:1024,height:1366}
+  ]){
     await page.setViewportSize(vp);
     await page.waitForTimeout(80);
     const responsive=await page.evaluate(()=>{

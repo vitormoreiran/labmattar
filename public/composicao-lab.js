@@ -417,7 +417,7 @@
   }
 
   function alignMToCopy(){
-    if(state.image!=="recorte")return;
+    if(state.mContent==="off")return;
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
   }
@@ -882,7 +882,7 @@
   for(const id of Object.values(fields)){
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
-      const previousImage=state.image,previousMode=state.mMode;
+      const previousMode=state.mMode;
       const previousFormat=state.format,previousWidth=state.textWidth;
       readInputs();
       if(id==="labFormat"&&state.format!==previousFormat){
@@ -898,7 +898,7 @@
       if(id==="labMMode"&&previousMode!==state.mMode){
         if(state.mMode==="janela")state.mScale=Math.min(state.mScale,50);
       }
-      if(id==="labTextWidth"||id==="labImage")
+      if(id==="labTextWidth"||id==="labBackground"||id==="labMContent")
         rememberedReadingWidths.set(state.format,state.textWidth);
       activePreset="";render();save();
     });

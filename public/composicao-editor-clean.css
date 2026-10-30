@@ -2208,3 +2208,23 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
     top:300px!important;
   }
 }
+
+/* Compact source-order correction: preview must precede controls visually. */
+@media (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace,
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])),
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format]){
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    overflow:visible!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    order:0!important;
+    flex:0 0 auto!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-inspector{
+    order:1!important;
+    flex:0 0 auto!important;
+  }
+}

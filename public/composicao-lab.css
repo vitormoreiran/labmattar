@@ -242,3 +242,21 @@
   left:var(--lab-m-x)!important;
   top:var(--lab-m-y)!important;
 }
+
+/* M remains centered. Its two central tips may work independently as page markers. */
+.lm-lab-m-markers{
+  position:absolute;inset:0;z-index:2;pointer-events:none;color:color-mix(in srgb,var(--lab-bg) 72%,#000 28%);
+}
+.lm-lab-m-marker{
+  position:absolute;left:50%;display:none;overflow:visible;fill:currentColor;
+  transform:translateX(-50%);
+}
+.lm-lab-m-marker-top{top:0;width:42%;height:22%}
+.lm-lab-m-marker-bottom{bottom:0;width:54%;height:17%}
+.lm-lab-m-markers[data-marker=top] .lm-lab-m-marker-top,
+.lm-lab-m-markers[data-marker=bottom] .lm-lab-m-marker-bottom,
+.lm-lab-m-markers[data-marker=both] .lm-lab-m-marker{display:block}
+.lm-lab-board[data-image=recorte] .lm-lab-m-photo{
+  left:50%!important;
+  top:50%!important;
+}

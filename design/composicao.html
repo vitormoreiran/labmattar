@@ -173,12 +173,10 @@
     <div><p class="eyebrow">02 / FERRAMENTA DE COMPOSIÇÃO</p><h2>COMPOR</h2></div>
     <div class="lm-lab-heading-aside"><p>M central. Escala, marcadores, texto e imagem variam.</p><button type="button" class="lm-help-trigger lm-help-trigger-overview" id="labOverviewHelp" aria-expanded="false" aria-label="Dúvidas: como funciona o laboratório" aria-controls="labHelp-overview"><span aria-hidden="true">?</span><span class="lm-help-trigger-text">Como funciona</span></button></div>
   </div>
-  <div class="lm-lab-prep">
-    <span class="lm-lab-prep-label">EXEMPLOS</span>
-    <div class="lm-lab-presets" role="group" aria-label="Pontos de partida para a composição">
-      <button type="button" data-lab-preset="tipografia" aria-pressed="true"><span class="lm-ctrl-preset-visual" data-preview="type" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>Tipografia</strong><small>Campo sem imagem</small></span></button>
-      <button type="button" data-lab-preset="mascara" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="mask" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>M + fotografia</strong><small>Recorte e texto</small></span></button>
-      <button type="button" data-lab-preset="imagem" aria-pressed="false"><span class="lm-ctrl-preset-visual" data-preview="full" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lm-ctrl-preset-text"><strong>Imagem integral</strong><small>Campo fotográfico</small></span></button>
+  <div class="lm-lab-prep lm-lab-single-system">
+    <div class="lm-lab-system-statement">
+      <span>UMA COMPOSIÇÃO</span>
+      <span>SUPERFÍCIE · FUNDO · M · TEXTO · ASSINATURA · CONSTRUÇÃO</span>
     </div>
     <div class="lm-studio-launch">
       <button type="button" id="labStudioToggle" aria-pressed="false" aria-controls="labArtboard">
@@ -189,13 +187,11 @@
   <div class="lm-lab-workspace">
     <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">
       <div class="lm-inspector-head"><span>FERRAMENTAS / COMPOSIÇÃO</span></div>
-      <div class="lm-inspector-tabs" role="tablist" aria-label="Áreas de edição">
-        <button type="button" id="labTab-pagina" data-lab-tab="pagina" role="tab" aria-controls="labPanel-pagina" aria-selected="true" tabindex="0"><span class="lm-inspector-tab-name">Página</span><span class="lm-inspector-tab-description" id="labTabMeta-pagina">Formato e margens</span></button>
-        <button type="button" id="labTab-texto" data-lab-tab="texto" role="tab" aria-controls="labPanel-texto" aria-selected="false" tabindex="-1"><span class="lm-inspector-tab-name">Texto</span><span class="lm-inspector-tab-description" id="labTabMeta-texto">Hierarquia e leitura</span></button>
-        <button type="button" id="labTab-imagem" data-lab-tab="imagem" role="tab" aria-controls="labPanel-imagem" aria-selected="false" tabindex="-1"><span class="lm-inspector-tab-name">Imagem / M</span><span class="lm-inspector-tab-description" id="labTabMeta-imagem">Fotografia e recorte</span></button>
+      <div class="lm-composition-module-index" aria-label="Partes da composição">
+        <span>SUPERFÍCIE</span><span>FUNDO</span><span>M</span><span>TEXTO</span><span>ASSINATURA</span><span>CONSTRUÇÃO</span>
       </div>
-      <section class="lm-inspector-panel" id="labPanel-pagina" data-lab-panel="pagina" role="tabpanel" aria-labelledby="labTab-pagina" tabindex="0">
-        <div class="lm-inspector-panel-heading"><span>SUPERFÍCIE E MARGENS</span></div>
+      <section class="lm-inspector-panel lm-composition-module" id="labPanel-pagina" data-lab-panel="pagina" data-module="superficie">
+        <div class="lm-inspector-panel-heading"><span>SUPERFÍCIE</span><small>Formato · margem</small></div>
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labFormatTitle" class="lm-lab-field-title">Proporção da superfície</div><select id="labFormat" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
           <option value="horizontal">Horizontal / 16:9</option><option value="vertical">Vertical / 9:16</option><option value="quadrado">Quadrado / 1:1</option><option value="editorial">Editorial / √2:1</option>
         </select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labFormatTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="horizontal" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="horizontal"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Horizontal</span><span class="lm-ctrl-meta">16:9</span></button>
@@ -212,14 +208,14 @@
 <button type="button" class="lm-ctrl-choice" data-lab-choice="color" data-value="blue" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-color-circle" style="--lm-color-dot:#1f3554" aria-hidden="true"></span></span><span class="lm-ctrl-name">Azul</span><span class="lm-ctrl-meta">Estudo</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="color" data-value="brown" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-color-circle" style="--lm-color-dot:#5b463e" aria-hidden="true"></span></span><span class="lm-ctrl-name">Marrom</span><span class="lm-ctrl-meta">Estudo</span></button></div><small class="lm-ctrl-helper">Disponível apenas nas páginas sem fotografia.</small></div></div>
         <details class="lm-inspector-more" data-lab-more="pagina">
-          <summary><span>Guias de construção</span><span class="lm-inspector-more-count">1 opção</span></summary>
+          <summary><span>CONSTRUÇÃO</span><span class="lm-inspector-more-count">Guias</span></summary>
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labGuidesTitle" class="lm-lab-field-title">Guias de construção</div><select id="labGuides" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="nenhuma">Ocultar</option><option value="margens">Área útil</option><option value="grid">Área útil + 12 colunas</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labGuidesTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="nenhuma" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="none"><i></i><i></i></span></span><span class="lm-ctrl-name">Sem guias</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="margens" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="safe"><i></i><i></i></span></span><span class="lm-ctrl-name">Margens</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="grid" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="grid"><i></i><i></i></span></span><span class="lm-ctrl-name">12 colunas</span></button></div><small class="lm-ctrl-helper">As guias servem apenas à construção.</small></div></div>
         </details>
       </section>
-      <section class="lm-inspector-panel" id="labPanel-texto" data-lab-panel="texto" role="tabpanel" aria-labelledby="labTab-texto" tabindex="0" hidden>
-        <div class="lm-inspector-panel-heading"><span>TIPOGRAFIA E COMPOSIÇÃO</span></div>
+      <section class="lm-inspector-panel lm-composition-module" id="labPanel-texto" data-lab-panel="texto" data-module="texto">
+        <div class="lm-inspector-panel-heading"><span>TEXTO</span><small>Título · corpo · largura</small></div>
         <div class="lm-lab-fields lm-inspector-primary">
         <select id="labPlacement" hidden aria-hidden="true"><option value="superior">Alto</option><option value="central" selected>Centro</option><option value="inferior">Baixo</option></select>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labTypeTitle" class="lm-lab-field-title">Tratamento do título</div><select id="labType" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="alternada">Univers + Perpetua</option><option value="univers">Univers</option><option value="perpetua">Perpetua</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labTypeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="alternada" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="mixed"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Alternado</span><span class="lm-ctrl-meta">U + P</span></button>
@@ -230,21 +226,46 @@
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labBodyModeTitle" class="lm-lab-field-title">Texto de leitura</div><select id="labBodyMode" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="oculto">Somente título</option><option value="visivel">Título + texto</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labBodyModeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="bodyMode" data-value="oculto" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-relation" data-relation="title"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Só título</span><span class="lm-ctrl-meta">Uma hierarquia</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="bodyMode" data-value="visivel" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-relation" data-relation="body"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Título + texto</span><span class="lm-ctrl-meta">Duas hierarquias</span></button></div><small class="lm-ctrl-helper">Controla a presença do texto de apoio.</small></div></div>
         <details class="lm-inspector-more" data-lab-more="texto">
-          <summary><span>Editar também pelo painel</span><span class="lm-inspector-more-count">2 opções</span></summary>
+          <summary><span>TEXTO / CONTEÚDO</span><span class="lm-inspector-more-count">Editar</span></summary>
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field"><label for="labTitleInput">Título <span class="lm-ctrl-subtitle">/ quebras por linha</span></label><textarea id="labTitleInput" rows="3" maxlength="140" spellcheck="true">PRÁTICAS
 MATERIAIS
 E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         <div class="lm-lab-field"><label for="labBodyInput">Texto de leitura</label><textarea id="labBodyInput" rows="4" maxlength="380" spellcheck="true">Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</textarea></div></div>
         </details>
       </section>
-      <section class="lm-inspector-panel" id="labPanel-imagem" data-lab-panel="imagem" role="tabpanel" aria-labelledby="labTab-imagem" tabindex="0" hidden>
-        <div class="lm-inspector-panel-heading"><span>FOTOGRAFIA E RECORTE</span></div>
+      <section class="lm-inspector-panel lm-composition-module" id="labPanel-imagem" data-lab-panel="imagem" data-module="imagem-m">
+        <div class="lm-inspector-panel-heading"><span>FUNDO + M</span><small>Funções independentes</small></div>
         <div class="lm-lab-fields lm-inspector-primary lm-image-vocabulary">
         <div class="lm-image-invariant" aria-label="Regra do M"><span>M CENTRAL</span><span>ESCALA VARIÁVEL</span><span>GEOMETRIA FIXA</span></div>
-        <div class="lm-lab-field lm-ctrl-choice-field lm-vocab-field lm-vocab-image"><div id="labImageTitle" class="lm-lab-field-title">Aplicação fotográfica</div><select id="labImage" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="nenhuma">Sem imagem</option><option value="recorte">Fotografia recortada no M</option><option value="inteira">Fotografia integral</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labImageTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="nenhuma" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="none"><i></i><i></i></span></span><span class="lm-ctrl-name">Sem foto</span><span class="lm-ctrl-meta">Campo liso</span></button>
-<button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="recorte" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="mask"><i></i><i></i></span></span><span class="lm-ctrl-name">Máscara M</span><span class="lm-ctrl-meta">Foto recortada</span></button>
-<button type="button" class="lm-ctrl-choice" data-lab-choice="image" data-value="inteira" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-image" data-mode="full"><i></i><i></i></span></span><span class="lm-ctrl-name">Integral</span><span class="lm-ctrl-meta">Imagem total</span></button></div></div>
-        
+        <div class="lm-composition-submodule" data-submodule="fundo">
+          <div class="lm-composition-submodule-head"><span>FUNDO</span><small>Cor ou fotografia</small></div>
+          <div class="lm-lab-field lm-ctrl-choice-field lm-vocab-field">
+            <div id="labBackgroundTitle" class="lm-lab-field-title">Conteúdo do fundo</div>
+            <select id="labBackground" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
+              <option value="color">Cor</option><option value="photo">Fotografia</option>
+            </select>
+            <div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labBackgroundTitle">
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="color" aria-pressed="false"><span class="lm-ctrl-name">Cor</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="lm-composition-submodule" data-submodule="m">
+          <div class="lm-composition-submodule-head"><span>M</span><small>Central · escala variável</small></div>
+          <div class="lm-image-invariant" aria-label="Regra do M"><span>CENTRAL</span><span>GEOMETRIA FIXA</span></div>
+          <div class="lm-lab-field lm-ctrl-choice-field lm-vocab-field">
+            <div id="labMContentTitle" class="lm-lab-field-title">Conteúdo do M</div>
+            <select id="labMContent" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
+              <option value="off">Sem M</option><option value="solid">Sólido</option><option value="photo">Fotografia</option>
+            </select>
+            <div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labMContentTitle">
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="off" aria-pressed="false"><span class="lm-ctrl-name">Sem M</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="solid" aria-pressed="false"><span class="lm-ctrl-name">Sólido</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
+            </div>
+          </div>
+        </div>
+        <select id="labImage" hidden aria-hidden="true"><option value="nenhuma" selected>Compatibilidade</option></select>
         <select id="labMMode" hidden aria-hidden="true"><option value="janela" selected>Aplicação estrutural do M</option></select>
         
         <div class="lm-lab-field lm-ctrl-choice-field lm-marker-field lm-vocab-field">
@@ -270,14 +291,14 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         
         <div class="lm-lab-field lm-m-scale-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"></div>
         
-        <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia do projeto</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
+        <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="179" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg"></span></span><span class="lm-ctrl-name">Imagem 02</span><span class="lm-ctrl-meta">Projeto</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="151" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg"></span></span><span class="lm-ctrl-name">Imagem 03</span><span class="lm-ctrl-meta">Detalhe</span></button></div></div>
         
         <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>
       </div>
         <details class="lm-inspector-more" data-lab-more="imagem">
-          <summary><span>Foco e assinatura</span><span class="lm-inspector-more-count">3 opções</span></summary>
+          <summary><span>ASSINATURA + AJUSTES DE IMAGEM</span><span class="lm-inspector-more-count">Detalhes</span></summary>
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusX">Foco horizontal da fotografia</label><output id="labFocusXValue" for="labFocusX">50%</output></div><input id="labFocusX" type="range" min="0" max="100" step="5" value="50"></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusY">Foco vertical da fotografia</label><output id="labFocusYValue" for="labFocusY">50%</output></div><input id="labFocusY" type="range" min="0" max="100" step="5" value="50"></div>
         <div class="lm-lab-field lm-ctrl-signature-field"><div class="lm-ctrl-signature-title"><label for="labSymbol">Símbolo de assinatura</label><span class="lm-ctrl-signature-figure" aria-hidden="true"><img id="labSymbolPreview" src="/identidade/M.svg" alt=""></span></div><select id="labSymbol"><option value="none">Sem assinatura adicional</option><option value="M.svg">M / master</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select><small class="lm-ctrl-helper">Assinatura independente da máscara M.</small></div></div>

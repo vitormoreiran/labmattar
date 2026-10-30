@@ -1616,3 +1616,183 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     font-size:9.5px!important;
   }
 }
+
+/* Safari/iPad responsive contract — authoritative layer.
+   Phone and tablet are explicit layouts; app height comes from window.innerHeight. */
+@media (max-width:1180px){
+  html:has(body.lm-studio-open),
+  body.lm-studio-open{
+    height:var(--lm-app-h,100svh)!important;
+    overflow:hidden!important;
+  }
+  body.lm-studio-open #laboratorio.lm-lab{
+    height:var(--lm-app-h,100svh)!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace{
+    height:calc(var(--lm-app-h,100svh) - 40px)!important;
+    min-height:0!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module,
+  body.lm-studio-open #laboratorio .lm-composition-module[hidden]{
+    display:none!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
+    display:block!important;
+  }
+}
+
+/* Phone */
+@media (max-width:700px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-rows:clamp(170px,28%,230px) minmax(0,1fr)!important;
+    grid-template-areas:"preview" "controls"!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    grid-area:preview!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-inspector{
+    grid-area:controls!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-board{
+    max-height:calc(clamp(170px,28%,230px) - 18px)!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=horizontal]{
+    width:min(calc(100vw - 16px),calc((clamp(170px,28%,230px) - 18px) * 16 / 9))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=editorial]{
+    width:min(calc(100vw - 16px),calc((clamp(170px,28%,230px) - 18px) * 1.414))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=quadrado]{
+    width:min(calc(100vw - 16px),calc(clamp(170px,28%,230px) - 18px))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=vertical]{
+    width:min(calc(100vw - 16px),calc((clamp(170px,28%,230px) - 18px) * 9 / 16))!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector{
+    padding-inline:10px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    width:calc(100% + 20px)!important;
+    margin-inline:-10px!important;
+  }
+}
+
+/* iPad / tablet */
+@media (min-width:701px) and (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-lab-prep{
+    height:44px!important;
+    min-height:44px!important;
+    padding:0 14px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace{
+    height:calc(var(--lm-app-h,100svh) - 44px)!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,56%) minmax(310px,44%)!important;
+    grid-template-rows:minmax(0,1fr)!important;
+    grid-template-areas:"preview controls"!important;
+    gap:0!important;
+    overflow:hidden!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    grid-area:preview!important;
+    position:relative!important;
+    width:100%!important;height:100%!important;
+    min-width:0!important;min-height:0!important;
+    border-right:1px solid #d7d7d3!important;
+    border-bottom:0!important;
+    background:#ededeb!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    width:100%!important;height:100%!important;
+    min-width:0!important;min-height:0!important;
+    padding:18px!important;
+    display:grid!important;
+    place-items:center!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board{
+    max-width:calc(56vw - 36px)!important;
+    max-height:calc(var(--lm-app-h,100svh) - 80px)!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=horizontal]{
+    width:min(calc(56vw - 36px),calc((var(--lm-app-h,100svh) - 80px) * 16 / 9))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=editorial]{
+    width:min(calc(56vw - 36px),calc((var(--lm-app-h,100svh) - 80px) * 1.414))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=quadrado]{
+    width:min(calc(56vw - 36px),calc(var(--lm-app-h,100svh) - 80px))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=vertical]{
+    width:min(calc(56vw - 36px),calc((var(--lm-app-h,100svh) - 80px) * 9 / 16))!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector{
+    grid-area:controls!important;
+    width:100%!important;height:100%!important;
+    min-width:0!important;min-height:0!important;
+    overflow-y:auto!important;overflow-x:hidden!important;
+    padding:0 16px max(18px,env(safe-area-inset-bottom))!important;
+    background:#f8f8f7!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    width:calc(100% + 32px)!important;
+    margin-inline:-16px!important;
+    padding-inline:10px!important;
+    height:46px!important;min-height:46px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    height:46px!important;
+    font-size:10px!important;
+    padding-inline:10px!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
+    padding:16px 0 22px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-inspector-primary,
+  body.lm-studio-open #laboratorio .lm-inspector-extra{
+    gap:16px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-ctrl-choice{
+    min-height:56px!important;
+  }
+}
+
+/* iPad portrait gets a little more preview; landscape keeps side-by-side. */
+@media (min-width:701px) and (max-width:900px) and (orientation:portrait){
+  body.lm-studio-open #laboratorio .lm-lab-workspace{
+    grid-template-columns:1fr!important;
+    grid-template-rows:minmax(260px,42%) minmax(0,1fr)!important;
+    grid-template-areas:"preview" "controls"!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    border-right:0!important;
+    border-bottom:1px solid #d7d7d3!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board{
+    max-width:calc(100vw - 28px)!important;
+    max-height:calc(42vh - 28px)!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=horizontal]{
+    width:min(calc(100vw - 28px),calc((42vh - 28px) * 16 / 9))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=editorial]{
+    width:min(calc(100vw - 28px),calc((42vh - 28px) * 1.414))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=quadrado]{
+    width:min(calc(100vw - 28px),calc(42vh - 28px))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=vertical]{
+    width:min(calc(100vw - 28px),calc((42vh - 28px) * 9 / 16))!important;
+  }
+}

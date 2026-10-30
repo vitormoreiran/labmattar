@@ -14,7 +14,7 @@
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"central",relation:"central",gap:0,textWidth:61,titleScale:100,type:"alternada",
-      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      background:"color",mContent:"off",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
@@ -22,7 +22,7 @@
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
       placement:"central",relation:"central",gap:0,textWidth:40,titleScale:95,type:"alternada",
-      image:"recorte",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
+      background:"color",mContent:"photo",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -30,7 +30,7 @@
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"central",relation:"central",gap:0,textWidth:80,titleScale:95,type:"alternada",
-      image:"inteira",mMode:"janela",photo:"179",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      background:"photo",mContent:"off",image:"nenhuma",mMode:"janela",photo:"179",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -39,7 +39,7 @@
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
     placement:"labPlacement",relation:"labRelation",gap:"labGap",marker:"labMarker",textWidth:"labTextWidth",
-    titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
+    titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",image:"labImage",mMode:"labMMode",photo:"labPhoto",
     mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
@@ -96,41 +96,14 @@
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
-  const editorTabs=[...document.querySelectorAll("[data-lab-tab]")];
+  const editorTabs=[];
   const editorPanels=[...document.querySelectorAll("[data-lab-panel]")];
   const validPanels=["pagina","texto","imagem"];
   let activePanel="pagina";
-  try{
-    const savedPanel=sessionStorage.getItem("labmattar-composicao-panel-v1");
-    if(validPanels.includes(savedPanel))activePanel=savedPanel;
-  }catch{}
-  function selectPanel(name,{focus=false}={}){
-    if(!validPanels.includes(name))return;
-    activePanel=name;
-    for(const tab of editorTabs){
-      const active=tab.dataset.labTab===name;
-      tab.setAttribute("aria-selected",String(active));
-      tab.tabIndex=active?0:-1;
-      if(active&&focus)tab.focus();
-    }
-    for(const panel of editorPanels)panel.hidden=panel.dataset.labPanel!==name;
-    try{sessionStorage.setItem("labmattar-composicao-panel-v1",name)}catch{}
+  function selectPanel(name){
+    if(validPanels.includes(name))activePanel=name;
+    for(const panel of editorPanels)panel.hidden=false;
   }
-  editorTabs.forEach((tab,index)=>{
-    tab.addEventListener("click",()=>selectPanel(tab.dataset.labTab));
-    tab.addEventListener("keydown",e=>{
-      const next={
-        ArrowRight:(index+1)%editorTabs.length,
-        ArrowLeft:(index-1+editorTabs.length)%editorTabs.length,
-        Home:0,End:editorTabs.length-1
-      }[e.key];
-      if(next===undefined)return;
-      e.preventDefault();
-      selectPanel(editorTabs[next].dataset.labTab,{focus:true});
-    });
-  });
-  // When editing copy on the artboard, display the relevant controls without
-  // stealing focus or moving the cursor from the text itself.
   selectPanel(activePanel);
   function setFieldVisible(id,visible){
     const input=by(id);
@@ -139,25 +112,17 @@
   }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
-    const activeImage=state.image!=="nenhuma",mask=state.image==="recorte";
+    const backgroundPhoto=state.background==="photo";
+    const mActive=state.mContent!=="off";
+    const mPhoto=state.mContent==="photo";
+    const activeImage=backgroundPhoto||mPhoto;
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
-    for(const key of ["mPosition","mScale","mMode"])by(fields[key]).disabled=!mask;
-    by("labColor").disabled=activeImage;
+    for(const key of ["mPosition","mMode"])by(fields[key]).disabled=!mActive;
+    by("labMScale").disabled=!mActive;
+    by("labColor").disabled=false;
     by("labMarker").disabled=false;
-    // Controls follow the page's actual state. An absent photograph does not
-    // need six ghost tools; M-specific tools appear only with the M mask.
-    setFieldVisible("labColor",!activeImage);
-    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY"])
-      setFieldVisible(id,activeImage);
-    for(const id of ["labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
-    setFieldVisible("labMarker",true);
-    by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
-    by("labTabMeta-texto").textContent=
-      (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
-    by("labTabMeta-imagem").textContent=
-      state.image==="nenhuma"?"Sem fotografia":
-      state.image==="recorte"?"M central / "+state.mScale+"%":
-      "Imagem integral";
+    for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMMode","labMPosition","labMScale","labMarker"])
+      setFieldVisible(id,true);
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
@@ -167,8 +132,6 @@
       }
     }
 
-    document.querySelectorAll("[data-lab-preset]").forEach(b=>
-      b.setAttribute("aria-pressed",String(b.dataset.labPreset===activePreset)));
     // Visual choice cards and hidden select retain the SAME state.
     // The native controls remain in the DOM for predictable serialization.
     document.querySelectorAll("[data-lab-choice]").forEach(button=>{
@@ -259,7 +222,10 @@
     board.dataset.format=state.format;
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
-    board.dataset.image=state.image;
+    const legacyImage=state.mContent==="photo"?"recorte":state.background==="photo"?"inteira":"nenhuma";
+    board.dataset.image=legacyImage;
+    board.dataset.background=state.background;
+    board.dataset.mContent=state.mContent;
     board.dataset.mMode=state.mMode;
     board.dataset.guide=state.guides;
     board.dataset.photoText="false";
@@ -273,7 +239,7 @@
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
     by("labMMarkers").dataset.marker=state.marker;
-    const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
+    const [bg,ink]=state.background==="color"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);
     const src=photos[state.photo];
@@ -459,19 +425,21 @@
   function measure(){
     const titleFit=fitTitleToReadingArea();
     alignMToCopy();
-    const hasPhoto=state.image!=="nenhuma";
+    const backgroundPhoto=state.background==="photo";
+    const mPhoto=state.mContent==="photo";
+    const hasPhoto=backgroundPhoto||mPhoto;
     const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];
     if(!body.hidden)textNodes.push(body);
-    board.dataset.photoText=String(hasPhoto&&textNodes.some(n=>n.textContent.trim()));
+    board.dataset.photoText=String(backgroundPhoto&&textNodes.some(n=>n.textContent.trim()));
     const mask=by("labMask");
-    const overlap=hasPhoto&&state.image==="recorte"&&state.mMode!=="sutil"&&
+    const overlap=mPhoto&&
       textNodes.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
     // Footer and kicker are metadata, not the primary editorial column. They
     // still receive the 20% photographic treatment, but do not create a false
     // "separate image/text" conflict beside an otherwise intact title.
     const editorialText=[...board.querySelectorAll(".lm-lab-title-line")];
     if(!body.hidden)editorialText.push(body);
-    const editorialOverlap=state.image==="recorte"&&state.mMode!=="sutil"&&
+    const editorialOverlap=mPhoto&&
       editorialText.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
     board.dataset.mText=String(overlap);
     const rect=board.getBoundingClientRect();
@@ -498,8 +466,9 @@
     status.dataset.state=invalid?"overflow":collision?"collision":titleFit.lowLegibility?"review":"ok";
     const treatment=by("labPhotoStatus");
     treatment.textContent=!hasPhoto?"SEM VÉU FOTOGRÁFICO":
-      overlap?"PRETO 20% / FUNDO E RECORTE M":
-      "PRETO 20% / CAMPO FOTOGRÁFICO";
+      backgroundPhoto&&mPhoto?"PRETO 20% / FUNDO + M":
+      mPhoto?"PRETO 20% / M":
+      "PRETO 20% / FUNDO";
   }
   function applyPreset(key){
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
@@ -533,7 +502,6 @@
     const inspector=fields[editor.key]&&by(fields[editor.key]);
     if(inspector)inspector.value=value;
     activePreset="";
-    document.querySelectorAll("[data-lab-preset]").forEach(b=>b.setAttribute("aria-pressed","false"));
     save();
     requestMeasurement();
   };
@@ -587,8 +555,7 @@
       else el.textContent=state[key];
       board.removeAttribute("data-editing");
       activePreset="";
-      document.querySelectorAll("[data-lab-preset]").forEach(b=>b.setAttribute("aria-pressed","false"));
-      save();
+        save();
       requestMeasurement();
     });
   }
@@ -711,6 +678,12 @@
     labBodyInput:["Editar texto de leitura",
       "Edite o parágrafo no painel ou clique nele diretamente na página.",
       "A largura de leitura e os limites da superfície continuam aplicados durante a edição."],
+    labBackground:["Fundo",
+      "Define se a superfície usa cor ou fotografia.",
+      "O fundo é independente do M."],
+    labMContent:["M",
+      "Define se o M está ausente, sólido ou preenchido por fotografia.",
+      "O M permanece central e sua escala é independente do fundo."],
     labImage:["Imagem",
       "Escolha campo liso, fotografia integral ou máscara M.",
       "Com texto sobre fotografia, o preto 20% é automático."],
@@ -921,11 +894,7 @@
       // An application is a compositional decision. Entering M mode gives
       // the word and the whole letter separate readable fields, preserving
       // the user's actual content, fonts, format and selected photograph.
-      if(id==="labImage"&&previousImage!=="recorte"&&state.image==="recorte"){
-        state.mMode="janela";
-        state.mPosition="centro";
-        state.mScale=Math.min(state.mScale,60);
-      }
+
       if(id==="labMMode"&&previousMode!==state.mMode){
         if(state.mMode==="janela")state.mScale=Math.min(state.mScale,50);
       }

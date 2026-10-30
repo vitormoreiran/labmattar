@@ -1222,3 +1222,67 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     grid-template-rows:minmax(150px,34dvh) minmax(0,1fr)!important;
   }
 }
+
+/* Mobile hard fixes: visible artboard + truly exclusive modules. */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-lab-system-statement,
+  body.lm-studio-open #laboratorio .lm-inspector-head{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module[hidden]{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    display:grid!important;
+    place-items:center!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-board{
+    width:min(calc(100vw - 28px),calc((38dvh - 42px) * 16 / 9))!important;
+    max-width:none!important;
+    max-height:calc(38dvh - 42px)!important;
+    height:auto!important;
+    margin:auto!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=editorial]{
+    width:min(calc(100vw - 28px),calc((38dvh - 42px) * 1.414))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=quadrado]{
+    width:min(calc(100vw - 28px),calc(38dvh - 42px))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=vertical]{
+    width:min(calc(100vw - 28px),calc((38dvh - 42px) * 9 / 16))!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-preview-head{
+    display:none!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    grid-template-rows:minmax(0,1fr) 20px!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-preview-foot{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:8px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-preview-foot span:last-child{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    padding-inline:8px!important;
+    margin-inline:-12px!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    padding-inline:10px!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector{
+    scroll-padding-top:44px;
+  }
+}

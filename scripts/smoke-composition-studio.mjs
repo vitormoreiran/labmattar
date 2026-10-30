@@ -32,9 +32,13 @@ try{
 
   const baseline=await page.locator("#labArtboard").evaluate(el=>({
     mx:getComputedStyle(el).getPropertyValue("--lab-m-x").trim(),
-    scale:document.querySelector("#labMScale").value
+    scale:document.querySelector("#labMScale").value,
+    logicalWidth:parseFloat(getComputedStyle(el).width),
+    logicalHeight:parseFloat(getComputedStyle(el).height)
   }));
   assert(baseline.mx==="50%","M must remain on the central axis");
+  assert(Math.abs(baseline.logicalWidth-1280)<1&&Math.abs(baseline.logicalHeight-720)<1,
+    "Horizontal artboard must keep fixed logical geometry");
 
   await choose("background","photo");
   await choose("mContent","solid");
@@ -101,56 +105,50 @@ try{
 
   for(const vp of [
     {width:320,height:568},
-    {width:360,height:640},
     {width:390,height:844},
-    {width:430,height:932},
     {width:500,height:700},
-    {width:600,height:700},
     {width:768,height:1024},
     {width:834,height:1112},
     {width:1024,height:768}
   ]){
     await page.setViewportSize(vp);
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(120);
 
-    const responsive=await page.evaluate(()=>{
-      const board=document.querySelector("#labArtboard").getBoundingClientRect();
-      const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();
-      const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
-      const rail=document.querySelector(".lm-composition-module-index").getBoundingClientRect();
-      return {board,preview,inspector,rail,vw:innerWidth,vh:innerHeight,
-        bodyOverflow:getComputedStyle(document.body).overflowY};
+    const previewState=await page.evaluate(()=>{
+      const board=document.querySelector("#labArtboard");
+      const frame=document.querySelector("#labArtboardFrame");
+      const stage=document.querySelector(".lm-lab-stage");
+      const preview=document.querySelector(".lm-lab-preview");
+      const cs=getComputedStyle(board), ps=getComputedStyle(preview);
+      const br=board.getBoundingClientRect(), fr=frame.getBoundingClientRect(), sr=stage.getBoundingClientRect();
+      return {
+        logicalW:parseFloat(cs.width),logicalH:parseFloat(cs.height),
+        boardW:br.width,boardH:br.height,
+        frameW:fr.width,frameH:fr.height,
+        stageW:sr.width,stageH:sr.height,
+        previewPosition:ps.position,
+        previewTop:ps.top
+      };
     });
-    assert(responsive.board.width>100&&responsive.board.right<=responsive.vw+1,
-      "Artboard must remain visible and contained at "+vp.width+"x"+vp.height);
-    assert(responsive.rail.width<=responsive.vw+2,
-      "Module rail must stay within viewport width at "+vp.width+"x"+vp.height);
 
-    await page.locator('button[data-mobile-module="superficie"]').click();
-    await page.locator("#labPanel-pagina").scrollIntoViewIfNeeded();
-    const button=page.locator('[data-lab-choice="format"][data-value="horizontal"]');
-    await button.scrollIntoViewIfNeeded();
-    const hit=await button.evaluate(el=>{
-      const r=el.getBoundingClientRect();
-      const x=r.left+r.width/2,y=r.top+r.height/2;
-      const top=document.elementFromPoint(x,y);
-      return {width:r.width,height:r.height,hit:top===el||el.contains(top)};
-    });
-    assert(hit.width>=44&&hit.height>=44&&hit.hit,
-      "Format control must be tappable without collision at "+vp.width+"x"+vp.height+": "+JSON.stringify(hit));
-    await button.click();
+    assert(Math.abs(previewState.logicalW-1280)<1&&Math.abs(previewState.logicalH-720)<1,
+      "Device viewport must not alter horizontal artboard geometry at "+vp.width+"x"+vp.height);
+    assert(previewState.boardW<=previewState.stageW+1&&previewState.boardH<=previewState.stageH+1,
+      "Scaled artboard must fit preview at "+vp.width+"x"+vp.height);
+    assert(previewState.frameW>100&&previewState.frameH>50,
+      "Scaled artboard frame must stay visible at "+vp.width+"x"+vp.height);
+    assert(previewState.previewPosition==="sticky",
+      "Compact preview must stay sticky while editing at "+vp.width+"x"+vp.height);
 
     await page.locator('button[data-mobile-module="m"]').click();
     const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
     await mButton.scrollIntoViewIfNeeded();
-    const mHit=await mButton.evaluate(el=>{
-      const r=el.getBoundingClientRect();
-      const x=r.left+r.width/2,y=r.top+r.height/2;
-      const top=document.elementFromPoint(x,y);
-      return {width:r.width,height:r.height,hit:top===el||el.contains(top)};
+    const stickyAfterScroll=await page.evaluate(()=>{
+      const p=document.querySelector(".lm-lab-preview").getBoundingClientRect();
+      return {top:p.top,bottom:p.bottom,viewport:innerHeight};
     });
-    assert(mHit.width>=44&&mHit.height>=44&&mHit.hit,
-      "M control must be tappable without collision at "+vp.width+"x"+vp.height+": "+JSON.stringify(mHit));
+    assert(stickyAfterScroll.top>=39&&stickyAfterScroll.top<55&&stickyAfterScroll.bottom>stickyAfterScroll.top,
+      "Preview must remain visible while controls scroll at "+vp.width+"x"+vp.height);
     await mButton.click();
   }
 

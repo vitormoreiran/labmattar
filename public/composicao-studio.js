@@ -53,6 +53,40 @@
     if(active)requestAnimationFrame(()=>lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"}));
   }
 
+
+  const moduleButtons=[...lab.querySelectorAll("[data-mobile-module]")];
+  const mobileQuery=matchMedia("(max-width:850px)");
+  let mobileModule="superficie";
+  try{
+    const saved=sessionStorage.getItem("labmattar-composicao-mobile-module");
+    if(moduleButtons.some(b=>b.dataset.mobileModule===saved))mobileModule=saved;
+  }catch{}
+
+  function applyMobileModule(name,{scroll=false}={}){
+    if(!moduleButtons.some(b=>b.dataset.mobileModule===name))return;
+    mobileModule=name;
+    inspector.dataset.mobileModule=name;
+    for(const button of moduleButtons)
+      button.setAttribute("aria-pressed",String(button.dataset.mobileModule===name));
+
+    const construction=by("labPanel-pagina")?.querySelector('[data-lab-more="pagina"]');
+    const textMore=by("labPanel-texto")?.querySelector('[data-lab-more="texto"]');
+    const imageMore=by("labPanel-imagem")?.querySelector('[data-lab-more="imagem"]');
+    if(mobileQuery.matches){
+      if(construction)construction.open=name==="construcao";
+      if(name!=="texto"&&textMore)textMore.open=false;
+      if(imageMore)imageMore.open=name==="assinatura";
+    }
+    try{sessionStorage.setItem("labmattar-composicao-mobile-module",name)}catch{}
+    if(scroll&&mobileQuery.matches)
+      inspector.querySelector(".lm-composition-module-index")?.scrollIntoView({block:"nearest"});
+  }
+
+  for(const button of moduleButtons)
+    button.addEventListener("click",()=>applyMobileModule(button.dataset.mobileModule,{scroll:true}));
+
+  mobileQuery.addEventListener?.("change",()=>applyMobileModule(mobileModule));
+  applyMobileModule(mobileModule);
   toggle.addEventListener("click",()=>setActive(!active));
   const params=new URLSearchParams(location.search);
   setActive(params.get("studio")==="1",{updateUrl:false});

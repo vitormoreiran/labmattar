@@ -2821,3 +2821,71 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
     pointer-events:auto!important;
   }
 }
+
+/* 2026-10-30 COMPLETE COMPACT MENU
+   All six modules remain visible at once on phone/tablet. */
+@media (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    position:sticky!important;
+    z-index:31!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:6px 8px!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    grid-auto-rows:42px!important;
+    gap:4px!important;
+    overflow:visible!important;
+    border-bottom:1px solid var(--ui-line,#d8d8d3)!important;
+    background:rgba(248,248,246,.98)!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    height:42px!important;
+    padding:0 8px!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:7px!important;
+    overflow:hidden!important;
+    border:1px solid transparent!important;
+    border-radius:7px!important;
+    background:transparent!important;
+    color:var(--ui-muted,#777772)!important;
+    font:300 10px/1 UniversMattar,Arial,sans-serif!important;
+    letter-spacing:.035em!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button::before{
+    flex:0 0 auto!important;
+    margin:0!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
+    color:var(--ui-ink,#20201e)!important;
+    background:#fff!important;
+    border-color:var(--ui-line,#d8d8d3)!important;
+    box-shadow:0 1px 2px rgba(0,0,0,.05)!important;
+  }
+}
+
+@media (max-width:520px){
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-rows:40px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    height:40px!important;
+    font-size:9.5px!important;
+    padding-inline:8px!important;
+  }
+}

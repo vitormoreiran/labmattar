@@ -349,3 +349,23 @@
   }
   .lm-rules-index{grid-template-columns:1fr}
 }
+
+/* One composition, independent layers. */
+.lm-lab-board[data-background=color] .lm-lab-photo-layer{display:none!important}
+.lm-lab-board[data-background=photo] .lm-lab-photo-layer{display:block!important}
+.lm-lab-board[data-background=photo] .lm-lab-photo-ambient{
+  inset:0!important;width:100%!important;height:100%!important;
+  filter:none!important;transform:none!important;
+}
+.lm-lab-board[data-m-content=off] .lm-lab-m-photo{display:none!important}
+.lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
+  display:block!important;background:var(--lab-ink)!important;
+}
+.lm-lab-board[data-m-content=solid] .lm-lab-m-photo img{display:none!important}
+.lm-lab-board[data-m-content=photo] .lm-lab-m-photo{display:block!important;background:transparent!important}
+.lm-lab-board[data-m-content=photo] .lm-lab-m-photo img{display:block!important}
+.lm-lab-board[data-m-content=solid] .lm-lab-m-photo::after{display:none!important}
+.lm-lab-board[data-m-content=photo] .lm-lab-m-photo,
+.lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
+  left:50%!important;top:50%!important;
+}

@@ -40,7 +40,7 @@
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
     placement:"labPlacement",relation:"labRelation",gap:"labGap",marker:"labMarker",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
-    mPosition:"centro",marker:"none",mScale:"labMScale",focusX:"labFocusX",
+    mPosition:"labMPosition",marker:"labMarker",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };

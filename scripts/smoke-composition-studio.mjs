@@ -61,6 +61,41 @@ try{
   assert(await page.locator("#labColor").isEnabled(),
     "Background color must remain a complete independent function");
 
+
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForTimeout(120);
+  assert(await page.locator(".lm-composition-module-index").isVisible(),
+    "Mobile module rail must remain visible");
+  assert(await page.locator('[data-mobile-module="superficie"]').getAttribute("aria-pressed")==="true",
+    "Mobile editor must open with Surface selected");
+
+  await page.locator('[data-mobile-module="m"]').click();
+  assert(await page.locator("#labPanel-imagem").isVisible()&&
+         await page.locator("[data-submodule=m]").isVisible()&&
+         await page.locator("[data-submodule=fundo]").isHidden(),
+    "Mobile M module must isolate M controls without changing composition type");
+
+  await page.locator('[data-mobile-module="fundo"]').click();
+  assert(await page.locator("[data-submodule=fundo]").isVisible()&&
+         await page.locator("[data-submodule=m]").isHidden(),
+    "Mobile Background module must isolate background controls");
+
+  await page.locator('[data-mobile-module="texto"]').click();
+  assert(await page.locator("#labPanel-texto").isVisible()&&
+         await page.locator("#labPanel-pagina").isHidden(),
+    "Mobile Text module must show only text controls");
+
+  const mobileLayout=await page.evaluate(()=>{
+    const workspace=document.querySelector(".lm-lab-workspace").getBoundingClientRect();
+    const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();
+    const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
+    return {workspace,preview,inspector,viewport:innerHeight};
+  });
+  assert(mobileLayout.preview.bottom<=mobileLayout.inspector.top+2,
+    "Mobile canvas and controls must not overlap");
+  assert(mobileLayout.workspace.bottom<=mobileLayout.viewport+2,
+    "Mobile editor must fit inside one viewport with internal control scrolling");
+
   await page.locator("#labStudioToggle").click();
   assert(await page.locator("body").evaluate(el=>!el.classList.contains("lm-studio-open")),
     "Focused mode did not close");

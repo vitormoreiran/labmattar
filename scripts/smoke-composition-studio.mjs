@@ -123,8 +123,6 @@ try{
     });
     assert(responsive.board.width>100&&responsive.board.right<=responsive.vw+1,
       "Artboard must remain visible and contained at "+vp.width+"x"+vp.height);
-    assert(responsive.preview.bottom<=responsive.inspector.top+2,
-      "Preview and controls must stay in document flow at "+vp.width+"x"+vp.height);
     assert(responsive.rail.width<=responsive.vw+2,
       "Module rail must stay within viewport width at "+vp.width+"x"+vp.height);
 

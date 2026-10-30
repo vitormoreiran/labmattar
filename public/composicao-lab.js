@@ -13,24 +13,24 @@
   const presets={
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"central",relation:"centro",gap:4,textWidth:61,titleScale:100,type:"alternada",
-      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro-direita",mScale:60,focusX:50,focusY:50,symbol:"none",
+      placement:"central",relation:"central",gap:0,textWidth:61,titleScale:100,type:"alternada",
+      image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"central",relation:"lado-a-lado",gap:4,textWidth:40,titleScale:95,type:"alternada",
-      image:"recorte",mMode:"janela",photo:"64",mPosition:"centro-direita",mScale:50,focusX:50,focusY:50,symbol:"none",
+      placement:"central",relation:"central",gap:0,textWidth:40,titleScale:95,type:"alternada",
+      image:"recorte",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
     },
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"central",relation:"sobreposta",gap:0,textWidth:80,titleScale:95,type:"alternada",
-      image:"inteira",mMode:"janela",photo:"179",mPosition:"centro-direita",mScale:60,focusX:50,focusY:50,symbol:"none",
+      placement:"central",relation:"central",gap:0,textWidth:80,titleScale:95,type:"alternada",
+      image:"inteira",mMode:"janela",photo:"179",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -38,9 +38,9 @@
   };
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
-    placement:"labPlacement",relation:"labRelation",gap:"labGap",textWidth:"labTextWidth",
+    placement:"labPlacement",relation:"labRelation",gap:"labGap",marker:"labMarker",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",image:"labImage",mMode:"labMMode",photo:"labPhoto",
-    mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
+    mPosition:"centro",marker:"none",mScale:"labMScale",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
@@ -143,22 +143,22 @@
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     for(const key of ["mPosition","mScale","mMode"])by(fields[key]).disabled=!mask;
     by("labColor").disabled=activeImage;
-    by("labRelation").disabled=!mask;
-    by("labGap").disabled=!mask;
+    by("labMarker").disabled=false;
     // Controls follow the page's actual state. An absent photograph does not
     // need six ghost tools; M-specific tools appear only with the M mask.
     setFieldVisible("labColor",!activeImage);
     for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY"])
       setFieldVisible(id,activeImage);
-    for(const id of ["labRelation","labGap","labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
+    for(const id of ["labMMode","labMPosition","labMScale"])setFieldVisible(id,mask);
+    setFieldVisible("labMarker",true);
     by("labTabMeta-pagina").textContent=formatNames[state.format].split(" / ")[0]+" · "+state.margin+"%";
     by("labTabMeta-texto").textContent=
       (state.type==="alternada"?"U + P":state.type==="univers"?"Univers":"Perpetua")+" · "+state.titleScale+"%";
     by("labTabMeta-imagem").textContent=
       state.image==="nenhuma"?"Sem fotografia":
-      state.image==="recorte"?"M / "+({ "lado-a-lado":"lado a lado",topo:"topo",centro:"centro",base:"base",sobreposta:"sobreposição"}[state.relation]||state.relation):
+      state.image==="recorte"?"M central / "+state.mScale+"%":
       "Imagem integral";
-    for(const key of ["margin","gap","textWidth","titleScale","mScale","focusX","focusY"]){
+    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -253,19 +253,12 @@
     mScaleInput.max=String(mMax);
     const mPrecision=by("labPrecision-mScale");
     if(mPrecision)mPrecision.max=String(mMax);
-    const relationLayout={
-      "lado-a-lado":{placement:"central",mPosition:"centro-direita"},
-      topo:{placement:"superior",mPosition:"superior-direita"},
-      centro:{placement:"central",mPosition:"centro-direita"},
-      base:{placement:"inferior",mPosition:"inferior-direita"},
-      sobreposta:{placement:"central",mPosition:"centro"}
-    }[state.relation]||{placement:"central",mPosition:"centro-direita"};
-    state.placement=relationLayout.placement;
-    state.mPosition=relationLayout.mPosition;
+    state.placement="central";
+    state.mPosition="centro";
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.placement=state.placement;
-    board.dataset.relation=state.relation;
+    board.dataset.relation="central";
     board.dataset.image=state.image;
     board.dataset.mMode=state.mMode;
     board.dataset.guide=state.guides;
@@ -277,8 +270,9 @@
     board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
-    board.style.setProperty("--lab-m-x",state.relation==="sobreposta"?"50%":"75%");
+    board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
+    by("labMMarkers").dataset.marker=state.marker;
     const [bg,ink]=state.image==="nenhuma"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);
@@ -458,37 +452,8 @@
 
   function alignMToCopy(){
     if(state.image!=="recorte")return;
-    const boardRect=board.getBoundingClientRect();
-    const safeRect=by("labReading").getBoundingClientRect();
-    const copyRect=copyArea.getBoundingClientRect();
-    const mask=by("labMask");
-    const maskRect=mask.getBoundingClientRect();
-    if(!boardRect.width||!boardRect.height||!maskRect.width||!maskRect.height)return;
-
-    const gapPx=safeRect.width*(state.gap/100);
-    const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
-    // Text is constrained by the reading area. The M is constrained by the
-    // page surface itself, so its scale is never silently reduced by margins.
-    const minX=maskRect.width/2;
-    const maxX=boardRect.width-maskRect.width/2;
-    const minY=maskRect.height/2;
-    const maxY=boardRect.height-maskRect.height/2;
-
-    let x,y;
-    if(state.relation==="sobreposta"){
-      x=(copyRect.left+copyRect.right)/2-boardRect.left;
-      y=(copyRect.top+copyRect.bottom)/2-boardRect.top;
-    }else{
-      x=copyRect.right-boardRect.left+gapPx+maskRect.width/2;
-      const center=(copyRect.top+copyRect.bottom)/2-boardRect.top;
-      if(state.relation==="topo")y=copyRect.top-boardRect.top+maskRect.height/2;
-      else if(state.relation==="base")y=copyRect.bottom-boardRect.top-maskRect.height/2;
-      else y=center;
-    }
-    x=clamp(x,minX,maxX);
-    y=clamp(y,minY,maxY);
-    board.style.setProperty("--lab-m-x",(x/boardRect.width*100).toFixed(4)+"%");
-    board.style.setProperty("--lab-m-y",(y/boardRect.height*100).toFixed(4)+"%");
+    board.style.setProperty("--lab-m-x","50%");
+    board.style.setProperty("--lab-m-y","50%");
   }
 
   function measure(){
@@ -517,7 +482,7 @@
     const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
-    const collision=editorialOverlap&&state.relation!=="sobreposta";
+    const collision=false;
     // The visual proof and its status must agree: an unintended overlap is
     // never an approved canvas, even if all text fits inside the page.
     board.dataset.state=invalid?"overflow":collision?"collision":"ok";
@@ -753,15 +718,12 @@
     labPhoto:["Fotografia",
       "Escolha a imagem.",
       "O enquadramento pode ser ajustado separadamente."],
-    labRelation:["Texto + M",
-      "Define a relação entre o bloco tipográfico e o M.",
-      "A relação não altera escala. Sobre fotografia, o preto 20% continua automático."],
-    labGap:["Distância",
-      "Ajusta o espaço entre texto e M.",
-      "Não altera escala nem margem."],
+    labMarker:["Marcadores do M",
+      "Ativa a ponta superior, a ponta inferior ou as duas pontas como elementos de marcação da página.",
+      "Os marcadores derivam da mesma geometria do M e não alteram o eixo central."],
     labMScale:["Escala do M",
-      "Ajusta o tamanho do M.",
-      "O vetor mantém sua proporção."],
+      "Ajusta o tamanho do M mantendo-o no eixo central da página.",
+      "A escala varia; posição central e proporção permanecem."],
     labFocalPreview:["Enquadramento",
       "Clique ou arraste para escolher o foco.",
       "O ajuste atua apenas na fotografia."],
@@ -961,10 +923,8 @@
       // the user's actual content, fonts, format and selected photograph.
       if(id==="labImage"&&previousImage!=="recorte"&&state.image==="recorte"){
         state.mMode="janela";
-        state.mScale=Math.min(state.mScale,50);
-        state.textWidth=Math.min(state.textWidth,40);
-        state.relation="lado-a-lado";
-        state.gap=4;
+        state.mPosition="centro";
+        state.mScale=Math.min(state.mScale,60);
       }
       if(id==="labMMode"&&previousMode!==state.mMode){
         if(state.mMode==="janela")state.mScale=Math.min(state.mScale,50);

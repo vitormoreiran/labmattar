@@ -137,19 +137,34 @@ try{
       "Scaled artboard must fit preview at "+vp.width+"x"+vp.height);
     assert(previewState.frameW>100&&previewState.frameH>50,
       "Scaled artboard frame must stay visible at "+vp.width+"x"+vp.height);
-    assert(previewState.previewPosition==="sticky",
-      "Compact preview must stay sticky while editing at "+vp.width+"x"+vp.height);
+    assert(previewState.previewPosition==="static",
+      "Compact preview must use normal document flow at "+vp.width+"x"+vp.height);
+
+    const menuState=await page.evaluate(()=>{
+      const menu=document.querySelector(".lm-composition-module-index");
+      const buttons=[...menu.querySelectorAll("button[data-mobile-module]")];
+      const mr=menu.getBoundingClientRect();
+      return {
+        menuWidth:mr.width,
+        buttonCount:buttons.length,
+        visible:buttons.every(b=>{const r=b.getBoundingClientRect();return r.width>=44&&r.height>=40;}),
+        labels:buttons.map(b=>b.textContent.trim())
+      };
+    });
+    assert(menuState.buttonCount===6&&menuState.visible,
+      "All six compact module buttons must remain fully visible at "+vp.width+"x"+vp.height);
 
     await page.locator('button[data-mobile-module="m"]').click();
     const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
     await mButton.scrollIntoViewIfNeeded();
-    const stickyAfterScroll=await page.evaluate(()=>{
-      const p=document.querySelector(".lm-lab-preview").getBoundingClientRect();
-      return {top:p.top,bottom:p.bottom,viewport:innerHeight};
-    });
-    assert(stickyAfterScroll.top>=39&&stickyAfterScroll.top<55&&stickyAfterScroll.bottom>stickyAfterScroll.top,
-      "Preview must remain visible while controls scroll at "+vp.width+"x"+vp.height);
     await mButton.click();
+    const scrollState=await page.evaluate(()=>({
+      y:window.scrollY,
+      bodyScroll:getComputedStyle(document.body).overflowY,
+      htmlScroll:getComputedStyle(document.documentElement).overflowY
+    }));
+    assert(scrollState.y>0,
+      "Compact editor document must scroll to controls at "+vp.width+"x"+vp.height);
   }
 
   await page.locator("#labStudioToggle").click();

@@ -79,7 +79,7 @@ for key in ("pagina","texto","imagem"):
  assert 'data-lab-more="'+key+'"' in composition,f"Advanced options not discoverable: {key}"
 for control in ("labFormat","labColor","labMargin","labGuides",
                 "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
-                "labTitleInput","labBodyInput","labImage","labMMode","labPhoto","labMarker","labRelation",
+                "labTitleInput","labBodyInput","labBackground","labMContent","labImage","labMMode","labPhoto","labMarker","labRelation",
                 "labMPosition","labGap","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
  assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
@@ -88,7 +88,7 @@ assert "setFieldVisible" in lab_js and "sessionStorage" in lab_js
 # Guidance is contextual; no instructions or numbered pseudo-steps clutter the UI.
 assert 'id="labOverviewHelp"' in composition
 assert '<strong>01 / Tipografia</strong>' not in composition
-for field in ("labFormat","labMargin","labTitleScale","labType","labImage",
+for field in ("labFormat","labMargin","labTitleScale","labType","labBackground","labMContent",
               "labMarker","labMScale","labFocalPreview","labSymbol"):
  assert field+':["' in lab_js,f"Missing contextual help for {field}"
 assert "showHelp(trigger,panel)" in lab_js
@@ -129,9 +129,11 @@ for selector in ('lm-lab-workspace','lm-lab-m-photo','lm-lab-main-copy','lm-lab-
  assert selector in lab_css,f"Missing lab element: {selector}"
 for action in ('labFormat','labMarker','labMScale','labFocusX','labTitleScale','labTitleInput','labBodyInput','labReset'):
  assert action in composition and action in lab_js,f"Unwired lab control: {action}"
-for variant in ('tipografia','mascara','imagem'):
- assert 'data-lab-preset="'+variant+'"' in composition
- assert variant+':' in lab_js
+assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
+assert "UMA COMPOSIÇÃO" in composition
+assert "lm-composition-module-index" in composition
+assert "data-lab-preset" not in composition, "Presets must not define composition types"
+assert "lm-inspector-tabs" not in composition, "Contextual tabs must not divide the single composition"
 assert "rgba(0,0,0,.20)" in lab_css, "Photo contrast must remain at 20 percent"
 assert "labContrast" not in composition, "Approved veil opacity must not be an uncontrolled experiment"
 

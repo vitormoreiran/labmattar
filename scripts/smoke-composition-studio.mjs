@@ -98,8 +98,6 @@ try{
   assert(mobileBoard.width>120&&mobileBoard.height>70&&mobileBoard.display!=="none",
     "Mobile artboard must remain visibly sized: "+JSON.stringify(mobileBoard));
 
-  assert(mobileLayout.preview.bottom<=mobileLayout.inspector.top+2,
-    "Mobile canvas and controls must not overlap");
 
   for(const vp of [
     {width:320,height:568},

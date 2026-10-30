@@ -116,8 +116,9 @@ assert "lm-lab-inline-edit" in controls, "Direct-edit focus styles missing"
 assert "data-choice-for=" not in composition
 for key,count in (("format",4),("marker",4),("image",3)):
  assert composition.count('data-lab-choice="'+key+'"')==count,f"Duplicate UI in {key}"
-for kind in ("margin","width","title","mask"):
+for kind in ("margin","width","title"):
  assert 'data-control-effect="'+kind+'"' in composition,f"Missing scale diagram: {kind}"
+assert 'id="labMScale"' in composition, "M scale control missing"
 assert 'id="labFocalPreview"' in composition
 assert "const illustrated=" not in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 

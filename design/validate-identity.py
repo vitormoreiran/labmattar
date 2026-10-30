@@ -62,11 +62,12 @@ for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-type","lm-ctr
 for key in ("format","marker","type","background","mContent","photo","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
-# The inspector has three focused work areas; every approved control remains.
+# The inspector is one composition with persistent modules; every approved control remains.
 for key in ("pagina","texto","imagem"):
- assert 'data-lab-tab="'+key+'"' in composition,f"Missing navigation: {key}"
- assert 'data-lab-panel="'+key+'"' in composition,f"Missing panel: {key}"
- assert 'data-lab-more="'+key+'"' in composition,f"Advanced options not discoverable: {key}"
+ assert 'data-lab-panel="'+key+'"' in composition,f"Missing composition module: {key}"
+assert 'data-lab-more="pagina"' in composition
+assert 'data-lab-more="texto"' in composition
+assert 'data-lab-more="imagem"' in composition
 for control in ("labFormat","labColor","labMargin","labGuides",
                 "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
                 "labTitleInput","labBodyInput","labBackground","labMContent","labImage","labMMode","labPhoto","labMarker","labRelation",
@@ -74,7 +75,7 @@ for control in ("labFormat","labColor","labMargin","labGuides",
  assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
-assert "setFieldVisible" in lab_js and "sessionStorage" in lab_js
+assert "setFieldVisible" in lab_js and "selectPanel(activePanel)" in lab_js
 # Guidance is contextual; no instructions or numbered pseudo-steps clutter the UI.
 assert 'id="labOverviewHelp"' in composition
 assert '<strong>01 / Tipografia</strong>' not in composition

@@ -50,7 +50,7 @@
     quickReset.hidden=!active;
     for(const panel of panels)panel.hidden=false;
     if(updateUrl)setUrl(active);
-    if(active)requestAnimationFrame(()=>lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"}));
+    if(active)requestAnimationFrame(()=>{lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"});fitArtboard();});
   }
 
 
@@ -62,6 +62,46 @@
   syncViewport();
   window.addEventListener("resize",syncViewport,{passive:true});
   window.visualViewport?.addEventListener("resize",syncViewport,{passive:true});
+
+  const artboard=by("labArtboard");
+  const artboardFrame=by("labArtboardFrame");
+  const stage=lab.querySelector(".lm-lab-stage");
+  const logicalSizes={
+    horizontal:[1280,720],
+    vertical:[720,1280],
+    quadrado:[900,900],
+    editorial:[1000,707]
+  };
+
+  function fitArtboard(){
+    if(!artboard||!artboardFrame||!stage)return;
+    const format=artboard.dataset.format||"horizontal";
+    const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
+    artboard.style.width=logicalW+"px";
+    artboard.style.height=logicalH+"px";
+    artboard.style.maxWidth="none";
+    artboard.style.maxHeight="none";
+    artboard.style.aspectRatio="auto";
+
+    const compact=window.innerWidth<=1180;
+    const pad=compact?16:32;
+    const maxW=Math.max(120,stage.clientWidth-pad);
+    const maxH=Math.max(90,stage.clientHeight-pad);
+    const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
+
+    artboard.style.transformOrigin="top left";
+    artboard.style.transform="scale("+scale+")";
+    artboardFrame.style.width=(logicalW*scale)+"px";
+    artboardFrame.style.height=(logicalH*scale)+"px";
+    artboardFrame.dataset.scale=scale.toFixed(4);
+  }
+
+  const fitObserver=new ResizeObserver(()=>fitArtboard());
+  if(stage)fitObserver.observe(stage);
+  if(artboard)new MutationObserver(fitArtboard).observe(artboard,{attributes:true,attributeFilter:["data-format"]});
+  window.addEventListener("resize",fitArtboard,{passive:true});
+  window.visualViewport?.addEventListener("resize",fitArtboard,{passive:true});
+  requestAnimationFrame(fitArtboard);
 
   const moduleButtons=[...lab.querySelectorAll("[data-mobile-module]")];
   const mobileQuery=matchMedia("(max-width:1180px)");

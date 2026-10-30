@@ -1131,21 +1131,22 @@
 
 
 
-/* Composition relationship control: one decision, five spatial relations. */
-.lm-relation-grid{
+
+/* M tip markers: same central geometry, used as page markers. */
+.lm-marker-grid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:6px;
 }
-.lm-composition-relation-field .lm-ctrl-choice{
+.lm-marker-field .lm-ctrl-choice{
   min-width:0;
   padding:8px 6px 9px;
 }
-.lm-composition-relation-field .lm-ctrl-name{
+.lm-marker-field .lm-ctrl-name{
   font-size:10px;
   line-height:1.15;
 }
-.lm-relation-mini{
+.lm-marker-mini{
   position:relative;
   display:block;
   width:100%;
@@ -1153,37 +1154,29 @@
   border:1px solid var(--line);
   overflow:hidden;
 }
-.lm-relation-mini i,
-.lm-relation-mini b{
+.lm-marker-mini i,
+.lm-marker-mini b{
   position:absolute;
+  left:22%;
+  width:56%;
+  height:42%;
   display:block;
-  font-style:normal;
+  background:var(--ink);
 }
-.lm-relation-mini i{
-  left:10%;
-  width:34%;
-  height:22%;
-  border-top:2px solid var(--ink);
-  border-bottom:1px solid var(--ink);
+.lm-marker-mini i{
+  top:0;
+  clip-path:polygon(0 0,100% 0,58% 100%,42% 100%);
 }
-.lm-relation-mini b{
-  width:34%;
-  aspect-ratio:990.08/743.18;
-  border:1px solid var(--ink);
-  background:
-    linear-gradient(135deg,transparent 37%,var(--ink) 38% 42%,transparent 43%),
-    linear-gradient(45deg,transparent 37%,var(--ink) 38% 42%,transparent 43%);
+.lm-marker-mini b{
+  bottom:0;
+  clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);
 }
-.lm-relation-mini[data-relation-map=side] i{top:39%}
-.lm-relation-mini[data-relation-map=side] b{right:9%;top:29%}
-.lm-relation-mini[data-relation-map=top] i{top:22%}
-.lm-relation-mini[data-relation-map=top] b{right:9%;top:19%}
-.lm-relation-mini[data-relation-map=center] i{top:39%}
-.lm-relation-mini[data-relation-map=center] b{right:9%;top:29%}
-.lm-relation-mini[data-relation-map=bottom] i{bottom:20%}
-.lm-relation-mini[data-relation-map=bottom] b{right:9%;bottom:17%}
-.lm-relation-mini[data-relation-map=overlap] i{left:23%;top:39%;z-index:2;width:42%}
-.lm-relation-mini[data-relation-map=overlap] b{left:34%;top:20%;width:42%}
-@media(max-width:420px){
-  .lm-relation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lm-marker-mini[data-marker=bottom] i{top:auto;bottom:0;clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.lm-marker-mini[data-marker=both] i{display:block}
+.lm-marker-mini[data-marker=both] b{display:block}
+.lm-marker-mini[data-marker=none]::after{
+  content:"—";position:absolute;inset:0;display:grid;place-items:center;color:#8f8b84;font-size:15px
+}
+@media(max-width:520px){
+  .lm-marker-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }

@@ -260,3 +260,92 @@
   left:50%!important;
   top:50%!important;
 }
+
+/* The manual presents the system as a vocabulary, not as a stack of mini-essays. */
+.lm-composition-vocabulary{
+  margin-top:34px;
+  gap:10px;
+}
+.lm-composition-vocabulary article{
+  display:grid;
+  grid-template-columns:88px minmax(0,1fr);
+  grid-template-areas:
+    "index title"
+    "index text";
+  gap:3px 14px;
+  align-items:start;
+  padding:10px 0 12px;
+  border-top:1px solid var(--line);
+}
+.lm-composition-vocabulary b{
+  grid-area:index;
+  margin:2px 0 0;
+  font-size:9px;
+  letter-spacing:.06em;
+}
+.lm-composition-vocabulary h3{
+  grid-area:title;
+  margin:0;
+  font-size:16px;
+  line-height:1.12;
+}
+.lm-composition-vocabulary p{
+  grid-area:text;
+  margin:0;
+  max-width:52ch;
+  font-size:12px;
+  line-height:1.38;
+  color:#5f5b55;
+}
+
+.lm-rules-index{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0 28px;
+}
+.lm-rules-index article{
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr);
+  grid-template-areas:
+    "diagram title"
+    "diagram text";
+  gap:2px 12px;
+  align-items:center;
+  min-height:72px;
+  padding:10px 0;
+  border-top:1px solid var(--line);
+}
+.lm-rules-index .lm-rule-diagram{
+  grid-area:diagram;
+  width:44px;
+  aspect-ratio:1;
+  margin:0;
+}
+.lm-rules-index h3{
+  grid-area:title;
+  margin:0;
+  font-size:15px;
+  line-height:1.12;
+}
+.lm-rules-index p{
+  grid-area:text;
+  margin:0;
+  font-size:11.5px;
+  line-height:1.35;
+  color:#5f5b55;
+}
+.lm-rules-index .lm-rule-diagram::before{inset:14%}
+.lm-rules-index .lm-rule-diagram::after{top:20%;bottom:20%}
+.lm-rules-index .lm-rule-diagram i:nth-child(1){top:28%}
+.lm-rules-index .lm-rule-diagram i:nth-child(2){top:47%}
+.lm-rules-index .lm-rule-diagram i:nth-child(3){top:66%}
+.lm-m-guide-rule{
+  margin-top:20px;
+  padding-top:12px;
+}
+@media(max-width:700px){
+  .lm-composition-vocabulary{grid-template-columns:1fr}
+  .lm-composition-vocabulary article{
+    grid-template-columns:72px minmax(0,1fr);
+  }
+  .lm-rules-index{grid-template-columns:1fr}
+}

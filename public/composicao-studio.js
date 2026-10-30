@@ -120,6 +120,10 @@
     if(!moduleButtons.some(b=>b.dataset.mobileModule===name))return;
     mobileModule=name;
     inspector.dataset.mobileModule=name;
+    const activeButton=moduleButtons.find(button=>button.dataset.mobileModule===name);
+    const activeLabel=(activeButton?.textContent||name).trim();
+    inspector.dataset.activeLabel=activeLabel;
+    inspector.querySelector(".lm-composition-module-index")?.setAttribute("data-active-label",activeLabel);
     for(const button of moduleButtons)
       button.setAttribute("aria-pressed",String(button.dataset.mobileModule===name));
 

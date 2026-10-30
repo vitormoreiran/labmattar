@@ -1180,3 +1180,69 @@
 @media(max-width:520px){
   .lm-marker-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* Compact visual vocabulary for Image / M.
+   Choices stay complete, but the interface gives them different visual weight. */
+.lm-image-vocabulary{gap:14px}
+.lm-image-invariant{
+  display:flex;flex-wrap:wrap;gap:6px 12px;
+  padding:0 0 12px;border-bottom:1px solid var(--line);
+  font:300 10px/1.2 UniversMattar,Arial,sans-serif;
+  letter-spacing:.045em;
+}
+.lm-image-invariant span{white-space:nowrap}
+.lm-vocab-field{gap:7px}
+.lm-vocab-field .lm-lab-field-title{margin-bottom:0}
+.lm-vocab-field .lm-ctrl-choice-grid{gap:5px}
+.lm-vocab-field .lm-ctrl-choice{
+  min-height:58px;
+  padding:6px 5px 7px;
+  gap:5px;
+}
+.lm-vocab-field .lm-ctrl-visual{min-height:25px}
+.lm-vocab-field .lm-ctrl-name{
+  font-size:9.5px;
+  line-height:1.1;
+}
+.lm-vocab-field .lm-ctrl-meta{display:none}
+.lm-vocab-image .lm-ctrl-mini-image{
+  width:42px;height:25px;
+}
+.lm-marker-field .lm-marker-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.lm-marker-field .lm-marker-mini{
+  height:25px;border:0;
+}
+.lm-marker-field .lm-marker-mini i,
+.lm-marker-field .lm-marker-mini b{
+  left:28%;width:44%;
+}
+.lm-m-scale-field{
+  padding:10px 0 2px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.lm-m-scale-field .lm-lab-value-row{margin-bottom:7px}
+.lm-photo-library-field{
+  padding-top:4px;
+}
+.lm-photo-library-field .lm-ctrl-choice-grid{gap:5px}
+.lm-photo-library-field .lm-ctrl-choice{
+  min-height:72px;padding:5px;
+}
+.lm-photo-library-field .lm-ctrl-mini-photo{
+  width:100%;height:36px;
+}
+.lm-photo-library-field .lm-ctrl-name{
+  font-size:9.5px;line-height:1.1;
+}
+.lm-photo-library-field .lm-ctrl-meta{display:none}
+.lm-image-vocabulary .lm-ctrl-focus-field{
+  margin-top:-2px;
+}
+.lm-image-vocabulary .lm-ctrl-focus-visual{
+  min-height:74px;
+}
+@media(max-width:540px){
+  .lm-image-invariant{gap:5px 9px;font-size:9px}
+  .lm-marker-field .lm-marker-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}

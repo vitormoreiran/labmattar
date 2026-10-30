@@ -130,7 +130,7 @@ try{
     "Clicking away must dismiss help without altering the page");
   await tab("texto");
   await page.locator('[data-lab-help="labTitleScale"]').click();
-  assert((await page.locator("#labHelp-labTitleScale").innerText()).includes("limite superior"),
+  assert((await page.locator("#labHelp-labTitleScale").innerText()).includes("área útil"),
     "Title scale help must explain the margin invariant");
   assert(await page.locator("#labHelp-labTitleScale [data-control-effect='title']").count()===1,
     "Title scale diagram must be available only on demand");
@@ -139,9 +139,9 @@ try{
   assert(await page.locator("#labHelp-labTitleScale").isHidden(),
     "Switching tabs must dismiss the prior tool's help");
   await page.locator('[data-lab-choice="image"][data-value="recorte"]').click();
-  await page.locator('[data-lab-help="labRelation"]').click();
-  assert((await page.locator("#labHelp-labRelation").innerText()).includes("20%"),
-    "Photographic text-overlap help must explain the fixed contrast rule");
+  await page.locator('[data-lab-help="labMarker"]').click();
+  assert((await page.locator("#labHelp-labMarker").innerText()).includes("ponta"),
+    "M marker help must explain the upper/lower tips");
   await page.keyboard.press("Escape");
   await tab("pagina");
   await range("labMargin",7);
@@ -277,14 +277,13 @@ try{
   assert((await read()).photoSrc.includes("BOXDOSENTIR-151.jpg"),"Thumbnail did not change the photograph");
   assert(await page.locator("#labFocusImage").evaluate(el=>getComputedStyle(el).backgroundImage.includes("151.jpg")),"Focus diagram did not follow the selected photo");
   const mScaleBefore=await page.locator("#labMScale").inputValue();
-  await page.locator("[data-lab-choice='relation'][data-value='topo']").click();
-  assert(await page.locator("#labRelation").inputValue()==="topo",
-    "Text + M relationship control is inert");
+  await page.locator("[data-lab-choice='marker'][data-value='both']").click();
+  assert(await page.locator("#labMarker").inputValue()==="both",
+    "M-tip marker control is inert");
   assert(await page.locator("#labMScale").inputValue()===mScaleBefore,
-    "Changing the text + M relationship must never change M scale");
-  await range("labGap",7);
-  assert(await page.locator("#labGap").inputValue()==="7",
-    "Text + M distance must be independently adjustable");
+    "Changing M markers must never change M scale");
+  assert(await page.locator("#labMMarkers").getAttribute("data-marker")==="both",
+    "Marker state must reach the live canvas");
   const focal=page.locator("#labFocalPreview");
   await focal.scrollIntoViewIfNeeded();
   const rect=await focal.boundingBox();
@@ -332,7 +331,6 @@ try{
   assert(data.photoText==="true"&&data.backgroundOpacity==="1","20% background veil did not activate");
   assert(data.m.mask.includes("m-publicado.svg"),"Original M geometry not used as mask");
   assert(Math.abs(data.m.width/data.m.height-990.08/743.18)<.05,"M image distorted");
-  await page.locator("[data-lab-choice='relation'][data-value='sobreposta']").click();
   await range("labMScale",Number(await page.locator("#labMScale").getAttribute("max")));
   data=await read();
   assert(data.mText==="true"&&data.m.opacity==="1","M must darken by 20% when the text intersects it");
@@ -340,8 +338,8 @@ try{
   assert(color.includes("0.2")||color.includes("0.20"),"M overlay is not 20% opaque black");
   await page.locator("#labArtboard").screenshot({path:"composition-lab-m-overlay.png"});
 
-  await select("labRelation","lado-a-lado");
-  await range("labGap",4);
+  assert(await page.locator("#labRelation").inputValue()==="central",
+    "M must remain on the central axis");
   await range("labMScale",45);
   await range("labTextWidth",40);
   data=await read();

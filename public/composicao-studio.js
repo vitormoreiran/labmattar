@@ -85,8 +85,13 @@
 
     const compact=window.innerWidth<=1180;
     const pad=compact?16:32;
-    const maxW=Math.max(120,stage.clientWidth-pad);
-    const maxH=Math.max(90,stage.clientHeight-pad);
+    const maxW=compact
+      ? Math.max(160,window.innerWidth-24)
+      : Math.max(160,stage.clientWidth-pad);
+    const compactPreviewH=window.innerWidth<=700?174:244;
+    const maxH=compact
+      ? compactPreviewH
+      : Math.max(120,stage.clientHeight-pad);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
 
     artboard.style.transformOrigin="top left";

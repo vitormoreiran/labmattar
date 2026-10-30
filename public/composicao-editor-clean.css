@@ -2889,3 +2889,94 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
     padding-inline:8px!important;
   }
 }
+
+/* 2026-10-30 COMPACT TOOLBAR NAV
+   Replace tall compact grid with a single-row icon toolbar.
+   All six modules stay visible; only active module shows its label. */
+@media (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    position:sticky!important;
+    z-index:31!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    height:48px!important;
+    min-height:48px!important;
+    margin:0!important;
+    padding:4px 8px!important;
+    display:grid!important;
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+    grid-auto-rows:40px!important;
+    gap:2px!important;
+    overflow:visible!important;
+    border-bottom:1px solid var(--ui-line,#d8d8d3)!important;
+    background:rgba(248,248,246,.98)!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    height:40px!important;
+    padding:0!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:0!important;
+    overflow:hidden!important;
+    border:1px solid transparent!important;
+    border-radius:7px!important;
+    background:transparent!important;
+    color:var(--ui-muted,#777772)!important;
+    font:300 0/1 UniversMattar,Arial,sans-serif!important;
+    letter-spacing:0!important;
+    white-space:nowrap!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button::before{
+    width:15px!important;
+    height:15px!important;
+    margin:0!important;
+    flex:0 0 auto!important;
+    opacity:.7!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
+    color:var(--ui-ink,#20201e)!important;
+    background:#fff!important;
+    border-color:var(--ui-line,#d8d8d3)!important;
+    box-shadow:0 1px 2px rgba(0,0,0,.05)!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]::before{
+    opacity:1!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index::after{
+    content:attr(data-active-label);
+    display:none;
+  }
+}
+
+/* active label lives just below toolbar without increasing menu height */
+@media (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-lab-inspector::before{
+    content:attr(data-active-label);
+    display:block;
+    padding:12px 14px 4px;
+    color:var(--ui-muted,#777772);
+    font:300 10px/1 UniversMattar,Arial,sans-serif;
+    letter-spacing:.06em;
+  }
+}
+
+@media(max-width:520px){
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    height:46px!important;
+    min-height:46px!important;
+    grid-auto-rows:38px!important;
+    padding:4px 6px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    height:38px!important;
+  }
+}

@@ -1796,3 +1796,343 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     width:min(calc(100vw - 28px),calc((42vh - 28px) * 9 / 16))!important;
   }
 }
+
+/* 2026-10-30 COMPACT FLOW RESET
+   Below desktop width the editor uses normal document flow.
+   No viewport locking, no overlapping panes, no fixed-height inspector. */
+@media (max-width:1180px){
+  html:has(body.lm-studio-open),
+  body.lm-studio-open{
+    height:auto!important;
+    min-height:100%!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:auto!important;
+  }
+
+  body.lm-studio-open #laboratorio.lm-lab{
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+    background:#f8f8f7!important;
+  }
+
+  body.lm-studio-open #laboratorio>.lm-lab-heading,
+  body.lm-studio-open #laboratorio>.lm-lab-legend,
+  body.lm-studio-open #laboratorio>.lm-lab-lead{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-prep{
+    position:static!important;
+    width:100%!important;
+    height:40px!important;
+    min-height:40px!important;
+    padding:0 10px!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    border-bottom:1px solid #d7d7d3!important;
+    background:#f8f8f7!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-system-statement{display:none!important}
+
+  body.lm-studio-open #laboratorio .lm-lab-workspace,
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])),
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format]){
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow:visible!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    padding:0!important;
+    margin:0!important;
+    display:block!important;
+    overflow:visible!important;
+    border:0!important;
+    border-bottom:1px solid #d7d7d3!important;
+    background:#ededeb!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-preview-head,
+  body.lm-studio-open #laboratorio .lm-lab-preview-foot{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    box-sizing:border-box!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    padding:12px!important;
+    margin:0!important;
+    display:grid!important;
+    place-items:center!important;
+    overflow:visible!important;
+    border:0!important;
+    background:#ededeb!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-board{
+    box-sizing:border-box!important;
+    display:block!important;
+    width:min(100%,720px)!important;
+    height:auto!important;
+    max-width:calc(100vw - 24px)!important;
+    max-height:none!important;
+    margin:0 auto!important;
+    flex:none!important;
+    box-shadow:0 2px 14px rgba(0,0,0,.10)!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=horizontal]{
+    width:min(calc(100vw - 24px),720px)!important;
+    aspect-ratio:16/9!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=editorial]{
+    width:min(calc(100vw - 24px),620px)!important;
+    aspect-ratio:1.414!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=quadrado]{
+    width:min(calc(100vw - 24px),560px)!important;
+    aspect-ratio:1!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-board[data-format=vertical]{
+    width:min(calc(100vw - 24px),360px)!important;
+    aspect-ratio:9/16!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector,
+  body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
+    position:static!important;
+    width:100%!important;
+    height:auto!important;
+    min-width:0!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    overflow:visible!important;
+    padding:0 12px 28px!important;
+    margin:0!important;
+    display:block!important;
+    border:0!important;
+    background:#f8f8f7!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-inspector-head,
+  body.lm-studio-open #laboratorio .lm-lab-mini-actions{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    position:static!important;
+    inset:auto!important;
+    z-index:auto!important;
+    box-sizing:border-box!important;
+    width:calc(100% + 24px)!important;
+    height:46px!important;
+    min-height:46px!important;
+    margin:0 -12px!important;
+    padding:0 8px!important;
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    align-items:stretch!important;
+    gap:0!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    border-bottom:1px solid #d7d7d3!important;
+    background:#f8f8f7!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index::-webkit-scrollbar{display:none}
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{
+    position:relative!important;
+    flex:0 0 auto!important;
+    min-width:max-content!important;
+    width:auto!important;
+    height:46px!important;
+    padding:0 12px!important;
+    margin:0!important;
+    border:0!important;
+    border-bottom:1px solid transparent!important;
+    border-radius:0!important;
+    background:transparent!important;
+    font:300 10px/46px UniversMattar,Arial,sans-serif!important;
+    letter-spacing:.045em!important;
+    color:#555!important;
+    white-space:nowrap!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
+    color:#111!important;
+    border-bottom-color:#111!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module,
+  body.lm-studio-open #laboratorio .lm-composition-module[hidden]{
+    display:none!important;
+    pointer-events:none!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
+    display:block!important;
+    pointer-events:auto!important;
+    position:relative!important;
+    z-index:1!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    padding:16px 0 24px!important;
+    margin:0!important;
+    border:0!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module .lm-inspector-panel-heading{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-inspector-primary,
+  body.lm-studio-open #laboratorio .lm-inspector-extra{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:16px!important;
+    width:100%!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-field,
+  body.lm-studio-open #laboratorio .lm-ctrl-focus-field,
+  body.lm-studio-open #laboratorio .lm-composition-submodule{
+    position:relative!important;
+    z-index:1!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    pointer-events:auto!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-ctrl-choice-grid,
+  body.lm-studio-open #laboratorio .lm-ctrl-columns-2,
+  body.lm-studio-open #laboratorio .lm-ctrl-columns-3,
+  body.lm-studio-open #laboratorio .lm-marker-grid{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fit,minmax(92px,1fr))!important;
+    gap:7px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.lm-studio-open #laboratorio .lm-marker-grid{
+    grid-template-columns:repeat(auto-fit,minmax(72px,1fr))!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-ctrl-choice{
+    position:relative!important;
+    z-index:1!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:48px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:8px 6px!important;
+    overflow:hidden!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  body.lm-studio-open #laboratorio .lm-ctrl-choice *{
+    pointer-events:none!important;
+  }
+
+  body.lm-studio-open #laboratorio input,
+  body.lm-studio-open #laboratorio select,
+  body.lm-studio-open #laboratorio textarea,
+  body.lm-studio-open #laboratorio button{
+    max-width:100%!important;
+  }
+  body.lm-studio-open #laboratorio input[type=range]{
+    width:100%!important;
+    min-height:34px!important;
+    touch-action:pan-y!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-control-effect,
+  body.lm-studio-open #laboratorio .lm-ctrl-helper,
+  body.lm-studio-open #laboratorio .lm-ctrl-meta{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-photo-library-field .lm-ctrl-choice{
+    min-height:64px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-photo-library-field .lm-ctrl-mini-photo{
+    height:34px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-ctrl-focus-visual{
+    width:100%!important;
+    height:92px!important;
+    min-height:92px!important;
+  }
+
+  /* module isolation */
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=superficie] #labPanel-pagina [data-lab-more=pagina]{display:none!important}
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina>.lm-inspector-primary{display:none!important}
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]{
+    display:block!important;border:0!important;margin:0!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]>summary{display:none!important}
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-image-invariant,
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-submodule=m],
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-marker-field,
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-m-scale-field,
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-lab-more=imagem]{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labPanel-imagem [data-submodule=fundo],
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labPanel-imagem .lm-lab-field:has(#labColor),
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labPanel-imagem [data-lab-more=imagem]{
+    display:none!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem>.lm-inspector-primary{
+    display:none!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem [data-lab-more=imagem]{
+    display:block!important;border:0!important;margin:0!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem [data-lab-more=imagem]>summary{display:none!important}
+  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem [data-lab-more=imagem] .lm-lab-field:not(.lm-ctrl-signature-field){display:none!important}
+}
+
+@media (max-width:420px){
+  body.lm-studio-open #laboratorio .lm-ctrl-choice-grid,
+  body.lm-studio-open #laboratorio .lm-ctrl-columns-2,
+  body.lm-studio-open #laboratorio .lm-ctrl-columns-3{
+    grid-template-columns:repeat(auto-fit,minmax(82px,1fr))!important;
+  }
+  body.lm-studio-open #laboratorio .lm-marker-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}

@@ -31,45 +31,35 @@ assert 'href="/composicao-lab-controls.css"' in composition, "Illustrated contro
 assert 'href="/composicao-studio.css"' in composition, "Viewport studio stylesheet missing"
 assert 'href="/composicao-editor-clean.css"' in composition, "Focused editor treatment missing"
 clean_css=(Path("public")/"composicao-editor-clean.css").read_text(encoding="utf-8")
-assert "grid-template-columns:minmax(0,1fr) 322px" in clean_css
-assert "lm-studio-tool[aria-expanded=true]" in clean_css
-assert "lm-studio-image-flat" in clean_css
-assert "entry.button.after(layout.detail)" in (Path("public")/"composicao-studio.js").read_text(encoding="utf-8")
-assert "lm-studio-detail-body" in clean_css
+studio_css=(Path("public")/"composicao-studio.css").read_text(encoding="utf-8")
+studio_js=(Path("public")/"composicao-studio.js").read_text(encoding="utf-8")
+lab_css=(Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 
 assert 'src="/composicao-studio.js"' in composition, "Viewport studio behavior missing"
 assert 'id="labStudioToggle"' in composition, "Focused editing entry must be visible"
-studio_css=(Path("public")/"composicao-studio.css").read_text(encoding="utf-8")
-studio_js=(Path("public")/"composicao-studio.js").read_text(encoding="utf-8")
-for key in ("lm-studio-tools","lm-studio-detail","lm-studio-open","data-format"):
- assert key in studio_css or key in studio_js,f"Studio integration missing: {key}"
-for key in ("fitBoard()","openTool(entry)","startStudio()","stopStudio()","labStudioToggle"):
- assert key in studio_js,f"Studio control not connected: {key}"
-assert 'grid-template-columns:repeat(3,minmax(0,1fr))' in studio_css
-assert "innerDimensions(stage)" in studio_js
-assert "m-publicado.svg" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+assert "lm-unified-studio" in studio_js and "lm-studio-open" in studio_js
+assert "data-studio-tool" not in studio_js, "Focused mode must not build a second tool architecture"
+assert "lm-composition-module-index" in composition
+assert "UMA COMPOSIÇÃO" in composition
+assert "lm-composition-submodule" in composition
+assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
+assert "data-background" in lab_js and "data-m-content" in lab_js
+assert "data-background=photo" in lab_css and "data-m-content=solid" in lab_css
+assert "m-publicado.svg" in lab_css
 assert 'id="regras-de-composicao"' in composition, "Composition rules section missing"
 for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):
  assert rule in composition,f"Missing composition rule: {rule}"
 assert 'data-lab-choice="mMode"' not in composition, "Invented M usage modes must not be exposed"
-assert "mountFlatImage()" in studio_js and "restoreFlatImage()" in studio_js
-# The inspector is spatially continuous: a property expands under the full
-# tool index rather than replacing or covering the original menu.
-assert "layout.menu.hidden=true" not in studio_js
-assert "layout.detail.hidden=false" in studio_js
-assert 'entry.button.setAttribute("aria-expanded","true")' in studio_js
-assert "EXPANSION BELOW THE PALETTE" in studio_css
-assert "position:relative;" in studio_css
-assert "lm-studio-image-flat" in studio_css, "The existing flat M inspector must remain intact"
-assert "lm-studio-image-flat" in studio_css, "Image controls still use nested studio folders"
-assert "state.mMode" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
-assert ".20" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8"), "Fixed 20% must be preserved"
+assert ".20" in lab_css, "Fixed 20% must be preserved"
+assert "state.mMode" in lab_js
+assert "lm-composition-module" in clean_css and "lm-composition-submodule" in clean_css
 
 
 controls=(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8")
-for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-image","lm-ctrl-mini-type","lm-ctrl-mini-photo","lm-marker-grid"):
+for sample in ("lm-ctrl-choice","lm-ctrl-mini-sheet","lm-ctrl-mini-type","lm-ctrl-mini-photo","lm-marker-grid"):
  assert sample in controls and sample in composition,f"Missing illustrated control: {sample}"
-for key in ("format","marker","type","image","photo","bodyMode"):
+for key in ("format","marker","type","background","mContent","photo","bodyMode"):
  assert 'data-lab-choice="'+key+'"' in composition,f"Missing visual control group: {key}"
 assert "fitTitleToReadingArea" in (Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 # The inspector has three focused work areas; every approved control remains.

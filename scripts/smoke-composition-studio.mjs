@@ -103,6 +103,24 @@ try{
   assert(mobileLayout.workspace.bottom<=mobileLayout.viewport+2,
     "Mobile editor must fit inside one viewport with internal control scrolling");
 
+  for(const vp of [{width:360,height:740},{width:430,height:932}]){
+    await page.setViewportSize(vp);
+    await page.waitForTimeout(80);
+    const responsive=await page.evaluate(()=>{
+      const board=document.querySelector("#labArtboard").getBoundingClientRect();
+      const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();
+      const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
+      const rail=document.querySelector(".lm-composition-module-index").getBoundingClientRect();
+      return {board,preview,inspector,rail,vw:innerWidth,vh:innerHeight};
+    });
+    assert(responsive.board.width>110&&responsive.board.right<=responsive.vw+1,
+      "Artboard must remain visible and contained at "+vp.width+"x"+vp.height);
+    assert(responsive.preview.bottom<=responsive.inspector.top+2,
+      "Preview and inspector must not overlap at "+vp.width+"x"+vp.height);
+    assert(responsive.rail.width<=responsive.vw+2,
+      "Module rail must stay within viewport width at "+vp.width+"x"+vp.height);
+  }
+
   await page.locator("#labStudioToggle").click();
   assert(await page.locator("body").evaluate(el=>!el.classList.contains("lm-studio-open")),
     "Focused mode did not close");

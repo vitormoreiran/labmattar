@@ -66,21 +66,21 @@ try{
   await page.waitForTimeout(120);
   assert(await page.locator(".lm-composition-module-index").isVisible(),
     "Mobile module rail must remain visible");
-  assert(await page.locator('[data-mobile-module="superficie"]').getAttribute("aria-pressed")==="true",
+  assert(await page.locator('button[data-mobile-module="superficie"]').getAttribute("aria-pressed")==="true",
     "Mobile editor must open with Surface selected");
 
-  await page.locator('[data-mobile-module="m"]').click();
+  await page.locator('button[data-mobile-module="m"]').click();
   assert(await page.locator("#labPanel-imagem").isVisible()&&
          await page.locator("[data-submodule=m]").isVisible()&&
          await page.locator("[data-submodule=fundo]").isHidden(),
     "Mobile M module must isolate M controls without changing composition type");
 
-  await page.locator('[data-mobile-module="fundo"]').click();
+  await page.locator('button[data-mobile-module="fundo"]').click();
   assert(await page.locator("[data-submodule=fundo]").isVisible()&&
          await page.locator("[data-submodule=m]").isHidden(),
     "Mobile Background module must isolate background controls");
 
-  await page.locator('[data-mobile-module="texto"]').click();
+  await page.locator('button[data-mobile-module="texto"]').click();
   assert(await page.locator("#labPanel-texto").isVisible()&&
          await page.locator("#labPanel-pagina").isHidden(),
     "Mobile Text module must show only text controls");
@@ -130,7 +130,7 @@ try{
     assert(responsive.rail.width<=responsive.vw+2,
       "Module rail must stay within viewport width at "+vp.width+"x"+vp.height);
 
-    await page.locator('[data-mobile-module="superficie"]').click();
+    await page.locator('button[data-mobile-module="superficie"]').click();
     await page.locator("#labPanel-pagina").scrollIntoViewIfNeeded();
     const button=page.locator('[data-lab-choice="format"][data-value="horizontal"]');
     await button.scrollIntoViewIfNeeded();
@@ -144,7 +144,7 @@ try{
       "Format control must be tappable without collision at "+vp.width+"x"+vp.height+": "+JSON.stringify(hit));
     await button.click();
 
-    await page.locator('[data-mobile-module="m"]').click();
+    await page.locator('button[data-mobile-module="m"]').click();
     const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
     await mButton.scrollIntoViewIfNeeded();
     const mHit=await mButton.evaluate(el=>{

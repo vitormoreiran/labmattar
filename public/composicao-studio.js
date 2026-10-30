@@ -54,8 +54,17 @@
   }
 
 
+  function syncViewport(){
+    document.documentElement.style.setProperty("--lm-app-h",window.innerHeight+"px");
+    document.body.classList.toggle("lm-phone-layout",window.innerWidth<=700);
+    document.body.classList.toggle("lm-tablet-layout",window.innerWidth>700&&window.innerWidth<=1180);
+  }
+  syncViewport();
+  window.addEventListener("resize",syncViewport,{passive:true});
+  window.visualViewport?.addEventListener("resize",syncViewport,{passive:true});
+
   const moduleButtons=[...lab.querySelectorAll("[data-mobile-module]")];
-  const mobileQuery=matchMedia("(max-width:850px)");
+  const mobileQuery=matchMedia("(max-width:1180px)");
   let mobileModule="superficie";
   try{
     const saved=sessionStorage.getItem("labmattar-composicao-mobile-module");

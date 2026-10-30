@@ -44,7 +44,7 @@ assert "lm-composition-module-index" in composition
 assert "UMA COMPOSIÇÃO" in composition
 assert "lm-composition-submodule" in composition
 assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
-assert "data-background" in lab_js and "data-m-content" in lab_js
+assert "dataset.background" in lab_js and "dataset.mContent" in lab_js
 assert "data-background=photo" in lab_css and "data-m-content=solid" in lab_css
 assert "m-publicado.svg" in lab_css
 assert 'id="regras-de-composicao"' in composition, "Composition rules section missing"

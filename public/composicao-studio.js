@@ -15,13 +15,13 @@
   const fieldsByPanel={
     pagina:["labFormat","labMargin","labColor","labGuides"],
     texto:["labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
-    imagem:["labImage","labPhoto","labRelation","labGap","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
+    imagem:["labImage","labPhoto","labMarker","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
   };
   const label={
     labFormat:"Formato",labMargin:"Margem",labColor:"Fundo",labGuides:"Guias",
     labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
     labBodyMode:"Leitura",labTitleInput:"Editar título",labBodyInput:"Editar texto",
-    labImage:"Aplicação",labPhoto:"Fotografia",labRelation:"Relação texto + M",labGap:"Distância",
+    labImage:"Aplicação",labPhoto:"Fotografia",labMarker:"Marcadores do M",
     labMScale:"Escala M",labFocalPreview:"Enquadrar",labFocusX:"Foco X",
     labFocusY:"Foco Y",labSymbol:"Assinatura"
   };
@@ -35,7 +35,7 @@
     image:{nenhuma:"Sem foto",recorte:"Com M",inteira:"Integral"},
     mMode:{janela:"Janela",corte:"Corte lateral",sutil:"Marca sutil"},
     photo:{"64":"Imagem 01","179":"Imagem 02","151":"Imagem 03"},
-    relation:{"lado-a-lado":"Lado a lado",topo:"Topo",centro:"Centro",base:"Base",sobreposta:"Sobrepostos"},
+    marker:{none:"Sem marcadores",top:"Superior",bottom:"Inferior",both:"Superior + inferior"},
     symbol:{none:"Nenhuma","M.svg":"M mestre"}
   };
   const ratio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
@@ -139,7 +139,7 @@
     {name:"aplicacao",fields:["labImage"]},
     {name:"fotografia",fields:["labPhoto"]},
     {name:"foco",fields:["labFocalPreview","labFocusX","labFocusY"]},
-    {name:"relacao",fields:["labRelation","labGap"]},
+    {name:"marcadores",fields:["labMarker"]},
     {name:"geometria",fields:["labMScale"]},
     {name:"assinatura",fields:["labSymbol"]}
   ];
@@ -149,7 +149,7 @@
     container.setAttribute("role","group");
     const heading={
       aplicacao:"IMAGEM",fotografia:"FOTOGRAFIA",
-      foco:"ENQUADRAMENTO",relacao:"TEXTO + M",geometria:"ESCALA DO M",
+      foco:"ENQUADRAMENTO",marcadores:"MARCADORES DO M",geometria:"ESCALA DO M",
       assinatura:"ASSINATURA"
     }[spec.name];
     container.append(make("span","lm-studio-image-block-label",heading));

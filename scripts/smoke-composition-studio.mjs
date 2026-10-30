@@ -100,32 +100,62 @@ try{
 
   assert(mobileLayout.preview.bottom<=mobileLayout.inspector.top+2,
     "Mobile canvas and controls must not overlap");
-  assert(mobileLayout.workspace.bottom<=mobileLayout.viewport+2,
-    "Mobile editor must fit inside one viewport with internal control scrolling");
 
   for(const vp of [
-    {width:360,height:740},
+    {width:320,height:568},
+    {width:360,height:640},
     {width:390,height:844},
     {width:430,height:932},
+    {width:500,height:700},
+    {width:600,height:700},
     {width:768,height:1024},
-    {width:834,height:1194},
-    {width:1024,height:1366}
+    {width:834,height:1112},
+    {width:1024,height:768}
   ]){
     await page.setViewportSize(vp);
-    await page.waitForTimeout(80);
+    await page.waitForTimeout(100);
+
     const responsive=await page.evaluate(()=>{
       const board=document.querySelector("#labArtboard").getBoundingClientRect();
       const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();
       const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
       const rail=document.querySelector(".lm-composition-module-index").getBoundingClientRect();
-      return {board,preview,inspector,rail,vw:innerWidth,vh:innerHeight};
+      return {board,preview,inspector,rail,vw:innerWidth,vh:innerHeight,
+        bodyOverflow:getComputedStyle(document.body).overflowY};
     });
-    assert(responsive.board.width>110&&responsive.board.right<=responsive.vw+1,
+    assert(responsive.board.width>100&&responsive.board.right<=responsive.vw+1,
       "Artboard must remain visible and contained at "+vp.width+"x"+vp.height);
     assert(responsive.preview.bottom<=responsive.inspector.top+2,
-      "Preview and inspector must not overlap at "+vp.width+"x"+vp.height);
+      "Preview and controls must stay in document flow at "+vp.width+"x"+vp.height);
     assert(responsive.rail.width<=responsive.vw+2,
       "Module rail must stay within viewport width at "+vp.width+"x"+vp.height);
+
+    await page.locator('[data-mobile-module="superficie"]').click();
+    await page.locator("#labPanel-pagina").scrollIntoViewIfNeeded();
+    const button=page.locator('[data-lab-choice="format"][data-value="horizontal"]');
+    await button.scrollIntoViewIfNeeded();
+    const hit=await button.evaluate(el=>{
+      const r=el.getBoundingClientRect();
+      const x=r.left+r.width/2,y=r.top+r.height/2;
+      const top=document.elementFromPoint(x,y);
+      return {width:r.width,height:r.height,hit:top===el||el.contains(top)};
+    });
+    assert(hit.width>=44&&hit.height>=44&&hit.hit,
+      "Format control must be tappable without collision at "+vp.width+"x"+vp.height+": "+JSON.stringify(hit));
+    await button.click();
+
+    await page.locator('[data-mobile-module="m"]').click();
+    const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
+    await mButton.scrollIntoViewIfNeeded();
+    const mHit=await mButton.evaluate(el=>{
+      const r=el.getBoundingClientRect();
+      const x=r.left+r.width/2,y=r.top+r.height/2;
+      const top=document.elementFromPoint(x,y);
+      return {width:r.width,height:r.height,hit:top===el||el.contains(top)};
+    });
+    assert(mHit.width>=44&&mHit.height>=44&&mHit.hit,
+      "M control must be tappable without collision at "+vp.width+"x"+vp.height+": "+JSON.stringify(mHit));
+    await mButton.click();
   }
 
   await page.locator("#labStudioToggle").click();

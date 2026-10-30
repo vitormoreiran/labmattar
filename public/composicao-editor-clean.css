@@ -2136,3 +2136,75 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
   }
 }
+
+/* Device-independent preview: fixed logical artboard scaled inside a stable frame. */
+body.lm-studio-open #laboratorio .lm-lab-artboard-frame{
+  position:relative!important;
+  flex:0 0 auto!important;
+  margin:auto!important;
+  overflow:visible!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
+  position:absolute!important;
+  left:0!important;top:0!important;
+  margin:0!important;
+}
+
+/* Compact devices keep the edited page visible while controls scroll. */
+@media (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    position:sticky!important;
+    top:40px!important;
+    z-index:30!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:visible!important;
+    background:#ededeb!important;
+    border-bottom:1px solid #d7d7d3!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    height:clamp(180px,30vw,280px)!important;
+    min-height:180px!important;
+    max-height:280px!important;
+    padding:8px!important;
+    overflow:hidden!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-lab-inspector{
+    overflow:visible!important;
+    height:auto!important;
+  }
+
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    position:sticky!important;
+    top:calc(40px + clamp(180px,30vw,280px))!important;
+    z-index:31!important;
+    background:#f8f8f7!important;
+    border-top:1px solid #d7d7d3!important;
+  }
+}
+
+/* Phones use a smaller persistent preview so controls still have room. */
+@media (max-width:700px){
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    height:190px!important;
+    min-height:190px!important;
+    max-height:190px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    top:230px!important;
+  }
+}
+
+/* Tablets keep a larger persistent preview. */
+@media (min-width:701px) and (max-width:1180px){
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    height:260px!important;
+    min-height:260px!important;
+    max-height:260px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    top:300px!important;
+  }
+}

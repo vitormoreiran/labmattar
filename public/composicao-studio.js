@@ -1,360 +1,64 @@
-/* LABMATTAR — focused, viewport-based composition studio.
- * Reuses the existing LABMATTAR artboard and all canonical input IDs.
- * No new identity style, M geometry, or content/state copy is introduced.
+/* LABMATTAR — unified composition editor.
+ * The focused mode enlarges the same inspector used in the manual.
+ * It does not create alternate composition types or duplicate controls.
  */
 (()=>{
   "use strict";
   const by=id=>document.getElementById(id);
-  const lab=by("laboratorio"),board=by("labArtboard"),stage=lab?.querySelector(".lm-lab-stage");
-  const workspace=lab?.querySelector(".lm-lab-workspace");
-  const toolbar=lab?.querySelector(".lm-lab-prep");
-  const toggle=by("labStudioToggle");
-  const toggleText=by("labStudioToggleText");
-  if(!lab||!board||!stage||!workspace||!toggle)return;
+  const lab=by("laboratorio"),toggle=by("labStudioToggle"),toggleText=by("labStudioToggleText");
+  const reset=by("labReset");
+  if(!lab||!toggle||!toggleText)return;
 
-  const fieldsByPanel={
-    pagina:["labFormat","labMargin","labColor","labGuides"],
-    texto:["labType","labTitleScale","labTextWidth","labBodyMode","labTitleInput","labBodyInput"],
-    imagem:["labImage","labPhoto","labMarker","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"]
-  };
-  const label={
-    labFormat:"Formato",labMargin:"Margem",labColor:"Fundo",labGuides:"Guias",
-    labType:"Fonte",labTitleScale:"Título",labTextWidth:"Coluna",
-    labBodyMode:"Leitura",labTitleInput:"Editar título",labBodyInput:"Editar texto",
-    labImage:"Aplicação",labPhoto:"Fotografia",labMarker:"Marcadores do M",
-    labMScale:"Escala M",labFocalPreview:"Enquadrar",labFocusX:"Foco X",
-    labFocusY:"Foco Y",labSymbol:"Assinatura"
-  };
-  const display={
-    format:{horizontal:"16:9",vertical:"9:16",quadrado:"1:1",editorial:"√2:1"},
-    color:{neutral:"Papel",beige:"Bege",green:"Verde",red:"Vermelho",blue:"Azul",brown:"Marrom"},
-    guides:{nenhuma:"Oculto",margens:"Margens",grid:"12 colunas"},
-    
-    type:{alternada:"U + P",univers:"Univers",perpetua:"Perpetua"},
-    bodyMode:{oculto:"Só título",visivel:"Título + texto"},
-    image:{nenhuma:"Sem foto",recorte:"Com M",inteira:"Integral"},
-    mMode:{janela:"Janela",corte:"Corte lateral",sutil:"Marca sutil"},
-    photo:{"64":"Imagem 01","179":"Imagem 02","151":"Imagem 03"},
-    marker:{none:"Sem marcadores",top:"Superior",bottom:"Inferior",both:"Superior + inferior"},
-    symbol:{none:"Nenhuma","M.svg":"M mestre"}
-  };
-  const ratio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
-  const entries=new Map(),layouts=new Map();
-  let active=false,currentEntry=null,overviewMarker=null;
-  let fitFrame=0,syncFrame=0,lastFocus=null;
-  const overview=lab.querySelector(".lm-lab-heading-aside");
+  const panels=[...lab.querySelectorAll("[data-lab-panel]")];
+  const inspector=lab.querySelector(".lm-lab-inspector");
   const heading=lab.querySelector(".lm-inspector-head>span");
-  if(heading)heading.textContent="AJUSTES";
-  if(overview){overviewMarker=document.createComment("Return overview help to manual");overview.after(overviewMarker)}
-  const quickReset=document.createElement("button");
-  quickReset.type="button";
-  quickReset.className="lm-studio-quickreset";
-  quickReset.id="labStudioQuickReset";
-  quickReset.setAttribute("aria-label","Restaurar composição inicial");
-  quickReset.title="Restaurar estudo inicial";
-  quickReset.textContent="↺";
-  const launch=lab.querySelector(".lm-studio-launch");
-  launch?.prepend(quickReset);
-  quickReset.addEventListener("click",()=>by("labReset")?.click());
+  let active=false;
 
-  function make(tag,className,text){
-    const el=document.createElement(tag);
-    el.className=className;
-    if(text!==undefined)el.textContent=text;
-    return el;
-  }
-  function fieldValue(id){
-    if(id==="labFocalPreview")return by("labFocusX").value+"% · "+by("labFocusY").value+"%";
-    const input=by(id);
-    if(!input)return "";
-    if(input.matches("textarea"))return input.value.trim()?"Editar":"Vazio";
-    if(input.type==="range")return input.value+"%";
-    if(input.tagName==="SELECT"){
-      const val=input.value,fieldName=id.replace(/^lab/,"");
-      const key=fieldName.charAt(0).toLowerCase()+fieldName.slice(1);
-      return display[key]?.[val]||input.selectedOptions?.[0]?.textContent||val;
-    }
-    return input.value||"";
-  }
-  function registerTool(panelName,id,menu,detail){
-    const input=by(id);
-    const field=input?.closest(".lm-lab-field,.lm-ctrl-focus-field");
-    if(!input||!field)throw Error("Missing composition tool "+id);
-    const marker=document.createComment("Original field: "+id);
-    field.before(marker);
-    const button=make("button","lm-studio-tool");
-    button.type="button";
-    button.dataset.studioTool=id;
-    button.setAttribute("aria-controls",detail.id);
-    button.setAttribute("aria-expanded","false");
-    const labelSpan=make("span","lm-studio-tool-label",label[id]);
-    const value=make("span","lm-studio-tool-value","");
-    button.append(labelSpan,value);
-    menu.append(button);
-    const entry={id,panelName,input,field,marker,button,value,detail};
-    button.addEventListener("click",()=>openTool(entry));
-    entries.set(id,entry);
-  }
-  for(const [panelName,ids] of Object.entries(fieldsByPanel)){
-    const panel=by("labPanel-"+panelName);
-    if(!panel)throw Error("Composition inspector panel missing: "+panelName);
-    const menu=make("div","lm-studio-tools");
-    menu.dataset.studioTools=panelName;
-    menu.setAttribute("role","group");
-    menu.setAttribute("aria-label","Ferramentas de "+(panelName==="imagem"?"imagem e M":panelName));
-    const detail=make("div","lm-studio-detail");
-    detail.id="labStudioDetail-"+panelName;
-    detail.hidden=true;
-    detail.setAttribute("role","region");
-    detail.setAttribute("aria-label","Opções de edição");
-    const head=make("div","lm-studio-detail-head");
-    const back=make("button","lm-studio-back");
-    back.type="button";
-    back.append(make("span","lm-studio-back-icon","×"),make("span","lm-studio-back-text","FECHAR AJUSTE"));
-    back.setAttribute("aria-label","Recolher opções");
-    const value=make("span","lm-studio-detail-value","");
-    head.append(back,value);
-    const body=make("div","lm-studio-detail-body");
-    detail.append(head,body);
-    panel.insertBefore(menu,panel.querySelector(".lm-inspector-primary"));
-    panel.append(detail);
-    layouts.set(panelName,{panel,menu,detail,head,body,back,value});
-    for(const id of ids)registerTool(panelName,id,menu,detail);
-    back.addEventListener("click",()=>closeTool({focus:true}));
+  // One composition: every module remains present in both manual and focused mode.
+  for(const panel of panels)panel.hidden=false;
+  if(heading)heading.textContent="COMPOSIÇÃO";
+
+  let quickReset=by("labStudioQuickReset");
+  if(!quickReset){
+    quickReset=document.createElement("button");
+    quickReset.type="button";
+    quickReset.id="labStudioQuickReset";
+    quickReset.className="lm-studio-quickreset";
+    quickReset.textContent="↺";
+    quickReset.title="Restaurar composição";
+    quickReset.setAttribute("aria-label","Restaurar composição");
+    lab.querySelector(".lm-studio-launch")?.prepend(quickReset);
+    quickReset.addEventListener("click",()=>reset?.click());
   }
 
-  /*
-   * Image / M is an editorial decision, not a folder tree.
-   * The existing fields are temporarily lifted into one compact visible
-   * surface while the studio is active, then restored to the manual in order.
-   * We do not clone inputs, SVGs, or state.
-   */
-  const imageLayout=layouts.get("imagem");
-  const imageFlat=make("div","lm-studio-image-flat");
-  imageFlat.id="labStudioImageFlat";
-  imageFlat.setAttribute("aria-label","Composição de fotografia e M");
-  imageLayout.panel.insertBefore(imageFlat,imageLayout.menu);
-  const imageBlocks=[];
-  const imageSpec=[
-    {name:"aplicacao",fields:["labImage"]},
-    {name:"fotografia",fields:["labPhoto"]},
-    {name:"foco",fields:["labFocalPreview","labFocusX","labFocusY"]},
-    {name:"marcadores",fields:["labMarker"]},
-    {name:"geometria",fields:["labMScale"]},
-    {name:"assinatura",fields:["labSymbol"]}
-  ];
-  for(const spec of imageSpec){
-    const container=make("div","lm-studio-image-block lm-studio-image-block--"+spec.name);
-    container.dataset.studioImageBlock=spec.name;
-    container.setAttribute("role","group");
-    const heading={
-      aplicacao:"IMAGEM",fotografia:"FOTOGRAFIA",
-      foco:"ENQUADRAMENTO",marcadores:"MARCADORES DO M",geometria:"ESCALA DO M",
-      assinatura:"ASSINATURA"
-    }[spec.name];
-    container.append(make("span","lm-studio-image-block-label",heading));
-    imageFlat.append(container);
-    imageBlocks.push({spec,container});
-  }
-  function mountFlatImage(){
-    for(const {spec,container} of imageBlocks)
-      for(const id of spec.fields)container.append(entries.get(id).field);
-  }
-  function restoreFlatImage(){
-    for(const {spec} of imageBlocks)
-      for(const id of spec.fields){
-        const entry=entries.get(id);
-        entry.marker.after(entry.field);
-      }
-  }
-  function syncFlatImage(){
-    if(!active)return;
-    for(const {spec,container} of imageBlocks){
-      container.hidden=spec.fields.every(id=>{
-        const entry=entries.get(id);
-        return entry.field.hidden||entry.input.disabled;
-      });
-    }
-  }
-
-  function restoreField(entry){
-    entry.marker.after(entry.field);
-    entry.button.setAttribute("aria-expanded","false");
-  }
-  function closeTool({focus=false}={}){
-    if(!currentEntry)return;
-    const entry=currentEntry;
-    currentEntry=null;
-    restoreField(entry);
-    const layout=layouts.get(entry.panelName);
-    layout.detail.hidden=true;
-    // The property index is the stable spatial reference point. It is
-    // never removed when a parameter opens or closes.
-    if(focus&&active&&!layout.panel.hidden&&!entry.button.hidden)
-      entry.button.focus();
-    scheduleSync();
-  }
-  function openTool(entry){
-    if(!active)return;
-    if(entry.field.hidden||entry.input.disabled)return;
-    if(currentEntry===entry){closeTool({focus:true});return}
-    closeTool();
-    const layout=layouts.get(entry.panelName);
-    layout.body.append(entry.field);
-    // An Apple-style inspector keeps the property hierarchy stable: one
-    // quiet row expands directly BELOW the selected row, in the same list.
-    // The only real field is moved, never duplicated.
-    entry.button.after(layout.detail);
-    layout.value.textContent=fieldValue(entry.id);
-    layout.detail.setAttribute("aria-label","Opções: "+label[entry.id]);
-    layout.detail.hidden=false;
-    currentEntry=entry;
-    entry.button.setAttribute("aria-expanded","true");
-    // Keep focus at the selected property. Reclick to collapse, or choose
-    // another property to replace only the inline options, not the list.
-    scheduleSync();
-  }
-  function syncTools(){
-    if(!active)return;
-    for(const entry of entries.values()){
-      entry.button.hidden=entry.field.hidden||Boolean(entry.input.disabled);
-      entry.value.textContent=fieldValue(entry.id);
-      entry.button.setAttribute("aria-label",label[entry.id]+": "+entry.value.textContent);
-    }
-    syncFlatImage();
-    if(currentEntry){
-      if(currentEntry.field.hidden||currentEntry.input.disabled||
-         layouts.get(currentEntry.panelName)?.panel.hidden){
-        closeTool();
-      }else{
-        layouts.get(currentEntry.panelName).value.textContent=fieldValue(currentEntry.id);
-      }
-    }
-  }
-  function scheduleSync(){
-    if(syncFrame)return;
-    syncFrame=requestAnimationFrame(()=>{
-      syncFrame=0;
-      syncTools();
-    });
-  }
-  function innerDimensions(el){
-    const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
-    return {
-      width:Math.max(0,rect.width-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-
-        parseFloat(style.borderLeftWidth||0)-parseFloat(style.borderRightWidth||0)),
-      height:Math.max(0,rect.height-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom)-
-        parseFloat(style.borderTopWidth||0)-parseFloat(style.borderBottomWidth||0))
-    };
-  }
-  function fitBoard(){
-    if(!active)return;
-    const space=innerDimensions(stage);
-    const r=ratio[board.dataset.format]||ratio.horizontal;
-    if(space.width<20||space.height<20)return;
-    // Contain (not cover): nothing is cropped or distorted. No fixed size
-    // for the vertical canvas, square canvas, or horizontal canvas.
-    const width=Math.max(1,Math.min(space.width,space.height*r));
-    const height=width/r;
-    const w=Math.floor(width*100)/100;
-    const h=Math.floor(height*100)/100;
-    if(Math.abs(board.getBoundingClientRect().width-w)>.3||
-       Math.abs(board.getBoundingClientRect().height-h)>.3){
-      board.style.setProperty("width",w+"px");
-      board.style.setProperty("height",h+"px");
-    }
-  }
-  function scheduleFit(){
-    if(fitFrame)return;
-    fitFrame=requestAnimationFrame(()=>{
-      fitFrame=0;fitBoard();syncTools();
-    });
-  }
-  function setUrlState(on){
+  function setUrl(open){
     try{
-      const url=new URL(window.location.href);
-      if(on)url.searchParams.set("studio","1");
+      const url=new URL(location.href);
+      if(open)url.searchParams.set("studio","1");
       else url.searchParams.delete("studio");
-      window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
+      history.replaceState(null,"",url);
     }catch{}
   }
-  function startStudio(){
-    if(active)return;
-    lastFocus=document.activeElement;
-    active=true;
-    mountFlatImage();
-    document.body.classList.add("lm-studio-open");
-    lab.dataset.studio="true";
-    if(overview)toolbar.insertBefore(overview,launch);
-    toggle.setAttribute("aria-pressed","true");
-    toggleText.textContent="VOLTAR AO MANUAL";
-    toggle.setAttribute("aria-label","Sair do editor e voltar ao manual");
-    closeTool();
-    for(const layout of layouts.values()){
-      layout.menu.hidden=false;
-      layout.detail.hidden=true;
-    }
-    setUrlState(true);
-    scheduleSync();
-    scheduleFit();
-    requestAnimationFrame(scheduleFit);
+
+  function setActive(open,{updateUrl=true}={}){
+    active=Boolean(open);
+    document.body.classList.toggle("lm-studio-open",active);
+    lab.classList.toggle("lm-unified-studio",active);
+    inspector?.setAttribute("data-editor-mode",active?"focused":"manual");
+    toggle.setAttribute("aria-pressed",String(active));
+    toggleText.textContent=active?"VOLTAR AO MANUAL":"ABRIR EDITOR";
+    quickReset.hidden=!active;
+    for(const panel of panels)panel.hidden=false;
+    if(updateUrl)setUrl(active);
+    if(active)requestAnimationFrame(()=>lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"}));
   }
-  function stopStudio(){
-    if(!active)return;
-    closeTool();
-    restoreFlatImage();
-    active=false;
-    document.body.classList.remove("lm-studio-open");
-    lab.dataset.studio="false";
-    if(overview&&overviewMarker)overviewMarker.before(overview);
-    board.style.removeProperty("height");
-    board.style.removeProperty("width");
-    toggle.setAttribute("aria-pressed","false");
-    toggleText.textContent="ABRIR EDITOR";
-    toggle.setAttribute("aria-label","Abrir laboratório de composição sem rolagem");
-    setUrlState(false);
-    if(lastFocus&&lastFocus!==document.body&&lastFocus.isConnected&&lastFocus!==toggle){
-      lastFocus.focus({preventScroll:true});
-    }
-    lastFocus=null;
-  }
-  toggle.addEventListener("click",()=>active?stopStudio():startStudio());
-  window.addEventListener("resize",scheduleFit,{passive:true});
-  new ResizeObserver(scheduleFit).observe(stage);
-  new MutationObserver(scheduleFit).observe(board,{attributes:true,attributeFilter:["data-format"]});
-  for(const layout of layouts.values()){
-    new MutationObserver(()=>{
-      if(active){
-        if(layout.panel.hidden&&currentEntry?.panelName===layout.panel.dataset.labPanel)
-          closeTool();
-        scheduleSync();
-      }
-    }).observe(layout.panel,{attributes:true,attributeFilter:["hidden"]});
-  }
-  // The canonical editor updates visibility and selection through its existing
-  // event pipeline. Observe those changes without manufacturing extra state.
-  for(const entry of entries.values()){
-    new MutationObserver(scheduleSync).observe(entry.field,{attributes:true,attributeFilter:["hidden"]});
-  }
-  // A page click selects the relevant inspector rather than forcing users
-  // to navigate a technical hierarchy. Text-layer focus is handled by the
-  // canonical editor; clicking elsewhere on a photographed page selects media.
-  board.addEventListener("click",event=>{
-    if(!active)return;
-    if(event.target.closest("[data-lab-inline]"))return;
-    if(board.dataset.image==="nenhuma")return;
-    by("labTab-imagem")?.click();
+
+  toggle.addEventListener("click",()=>setActive(!active));
+  const params=new URLSearchParams(location.search);
+  setActive(params.get("studio")==="1",{updateUrl:false});
+
+  window.addEventListener("popstate",()=>{
+    const next=new URLSearchParams(location.search).get("studio")==="1";
+    setActive(next,{updateUrl:false});
   });
-  document.addEventListener("input",scheduleSync,true);
-  document.addEventListener("change",scheduleSync,true);
-  document.addEventListener("click",e=>{
-    if(!active)return;
-    if(e.target.closest("[data-lab-tab]")&&currentEntry)closeTool();
-    scheduleSync();
-    scheduleFit();
-  },true);
-  for(const tab of lab.querySelectorAll("[data-lab-tab]"))
-    tab.addEventListener("click",()=>{if(active)closeTool()});
-  document.fonts?.ready.then(scheduleFit);
-  if(new URLSearchParams(window.location.search).get("studio")==="1")startStudio();
 })();

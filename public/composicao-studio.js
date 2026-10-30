@@ -69,14 +69,24 @@
     for(const button of moduleButtons)
       button.setAttribute("aria-pressed",String(button.dataset.mobileModule===name));
 
-    const construction=by("labPanel-pagina")?.querySelector('[data-lab-more="pagina"]');
-    const textMore=by("labPanel-texto")?.querySelector('[data-lab-more="texto"]');
-    const imageMore=by("labPanel-imagem")?.querySelector('[data-lab-more="imagem"]');
+    const pagePanel=by("labPanel-pagina");
+    const textPanel=by("labPanel-texto");
+    const imagePanel=by("labPanel-imagem");
+    const construction=pagePanel?.querySelector('[data-lab-more="pagina"]');
+    const textMore=textPanel?.querySelector('[data-lab-more="texto"]');
+    const imageMore=imagePanel?.querySelector('[data-lab-more="imagem"]');
+
     if(mobileQuery.matches){
+      pagePanel.hidden=!(name==="superficie"||name==="construcao");
+      textPanel.hidden=name!=="texto";
+      imagePanel.hidden=!(name==="fundo"||name==="m"||name==="assinatura");
       if(construction)construction.open=name==="construcao";
       if(name!=="texto"&&textMore)textMore.open=false;
       if(imageMore)imageMore.open=name==="assinatura";
+    }else{
+      for(const panel of panels)panel.hidden=false;
     }
+
     try{sessionStorage.setItem("labmattar-composicao-mobile-module",name)}catch{}
     if(scroll&&mobileQuery.matches)
       inspector.querySelector(".lm-composition-module-index")?.scrollIntoView({block:"nearest"});

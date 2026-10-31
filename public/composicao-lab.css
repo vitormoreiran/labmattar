@@ -369,3 +369,19 @@
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
   left:50%!important;top:50%!important;
 }
+
+/* M marker rule: any active M marker forces the composition photograph
+   into the background, synchronized with the same focal point, with blur. */
+.lm-lab-board[data-marker-blur="true"] .lm-lab-photo-layer{
+  display:block!important;
+}
+.lm-lab-board[data-marker-blur="true"] .lm-lab-photo-ambient{
+  inset:-6%!important;
+  width:112%!important;
+  height:112%!important;
+  object-fit:cover!important;
+  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
+  filter:blur(34px) brightness(.72) saturate(.86)!important;
+  transform:scale(1.045)!important;
+  opacity:1!important;
+}

@@ -112,7 +112,8 @@
   }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
-    const backgroundPhoto=state.background==="photo";
+    const markerActive=state.marker!=="none";
+    const backgroundPhoto=state.background==="photo"||markerActive;
     const mActive=state.mContent!=="off";
     const mPhoto=state.mContent==="photo";
     const activeImage=backgroundPhoto||mPhoto;
@@ -222,9 +223,12 @@
     board.dataset.format=state.format;
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
-    const legacyImage=state.mContent==="photo"?"recorte":state.background==="photo"?"inteira":"nenhuma";
+    const markerActive=state.marker!=="none";
+    const effectiveBackground=markerActive?"photo":state.background;
+    const legacyImage=state.mContent==="photo"?"recorte":effectiveBackground==="photo"?"inteira":"nenhuma";
     board.dataset.image=legacyImage;
-    board.dataset.background=state.background;
+    board.dataset.background=effectiveBackground;
+    board.dataset.markerBlur=String(markerActive);
     board.dataset.mContent=state.mContent;
     board.dataset.mMode=state.mMode;
     board.dataset.guide=state.guides;
@@ -239,7 +243,7 @@
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
     by("labMMarkers").dataset.marker=state.marker;
-    const [bg,ink]=state.background==="color"?palette[state.color]:["#111713","#f7f6f2"];
+    const [bg,ink]=effectiveBackground==="color"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);
     const src=photos[state.photo];

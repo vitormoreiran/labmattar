@@ -46,6 +46,21 @@ try{
   await choose("marker","top");
   assert(await page.locator("#labMScale").inputValue()===scaleBefore,
     "Changing marker state must not change M scale");
+  const markerBackground=await page.locator("#labArtboard").evaluate(el=>{
+    const photo=el.querySelector(".lm-lab-photo-ambient");
+    const cs=getComputedStyle(photo);
+    return {
+      background:el.dataset.background,
+      markerBlur:el.dataset.markerBlur,
+      filter:cs.filter,
+      src:photo.getAttribute("src"),
+      focus:getComputedStyle(el).getPropertyValue("--lab-focus-x").trim()+" "+getComputedStyle(el).getPropertyValue("--lab-focus-y").trim()
+    };
+  });
+  assert(markerBackground.background==="photo"&&markerBackground.markerBlur==="true",
+    "Active M marker must force the composition photograph into the background");
+  assert(markerBackground.filter.includes("blur(")&&markerBackground.src,
+    "Active M marker background must use the same photograph with blur");
 
   await choose("mContent","photo");
   await page.locator("#labMScale").fill("55");
@@ -64,6 +79,17 @@ try{
   await choose("background","color");
   assert(await page.locator("#labColor").isEnabled(),
     "Background color must remain a complete independent function");
+  const forcedWhileMarked=await page.locator("#labArtboard").evaluate(el=>({
+    background:el.dataset.background,markerBlur:el.dataset.markerBlur
+  }));
+  assert(forcedWhileMarked.background==="photo"&&forcedWhileMarked.markerBlur==="true",
+    "Choosing a color while an M marker is active must keep the blurred photo background");
+  await choose("marker","none");
+  const restoredAfterMarker=await page.locator("#labArtboard").evaluate(el=>({
+    background:el.dataset.background,markerBlur:el.dataset.markerBlur
+  }));
+  assert(restoredAfterMarker.background==="color"&&restoredAfterMarker.markerBlur==="false",
+    "Disabling M markers must restore the previously selected background");
 
 
   await page.setViewportSize({width:390,height:844});

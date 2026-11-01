@@ -36,6 +36,31 @@ try{
     logicalWidth:parseFloat(getComputedStyle(el).width),
     logicalHeight:parseFloat(getComputedStyle(el).height)
   }));
+
+  await page.setViewportSize({width:1440,height:900});
+  await page.waitForTimeout(120);
+  const desktopLayout=await page.evaluate(()=>{
+    const workspace=document.querySelector(".lm-lab-workspace").getBoundingClientRect();
+    const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();
+    const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
+    const menu=document.querySelector(".lm-composition-module-index").getBoundingClientRect();
+    const board=document.querySelector("#labArtboard").getBoundingClientRect();
+    return {
+      workspace:{width:workspace.width,height:workspace.height},
+      preview:{width:preview.width,height:preview.height},
+      inspector:{width:inspector.width,height:inspector.height},
+      menu:{width:menu.width,height:menu.height},
+      board:{width:board.width,height:board.height}
+    };
+  });
+  assert(desktopLayout.preview.width>desktopLayout.inspector.width*2,
+    "Desktop canvas must dominate the inspector: "+JSON.stringify(desktopLayout));
+  assert(desktopLayout.inspector.width>=330&&desktopLayout.inspector.width<=380,
+    "Desktop inspector must remain compact: "+JSON.stringify(desktopLayout.inspector));
+  assert(desktopLayout.board.width>500&&desktopLayout.board.height>280,
+    "Desktop artboard must remain clearly visible: "+JSON.stringify(desktopLayout.board));
+  assert(desktopLayout.menu.height<100,
+    "Desktop module menu must remain compact: "+JSON.stringify(desktopLayout.menu));
   assert(baseline.mx==="50%","M must remain on the central axis");
   assert(Math.abs(baseline.logicalWidth-1280)<1&&Math.abs(baseline.logicalHeight-720)<1,
     "Horizontal artboard must keep fixed logical geometry");

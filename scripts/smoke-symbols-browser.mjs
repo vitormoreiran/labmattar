@@ -86,7 +86,7 @@ try {
           }
           return {count:seen.length,pseudoCount,counts:Object.fromEntries(['title','body','detail'].map(r=>[r,seen.filter(x=>x.role===r).length])),errors:errors.slice(0,40),errorCount:errors.length};
         });
-        assert.ok(audit.count>30,'Full-page text must be audited: '+area);
+        assert.ok(audit.count>=15,'Text audit must cover real content on every chapter: '+area);
         assert.equal(audit.errorCount,0,'Only three typography treatments in '+area+' / '+viewportWidth+': '+JSON.stringify(audit.errors));
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});

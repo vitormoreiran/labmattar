@@ -100,7 +100,18 @@ jobs:
           test -f dist/client/editor/index.html
           cat > dist/server/worker-entry.js <<'JS'
           import handleRequest from './index.js';
-          export default { fetch(request, env, ctx) { return handleRequest(request, ctx); } };
+          export default {
+            fetch(request, env, ctx) {
+              const url = new URL(request.url);
+              // Keep old Imagem links functional without republishing a sixth chapter.
+              if (url.pathname === '/imagem.html' || url.pathname === '/imagem') {
+                url.pathname = '/laboratorio.html';
+                url.hash = '#laboratorio';
+                return Response.redirect(url.toString(), 308);
+              }
+              return handleRequest(request, ctx);
+            }
+          };
           JS
           cat > wrangler.preview.jsonc <<'JSON'
           {

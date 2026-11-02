@@ -17,10 +17,14 @@ for name in ("manual.html","tipografia.html","cores.html","composicao.html","ima
  assert '<nav class="lm-site-nav"' in text,f"Missing shared navigation in {name}"
  for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html","/imagem.html"):
   assert expected in text,f"Missing navigation link {expected} in {name}"
-for page in ("tipografia.html","cores.html"):
+# The five manual areas use one normative stylesheet, not independent font faces.
+typography=(Path("public")/"manual-headings.css").read_text(encoding="utf-8")
+for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
+ assert typography.count(font)==1,f"Missing or duplicate official font in normative CSS: {font}"
+for page in ("manual.html","tipografia.html","cores.html","composicao.html","imagem.html"):
  text=(Path("public")/page).read_text(encoding="utf-8")
- for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
-  assert font in text,f"{page} missing {font}"
+ assert text.count('href="/manual-headings.css')==1,f"{page} must use one normative typography stylesheet"
+ assert text.count('src="/manual-type-roles.js')==1,f"{page} must use one text role classifier"
 composition=(Path("public")/"composicao.html").read_text(encoding="utf-8")
 assert 'id="contraste"' in composition and ("PRETO 20%" in composition or "20% DE PRETO" in composition)
 assert ".lm-case-image::after" in composition, "Mask must carry its own text contrast veil"

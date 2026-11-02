@@ -34,7 +34,17 @@ for filename,area in areas.items():
  s=re.sub(r'<nav class="lm-crossnav"[^>]*>.*?</nav>',"",s,flags=re.S)
  s=re.sub(r'<style>\.lm-crossnav\{.*?</style>',"",s,flags=re.S)
  assert "</head>" in s and "<body>" in s
- s=s.replace("</head>",STYLE+"</head>",1)
+ # All five page-level H1 headings share exactly one typographic treatment.
+ title_match = re.search(r'<h1\\b[^>]*>', s, flags=re.I)
+ assert title_match, f"Missing page-level H1 in {filename}"
+ title_open = title_match.group(0)
+ if 'class="' in title_open:
+  title_open = re.sub(r'class="([^"]*)"', lambda m: 'class="' + m.group(1) + ' lm-manual-page-title"', title_open, count=1)
+ else:
+  title_open = title_open[:-1] + ' class="lm-manual-page-title">'
+ s = s[:title_match.start()] + title_open + s[title_match.end():]
+ assert 'lm-manual-page-title' in s
+ s=s.replace("</head>",STYLE+'<link rel="stylesheet" href="/manual-headings.css?v=20261102a">'+"</head>",1)
  s=s.replace("<body>","<body>"+NAV.replace('data-area="'+area+'"','aria-current="page" data-area="'+area+'"'),1)
  p.write_text(s,encoding="utf-8")
  print(filename, "global navigation OK")

@@ -17,7 +17,7 @@
   --lm-layout-title-band:214px;
   --lm-layout-after-title:44px;
   --lm-layout-section-space:clamp(84px,10vw,140px);
-  --lm-layout-col-offset:calc((100% - 11 * var(--lm-layout-gap))/12 + var(--lm-layout-gap));
+  --lm-layout-col-offset:calc(8.333333% + 1.667px);
 }
 body:has(>header){--lm-layout-local-nav:48px}
 
@@ -157,37 +157,37 @@ html body main section.lm-manual-cover a{
 
 /* Internal chapters share frame and rhythm. Artworks/demonstrations may use
    the full frame; direct editorial headings and paragraphs use column 2. */
-html body main section.lm-manual-section:not(.lm-manual-cover){
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover){
   box-sizing:border-box;
   padding:var(--lm-layout-section-space) var(--lm-layout-gutter)!important;
 }
-html body main section.lm-manual-section:not(.lm-manual-cover) > .inner{
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner{
   box-sizing:border-box;
   width:min(100%,var(--lm-layout-frame))!important;
   max-width:var(--lm-layout-frame)!important;
   margin-inline:auto!important;
   min-width:0;
 }
-html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy){
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy){
   margin-left:var(--lm-layout-col-offset)!important;
 }
-html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > .section-head{
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > .section-head{
   margin-left:var(--lm-layout-col-offset);
 }
-html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-intro,.lm-case-facts,.lm-case-controls,.lm-case-layout,.lm-case-trace,.lm-case-contrast,.lm-case-validation,.lm-m-guide-grid,.lm-lab-heading,.lm-lab-prep,.lm-lab-workspace){
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :is(.lm-case-intro,.lm-case-facts,.lm-case-controls,.lm-case-layout,.lm-case-trace,.lm-case-contrast,.lm-case-validation,.lm-m-guide-grid,.lm-lab-heading,.lm-lab-prep,.lm-lab-workspace){
   box-sizing:border-box;
   width:min(100%,var(--lm-layout-frame));
   max-width:var(--lm-layout-frame);
   margin-left:auto;
   margin-right:auto;
 }
-html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
   padding-left:var(--lm-layout-col-offset);
 }
 
 /* Tablet: keep the same one-column inset but redistribute reading fields. */
 @media(max-width:1023px) and (min-width:701px){
-  :root{--lm-layout-gap:16px}
+  :root{--lm-layout-gap:16px;--lm-layout-col-offset:calc(8.333333% + 1.333px)}
   html body main section.lm-manual-cover > .inner > h1{grid-column:2 / 13}
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{grid-column:2 / 8}
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:nth-child(2){grid-column:9 / 13}
@@ -231,11 +231,11 @@ html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-in
   html body main section.lm-manual-cover > .inner > h1{
     min-height:var(--lm-layout-title-band);
   }
-  html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy),
-  html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > .section-head{
+  html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy),
+  html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > .section-head{
     margin-left:0!important;
   }
-  html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
+  html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
     padding-left:0;
   }
 }

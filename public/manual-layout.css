@@ -197,6 +197,21 @@ html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{grid-column:2 / 8}
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:nth-child(2){grid-column:9 / 13}
 }
+/* No one-off font reduction at narrow widths: long editorial words may
+   hyphenate/wrap inside the official column instead of escaping the grid. */
+@media(max-width:700px){
+  html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) :is(h2.lm-manual-section-title,.type-title,.title){
+    overflow-wrap:anywhere!important;
+    hyphens:auto!important;
+  }
+  html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) :is(h2.lm-manual-section-title,.type-title,.title) :is(.line,.title-line,em,.perpetua){
+    white-space:normal!important;
+    width:auto!important;
+    max-width:100%!important;
+    overflow-wrap:anywhere!important;
+    hyphens:auto!important;
+  }
+}
 /* Narrow reading: the grid becomes a consistent single reading column. */
 @media(max-width:700px){
   :root{

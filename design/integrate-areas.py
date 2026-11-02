@@ -10,12 +10,12 @@ NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/imagem.html" data-area="imagem">06 / IMAGEM</a>
 </nav>'''
 STYLE='''<style>
-.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,3vw,48px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
-.lm-site-nav a{color:inherit;text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;white-space:nowrap}
+.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(16px,3vw,48px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
+.lm-site-nav a{color:inherit;text-decoration:none;flex-shrink:0;padding:4px 0;border-bottom:1px solid transparent;white-space:nowrap}\n.lm-site-nav::-webkit-scrollbar{display:none}
 .lm-site-nav a[aria-current=page]{border-color:currentColor}
 .lm-site-nav a:hover{text-decoration:underline;text-underline-offset:4px}
 .lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
-@media(max-width:600px){.lm-site-nav{justify-content:space-between;gap:10px;padding:10px 16px}}
+@media(max-width:600px){.lm-site-nav{justify-content:flex-start;gap:18px;padding:10px 16px;min-height:48px}}
 </style>'''
 areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","laboratorio.html":"laboratorio","imagem.html":"imagem"}
 for filename,area in areas.items():

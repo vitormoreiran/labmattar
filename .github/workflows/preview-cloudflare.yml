@@ -44,7 +44,7 @@ jobs:
           cp design/EditorialAssembly.tsx app/editor/EditorialAssembly.tsx
           cp design/editorial.css app/editor/editorial.css
           python3 design/patch-editor.py
-          for page in tipografia cores composicao imagem identidade inicio; do cp "design/$page.html" "public/$page.html"; done
+          for page in tipografia cores composicao laboratorio imagem identidade inicio; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py
           cp public/manual.html /tmp/manual-once.html
@@ -90,7 +90,7 @@ jobs:
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/composicao.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash

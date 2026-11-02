@@ -73,6 +73,18 @@ html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title) :is(.line
  max-width:100%;
  white-space:normal!important;
 }
+/* Visible CSS-generated labels and icon glyphs also use Detalhe. */
+html body *:not(#__lm_pseudo_guard_1__):not(#__lm_pseudo_guard_2__)::before,
+html body *:not(#__lm_pseudo_guard_1__):not(#__lm_pseudo_guard_2__)::after{
+ font-family:var(--lm-type-univers)!important;
+ font-size:var(--lm-type-detail-size)!important;
+ font-weight:300!important;
+ font-style:normal!important;
+ line-height:var(--lm-type-detail-leading)!important;
+ letter-spacing:var(--lm-type-detail-tracking)!important;
+ text-transform:uppercase!important;
+ font-synthesis:none!important;
+}
 /* The typography specimen uses exactly the same title role as the headings. */
 html body main .type-title .title-line{width:auto!important;max-width:100%!important;white-space:normal!important}
 #estrutura .lm-reading-intro:has(>h2.lm-manual-section-title){grid-template-columns:minmax(0,1fr)}

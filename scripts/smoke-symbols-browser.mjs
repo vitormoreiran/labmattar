@@ -41,7 +41,7 @@ try {
           while((node=text.nextNode())){
             const value=node.nodeValue?.trim();if(!value)continue;
             const e=node.parentElement;
-            if(!e||e.closest('script,style,noscript,template,svg,math,[hidden],[aria-hidden="true"]'))continue;
+            if(!e||e.closest('script,style,noscript,template,svg,math,[hidden]'))continue;
             const cs=getComputedStyle(e),rect=e.getBoundingClientRect();
             if(cs.display==='none'||cs.visibility==='hidden'||rect.width===0||rect.height===0||parseFloat(cs.fontSize)===0)continue;
             const role=e.getAttribute('data-lm-text-role'),nominal=expect[role];
@@ -56,7 +56,19 @@ try {
             const tracking=role==='title'?(alt?0:-.025*title):role==='body'?0:.04*detail;
             if(Math.abs(item.tracking-tracking)>.12)errors.push({...item,reason:'non-token letter spacing',expected:tracking});
           }
-          return {count:seen.length,counts:Object.fromEntries(['title','body','detail'].map(r=>[r,seen.filter(x=>x.role===r).length])),errors:errors.slice(0,40),errorCount:errors.length};
+          let pseudoCount=0;
+          for(const e of document.querySelectorAll('body *')){
+            if(e.closest('[hidden]')||getComputedStyle(e).display==='none')continue;
+            for(const pseudo of ['::before','::after']){
+              const c=getComputedStyle(e,pseudo),value=c.content;
+              if(!value||value==='none'||value==='normal'||value==='""'||value==="''"||c.display==='none'||c.visibility==='hidden')continue;
+              pseudoCount++;
+              const actual={text:String(value).slice(0,40),pseudo,element:e.tagName+'.'+String(e.className).slice(0,45),size:parseFloat(c.fontSize),leading:parseFloat(c.lineHeight),family:c.fontFamily,weight:c.fontWeight,tracking:parseFloat(c.letterSpacing)||0};
+              if(Math.abs(actual.size-detail)>.12||Math.abs(actual.leading-expect.detail.leading)>.25||actual.weight!=='300'||!actual.family.startsWith('UniversMattar')||Math.abs(actual.tracking-.04*detail)>.12)
+                errors.push({...actual,reason:'CSS-generated label is not Detalhe'});
+            }
+          }
+          return {count:seen.length,pseudoCount,counts:Object.fromEntries(['title','body','detail'].map(r=>[r,seen.filter(x=>x.role===r).length])),errors:errors.slice(0,40),errorCount:errors.length};
         });
         assert.ok(audit.count>30,'Full-page text must be audited: '+area);
         assert.equal(audit.errorCount,0,'Only three typography treatments in '+area+' / '+viewportWidth+': '+JSON.stringify(audit.errors));

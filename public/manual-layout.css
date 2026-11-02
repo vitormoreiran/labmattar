@@ -222,7 +222,10 @@ html body main section.lm-m-guide > *{
 }
 html body main section.lm-m-guide > :is(.eyebrow,h2,.lm-m-guide-lead,.lm-m-guide-rule){
   box-sizing:border-box;
-  padding-left:var(--lm-layout-col-offset);
+  padding-left:0;
+  margin-left:var(--lm-layout-col-offset)!important;
+  width:calc(100% - var(--lm-layout-col-offset))!important;
+  max-width:calc(100% - var(--lm-layout-col-offset))!important;
 }
 html body main section.lm-composition-next{display:block!important}
 html body main section.lm-composition-next > .inner{
@@ -309,7 +312,12 @@ html body main section.page .section-head > p:nth-child(2){
   html body > header nav{width:100%}
   html body main section.lm-manual-cover{padding-bottom:clamp(56px,8svh,84px)!important}
   html body main #estrutura .lm-reading-intro,
-  html body main section.lm-m-guide > :is(.eyebrow,h2,.lm-m-guide-lead,.lm-m-guide-rule){padding-left:0}
+  html body main section.lm-m-guide > :is(.eyebrow,h2,.lm-m-guide-lead,.lm-m-guide-rule){
+    padding-left:0;
+    margin-left:0!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
   html body main section.lm-composition-next > .inner,
   html body main section.page .section-head{grid-template-columns:minmax(0,1fr)!important}
   html body main section.lm-composition-next > .inner > :is(p.eyebrow,p:not(.eyebrow),.lm-composition-next-link),

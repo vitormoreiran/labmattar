@@ -235,7 +235,6 @@
     board.dataset.photoText="false";
     board.dataset.mText="false";
     board.style.setProperty("--lab-pad",state.margin+"%");
-    board.style.setProperty("--lab-title-scale",String(state.titleScale/100));
     board.style.setProperty("--lab-text-width",state.textWidth+"%");
     board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");

@@ -20,10 +20,10 @@ try {
   for (const family of ['UniversMattar','PerpetuaMattar']) check(report.fonts.some(f=>f.family===family&&f.status==='loaded'),`Official font loaded: ${family}`);
   assert.equal(await page.locator('#estrutura .symbol').count(),2,'Only signature and M');
   assert.equal(await page.locator('#estrutura svg').count(),2,'No duplicate signature');
-  // Regression: all six area-opening H1 headings must have identical typography.
+  // Regression: all five area-opening H1 headings must have identical typography.
   // Each page owns distinct local CSS; a shared title rule must win across them.
   report.manualHeadings=[];
-  const areas=['manual.html','tipografia.html','cores.html','composicao.html','laboratorio.html','imagem.html'];
+  const areas=['manual.html','tipografia.html','cores.html','composicao.html','laboratorio.html'];
   for (const [viewportWidth,viewportHeight] of [[1440,900],[768,1024],[390,844],[320,640]]) {
     const group=[];
     for (const area of areas) {
@@ -31,6 +31,12 @@ try {
       try {
         const response=await areaPage.goto(new URL('/'+area,url).href,{waitUntil:'networkidle',timeout:60000});
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
+        const navLinks=await areaPage.locator('.lm-site-nav a').allTextContents();
+        assert.deepEqual(navLinks.map(x=>x.trim()),[
+          '01 / SÍMBOLOS','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO'
+        ],'Only five chapters, ending with the Laboratory: '+area);
+        assert.equal(await areaPage.locator('.lm-site-nav a[href="/imagem.html"]').count(),0,
+          'Imagem must not reappear as a separate chapter');
         if(area==='composicao.html'){
           assert.equal(await areaPage.locator('#laboratorio, #labArtboard, #labStudioToggle').count(),0,
             'Composição must not contain the interactive laboratory');
@@ -40,6 +46,15 @@ try {
             'Construction must show four clear assembly decisions');
           assert.equal(await areaPage.locator('#regras-de-composicao .lm-m-guide-grid article').count(),6,
             'Six identity composition rules remain available');
+        }
+        if(area==='laboratorio.html' && viewportWidth===1440){
+          const oldImagePage=await browser.newPage();
+          try {
+            await oldImagePage.goto(new URL('/imagem.html',url).href,{waitUntil:'load',timeout:60000});
+            await oldImagePage.waitForURL(next=>new URL(next).pathname==='/laboratorio.html',{timeout:15000});
+            assert.equal(new URL(oldImagePage.url()).pathname,'/laboratorio.html',
+              'Legacy image URL must redirect into the laboratory');
+          } finally { await oldImagePage.close(); }
         }
         if(area==='laboratorio.html'){
           assert.equal(await areaPage.locator('#labArtboard').count(),1,
@@ -91,7 +106,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':3,'laboratorio.html':1,'imagem.html':1};
+        const expected={'manual.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':3,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();

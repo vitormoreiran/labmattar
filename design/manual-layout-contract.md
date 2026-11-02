@@ -8,7 +8,7 @@
 
 - Não existem cinco layouts independentes. Todas as capas usam o mesmo mapa de posição; todas as seções partem da mesma régua.
 - Os únicos tratamentos tipográficos são **Título, Corpo e Detalhe**. Nunca criar um quarto peso, tamanho ou entrelinha para resolver uma quebra ou uma composição.
-- O título pode quebrar linhas, mas **não diminui** para caber. A banda do título é reservada, inclusive em capas com títulos curtos.
+- O título pode quebrar linhas, mas **não diminui** para caber. Sua banda é reservada e o conteúdo é centralizado verticalmente dentro dela: um título curto não cria uma lacuna exagerada antes do Corpo.
 - A cor e o formato mudam o conteúdo visual, não as coordenadas do texto do manual.
 - Os exemplos e a ferramenta podem ocupar mais colunas, mas não podem estabelecer outra origem editorial.
 - O eixo de leitura coincide com a borda inicial do quadro de 1.350 px: não acrescentar recuos de coluna ao texto. A largura e a posição anteriores à PR #50 são a referência de preservação.
@@ -35,15 +35,15 @@ As colunas são contadas de 1 a 12, com fim exclusivo no CSS Grid: `1 / 10`, `1 
 
 ## 3. Contrato vertical da capa
 
-1. Barra de navegação global: **54 px**.
-2. Navegação local, quando presente: **48 px**. A capa compensa essa diferença; uma segunda barra nunca empurra os textos da capa para baixo.
-3. Topo visual da identificação: `clamp(132px, 18svh, 186px)` desde o topo do viewport, independentemente da presença da navegação local.
-4. Distância identificação → título: **48 px**.
-5. Banda reservada ao título: **214 px** no desktop, sem redução automática; títulos de uma e duas linhas compartilham a mesma banda.
-6. Distância banda do título → Corpo/Detalhe: **44 px**.
-7. Corpo e Detalhe começam na mesma linha. O Corpo ocupa a coluna principal; o Detalhe é lateral. Um link no Detalhe continua tendo a tipografia de Detalhe.
-8. A capa encerra, no mínimo, no limite inferior do viewport; conteúdos longos expandem a página naturalmente, sem colisão nem corte.
-9. Nenhuma capa pode ter ajustes próprios de `margin-top`, `padding-top`, `min-height` ou `max-width`.
+1. A capa ocupa, no mínimo, a altura disponível depois da navegação. **A composição inteira — identificação, título, Corpo e Detalhe — é centralizada verticalmente na área útil**, sem uma coordenada fixa para a identificação.
+2. Navegação global: **54 px**; navegação local, quando houver: **48 px**. A compensação óptica de **−24 px** nas páginas com menu local mantém os mesmos campos verticais nas cinco capas, independentemente de haver uma segunda barra.
+3. Respiro mínimo externo no desktop: topo `clamp(36px,5svh,56px)` e base `clamp(44px,6svh,70px)`. A base ligeiramente mais ampla favorece o equilíbrio visual.
+4. Distância entre Identificação e banda do Título: **44 px** no desktop. O bloco do título conserva **214 px** de altura mínima, com o conteúdo centrado verticalmente; não se altera escala, peso ou entrelinha para compensar títulos curtos.
+5. Distância entre a banda do Título e a leitura: **30 px** no desktop. Corpo e Detalhe começam na mesma linha, em suas colunas fixas.
+6. A linha de leitura reserva uma banda mínima de **160 px** no desktop/tablet. O maior texto introdutório define esta reserva comum: a extensão dos textos não empurra outras capas para posições distintas.
+7. No celular, a composição se empilha na ordem Identificação → Título → Corpo → Detalhe, com bandas de Título `clamp(88px,12svh,104px)` e leitura **245 px** (**290 px** em telas até 350 px) para abrigar os textos mais longos sem cortes. Em telas de até 350 px, o respiro externo é redistribuído em **42 px acima** e **30 px abaixo** para evitar um desvio entre capas com e sem navegação local. Os intervalos diminuem proporcionalmente, não a tipografia.
+8. Quando a soma dos conteúdos e respiros exceder a altura disponível, a capa **cresce naturalmente**. É preferível uma rolagem vertical legítima a cortes, sobreposição ou escala de fonte inconsistente.
+9. A origem horizontal continua na **coluna 1**, com quadro de **1.350 px**. Não adicionar margens ou deslocamentos por página para ajustar um caso individual.
 
 ## 4. Contrato das seções internas
 
@@ -63,12 +63,13 @@ As colunas são contadas de 1 a 12, com fim exclusivo no CSS Grid: `1 / 10`, `1 
 | <= 700 px | Uma coluna de leitura, mantendo a ordem: Identificação, Título, Corpo, Detalhe, conteúdo |
 | Todas | Sem `font-fit`, `scale()` ou `font-size` por elemento para remediar excesso de texto |
 
-O título tem banda vertical reservada no desktop/tablet. No celular, a banda é reduzida de forma uniforme para todos os capítulos, nunca escolhida por título individual. A posição inicial da identificação continua compartilhada.
+O título tem banda vertical reservada no desktop/tablet e conteúdo centralizado nessa banda. No celular, a banda é reduzida de forma uniforme para todos os capítulos. A posição inicial da identificação permanece compartilhada; o conjunto é centralizado pela altura real disponível, não pelo topo arbitrário de um capítulo.
 
 ## 6. Controle de qualidade obrigatório
 
 Em 1440×900, 1024×768, 768×1024, 390×844 e 320×640:
-- Medir `left` e `top` de Identificação, Título, Corpo e Detalhe nas cinco capas. Cada campo deve apresentar desvio máximo de **2 px** entre capítulos na mesma viewport.
+- Medir `left` e `top` de Identificação, Título, Corpo e Detalhe nas cinco capas. Os campos estruturais devem apresentar desvio máximo de **2 px** entre capítulos na mesma viewport (o Detalhe empilhado no celular segue naturalmente a altura do Corpo).
+- Conferir que o centro vertical da composição acompanha o centro da área útil da tela, com compensação óptica de no máximo **26 px**, e que o conteúdo do título fica centralizado na banda reservada.
 - Conferir nav global 54 px, local 48 px quando existir, sem sobreposição.
 - Garantir que todo título cabe horizontalmente por quebra natural, sem redução de fonte.
 - Proibir rolagem horizontal e cortes de conteúdo.

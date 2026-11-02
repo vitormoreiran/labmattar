@@ -12,14 +12,17 @@
   --lm-layout-gutter:clamp(20px,4vw,64px);
   --lm-layout-global-nav:54px;
   --lm-layout-local-nav:0px;
-  --lm-layout-kicker-y:clamp(132px,18svh,186px);
-  --lm-layout-title-offset:48px;
+  --lm-layout-local-optical-y:0px;
+  --lm-layout-cover-pad-top:clamp(36px,5svh,56px);
+  --lm-layout-cover-pad-bottom:clamp(44px,6svh,70px);
+  --lm-layout-cover-body-band:160px;
+  --lm-layout-title-offset:44px;
   --lm-layout-title-band:214px;
-  --lm-layout-after-title:44px;
+  --lm-layout-after-title:30px;
   --lm-layout-section-space:clamp(84px,10vw,140px);
   --lm-layout-col-offset:0px;
 }
-body:has(>header){--lm-layout-local-nav:48px}
+body:has(>header){--lm-layout-local-nav:48px;--lm-layout-local-optical-y:-24px}
 
 /* Navigation reserves deterministic height. The optional local chapter menu
    must never change the absolute Y coordinate of the cover's first field. */
@@ -59,17 +62,18 @@ html body > header nav{
 }
 html body > header nav a{flex:none}
 
-/* Cover. One content frame. The editorial axis starts at the original frame's first column.
-   The body and the detail ALWAYS share row 3 at desktop/tablet width. */
+/* Cover. Center the entire editorial composition in the viewport's available
+   reading area, while preserving one shared horizontal and vertical grid.
+   The reserved body row makes variable copy lengths unable to shift the cover. */
 html body main section.lm-manual-cover{
   box-sizing:border-box;
-  display:block!important;
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
   width:100%;
   min-height:calc(100svh - var(--lm-layout-global-nav) - var(--lm-layout-local-nav))!important;
-  padding:
-    max(32px,calc(var(--lm-layout-kicker-y) - var(--lm-layout-global-nav) - var(--lm-layout-local-nav)))
-    var(--lm-layout-gutter)
-    clamp(70px,8svh,110px)!important;
+  padding:var(--lm-layout-cover-pad-top) var(--lm-layout-gutter) var(--lm-layout-cover-pad-bottom)!important;
   border-bottom:1px solid var(--line,var(--rule,#c9c8c2));
 }
 html body main section.lm-manual-cover > .inner{
@@ -78,6 +82,8 @@ html body main section.lm-manual-cover > .inner{
   max-width:var(--lm-layout-frame)!important;
   margin-inline:auto!important;
   padding:0!important;
+  flex:none!important; /* Override legacy .cover .inner { flex: 1 } in the Symbols page. */
+  transform:translateY(var(--lm-layout-local-optical-y));
   min-width:0;
   display:grid!important;
   grid-template-columns:repeat(12,minmax(0,1fr));
@@ -99,12 +105,20 @@ html body main section.lm-manual-cover > .inner > h1{
   grid-row:2;
   min-width:0;
   min-height:var(--lm-layout-title-band);
+  display:flex!important;
+  flex-direction:column;
+  justify-content:center;
   width:100%;
   max-width:100%;
   margin:var(--lm-layout-title-offset) 0 var(--lm-layout-after-title)!important;
   padding:0!important;
   align-self:start;
   text-align:left;
+}
+html body main section.lm-manual-cover > .inner > h1 > .lm-cover-title-content{
+  display:block;
+  min-width:0;
+  width:100%;
 }
 html body main section.lm-manual-cover > .inner > h1 :is(.line,.title-line){
   display:block;
@@ -127,6 +141,7 @@ html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,
   margin:0!important;
   padding:0!important;
   flex:initial!important;
+  min-height:var(--lm-layout-cover-body-band);
 }
 html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{
   grid-column:1 / 6;
@@ -301,16 +316,19 @@ html body main section.page .section-head > p:nth-child(2){
 @media(max-width:700px){
   :root{
     --lm-layout-gap:12px;
-    --lm-layout-title-offset:38px;
-    --lm-layout-title-band:112px;
-    --lm-layout-after-title:36px;
+    --lm-layout-title-offset:clamp(26px,4svh,38px);
+    --lm-layout-title-band:clamp(88px,12svh,104px);
+    --lm-layout-after-title:clamp(24px,3svh,32px);
+    --lm-layout-cover-body-band:245px;
+    --lm-layout-cover-pad-top:32px;
+    --lm-layout-cover-pad-bottom:48px;
     --lm-layout-section-space:clamp(64px,12vw,96px);
   }
   html body > nav.lm-site-nav{justify-content:flex-start!important}
   html body > header > span{display:none!important}
   html body > header{justify-content:flex-start!important}
   html body > header nav{width:100%}
-  html body main section.lm-manual-cover{padding-bottom:clamp(56px,8svh,84px)!important}
+  html body main section.lm-manual-cover{padding-bottom:var(--lm-layout-cover-pad-bottom)!important}
   html body main #estrutura .lm-reading-intro,
   html body main section.lm-m-guide > :is(.eyebrow,h2,.lm-m-guide-lead,.lm-m-guide-rule){
     padding-left:0;
@@ -367,3 +385,10 @@ html body main section.page .section-head > p:nth-child(2){
     grid-row:auto!important;
   }
 }
+
+/* At 320 px, the longer color introduction still fits the shared reading band. */
+@media(max-width:350px){:root{
+  --lm-layout-cover-body-band:290px;
+  --lm-layout-cover-pad-top:42px;
+  --lm-layout-cover-pad-bottom:30px;
+}}

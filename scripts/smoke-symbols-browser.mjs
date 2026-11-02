@@ -90,6 +90,26 @@ try {
         if(viewportWidth<=700)assert.ok(placement.detail.top>=placement.body.top+placement.body.height,
           'Mobile detail follows the body: '+area);
         geometry.push({area,...placement});
+        const internalSelectors={
+          'manual.html':'#estrutura .lm-reading-intro h2',
+          'tipografia.html':'#titulo h2',
+          'cores.html':'#paleta .section-head > p:first-child',
+          'composicao.html':'#construcao .lm-case-intro h2',
+          'laboratorio.html':'#laboratorio .lm-lab-heading h2'
+        };
+        const internal=areaPage.locator(internalSelectors[area]);
+        assert.equal(await internal.count(),1,'One representative internal chapter heading: '+area);
+        const internalX=await internal.evaluate(el=>el.getBoundingClientRect().left);
+        assert.ok(Math.abs(internalX-placement.kicker.left)<=2,
+          'Chapter section uses the exact same editorial left axis: '+area+'/'+viewportWidth+
+          ' internal='+internalX+' cover='+placement.kicker.left);
+        if(area==='composicao.html'){
+          for(const selector of ['#regras-de-composicao h2','.lm-composition-next .inner > p.eyebrow']){
+            const x=await areaPage.locator(selector).evaluate(el=>el.getBoundingClientRect().left);
+            assert.ok(Math.abs(x-placement.kicker.left)<=2,'Composition internal section shares ruler: '+selector+'/'+viewportWidth);
+          }
+        }
+
 
         const audit=await areaPage.evaluate(()=>{
           const text=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);

@@ -34,7 +34,7 @@ try {
         if(area==='composicao.html'){
           assert.equal(await areaPage.locator('#laboratorio, #labArtboard, #labStudioToggle').count(),0,
             'Composição must not contain the interactive laboratory');
-          assert.equal(await areaPage.locator('a[href="/laboratorio.html"]').count(),1,
+          assert.equal(await areaPage.locator('main a[href="/laboratorio.html"]').count(),1,
             'Composição must link to chapter 05');
           assert.equal(await areaPage.locator('#construcao .lm-case-facts article').count(),4,
             'Construction must show four clear assembly decisions');

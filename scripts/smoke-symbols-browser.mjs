@@ -128,13 +128,23 @@ try {
           const seen=[],errors=[];let node;
           const title=Math.max(31,Math.min(innerWidth*.07,104)),body=innerWidth<=760?16:18,detail=innerWidth<=760?12:13;
           const expect={title:{size:title,leading:title*.98},body:{size:body,leading:body*(innerWidth<=760?1.5:1.45)},detail:{size:detail,leading:detail*(innerWidth<=760?1.4:1.35)}};
+          const scale=(min,mult,max,width)=>Math.min(max,Math.max(min,width*mult));
           while((node=text.nextNode())){
             const value=node.nodeValue?.trim();if(!value)continue;
             const e=node.parentElement;
             if(!e||e.closest('script,style,noscript,template,svg,math,[hidden]'))continue;
             const cs=getComputedStyle(e),rect=e.getBoundingClientRect();
             if(cs.display==='none'||cs.visibility==='hidden'||rect.width===0||rect.height===0||parseFloat(cs.fontSize)===0)continue;
-            const role=e.getAttribute('data-lm-text-role'),nominal=expect[role];
+            const role=e.getAttribute('data-lm-text-role');
+            const artboard=e.closest('.lm-case-frame');
+            const width=artboard?.getBoundingClientRect().width;
+            const vertical=artboard?.classList.contains('is-mobile');
+            const sizes=width?vertical?
+              {title:scale(18,.096,38,width),body:scale(9,.0365,14,width),detail:scale(7,.0255,10,width)}:
+              {title:scale(12,.069,84,width),body:scale(8,.0175,18,width),detail:scale(6,.0125,13,width)}:null;
+            const nominal=sizes?{title:{size:sizes.title,leading:sizes.title*.98},
+              body:{size:sizes.body,leading:sizes.body*(innerWidth<=760?1.5:1.45)},
+              detail:{size:sizes.detail,leading:sizes.detail*(innerWidth<=760?1.4:1.35)}}[role]:expect[role];
             const item={role,tag:e.tagName,className:String(e.className).slice(0,90),text:value.slice(0,50),size:parseFloat(cs.fontSize),leading:parseFloat(cs.lineHeight),weight:cs.fontWeight,family:cs.fontFamily,tracking:parseFloat(cs.letterSpacing)||0};
             seen.push(item);
             if(!nominal){errors.push({...item,reason:'missing role'});continue;}
@@ -143,7 +153,7 @@ try {
             if(item.weight!=='300')errors.push({...item,reason:'weight must be 300'});
             if(!/^(UniversMattar|PerpetuaMattar)/.test(item.family))errors.push({...item,reason:'unapproved font family'});
             const alt=role==='title'&&item.family.startsWith('PerpetuaMattar');
-            const tracking=role==='title'?(alt?0:-.025*title):role==='body'?0:.04*detail;
+            const tracking=role==='title'?(alt?0:-.025*nominal.size):role==='body'?0:.04*nominal.size;
             if(Math.abs(item.tracking-tracking)>.12)errors.push({...item,reason:'non-token letter spacing',expected:tracking});
           }
           let pseudoCount=0;

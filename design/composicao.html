@@ -1,4 +1,11 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LABMATTAR — Sistema de composição</title><link rel="stylesheet" href="/manual-composition-layout.css"><link rel="stylesheet" href="/composicao-regras.css"><style>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LABMATTAR — Sistema de composição</title><script>
+(()=>{const previous=new URL(location.href);
+  if(previous.searchParams.get("studio")==="1"||previous.hash==="#laboratorio"){
+    previous.pathname="/laboratorio.html";
+    location.replace(previous.pathname+previous.search+previous.hash);
+  }
+})();
+</script><link rel="stylesheet" href="/manual-composition-layout.css"><link rel="stylesheet" href="/composicao-regras.css"><style>
 /* Estudo aplicado: interface documental isolada, sem alterar regras existentes. */
 .lm-case{padding-block:clamp(75px,9vw,135px)}
 .lm-case-intro{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.65fr);gap:clamp(24px,4vw,80px);align-items:end}

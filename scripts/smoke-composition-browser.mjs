@@ -92,6 +92,13 @@ try{
   assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).display)==="none",
     "M off state must remove the M without changing the composition type");
 
+  const legacy=await browser.newPage();
+  await legacy.goto(new URL("/composicao.html?studio=1#laboratorio",url).href,{waitUntil:"load",timeout:60000});
+  assert(new URL(legacy.url()).pathname==="/laboratorio.html",
+    "Old composition editor links must reopen the independent Laboratory");
+  assert(await legacy.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
+    "Legacy editor links must retain focused mode");
+  await legacy.close();
   const constructionPage=await browser.newPage({viewport:{width:1440,height:900}});
   constructionPage.on("pageerror",e=>errors.push("Construction: "+e.message));
   await constructionPage.goto(new URL("/composicao.html",url).href,{waitUntil:"load",timeout:60000});

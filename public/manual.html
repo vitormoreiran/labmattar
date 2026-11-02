@@ -20,6 +20,7 @@
 :root{
   --gutter:clamp(20px,4.2vw,68px);
   --manual-width:1350px;
+  --manual-title-size:clamp(36px,7vw,104px);
   --manual-space-section:clamp(92px,12vw,190px);
   --manual-space-heading:clamp(40px,6vw,84px);
   --manual-line:var(--line);
@@ -34,14 +35,14 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
 .chapter{padding:var(--manual-space-section) var(--gutter);scroll-margin-top:110px}
 .chapter .inner{width:100%;max-width:var(--manual-width);min-width:0}
 .chapter .eyebrow{margin:0 0 var(--manual-space-heading);font-size:12px;line-height:1.4}
-.chapter .title{max-width:100%;font-size:clamp(44px,8.2cqw,116px);line-height:.98;margin:0 0 var(--manual-space-heading)}
-.chapter .title .line{white-space:nowrap}
+.chapter .title{max-width:100%;font-size:var(--manual-title-size);line-height:1.04;margin:0 0 var(--manual-space-heading);letter-spacing:-.025em;overflow-wrap:normal}
+.chapter .title .line{white-space:normal}
 .chapter .copy{font-size:clamp(16px,1.5vw,19px);line-height:1.55;max-width:51ch}
 .chapter .detail{line-height:1.5}
 .chapter.cover{min-height:calc(100svh - 58px);padding-block:clamp(54px,8vw,110px);display:flex;align-items:stretch}
 .cover .inner{display:flex;flex-direction:column;justify-content:space-between;flex:1}
 .cover .eyebrow{margin:0}
-.cover .title{margin:clamp(55px,10svh,125px) 0;font-size:clamp(43px,9cqw,126px)}
+.cover .title{margin:clamp(55px,10svh,125px) 0}
 .cover .bottomline{align-items:flex-end;gap:24px;flex-wrap:wrap}
 .cover .bottomline .copy{max-width:40ch;margin:0}
 #estrutura .structure-intro{margin:0 0 clamp(45px,7vw,95px)}
@@ -90,7 +91,7 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
   header.top{align-items:flex-start;flex-direction:column;padding:13px var(--gutter);gap:8px}
   header.top nav{width:100%;overflow-x:auto;flex-wrap:nowrap;gap:20px;padding-bottom:5px;scrollbar-width:thin}
   header.top nav a{flex-shrink:0}
-  .chapter .title{font-size:clamp(38px,10cqw,74px)}
+
   .chapter.cover{min-height:calc(100svh - 95px)}
   .cover .title{margin:auto 0;padding-block:60px 35px}
   .cover .bottomline{flex-direction:column;align-items:flex-start;gap:22px}
@@ -105,7 +106,7 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
   .state-picker{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
 @media(max-width:520px){
-  .chapter .title .line{white-space:normal}
+
   #estrutura .symbol-row{grid-template-columns:1fr}
   #estrutura .symbol .art-zone{height:250px}
   #vasos .vase{min-height:250px;padding:14px}
@@ -125,7 +126,7 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
   .state-transport button:last-child{grid-column:2;grid-row:1}
 }
 @media(max-width:390px){
-  .cover .title{font-size:clamp(29px,9vw,42px)}
+
   #vasos .vase .art{height:160px}
   .state-picker button{font-size:11px}
 }
@@ -268,9 +269,7 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
 <div class="rule"><strong>03 / Integridade</strong><span>Preservar desenhos e proporções dos vetores originais.</span></div>
 <div class="rule"><strong>04 / Transformação</strong><span>Transformações respeitam as correspondências reais entre estados.</span></div>
 </div></div></section></main><footer class="foot"><span>LABMATTAR — ELEMENTOS GRÁFICOS / SISTEMA VETORIAL</span><span>IDENTIDADE VISUAL / 2026</span></footer>
-<script>
-(function(){const titles=[...document.querySelectorAll('.title')];function fit(){for(const t of titles){t.style.removeProperty('font-size');let size=parseFloat(getComputedStyle(t).fontSize),width=t.getBoundingClientRect().width;const lines=[...t.querySelectorAll('.line')];const maximum=Math.max(...lines.map(l=>{let range=document.createRange();range.selectNodeContents(l);return range.getBoundingClientRect().width}));if(maximum>width-3){t.style.fontSize=Math.max(1,size*(width-4)/maximum)+'px'}}}window.addEventListener("resize",fit,{passive:true});document.fonts?.ready.then(fit);fit()})();
-</script><script id="manual-states-script">
+<script id="manual-states-script">
 (function(){
 const picker=document.querySelector('.state-picker'),stage=document.querySelector('#state-morph-paths'),svg=document.querySelector('#state-morph-svg'),name=document.querySelector('#state-name'),range=document.querySelector('#state-progress'),output=document.querySelector('#state-progress-value'),play=document.querySelector('#state-play'),reset=document.querySelector('#state-reset');
 if(!picker||!stage||!svg||!range)return;

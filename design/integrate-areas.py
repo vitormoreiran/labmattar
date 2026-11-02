@@ -35,7 +35,7 @@ for filename,area in areas.items():
  s=re.sub(r'<style>\.lm-crossnav\{.*?</style>',"",s,flags=re.S)
  assert "</head>" in s and "<body>" in s
  # All five page-level H1 headings share exactly one typographic treatment.
- title_match = re.search(r'<h1\\b[^>]*>', s, flags=re.I)
+ title_match = re.search(r'<h1\b[^>]*>', s, flags=re.I)
  assert title_match, f"Missing page-level H1 in {filename}"
  title_open = title_match.group(0)
  if 'class="' in title_open:

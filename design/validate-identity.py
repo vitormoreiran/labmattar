@@ -4,24 +4,27 @@ import json
 root=Path("design")
 manifest=json.loads((root/"identity-system.json").read_text(encoding="utf-8"))
 assert manifest["schemaVersion"]=="1.0.0"
-assert len(manifest["sections"])==8
+assert len(manifest["sections"])==7
+assert [section["id"] for section in manifest["sections"][:5]]==["symbols","typography","color","composition","laboratory"],"Manual must end at 05 / LABORATÓRIO"
+assert not any(section["id"]=="image" for section in manifest["sections"]),"Imagem is not an independent chapter"
 assert len(manifest["symbols"]["vessels"])==9
 assert manifest["image"]["textContrast"]["veilColor"]=="#000000"
 assert manifest["image"]["textContrast"]["veilOpacity"]==0.2
 assert manifest["image"]["textContrast"]["otherwise"]=="no automatic veil"
 assert len(set(manifest["colors"]["palette"].values()))==5
-for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","imagem.html"):
+for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html"):
  page=Path("public")/name
  assert page.exists(),f"Missing page: {page}"
  text=page.read_text(encoding="utf-8")
  assert '<nav class="lm-site-nav"' in text,f"Missing shared navigation in {name}"
- for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html","/laboratorio.html","/imagem.html"):
+ for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html","/laboratorio.html"):
   assert expected in text,f"Missing navigation link {expected} in {name}"
+ assert '/imagem.html' not in text,f"Obsolete image chapter link in {name}"
 # The five manual areas use one normative stylesheet, not independent font faces.
 typography=(Path("public")/"manual-headings.css").read_text(encoding="utf-8")
 for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
  assert typography.count(font)==1,f"Missing or duplicate official font in normative CSS: {font}"
-for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","imagem.html"):
+for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html"):
  text=(Path("public")/page).read_text(encoding="utf-8")
  assert text.count('href="/manual-headings.css')==1,f"{page} must use one normative typography stylesheet"
  assert text.count('src="/manual-type-roles.js')==1,f"{page} must use one text role classifier"

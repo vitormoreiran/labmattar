@@ -36,12 +36,6 @@
       "editor": "/laboratorio.html?studio=1#laboratorio"
     },
     {
-      "id": "image",
-      "label": "Imagem",
-      "stage": "experimental",
-      "path": "/imagem.html"
-    },
-    {
       "id": "motion",
       "label": "Movimento",
       "stage": "partial"

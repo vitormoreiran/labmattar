@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 
 const pages = [
   'design/tipografia.html', 'design/cores.html', 'design/composicao.html',
-  'design/laboratorio.html', 'design/imagem.html', 'public/manual.html'
+  'design/laboratorio.html', 'public/manual.html'
 ];
 const styles = [
   'public/manual-symbols.css', 'public/composicao-regras.css', 'public/manual-composition-layout.css', 'public/composicao-lab.css',

@@ -1,0 +1,241 @@
+/*
+ * LABMATTAR / MANUAL — GEOMETRIA EDITORIAL COMPARTILHADA
+ * Full normative contract: design/manual-layout-contract.md
+ *
+ * This file sets space, alignment, columns and sequencing ONLY.
+ * Typography is exclusively owned by /manual-headings.css.
+ * Never add page-specific cover margins or individual font fitting.
+ */
+:root{
+  --lm-layout-frame:1120px;
+  --lm-layout-gap:20px;
+  --lm-layout-gutter:clamp(20px,4vw,64px);
+  --lm-layout-global-nav:54px;
+  --lm-layout-local-nav:0px;
+  --lm-layout-kicker-y:clamp(132px,18svh,186px);
+  --lm-layout-title-offset:48px;
+  --lm-layout-title-band:214px;
+  --lm-layout-after-title:44px;
+  --lm-layout-section-space:clamp(84px,10vw,140px);
+  --lm-layout-col-offset:calc((100% - 11 * var(--lm-layout-gap))/12 + var(--lm-layout-gap));
+}
+body:has(>header){--lm-layout-local-nav:48px}
+
+/* Navigation reserves deterministic height. The optional local chapter menu
+   must never change the absolute Y coordinate of the cover's first field. */
+html body > nav.lm-site-nav{
+  box-sizing:border-box;
+  min-height:var(--lm-layout-global-nav)!important;
+  height:var(--lm-layout-global-nav)!important;
+  display:flex;
+  flex-wrap:nowrap!important;
+  align-items:center;
+  justify-content:flex-end;
+  overflow-x:auto;
+  overscroll-behavior-x:contain;
+}
+html body > header{
+  box-sizing:border-box;
+  position:sticky;
+  top:var(--lm-layout-global-nav)!important;
+  height:48px!important;
+  min-height:48px!important;
+  max-height:48px;
+  padding:7px var(--lm-layout-gutter)!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  flex-wrap:nowrap!important;
+  gap:18px!important;
+}
+html body > header nav{
+  display:flex!important;
+  min-width:0;
+  flex-wrap:nowrap!important;
+  align-items:center;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+html body > header nav a{flex:none}
+
+/* Cover. One content frame with a one-column editorial inset.
+   The body and the detail ALWAYS share row 3 at desktop/tablet width. */
+html body main section.lm-manual-cover{
+  box-sizing:border-box;
+  display:block!important;
+  width:100%;
+  min-height:calc(100svh - var(--lm-layout-global-nav) - var(--lm-layout-local-nav))!important;
+  padding:
+    max(32px,calc(var(--lm-layout-kicker-y) - var(--lm-layout-global-nav) - var(--lm-layout-local-nav)))
+    var(--lm-layout-gutter)
+    clamp(70px,8svh,110px)!important;
+  border-bottom:1px solid var(--line,var(--rule,#c9c8c2));
+}
+html body main section.lm-manual-cover > .inner{
+  box-sizing:border-box;
+  width:min(100%,var(--lm-layout-frame))!important;
+  max-width:var(--lm-layout-frame)!important;
+  margin-inline:auto!important;
+  padding:0!important;
+  min-width:0;
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:var(--lm-layout-gap);
+  row-gap:0;
+  align-content:start;
+  align-items:start;
+  justify-content:normal;
+}
+html body main section.lm-manual-cover > .inner > :first-child{
+  grid-column:2 / 13;
+  grid-row:1;
+  margin:0!important;
+  padding:0;
+  min-width:0;
+}
+html body main section.lm-manual-cover > .inner > h1{
+  grid-column:2 / 10;
+  grid-row:2;
+  min-width:0;
+  min-height:var(--lm-layout-title-band);
+  width:100%;
+  max-width:100%;
+  margin:var(--lm-layout-title-offset) 0 var(--lm-layout-after-title)!important;
+  padding:0!important;
+  align-self:start;
+  text-align:left;
+}
+html body main section.lm-manual-cover > .inner > h1 :is(.line,.title-line){
+  display:block;
+  max-width:100%;
+  white-space:normal!important;
+}
+html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro){
+  grid-column:1 / -1;
+  grid-row:3;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  column-gap:var(--lm-layout-gap)!important;
+  row-gap:0;
+  align-items:start!important;
+  align-content:start;
+  justify-content:normal!important;
+  margin:0!important;
+  padding:0!important;
+  flex:initial!important;
+}
+html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{
+  grid-column:2 / 7;
+  grid-row:1;
+  width:100%;
+  max-width:45ch;
+  min-width:0;
+  margin:0!important;
+  padding:0!important;
+  align-self:start;
+}
+html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:nth-child(2){
+  grid-column:10 / 13;
+  grid-row:1;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  margin:0!important;
+  padding:0!important;
+  align-self:start;
+  text-align:left;
+}
+html body main section.lm-manual-cover a{
+  color:inherit;
+  text-decoration:underline;
+  text-underline-offset:4px;
+}
+
+/* Internal chapters share frame and rhythm. Artworks/demonstrations may use
+   the full frame; direct editorial headings and paragraphs use column 2. */
+html body main section.lm-manual-section:not(.lm-manual-cover){
+  box-sizing:border-box;
+  padding:var(--lm-layout-section-space) var(--lm-layout-gutter)!important;
+}
+html body main section.lm-manual-section:not(.lm-manual-cover) > .inner{
+  box-sizing:border-box;
+  width:min(100%,var(--lm-layout-frame))!important;
+  max-width:var(--lm-layout-frame)!important;
+  margin-inline:auto!important;
+  min-width:0;
+}
+html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy){
+  margin-left:var(--lm-layout-col-offset)!important;
+}
+html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > .section-head{
+  margin-left:var(--lm-layout-col-offset);
+}
+html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-intro,.lm-case-facts,.lm-case-controls,.lm-case-layout,.lm-case-trace,.lm-case-contrast,.lm-case-validation,.lm-m-guide-grid,.lm-lab-heading,.lm-lab-prep,.lm-lab-workspace){
+  box-sizing:border-box;
+  width:min(100%,var(--lm-layout-frame));
+  max-width:var(--lm-layout-frame);
+  margin-left:auto;
+  margin-right:auto;
+}
+html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
+  padding-left:var(--lm-layout-col-offset);
+}
+
+/* Tablet: keep the same one-column inset but redistribute reading fields. */
+@media(max-width:1023px) and (min-width:701px){
+  :root{--lm-layout-gap:16px}
+  html body main section.lm-manual-cover > .inner > h1{grid-column:2 / 13}
+  html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{grid-column:2 / 8}
+  html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:nth-child(2){grid-column:9 / 13}
+}
+/* Narrow reading: the grid becomes a consistent single reading column. */
+@media(max-width:700px){
+  :root{
+    --lm-layout-gap:12px;
+    --lm-layout-title-offset:38px;
+    --lm-layout-title-band:112px;
+    --lm-layout-after-title:36px;
+    --lm-layout-section-space:clamp(64px,12vw,96px);
+  }
+  html body > nav.lm-site-nav{justify-content:flex-start!important}
+  html body > header > span{display:none!important}
+  html body > header{justify-content:flex-start!important}
+  html body > header nav{width:100%}
+  html body main section.lm-manual-cover{padding-bottom:clamp(56px,8svh,84px)!important}
+  html body main section.lm-manual-cover > .inner,
+  html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro){
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    column-gap:0!important;
+  }
+  html body main section.lm-manual-cover > .inner > :first-child,
+  html body main section.lm-manual-cover > .inner > h1,
+  html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro){
+    grid-column:1!important;
+  }
+  html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{
+    grid-column:1!important;
+    grid-row:1;
+    max-width:48ch;
+  }
+  html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:nth-child(2){
+    grid-column:1!important;
+    grid-row:2;
+    margin-top:28px!important;
+    max-width:32ch;
+  }
+  html body main section.lm-manual-cover > .inner > h1{
+    min-height:var(--lm-layout-title-band);
+  }
+  html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy),
+  html body main section.lm-manual-section:not(.lm-manual-cover) > .inner > .section-head{
+    margin-left:0!important;
+  }
+  html body main section.lm-manual-section:not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
+    padding-left:0;
+  }
+}

@@ -120,14 +120,6 @@
   function fitLayout() {
     document.documentElement.style.setProperty('--manual-nav-height', (nav?.getBoundingClientRect().height || 0) + 'px');
     document.documentElement.style.setProperty('--manual-header-height', (header?.getBoundingClientRect().height || 0) + 'px');
-    for (const title of document.querySelectorAll('.title')) {
-      title.style.removeProperty('font-size');
-      const width = title.getBoundingClientRect().width - 2;
-      const size = parseFloat(getComputedStyle(title).fontSize);
-      const measured = [...title.querySelectorAll('.line')].map(line => { const r = document.createRange(); r.selectNodeContents(line); return r.getBoundingClientRect().width; });
-      const widest = Math.max(0, ...measured);
-      if (widest > width && width > 0) title.style.fontSize = (size * width / widest) + 'px';
-    }
   }
   let layoutFrame = 0;
   const scheduleLayout = () => { cancelAnimationFrame(layoutFrame); layoutFrame = requestAnimationFrame(fitLayout); };

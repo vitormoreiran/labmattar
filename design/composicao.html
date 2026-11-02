@@ -37,17 +37,52 @@
 .lm-case-reading h3 span{display:block}
 .lm-case-reading p{max-width:38ch;margin:0}
 .lm-case-footer{display:flex;justify-content:space-between;gap:14px;align-items:end;}
-.lm-case-frame.is-mobile{--lm-safe:clamp(20px,7.2cqw,30px)}
+/* In a tall surface the reading changes structure, not just aspect ratio.
+   The top line, title, body and credits never share a physical text band. */
+.lm-case-frame.is-mobile{--lm-safe:clamp(18px,7.2cqw,30px)}
 .lm-case-frame.is-mobile .lm-case-symbol .lm-case-image{width:143.9%;max-width:none}
-.lm-case-frame.is-mobile .lm-case-reading{align-self:center}
-.lm-case-frame.is-mobile .lm-case-reading h3{margin-bottom:18px}
-.lm-case-frame.is-mobile .lm-case-reading p{max-width:27ch}
-.lm-case-frame.is-mobile .lm-case-footer{align-items:start;flex-direction:column;gap:3px}
+.lm-case-frame.is-mobile .lm-case-content{
+  grid-template-rows:auto minmax(0,1fr) auto;
+  row-gap:clamp(9px,2.6cqh,18px);
+}
+.lm-case-frame.is-mobile .lm-case-reading{
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:clamp(18px,5cqh,42px);
+  min-height:0;
+  padding-top:clamp(18px,5.5cqh,42px);
+  padding-bottom:clamp(14px,3cqh,26px);
+}
+.lm-case-frame.is-mobile .lm-case-reading h3{
+  width:100%;
+  max-width:100%;
+  margin:0;
+  text-wrap:initial;
+}
+.lm-case-frame.is-mobile .lm-case-reading h3 span{
+  display:block;
+  white-space:nowrap;
+}
+.lm-case-frame.is-mobile .lm-case-reading p{
+  width:100%;
+  max-width:29ch;
+  margin:0;
+}
+.lm-case-frame.is-mobile .lm-case-footer{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-end;
+  gap:4px;
+  min-width:0;
+}
 .lm-case-frame[data-step=campo] .lm-case-symbol,.lm-case-frame[data-step=campo] .lm-case-content{opacity:0}
 .lm-case-frame[data-step=mascara] .lm-case-content{opacity:0}
 .lm-case-frame[data-step=campo] .lm-case-veil{opacity:0}
 .lm-case-safe{position:absolute;z-index:6;inset:var(--lm-safe);border:1px solid #d8ffcf;pointer-events:none;display:none}
-.lm-case-safe::before{content:"ÁREA DE LEITURA";position:absolute;left:0;top:-18px;background:#d8ffcf;color:#121612;padding:2px 6px;}
+.lm-case-safe::before{content:"ÁREA DE LEITURA";position:absolute;left:0;top:auto;bottom:-18px;background:#d8ffcf;color:#121612;padding:2px 6px;}
 .lm-case-frame[data-guides=true] .lm-case-safe{display:block}
 .lm-case-aside{border-top:1px solid var(--ink);padding-top:17px;min-width:0}
 .lm-case-aside .eyebrow{margin:0 0 25px}
@@ -212,15 +247,26 @@
     mascara:["02 / MÁSCARA","O M enquadra sem ser deformado.","Sem texto sobreposto, o M mostra a fotografia sem o véu adicional de contraste. O recorte acompanha a geometria vetorial oficial e pode ultrapassar a superfície sem distorção."],
     completa:["03 / PÁGINA","Texto, M e fotografia funcionam em conjunto.","Quando o texto cruza uma fotografia, aplica-se preto 20% sob a área de leitura."]
   };
+  // One copy system; the tall format explains the actual recomposition.
+  function updateAside(){
+    const vertical=frame.classList.contains("is-mobile");
+    const d=frame.dataset.step==="completa"&&vertical?
+      ["03 / PÁGINA","O vertical reorganiza a leitura.","Título no campo superior; Corpo acima dos créditos. O M mantém seu eixo, sem sobreposição entre blocos."]:
+      data[frame.dataset.step];
+    document.getElementById("caseStepNumber").textContent=d[0];
+    document.getElementById("caseStepTitle").textContent=d[1];
+    document.getElementById("caseStepBody").textContent=d[2];
+  }
   function step(value){
     frame.dataset.step=value;
     document.querySelectorAll("[data-case-step]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.caseStep===value)));
-    const d=data[value];document.getElementById("caseStepNumber").textContent=d[0];document.getElementById("caseStepTitle").textContent=d[1];document.getElementById("caseStepBody").textContent=d[2];
+    updateAside();
     updateContrastNote();
   }
   function format(value){
     frame.classList.toggle("is-mobile",value==="mobile");
     document.querySelectorAll("[data-case-format]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.caseFormat===value)));
+    updateAside();
   }
   function updateContrastNote(){
     document.getElementById("caseContrastNote").textContent=frame.dataset.step!=="completa"?

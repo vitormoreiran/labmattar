@@ -66,13 +66,22 @@ try{
   await choose("background","color");
   await choose("mContent","photo");
   state=await page.locator("#labArtboard").evaluate(el=>({
+    background:el.dataset.background,mContent:el.dataset.mContent,markerBlur:el.dataset.markerBlur,
+    photo:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
+    m:getComputedStyle(el.querySelector("#labMask")).display,
+    mImage:getComputedStyle(el.querySelector("#labMaskPhoto")).display
+  }));
+  assert(state.background==="photo"&&state.markerBlur==="true"&&state.mImage!=="none",
+    "Active M-tip markers preserve the blurred photographic background");
+  await choose("marker","none");
+  state=await page.locator("#labArtboard").evaluate(el=>({
     background:el.dataset.background,mContent:el.dataset.mContent,
     photo:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
     m:getComputedStyle(el.querySelector("#labMask")).display,
     mImage:getComputedStyle(el.querySelector("#labMaskPhoto")).display
   }));
   assert(state.background==="color"&&state.photo==="none"&&state.m!=="none"&&state.mImage!=="none",
-    "A photographic M must work over a color background");
+    "Without markers a photographic M must work over a color background");
 
   await choose("mContent","off");
   assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).display)==="none",

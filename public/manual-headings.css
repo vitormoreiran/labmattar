@@ -39,7 +39,6 @@ html body main h1.lm-manual-page-title :is(.line, .title-line) {
   max-width: 100%;
   white-space: normal !important;
 }
-html body main h1.lm-manual-page-title br {display:block}
 @media (max-width: 520px) {
   html body main h1.lm-manual-page-title {
     margin-top: clamp(38px, 10vw, 54px) !important;

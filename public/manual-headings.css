@@ -85,6 +85,23 @@ html body :is(.perpetua,.p,em) [data-lm-text-role="title"]:not(#__lm_type_guard_
  font-family:var(--lm-type-perpetua)!important;
  letter-spacing:0px!important;
 }
+/* A simulated page is not the browser viewport. Scale the SAME three normative
+ * typography roles by the page canvas width (cqw) in the Composition example.
+ * This is one context-specific scale, not new semantic text formats or per-word fitting.
+ * It preserves both font families, line heights, letterspacing and roles. */
+html body main .lm-case-frame{
+ --lm-type-title-size:clamp(12px,6.9cqw,84px);
+ --lm-type-body-size:clamp(8px,1.75cqw,18px);
+ --lm-type-detail-size:clamp(6px,1.25cqw,13px);
+}
+html body main .lm-case-frame.is-mobile{
+ --lm-type-title-size:clamp(18px,9.6cqw,38px);
+ --lm-type-body-size:clamp(9px,3.65cqw,14px);
+ --lm-type-detail-size:clamp(7px,2.55cqw,10px);
+}
+html body main .lm-case-frame .lm-case-safe::before{
+ font-size:var(--lm-type-detail-size)!important;
+}
 /* Structural headline geometry remains consistent across the five chapters. */
 html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title){
  text-align:left!important;

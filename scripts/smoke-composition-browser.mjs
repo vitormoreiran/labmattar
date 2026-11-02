@@ -114,6 +114,54 @@ try{
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
     "Construction must demonstrate responsive recomposition");
+  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("Corpo acima dos créditos"),
+    "The construction manual must explain real tall-surface recomposition");
+  const checkVertical=async(viewport)=>{
+    await constructionPage.setViewportSize(viewport);
+    await constructionPage.evaluate(()=>document.fonts.ready);
+    const proof=await constructionPage.locator("#caseFrame").evaluate(frame=>{
+      const rect=el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right,width:r.width,height:r.height}};
+      const content=frame.querySelector(".lm-case-content");
+      const title=frame.querySelector(".lm-case-reading h3");
+      const body=frame.querySelector(".lm-case-reading p");
+      const kicker=frame.querySelector(".lm-case-kicker");
+      const footer=frame.querySelector(".lm-case-footer");
+      return {frame:rect(frame),safe:rect(content),title:rect(title),body:rect(body),
+        kicker:rect(kicker),footer:rect(footer),
+        font:{title:parseFloat(getComputedStyle(title).fontSize),body:parseFloat(getComputedStyle(body).fontSize)},
+        lines:[...title.querySelectorAll("span")].map(el=>({text:el.textContent,box:rect(el),scrollWidth:el.scrollWidth,clientWidth:el.clientWidth})),
+        clipped:frame.scrollHeight>frame.clientHeight+2,
+        aria:frame.getAttribute("data-step")};
+    });
+    const tolerance=2;
+    assert(proof.aria==="completa","Responsive checks must target the complete composition");
+    assert(Math.abs(proof.frame.width/proof.frame.height-9/16)<.004,
+      "Vertical page must have a genuine 9:16 surface: "+JSON.stringify(proof));
+    assert(proof.title.top>=proof.kicker.bottom+8,
+      "Title must begin below its identification: "+JSON.stringify({viewport,proof}));
+    assert(proof.body.top>=proof.title.bottom+14,
+      "The Body must not overlap the Title: "+JSON.stringify({viewport,proof}));
+    assert(proof.footer.top>=proof.body.bottom+8,
+      "Credits must not overlap the Body: "+JSON.stringify({viewport,proof}));
+    for(const block of [proof.kicker,proof.title,proof.body,proof.footer]){
+      assert(block.left>=proof.safe.left-tolerance && block.right<=proof.safe.right+tolerance,
+        "Text must remain inside the reading margins: "+JSON.stringify({viewport,proof}));
+    }
+    for(const line of proof.lines){
+      assert(line.scrollWidth<=line.clientWidth+tolerance && line.box.right<=proof.safe.right+tolerance,
+        "Vertical title line must fit the reading field without horizontal clipping: "+JSON.stringify({viewport,line,proof}));
+    }
+    assert(proof.font.title<proof.frame.width*.125 && proof.font.body<proof.frame.width*.045,
+      "Type must scale relative to the physical artboard, not browser viewport: "+JSON.stringify({viewport,proof}));
+    await constructionPage.locator("#caseFrame").screenshot({path:"composition-vertical-"+viewport.width+".png"});
+    return proof;
+  };
+  const desktopVertical=await checkVertical({width:1440,height:900});
+  assert(desktopVertical.title.bottom<desktopVertical.body.top,
+    "Desktop preview of vertical format must also be fully legible");
+  await checkVertical({width:390,height:844});
+  await checkVertical({width:320,height:640});
+  await constructionPage.setViewportSize({width:390,height:844});
   await constructionPage.setViewportSize({width:390,height:844});
   await constructionPage.screenshot({path:"composition-manual-mobile.png",fullPage:true});
   await constructionPage.close();

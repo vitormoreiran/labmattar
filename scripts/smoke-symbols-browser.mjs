@@ -32,17 +32,20 @@ try {
         const response=await areaPage.goto(new URL('/'+area,url).href,{waitUntil:'networkidle',timeout:60000});
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
         await areaPage.evaluate(()=>document.fonts.ready);
-        const heading=areaPage.locator('main h1.lm-manual-page-title');
-        assert.equal(await heading.count(),1,'Exactly one shared opening heading in '+area);
-        const style=await heading.evaluate(el=>{
+        const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
+        const expected={'manual.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'imagem.html':1};
+        assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
+        const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();
           return {size:parseFloat(css.fontSize),lineHeight:parseFloat(css.lineHeight),family:css.fontFamily,weight:css.fontWeight,tracking:css.letterSpacing,left:rect.left,right:rect.right,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth};
-        });
-        check(style.size>0,'Valid title font size '+area);
-        check(style.left>=-1 && style.right<=viewportWidth+1,'Title box inside viewport '+area+'/'+viewportWidth);
-        check(style.scrollWidth<=style.clientWidth+1,'Title text fits viewport '+area+'/'+viewportWidth);
+        }));
+        for(const style of styles){
+          check(style.size>0,'Valid title font size '+area);
+          check(style.left>=-1 && style.right<=viewportWidth+1,'Title box inside viewport '+area+'/'+viewportWidth);
+          check(style.scrollWidth<=style.clientWidth+1,'Title text fits viewport '+area+'/'+viewportWidth);
+        }
         if ([1440,390].includes(viewportWidth)) await areaPage.screenshot({path:`symbols-proof/${phase}-heading-${area.replace('.html','')}-${viewportWidth}.png`});
-        group.push({area,...style});
+        for(const style of styles) group.push({area,...style});
       } finally { await areaPage.close(); }
     }
     for(const field of ['size','lineHeight','family','weight','tracking']) {

@@ -31,11 +31,9 @@ header.top{position:sticky;top:var(--global-nav-h);z-index:90;background:var(--p
 </main><footer class="footer"><span>LABMATTAR / TIPOGRAFIA</span><span>IDENTIDADE VISUAL / 2026</span></footer>
 <script>
 (()=>{'use strict';
-const root=document.documentElement,titles=[...document.querySelectorAll('.type-title')];let resizeFrame=0;
+const root=document.documentElement;let resizeFrame=0;
 function fitTitles(){
- root.style.removeProperty('--title-fit');const base=parseFloat(getComputedStyle(titles[0]).fontSize);let ratio=1;
- for(const title of titles){const width=title.clientWidth;for(const line of title.querySelectorAll('.title-line')){const range=document.createRange();range.selectNodeContents(line);const measured=range.getBoundingClientRect().width;if(measured>0)ratio=Math.min(ratio,Math.max(1,width-8)/measured);}}
- root.style.setProperty('--title-fit',(Math.floor(base*ratio*100)/100)+'px');
+ // Only sticky navigation positions are recalculated. Title sizes stay uniform.
  const global=document.querySelector('.lm-site-nav'),top=document.querySelector('header.top'),gh=global?global.getBoundingClientRect().height:0;
  root.style.setProperty('--global-nav-h',gh+'px');root.style.setProperty('--header-stack',(gh+top.getBoundingClientRect().height)+'px');
 }

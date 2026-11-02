@@ -9,7 +9,7 @@ assert 'id="estrutura"' in html and '<div class="symbol-row">' in html
 
 a = html.index('<section class="chapter" id="estrutura">')
 b = html.index('<div class="symbol-row">', a)
-intro = '<div class="lm-reading-intro"><h2>Assinatura e símbolo</h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal, também utilizado como máscara e elemento de composição.</p></div>'
+intro = '<div class="lm-reading-intro"><h2 class="lm-manual-section-title"><span class="line">Assinatura e</span><span class="line perpetua">símbolo</span></h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal, também utilizado como máscara e elemento de composição.</p></div>'
 html = html[:a] + '<section class="chapter" id="estrutura"><div class="inner">' + intro + html[b:]
 html = re.sub(r'<h1 class="title(?: lm-manual-page-title)?">.*?</h1>', '<h1 class="title lm-manual-page-title"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></h1>', html, count=1, flags=re.S)
 html = html.replace('Sistema de identidade / Elementos gráficos / 2026', 'LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS', 1)
@@ -87,5 +87,6 @@ assert html.count('id="state-morph-svg"') == 1
 assert html.count('id="manual-states-script"') == 0
 assert html.count('class="lm-reading-intro"') == 1
 html = re.sub(r'\n*(<link rel="stylesheet" href="/manual-symbols)', r'\n\1', html)
+html = re.sub(r'<h2 class="title">', '<h2 class="title lm-manual-section-title">', html)
 p.write_text(html, encoding='utf-8')
 print('Symbols: concise approved copy; original artwork and controls preserved')

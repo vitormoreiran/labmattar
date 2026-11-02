@@ -11,7 +11,7 @@ a = html.index('<section class="chapter" id="estrutura">')
 b = html.index('<div class="symbol-row">', a)
 intro = '<div class="lm-reading-intro"><h2>Assinatura e símbolo</h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal, também utilizado como máscara e elemento de composição.</p></div>'
 html = html[:a] + '<section class="chapter" id="estrutura"><div class="inner">' + intro + html[b:]
-html = re.sub(r'<h1 class="title">.*?</h1>', '<h1 class="title lm-manual-page-title"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></h1>', html, count=1, flags=re.S)
+html = re.sub(r'<h1 class="title(?: lm-manual-page-title)?">.*?</h1>', '<h1 class="title lm-manual-page-title"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></h1>', html, count=1, flags=re.S)
 html = html.replace('Sistema de identidade / Elementos gráficos / 2026', 'LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS', 1)
 for id_ in ('manual-responsive-fix','manual-morph-interaction','lm-reading-hierarchy'):
     html = re.sub(r'<style id="'+id_+r'">.*?</style>', '', html, flags=re.S)

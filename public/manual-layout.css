@@ -171,6 +171,11 @@ html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .
 html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy){
   margin-left:var(--lm-layout-col-offset)!important;
 }
+html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > :is(h2,.title,.type-title){
+  box-sizing:border-box;
+  width:calc(100% - var(--lm-layout-col-offset))!important;
+  max-width:calc(100% - var(--lm-layout-col-offset))!important;
+}
 html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > .section-head{
   margin-left:var(--lm-layout-col-offset);
 }
@@ -234,6 +239,10 @@ html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :
   html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > :is(.eyebrow,h2,.copy,.type-title,.structure-intro,.section-copy),
   html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > .section-head{
     margin-left:0!important;
+  }
+  html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > .inner > :is(h2,.title,.type-title){
+    width:100%!important;
+    max-width:100%!important;
   }
   html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :is(.lm-case-intro,.lm-lab-heading){
     padding-left:0;

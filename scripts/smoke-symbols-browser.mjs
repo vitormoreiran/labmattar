@@ -75,11 +75,12 @@ try {
           const lower=inner?.querySelector(':scope > .bottomline,:scope > .cover-bottom,:scope > .intro-bottom,:scope > .intro');
           const kicker=inner?.firstElementChild;
           const title=inner?.querySelector(':scope > h1');
+          const titleContent=title?.querySelector(':scope > .lm-cover-title-content');
           const body=lower?.querySelector(':scope > p:first-child');
           const detail=lower?.querySelector(':scope > p:nth-child(2)');
-          if(!inner||!lower||!kicker||!title||!body||!detail)return {error:'Missing one of five canonical cover fields'};
+          if(!inner||!lower||!kicker||!title||!titleContent||!body||!detail)return {error:'Missing one of six canonical cover fields'};
           const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}};
-          return {kicker:rect(kicker),title:rect(title),body:rect(body),detail:rect(detail),
+          return {kicker:rect(kicker),title:rect(title),titleContent:rect(titleContent),body:rect(body),detail:rect(detail),
             cover:rect(section),frame:rect(inner),titleOverflow:title.scrollWidth-title.clientWidth,
             gridColumns:getComputedStyle(inner).gridTemplateColumns.split(' ').length};
         });
@@ -88,6 +89,15 @@ try {
           'Editorial axis must start at the existing content frame, without an extra grid inset: '+area+'/'+viewportWidth);
         assert.equal(placement.gridColumns,viewportWidth<=700?1:12,'Shared cover grid columns: '+area);
         assert.ok(placement.titleOverflow<=1.5,'Title fits its assigned column without automatic shrinking: '+area);
+        const coverCenter=(placement.frame.top+placement.frame.bottom)/2;
+        const visualTargetCenter=(viewportHeight+54)/2;
+        assert.ok(Math.abs(coverCenter-visualTargetCenter)<=26,
+          'Cover composition must be vertically balanced under the navigation: '+area+'/'+viewportWidth+
+          ' center='+coverCenter+' expected='+visualTargetCenter);
+        const titleCenter=(placement.title.top+placement.title.bottom)/2;
+        const titleContentCenter=(placement.titleContent.top+placement.titleContent.bottom)/2;
+        assert.ok(Math.abs(titleCenter-titleContentCenter)<=3,
+          'Short and long titles must be optically centered within the same title band: '+area+'/'+viewportWidth);
         assert.ok(placement.title.top<placement.body.top,'Cover title precedes copy: '+area);
         if(viewportWidth<=700)assert.ok(placement.detail.top>=placement.body.top+placement.body.height,
           'Mobile detail follows the body: '+area);

@@ -29,6 +29,13 @@
       "path": "/composicao.html"
     },
     {
+      "id": "laboratory",
+      "label": "Laboratório",
+      "path": "/laboratorio.html",
+      "stage": "experimental",
+      "editor": "/laboratorio.html?studio=1#laboratorio"
+    },
+    {
       "id": "image",
       "label": "Imagem",
       "stage": "experimental",

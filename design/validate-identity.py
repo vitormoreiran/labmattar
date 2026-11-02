@@ -4,31 +4,32 @@ import json
 root=Path("design")
 manifest=json.loads((root/"identity-system.json").read_text(encoding="utf-8"))
 assert manifest["schemaVersion"]=="1.0.0"
-assert len(manifest["sections"])==7
+assert len(manifest["sections"])==8
 assert len(manifest["symbols"]["vessels"])==9
 assert manifest["image"]["textContrast"]["veilColor"]=="#000000"
 assert manifest["image"]["textContrast"]["veilOpacity"]==0.2
 assert manifest["image"]["textContrast"]["otherwise"]=="no automatic veil"
 assert len(set(manifest["colors"]["palette"].values()))==5
-for name in ("manual.html","tipografia.html","cores.html","composicao.html","imagem.html"):
+for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","imagem.html"):
  page=Path("public")/name
  assert page.exists(),f"Missing page: {page}"
  text=page.read_text(encoding="utf-8")
  assert '<nav class="lm-site-nav"' in text,f"Missing shared navigation in {name}"
- for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html","/imagem.html"):
+ for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html","/laboratorio.html","/imagem.html"):
   assert expected in text,f"Missing navigation link {expected} in {name}"
 # The five manual areas use one normative stylesheet, not independent font faces.
 typography=(Path("public")/"manual-headings.css").read_text(encoding="utf-8")
 for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
  assert typography.count(font)==1,f"Missing or duplicate official font in normative CSS: {font}"
-for page in ("manual.html","tipografia.html","cores.html","composicao.html","imagem.html"):
+for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","imagem.html"):
  text=(Path("public")/page).read_text(encoding="utf-8")
  assert text.count('href="/manual-headings.css')==1,f"{page} must use one normative typography stylesheet"
  assert text.count('src="/manual-type-roles.js')==1,f"{page} must use one text role classifier"
-composition=(Path("public")/"composicao.html").read_text(encoding="utf-8")
-assert 'id="contraste"' in composition and ("PRETO 20%" in composition or "20% DE PRETO" in composition)
-assert ".lm-case-image::after" in composition, "Mask must carry its own text contrast veil"
-assert 'id="construcao"' in composition and 'id="laboratorio"' in composition
+construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
+composition=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
+assert 'id="contraste"' in construction and ("PRETO 20%" in construction or "20% DE PRETO" in construction)
+assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
+assert 'id="construcao"' in construction and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition
 assert 'src="/composicao-lab.js"' in composition
 assert 'href="/composicao-lab-controls.css"' in composition, "Illustrated control stylesheet missing"
@@ -51,9 +52,9 @@ assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
 assert "dataset.background" in lab_js and "dataset.mContent" in lab_js
 assert "data-background=photo" in lab_css and "data-m-content=solid" in lab_css
 assert "m-publicado.svg" in lab_css
-assert 'id="regras-de-composicao"' in composition, "Composition rules section missing"
+assert 'id="regras-de-composicao"' in construction, "Composition rules section missing"
 for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):
- assert rule in composition,f"Missing composition rule: {rule}"
+ assert rule in construction,f"Missing composition rule: {rule}"
 assert 'data-lab-choice="mMode"' not in composition, "Invented M usage modes must not be exposed"
 assert ".20" in lab_css, "Fixed 20% must be preserved"
 assert "state.mMode" in lab_js

@@ -26,9 +26,11 @@
   }
   if(node.nodeType!==Node.ELEMENT_NODE)return;
   if(node.matches(SKIP))return;
-  const titleContainers='h1,h2,h3,h4,h5,h6,.type-title,.title,.big,.lm-lab-title,.artboard .headline,.transform-rule,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3';
-  if(node.matches(titleContainers))annotate(node);
-  node.querySelectorAll(titleContainers).forEach(annotate);
+  // Text displayed as input values and select options has no DOM text node.
+  // Tag those controls explicitly so they cannot retain legacy font sizes.
+  const textContainers='h1,h2,h3,h4,h5,h6,.type-title,.title,.big,.lm-lab-title,.artboard .headline,.transform-rule,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3,input,textarea,select,option,button,label,legend,summary,output';
+  if(node.matches(textContainers))annotate(node);
+  node.querySelectorAll(textContainers).forEach(annotate);
   const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);
   let text;
   while((text=walker.nextNode())){

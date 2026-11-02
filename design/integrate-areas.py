@@ -51,7 +51,7 @@ for filename,area in areas.items():
  if area=="composicao":
   s=s.replace('<h2>', '<h2 class="lm-manual-section-title">')
   s=s.replace('<h2 id="lmCompositionRulesTitle"', '<h2 class="lm-manual-section-title" id="lmCompositionRulesTitle"')
- s=s.replace("</head>",STYLE+'<link rel="stylesheet" href="/manual-headings.css?v=20261102b">'+"</head>",1)
+ s=s.replace("</head>",STYLE+'<link rel="stylesheet" href="/manual-headings.css?v=20261102c"><script defer src="/manual-type-roles.js?v=20261102c"></script>'+"</head>",1)
  s=s.replace("<body>","<body>"+NAV.replace('data-area="'+area+'"','aria-current="page" data-area="'+area+'"'),1)
  p.write_text(s,encoding="utf-8")
  print(filename, "global navigation OK")

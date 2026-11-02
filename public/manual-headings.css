@@ -1,63 +1,97 @@
-/* LABMATTAR — uma régua para títulos estruturais.
-   Exclui títulos dentro de exemplos, fotografias e telas de edição. */
+/* LABMATTAR / Tipografia normativa. EXACTLY THREE visible text treatments.
+ * Título (Univers/Perpetua), Corpo (Univers) and Detalhe (Univers).
+ * This file overrides legacy component-specific typography without altering
+ * project SVGs, editor geometry, or image composition. */
+@font-face{font-family:UniversMattar;src:url('/fonts/univers-lt-std-45-light.otf') format('opentype');font-style:normal;font-weight:300;font-display:swap}
+@font-face{font-family:PerpetuaMattar;src:url('/fonts/perpetua-titling-light.ttf') format('truetype');font-style:normal;font-weight:300;font-display:swap}
 :root{
-  --lm-manual-title-size:clamp(31px,7vw,104px);
-  --lm-manual-title-leading:.98;
-  --lm-manual-title-tracking:-.025em;
+ --lm-type-univers:UniversMattar,Arial,sans-serif;
+ --lm-type-perpetua:PerpetuaMattar,Georgia,serif;
+ --lm-type-title-size:clamp(31px,7vw,104px);
+ --lm-type-body-size:18px;
+ --lm-type-detail-size:13px;
+ --lm-type-title-leading:.98;
+ --lm-type-body-leading:1.45;
+ --lm-type-detail-leading:1.35;
+ --lm-type-title-tracking:-.025em;
+ --lm-type-body-tracking:0px;
+ --lm-type-detail-tracking:.04em;
 }
+/* Existing visual containers continue to own positioning, color and spacing.
+ * Text elements get one of the three roles from manual-type-roles.js. */
+html body [data-lm-text-role="title"]:not(#__lm_type_guard__){
+ font-family:var(--lm-type-univers)!important;
+ font-size:var(--lm-type-title-size)!important;
+ font-weight:300!important;
+ font-style:normal!important;
+ line-height:var(--lm-type-title-leading)!important;
+ letter-spacing:var(--lm-type-title-tracking)!important;
+ text-transform:uppercase!important;
+ font-synthesis:none!important;
+}
+html body [data-lm-text-role="body"]:not(#__lm_type_guard__){
+ font-family:var(--lm-type-univers)!important;
+ font-size:var(--lm-type-body-size)!important;
+ font-weight:300!important;
+ font-style:normal!important;
+ line-height:var(--lm-type-body-leading)!important;
+ letter-spacing:var(--lm-type-body-tracking)!important;
+ text-transform:none!important;
+ font-synthesis:none!important;
+}
+html body [data-lm-text-role="detail"]:not(#__lm_type_guard__){
+ font-family:var(--lm-type-univers)!important;
+ font-size:var(--lm-type-detail-size)!important;
+ font-weight:300!important;
+ font-style:normal!important;
+ line-height:var(--lm-type-detail-leading)!important;
+ letter-spacing:var(--lm-type-detail-tracking)!important;
+ text-transform:uppercase!important;
+ font-synthesis:none!important;
+}
+/* Perpetua is an alternate letterform INSIDE Título, never a fourth scale. */
+html body [data-lm-text-role="title"]:is(.perpetua,.p,em):not(#__lm_type_guard__),
+html body :is(.perpetua,.p,em) [data-lm-text-role="title"]:not(#__lm_type_guard__){
+ font-family:var(--lm-type-perpetua)!important;
+ letter-spacing:0px!important;
+}
+/* Structural headline geometry remains consistent across the five chapters. */
 html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title){
-  font-family:UniversMattar,"Univers Mattar",Univers,Arial,sans-serif!important;
-  font-size:var(--lm-manual-title-size)!important;
-  font-weight:300!important;
-  font-style:normal!important;
-  line-height:var(--lm-manual-title-leading)!important;
-  letter-spacing:var(--lm-manual-title-tracking)!important;
-  text-align:left!important;
-  text-transform:uppercase!important;
-  font-synthesis:none!important;
-  display:block;
-  width:100%;
-  max-width:100%!important;
-  min-width:0;
-  margin:clamp(42px,6vw,84px) 0 clamp(36px,5vw,68px)!important;
-  padding:0!important;
-  overflow-wrap:normal;
-  word-break:normal;
-  hyphens:none;
-}
-/* Inclusive na demonstração de movimento, títulos tipográficos não mudam escala. */
-html body main .type-title{
-  font-size:var(--lm-manual-title-size)!important;
-  font-weight:300!important;
-  line-height:var(--lm-manual-title-leading)!important;
-  letter-spacing:var(--lm-manual-title-tracking)!important;
-}
-html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title) :is(.perpetua,.p,em){
-  font-family:PerpetuaMattar,"Perpetua Mattar",Perpetua,Georgia,serif!important;
-  font-weight:300!important;
-  font-style:normal!important;
-  letter-spacing:0!important;
+ text-align:left!important;
+ display:block;
+ width:100%;
+ max-width:100%!important;
+ margin:clamp(42px,6vw,84px) 0 clamp(36px,5vw,68px)!important;
+ padding:0!important;
+ overflow-wrap:normal;
+ word-break:normal;
+ hyphens:none;
 }
 html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title) :is(.line,.title-line){
-  display:block!important;
-  width:auto!important;
-  max-width:100%!important;
-  white-space:normal!important;
+ display:block!important;
+ width:auto!important;
+ max-width:100%;
+ white-space:normal!important;
 }
-html body main .type-title .title-line{
-  width:auto!important;
-  max-width:100%!important;
-  white-space:normal!important;
-}
-/* A introdução dos símbolos passa a ocupar o mesmo eixo das demais seções. */
-#estrutura .lm-reading-intro:has(>h2.lm-manual-section-title){
-  grid-template-columns:minmax(0,1fr);
-}
+/* The typography specimen uses exactly the same title role as the headings. */
+html body main .type-title .title-line{width:auto!important;max-width:100%!important;white-space:normal!important}
+#estrutura .lm-reading-intro:has(>h2.lm-manual-section-title){grid-template-columns:minmax(0,1fr)}
 #estrutura .lm-reading-intro>h2.lm-manual-section-title,
 #estrutura .lm-reading-intro>p{grid-column:1/-1}
+/* Zero-sized duplicate labels are visually hidden, not a fourth text style. */
+html body.lm-studio-open #labStudioToggleText,
+html body.lm-studio-open .lm-lab-prep-label{font-size:0!important}
+@media(max-width:760px){
+ :root{
+  --lm-type-body-size:16px;
+  --lm-type-detail-size:12px;
+  --lm-type-body-leading:1.5;
+  --lm-type-detail-leading:1.4;
+ }
+}
 @media(max-width:520px){
-  html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title){
-    margin-top:clamp(36px,9vw,52px)!important;
-    margin-bottom:clamp(32px,8vw,46px)!important;
-  }
+ html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title){
+  margin-top:clamp(36px,9vw,52px)!important;
+  margin-bottom:clamp(32px,8vw,46px)!important;
+ }
 }

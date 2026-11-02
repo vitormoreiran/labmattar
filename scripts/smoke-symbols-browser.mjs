@@ -32,6 +32,36 @@ try {
         const response=await areaPage.goto(new URL('/'+area,url).href,{waitUntil:'networkidle',timeout:60000});
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
         await areaPage.evaluate(()=>document.fonts.ready);
+        await areaPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
+        const audit=await areaPage.evaluate(()=>{
+          const text=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+          const seen=[],errors=[];let node;
+          const title=Math.max(31,Math.min(innerWidth*.07,104)),body=innerWidth<=760?16:18,detail=innerWidth<=760?12:13;
+          const expect={title:{size:title,leading:title*.98},body:{size:body,leading:body*(innerWidth<=760?1.5:1.45)},detail:{size:detail,leading:detail*(innerWidth<=760?1.4:1.35)}};
+          while((node=text.nextNode())){
+            const value=node.nodeValue?.trim();if(!value)continue;
+            const e=node.parentElement;
+            if(!e||e.closest('script,style,noscript,template,svg,math,[hidden],[aria-hidden="true"]'))continue;
+            const cs=getComputedStyle(e),rect=e.getBoundingClientRect();
+            if(cs.display==='none'||cs.visibility==='hidden'||rect.width===0||rect.height===0||parseFloat(cs.fontSize)===0)continue;
+            const role=e.getAttribute('data-lm-text-role'),nominal=expect[role];
+            const item={role,tag:e.tagName,className:String(e.className).slice(0,90),text:value.slice(0,50),size:parseFloat(cs.fontSize),leading:parseFloat(cs.lineHeight),weight:cs.fontWeight,family:cs.fontFamily,tracking:parseFloat(cs.letterSpacing)||0};
+            seen.push(item);
+            if(!nominal){errors.push({...item,reason:'missing role'});continue;}
+            if(Math.abs(item.size-nominal.size)>.12)errors.push({...item,reason:'non-token font size',expected:nominal.size});
+            if(Math.abs(item.leading-nominal.leading)>.25)errors.push({...item,reason:'non-token line height',expected:nominal.leading});
+            if(item.weight!=='300')errors.push({...item,reason:'weight must be 300'});
+            if(!/^(UniversMattar|PerpetuaMattar)/.test(item.family))errors.push({...item,reason:'unapproved font family'});
+            const alt=role==='title'&&item.family.startsWith('PerpetuaMattar');
+            const tracking=role==='title'?(alt?0:-.025*title):role==='body'?0:.04*detail;
+            if(Math.abs(item.tracking-tracking)>.12)errors.push({...item,reason:'non-token letter spacing',expected:tracking});
+          }
+          return {count:seen.length,counts:Object.fromEntries(['title','body','detail'].map(r=>[r,seen.filter(x=>x.role===r).length])),errors:errors.slice(0,40),errorCount:errors.length};
+        });
+        assert.ok(audit.count>30,'Full-page text must be audited: '+area);
+        assert.equal(audit.errorCount,0,'Only three typography treatments in '+area+' / '+viewportWidth+': '+JSON.stringify(audit.errors));
+        report.typeAudit??=[];
+        report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
         const expected={'manual.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'imagem.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);

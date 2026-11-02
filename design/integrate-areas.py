@@ -46,6 +46,8 @@ for filename,area in areas.items():
   s=s.replace('<h2>', '<h2 class="lm-manual-section-title">')
   s=s.replace('<h2 id="lmCompositionRulesTitle"', '<h2 class="lm-manual-section-title" id="lmCompositionRulesTitle"')
  assert s.count('href="/manual-headings.css')==1, f"Missing normative typography link: {filename}"
+ assert s.count('href="/manual-layout.css')==1, f"Missing shared editorial layout: {filename}"
+ assert s.count('lm-manual-cover')==1, f"Exactly one canonical cover is required: {filename}"
  assert s.count('src="/manual-type-roles.js')==1, f"Missing text-role classifier: {filename}"
  s=s.replace("</head>",STYLE+"</head>",1)
  s=s.replace("<body>","<body>"+NAV.replace('data-area="'+area+'"','aria-current="page" data-area="'+area+'"'),1)

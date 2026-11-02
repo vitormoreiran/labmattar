@@ -11,6 +11,7 @@
 - O título pode quebrar linhas, mas **não diminui** para caber. A banda do título é reservada, inclusive em capas com títulos curtos.
 - A cor e o formato mudam o conteúdo visual, não as coordenadas do texto do manual.
 - Os exemplos e a ferramenta podem ocupar mais colunas, mas não podem estabelecer outra origem editorial.
+- O eixo de leitura coincide com a borda inicial do quadro de 1.350 px: não acrescentar recuos de coluna ao texto. A largura e a posição anteriores à PR #50 são a referência de preservação.
 - M, nove vasos e suas proporções originais não são alterados por esta especificação.
 - O arquivo de layout não contém `font-size`, `font-family`, `font-weight`, `line-height` nem outros parâmetros tipográficos.
 
@@ -18,19 +19,19 @@
 
 | Propriedade | Valor normativo |
 | --- | --- |
-| Área máxima da grade | 1.120 px, centralizada |
+| Área máxima da grade | 1.350 px, centralizada |
 | Colunas | 12 |
 | Intervalo | 20 px |
 | Margem externa mínima | `clamp(20px, 4vw, 64px)` |
-| Origem do texto | Coluna 2 |
-| Sobretítulo / identificação | Colunas 2–12 |
-| Título | Colunas 2–9 |
-| Corpo | Colunas 2–6 |
+| Origem do texto | Coluna 1 |
+| Sobretítulo / identificação | Colunas 1–12 |
+| Título | Colunas 1–9 |
+| Corpo | Colunas 1–5 |
 | Detalhe | Colunas 10–12 |
 | Arte, imagem ou demonstração | Colunas 1–12, com a mesma grade |
 | Linha de separação | Alinhada ao quadro editorial do capítulo |
 
-As colunas são contadas de 1 a 12, com fim exclusivo no CSS Grid: `2 / 10`, `2 / 7` e `10 / 13`. Para títulos maiores, o conteúdo pode quebrar dentro das colunas; a origem permanece a mesma.
+As colunas são contadas de 1 a 12, com fim exclusivo no CSS Grid: `1 / 10`, `1 / 6` e `10 / 13`. Para títulos maiores, o conteúdo pode quebrar dentro das colunas; a origem permanece a mesma.
 
 ## 3. Contrato vertical da capa
 
@@ -57,8 +58,8 @@ As colunas são contadas de 1 a 12, com fim exclusivo no CSS Grid: `2 / 10`, `2 
 
 | Largura | Comportamento |
 | --- | --- |
-| >= 1024 px | 12 colunas, Corpo 2–6 e Detalhe 10–12 |
-| 701–1023 px | 12 colunas fluidas, Corpo 2–7 e Detalhe 9–12, mantendo mesmo alinhamento e ordem |
+| >= 1024 px | 12 colunas, Corpo 1–5 e Detalhe 10–12 |
+| 701–1023 px | 12 colunas fluidas, Corpo 1–7 e Detalhe 9–12, mantendo mesmo alinhamento e ordem |
 | <= 700 px | Uma coluna de leitura, mantendo a ordem: Identificação, Título, Corpo, Detalhe, conteúdo |
 | Todas | Sem `font-fit`, `scale()` ou `font-size` por elemento para remediar excesso de texto |
 

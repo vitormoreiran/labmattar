@@ -80,10 +80,12 @@ try {
           if(!inner||!lower||!kicker||!title||!body||!detail)return {error:'Missing one of five canonical cover fields'};
           const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}};
           return {kicker:rect(kicker),title:rect(title),body:rect(body),detail:rect(detail),
-            cover:rect(section),titleOverflow:title.scrollWidth-title.clientWidth,
+            cover:rect(section),frame:rect(inner),titleOverflow:title.scrollWidth-title.clientWidth,
             gridColumns:getComputedStyle(inner).gridTemplateColumns.split(' ').length};
         });
         assert.ok(!placement.error,'Cover field contract '+area+': '+placement.error);
+        assert.ok(Math.abs(placement.kicker.left-placement.frame.left)<=2,
+          'Editorial axis must start at the existing content frame, without an extra grid inset: '+area+'/'+viewportWidth);
         assert.equal(placement.gridColumns,viewportWidth<=700?1:12,'Shared cover grid columns: '+area);
         assert.ok(placement.titleOverflow<=1.5,'Title fits its assigned column without automatic shrinking: '+area);
         assert.ok(placement.title.top<placement.body.top,'Cover title precedes copy: '+area);

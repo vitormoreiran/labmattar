@@ -25,6 +25,8 @@ jobs:
         with:
           node-version: '22.13.0'
           cache: npm
+      - name: Validar tres tratamentos de texto
+        run: node scripts/validate-manual-type-sources.mjs
       - name: Instalar dependencias
         run: npm ci
       - name: Garantir permissao de scripts

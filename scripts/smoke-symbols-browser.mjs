@@ -51,9 +51,11 @@ try {
           const oldImagePage=await browser.newPage();
           try {
             await oldImagePage.goto(new URL('/imagem.html',url).href,{waitUntil:'load',timeout:60000});
-            await oldImagePage.waitForURL(next=>new URL(next).pathname==='/laboratorio.html',{timeout:15000});
-            assert.equal(new URL(oldImagePage.url()).pathname,'/laboratorio.html',
-              'Legacy image URL must redirect into the laboratory');
+            await oldImagePage.waitForURL(next=>['/laboratorio.html','/laboratorio'].includes(new URL(next).pathname),{timeout:15000});
+            assert.ok(['/laboratorio.html','/laboratorio'].includes(new URL(oldImagePage.url()).pathname),
+              'Legacy image URL must redirect into the laboratory: '+oldImagePage.url());
+            assert.equal(await oldImagePage.locator('#labArtboard').count(),1,
+              'Legacy image link must open the functional Laboratory instead of an image chapter');
           } finally { await oldImagePage.close(); }
         }
         if(area==='laboratorio.html'){

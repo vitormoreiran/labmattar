@@ -20,6 +20,37 @@ try {
   for (const family of ['UniversMattar','PerpetuaMattar']) check(report.fonts.some(f=>f.family===family&&f.status==='loaded'),`Official font loaded: ${family}`);
   assert.equal(await page.locator('#estrutura .symbol').count(),2,'Only signature and M');
   assert.equal(await page.locator('#estrutura svg').count(),2,'No duplicate signature');
+  // Regression: the five area-opening H1 headings must have identical typography.
+  // Each page owns distinct local CSS; a shared title rule must win across them.
+  report.manualHeadings=[];
+  const areas=['manual.html','tipografia.html','cores.html','composicao.html','imagem.html'];
+  for (const [viewportWidth,viewportHeight] of [[1440,900],[768,1024],[390,844],[320,640]]) {
+    const group=[];
+    for (const area of areas) {
+      const areaPage=await browser.newPage({viewport:{width:viewportWidth,height:viewportHeight},reducedMotion:'reduce'});
+      try {
+        const response=await areaPage.goto(new URL('/'+area,url).href,{waitUntil:'networkidle',timeout:60000});
+        assert.equal(response.status(),200,'Area HTTP 200 '+area);
+        await areaPage.evaluate(()=>document.fonts.ready);
+        const heading=areaPage.locator('main h1.lm-manual-page-title');
+        assert.equal(await heading.count(),1,'Exactly one shared opening heading in '+area);
+        const style=await heading.evaluate(el=>{
+          const css=getComputedStyle(el),rect=el.getBoundingClientRect();
+          return {size:parseFloat(css.fontSize),lineHeight:parseFloat(css.lineHeight),family:css.fontFamily,weight:css.fontWeight,tracking:css.letterSpacing,left:rect.left,right:rect.right,scrollWidth:el.scrollWidth,clientWidth:el.clientWidth};
+        });
+        check(style.size>0,'Valid title font size '+area);
+        check(style.left>=-1 && style.right<=viewportWidth+1,'Title box inside viewport '+area+'/'+viewportWidth);
+        check(style.scrollWidth<=style.clientWidth+1,'Title text fits viewport '+area+'/'+viewportWidth);
+        if ([1440,390].includes(viewportWidth)) await areaPage.screenshot({path:`symbols-proof/${phase}-heading-${area.replace('.html','')}-${viewportWidth}.png`});
+        group.push({area,...style});
+      } finally { await areaPage.close(); }
+    }
+    for(const field of ['size','lineHeight','family','weight','tracking']) {
+      const values=new Set(group.map(item=>typeof item[field]==='number'?item[field].toFixed(2):item[field]));
+      assert.equal(values.size,1,'Uniform opening title '+field+' at '+viewportWidth+': '+JSON.stringify(group));
+    }
+    report.manualHeadings.push({viewportWidth,areas:group});
+  }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {
     await page.setViewportSize({width,height});await page.waitForTimeout(120);
     const geometry = await page.evaluate(()=>({width:innerWidth,document:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('h1,h2,.title .line,.symbol-row,.state-explorer,.lm-site-nav,header.top,header.top a,.state-picker button')].filter(e=>{const r=e.getBoundingClientRect();return r.right>innerWidth+1||r.left< -1;}).map(e=>e.tagName+'.'+e.className)}));

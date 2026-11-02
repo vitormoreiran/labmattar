@@ -387,4 +387,8 @@ html body main section.page .section-head > p:nth-child(2){
 }
 
 /* At 320 px, the longer color introduction still fits the shared reading band. */
-@media(max-width:350px){:root{--lm-layout-cover-body-band:290px}}
+@media(max-width:350px){:root{
+  --lm-layout-cover-body-band:290px;
+  --lm-layout-cover-pad-top:42px;
+  --lm-layout-cover-pad-bottom:30px;
+}}

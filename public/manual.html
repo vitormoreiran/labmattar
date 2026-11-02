@@ -13,83 +13,124 @@
 .morph-toolbar{display:flex;flex-wrap:wrap;gap:14px;margin:28px 0 0}.morph-choice,#morph-play{background:none;border:1px solid var(--line);color:inherit;padding:12px 15px;font:300 12px/1.3 var(--u);letter-spacing:.02em;cursor:pointer}.morph-choice.is-selected{border-color:var(--ink)}.morph-choice:focus-visible,#morph-play:focus-visible,.morph-vessels button:focus-visible{outline:2px solid currentColor;outline-offset:3px}.morph-stage{background:#171717;color:#f7f6f2;min-height:clamp(230px,32vw,440px);margin-top:20px;display:flex;flex-direction:column;justify-content:center;position:relative;padding:clamp(16px,3vw,45px)}#morph-canvas{width:100%;height:auto;max-height:380px;display:block;overflow:visible}.morph-stage-meta{display:flex;justify-content:space-between;gap:20px;color:#dedbd4;font:300 11px/1.4 var(--u);letter-spacing:.05em}.morph-controls{display:flex;align-items:center;gap:18px;margin:20px 0;flex-wrap:wrap}.morph-scrubber{display:flex;align-items:center;gap:15px;font:300 12px/1.4 var(--u);flex:1;min-width:min(100%,240px)}.morph-scrubber input{accent-color:#181818;min-width:0;flex:1}.morph-vessels{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:8px}.morph-vessels button{min-width:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;aspect-ratio:1 / 1.3;padding:8px 3px;background:none;color:inherit;border:1px solid var(--line);cursor:pointer}.morph-vessels button.selected{border-color:var(--ink)}.morph-vessels svg{width:100%;height:74%;max-height:95px;fill:currentColor}.morph-vessels span{font:300 11px/1 var(--u)}.morph-note{max-width:80ch;margin-top:22px;line-height:1.5}@media(max-width:680px){.morph-vessels{grid-template-columns:repeat(5,minmax(0,1fr))}.morph-controls{gap:12px}}
 @media(prefers-reduced-motion:reduce){.morph-stage *{transition:none!important}}
 </style>
-<style id="editorial-rhythm-2026">
-.chapter{padding-block:clamp(112px,13vw,220px)}
-.chapter.cover{min-height:95svh;padding-block:clamp(70px,9vw,130px)}
-.chapter .eyebrow{margin-bottom:clamp(36px,5vw,72px)}
-.chapter .title{margin-bottom:clamp(48px,6.5vw,94px)}
-.chapter .copy{line-height:1.58;max-width:48ch}
-#estrutura .corners{min-height:clamp(700px,91svh,1050px)}
-#estrutura .symbol-row{margin-top:clamp(120px,15vw,210px);gap:clamp(50px,8vw,130px)}
-#vasos .family-intro{margin:clamp(90px,10vw,160px) 0 clamp(55px,6vw,95px)}
-#vasos .vase{min-height:clamp(320px,38vw,495px);padding:clamp(25px,3vw,45px)}
-#vasos .vase .art{height:clamp(240px,29vw,370px)}
+<style id="manual-editorial-layout">
+/* LABMATTAR manual — editorial layout system, 2026-11.
+   One source of truth for layout, rhythm, section scale and responsive behaviour.
+   Original drawings and morphing geometry are intentionally untouched. */
+:root{
+  --gutter:clamp(20px,4.2vw,68px);
+  --manual-width:1350px;
+  --manual-space-section:clamp(92px,12vw,190px);
+  --manual-space-heading:clamp(40px,6vw,84px);
+  --manual-line:var(--line);
+}
+html{scroll-padding-top:110px}
+html,body{max-width:100%;overflow-x:clip}
+header.top{align-items:center;min-height:58px;gap:20px;flex-wrap:wrap}
+header.top>span{flex:none}
+header.top nav{display:flex;align-items:center;gap:clamp(12px,2vw,30px);flex-wrap:wrap;min-width:0}
+header.top nav a{display:inline-flex;align-items:center;min-height:28px;white-space:nowrap;text-underline-offset:5px}
+header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
+.chapter{padding:var(--manual-space-section) var(--gutter);scroll-margin-top:110px}
+.chapter .inner{width:100%;max-width:var(--manual-width);min-width:0}
+.chapter .eyebrow{margin:0 0 var(--manual-space-heading);font-size:12px;line-height:1.4}
+.chapter .title{max-width:100%;font-size:clamp(44px,8.2cqw,116px);line-height:.98;margin:0 0 var(--manual-space-heading)}
+.chapter .title .line{white-space:nowrap}
+.chapter .copy{font-size:clamp(16px,1.5vw,19px);line-height:1.55;max-width:51ch}
+.chapter .detail{line-height:1.5}
+.chapter.cover{min-height:calc(100svh - 58px);padding-block:clamp(54px,8vw,110px);display:flex;align-items:stretch}
+.cover .inner{display:flex;flex-direction:column;justify-content:space-between;flex:1}
+.cover .eyebrow{margin:0}
+.cover .title{margin:clamp(55px,10svh,125px) 0;font-size:clamp(43px,9cqw,126px)}
+.cover .bottomline{align-items:flex-end;gap:24px;flex-wrap:wrap}
+.cover .bottomline .copy{max-width:40ch;margin:0}
+#estrutura .structure-intro{margin:0 0 clamp(45px,7vw,95px)}
+#estrutura .symbol-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,6vw,90px);margin-top:0}
+#estrutura .symbol{min-width:0}
+#estrutura .symbol .eyebrow{margin:0 0 20px}
+#estrutura .symbol .art-zone{height:clamp(180px,27vw,350px);margin:22px 0;min-width:0}
+#estrutura .symbol .art-zone svg{max-width:100%;height:auto}
+#estrutura .symbol .art-zone.m svg{width:min(75%,335px)}
+#estrutura .symbol .meta{line-height:1.5}
+#estrutura .corners{min-height:clamp(620px,80svh,950px)}
+#vasos .family-intro{margin:clamp(50px,8vw,115px) 0 clamp(40px,6vw,80px);flex-wrap:wrap}
+#vasos .vases{grid-template-columns:repeat(3,minmax(0,1fr))}
+#vasos .vase{min-height:clamp(300px,36vw,465px);padding:clamp(18px,2.5vw,36px)}
+#vasos .vase .art{height:clamp(210px,27vw,350px)}
 #transformacao .section-lead{font-size:clamp(18px,2vw,24px);max-width:42ch;margin:0}
-.editorial-interval{height:clamp(110px,15vw,230px)}
-.transformation-editorial{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:clamp(28px,5vw,85px);align-items:center;min-height:480px}
-.transform-hero{min-width:0;display:flex;flex-direction:column;gap:clamp(30px,4vw,70px);align-items:flex-start}
-.transform-hero svg{width:100%;max-width:390px;height:330px;object-fit:contain;fill:currentColor}
+.editorial-interval{height:clamp(72px,11vw,155px)}
+.transformation-editorial{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr) minmax(0,1fr);gap:clamp(24px,4vw,70px);align-items:center}
+.transform-hero{min-width:0;display:flex;flex-direction:column;gap:clamp(20px,3vw,48px);align-items:flex-start}
+.transform-hero svg{width:100%;max-width:390px;height:300px;object-fit:contain;fill:currentColor}
 .transform-hero svg path{fill:currentColor}
-.transform-shift{align-self:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:32px 0 42px}
-.transform-rule{font-size:clamp(19px,2.3vw,35px);line-height:1.25;letter-spacing:-.025em;margin:65px 0 38px;white-space:nowrap}
+.transform-shift{min-width:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:25px 0}
+.transform-rule{font-size:clamp(19px,2.3vw,32px);line-height:1.25;letter-spacing:-.025em;margin:30px 0;white-space:normal}
 .transform-rule span{color:#888}
 .transform-shift p{font-size:15px;line-height:1.55;max-width:29ch}
-#ferramenta .morph-stage{margin-top:clamp(75px,9vw,145px);min-height:clamp(340px,42vw,580px)}
-#ferramenta .morph-controls{margin-block:35px 50px}
-#ferramenta .morph-vessels{gap:clamp(8px,1.5vw,20px)}
-#regras .rules{margin-top:clamp(70px,9vw,135px)}
-#regras .rule{padding:clamp(25px,3vw,42px) 0}
-@media(max-width:760px){.chapter{padding-block:clamp(90px,18vw,135px)}.editorial-interval{height:95px}.transformation-editorial{grid-template-columns:1fr;gap:70px}.transform-hero{align-items:center;gap:25px}.transform-hero .detail{align-self:flex-start}.transform-hero svg{height:260px;max-width:290px}.transform-rule{margin:35px 0}.transform-shift{padding:22px 0}.chapter .title{margin-bottom:45px}#vasos .vase{padding:18px;min-height:300px}#vasos .vase .art{height:220px}#estrutura .corners{min-height:660px}}
-</style><style>.manual-open-editor{display:inline-block;padding:17px 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;color:inherit;font:300 clamp(18px,2.3vw,33px)/1.3 UniversMattar,Arial,sans-serif;text-decoration:none;letter-spacing:-.02em}.manual-open-editor:hover{opacity:.65}</style><style id="manual-responsive-fix">
-html,body{max-width:100%;overflow-x:clip}
-header.top{flex-wrap:wrap;row-gap:14px}
-header.top nav{max-width:100%;min-width:0}
-.chapter{scroll-margin-top:85px}
-.chapter .title{max-width:100%;overflow-wrap:normal}
-.cover .inner{display:flex;flex-direction:column;justify-content:space-between;flex:1;min-height:0}
-.cover .title{max-width:100%}
-#estrutura .structure-intro{margin:0 0 clamp(35px,6vw,100px)}
-#estrutura .symbol-row{margin-top:0}
-#estrutura .symbol .art-zone{min-width:0}
-#estrutura .symbol .art-zone svg{max-width:100%}
-.state-explorer{margin-top:clamp(55px,8vw,110px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:24px 0 32px}
-.state-heading{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.state-preview{height:clamp(220px,34vw,460px);display:flex;align-items:center;justify-content:center;padding:35px 0}
-.state-preview img{display:block;width:100%;height:100%;max-width:min(70%,450px);object-fit:contain;transition:opacity .2s ease,transform .2s ease}
-.state-picker{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
-.state-picker button{min-width:0;min-height:46px;border:1px solid var(--line);background:transparent;color:inherit;font:300 12px var(--u);cursor:pointer}
-.state-picker button:first-child{grid-column:span 1}
-.state-picker button.active,.state-picker button:hover{background:var(--ink);color:var(--paper)}
-.state-picker button:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.state-help{font:300 13px/1.5 var(--u);max-width:60ch;margin:18px 0 0}
+#ferramenta .morph-stage{margin-top:clamp(45px,7vw,95px);min-height:clamp(340px,40vw,540px)}
+#ferramenta .morph-controls{margin-block:30px 40px}
+#ferramenta .morph-vessels{gap:clamp(8px,1vw,16px)}
+#regras .rules{margin-top:clamp(40px,6vw,85px)}
+#regras .rule{padding:clamp(20px,2.6vw,34px) 0}
+.manual-open-editor{max-width:100%;overflow-wrap:anywhere}
+.state-explorer{margin-top:clamp(45px,7vw,95px)}
+.state-preview{height:clamp(240px,33vw,420px)}
+.state-preview svg{display:block;width:100%;height:100%;max-width:600px}
+.state-picker{grid-template-columns:repeat(10,minmax(0,1fr));gap:8px}
+.state-picker button{min-width:0}
+.state-transport{gap:18px}
+@media(max-width:900px){
+  .transformation-editorial{grid-template-columns:1fr 1fr}
+  .transform-shift{grid-column:1/-1;grid-row:2}
+  .transform-hero svg{height:260px}
+  #vasos .vase{min-height:295px}
+}
 @media(max-width:760px){
-header.top{align-items:flex-start;flex-direction:column;padding:13px var(--gutter)}
-header.top nav{display:flex;overflow-x:auto;white-space:nowrap;flex-wrap:nowrap;width:100%;gap:20px;padding-bottom:5px;scrollbar-width:thin}
-header.top nav a{flex-shrink:0}
-.chapter{padding-inline:var(--gutter);padding-block:70px}
-.cover{min-height:calc(100svh - 110px)}
-.cover .title{margin:auto 0;padding-block:70px 35px}
-.cover .bottomline{align-items:flex-start;flex-direction:column;gap:22px}
-#estrutura .symbol-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-#estrutura .symbol .art-zone{height:clamp(150px,32vw,260px);margin:15px 0}
-#estrutura .symbol .art-zone.m svg{width:85%}
-#estrutura .symbol .eyebrow{font-size:10px}
-#estrutura .symbol .meta{font-size:10px}
-.state-picker{grid-template-columns:repeat(5,minmax(0,1fr))}
-.state-picker button:first-child{grid-column:span 1}
-.state-preview{height:300px}
+  :root{--gutter:clamp(18px,5vw,30px);--manual-space-section:clamp(70px,13vw,105px);--manual-space-heading:34px}
+  header.top{align-items:flex-start;flex-direction:column;padding:13px var(--gutter);gap:8px}
+  header.top nav{width:100%;overflow-x:auto;flex-wrap:nowrap;gap:20px;padding-bottom:5px;scrollbar-width:thin}
+  header.top nav a{flex-shrink:0}
+  .chapter .title{font-size:clamp(38px,10cqw,74px)}
+  .chapter.cover{min-height:calc(100svh - 95px)}
+  .cover .title{margin:auto 0;padding-block:60px 35px}
+  .cover .bottomline{flex-direction:column;align-items:flex-start;gap:22px}
+  #estrutura .symbol-row{gap:20px}
+  #estrutura .symbol .art-zone{height:clamp(150px,30vw,240px)}
+  #estrutura .symbol .eyebrow,#estrutura .symbol .meta{font-size:11px}
+  #vasos .vases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #vasos .vase:nth-child(3n){border-right:1px solid var(--line)}
+  #vasos .vase:nth-child(2n){border-right:0}
+  #vasos .vase .art{height:220px}
+  .transformation-editorial{gap:30px}
+  .state-picker{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
-@media(max-width:420px){
-:root{--gutter:18px}
-.cover .title{font-size:clamp(29px,9vw,42px)}
-.cover .title .line{white-space:normal}
-.chapter .title .line{white-space:normal}
-#estrutura .symbol-row{gap:12px}
-#estrutura .symbol .art-zone{height:155px}
-.state-picker button{font-size:11px}
+@media(max-width:520px){
+  .chapter .title .line{white-space:normal}
+  #estrutura .symbol-row{grid-template-columns:1fr}
+  #estrutura .symbol .art-zone{height:250px}
+  #vasos .vase{min-height:250px;padding:14px}
+  #vasos .vase .art{height:185px}
+  .transformation-editorial{grid-template-columns:1fr;gap:42px}
+  .transform-shift{grid-column:auto;grid-row:auto}
+  .transform-hero{align-items:center}
+  .transform-hero .detail{align-self:flex-start}
+  .transform-hero svg{height:240px;max-width:290px}
+  .sequence{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg)}
+  .state-preview{height:260px}
+  .state-picker{gap:5px}
+  .state-transport{display:grid;grid-template-columns:1fr 1fr}
+  .state-transport label,.state-transport input{grid-column:1/-1}
+  .state-transport button:first-child{grid-column:1;grid-row:1}
+  .state-transport button:last-child{grid-column:2;grid-row:1}
 }
-@media(prefers-reduced-motion:reduce){.state-preview img{transition:none}}
-</style><style id="manual-morph-interaction">
+@media(max-width:390px){
+  .cover .title{font-size:clamp(29px,9vw,42px)}
+  #vasos .vase .art{height:160px}
+  .state-picker button{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style><style>.manual-open-editor{display:inline-block;padding:17px 0;border-top:1px solid currentColor;border-bottom:1px solid currentColor;color:inherit;font:300 clamp(18px,2.3vw,33px)/1.3 UniversMattar,Arial,sans-serif;text-decoration:none;letter-spacing:-.02em}.manual-open-editor:hover{opacity:.65}</style><style id="manual-morph-interaction">
 .state-preview svg{display:block;width:100%;height:100%;max-width:520px;overflow:visible}
 .state-transport{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--line);padding:20px 0}
 .state-transport button{border:1px solid var(--line);background:transparent;color:inherit;padding:12px 16px;cursor:pointer;font:300 12px var(--u)}
@@ -99,7 +140,7 @@ header.top nav a{flex-shrink:0}
 .state-transport input{flex:2;min-width:150px;accent-color:var(--ink)}
 @media(max-width:600px){.state-transport{display:grid;grid-template-columns:1fr 1fr}.state-transport label,.state-transport input{grid-column:1/-1}.state-transport button:last-child{grid-row:1;grid-column:2}.state-transport button:first-child{grid-row:1;grid-column:1}.state-preview{height:260px}}
 </style></head><body>
-<header class="top"><span>LABMATTAR / IDENTIDADE VISUAL</span><nav aria-label="Seções"><a href="#principio">Princípio</a><a href="#estrutura">Elementos</a><a href="#vasos">Vasos</a><a href="#transformacao">Transformação</a><a href="#regras">Regras</a><a href="#ferramenta">Ferramenta</a></nav></header>
+<header class="top"><span>LABMATTAR / IDENTIDADE VISUAL</span><nav aria-label="Seções"><a href="#principio">Princípio</a><a href="#estrutura">Elementos</a><a href="#vasos">Vasos</a><a href="#transformacao">Transformação</a><a href="#ferramenta">Ferramenta</a><a href="#regras">Regras</a></nav></header>
 <main><section class="chapter cover" id="principio"><div class="inner"><p class="eyebrow">Sistema de identidade / Elementos gráficos / 2026</p><h1 class="title"><span class="line">DA FORMA</span><span class="line perpetua">AO ESTADO</span><span class="line">LABMATTAR</span></h1><div class="bottomline"><p class="copy">Uma assinatura. Um símbolo master. Nove vasos de igual importância. Um sistema de transformação.</p><p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p></div></div></section>
 <section class="chapter" id="estrutura"><div class="inner"><p class="eyebrow">01 / Organização do sistema vetorial</p><p class="copy structure-intro">A assinatura identifica a instituição. O M é o símbolo principal; os nove vasos constituem seus estados gráficos.</p>
 <div class="symbol-row"><article class="symbol"><p class="eyebrow">Assinatura principal</p><div class="art-zone word"><svg aria-hidden="true" class="artwork" fill="none" height="199" viewbox="0 0 822 199" width="822" xmlns="http://www.w3.org/2000/svg">

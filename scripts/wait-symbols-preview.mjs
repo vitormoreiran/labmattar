@@ -12,7 +12,7 @@ try {
   const constructionReady=composition.status()===200&&
     await page.locator('#construcao').count()===1&&
     await page.locator('#laboratorio').count()===0&&
-    await page.locator('a[href="/laboratorio.html"]').count()===1;
+    await page.locator('main a[href="/laboratorio.html"]').count()===1;
   const laboratory=await page.goto(base+'/laboratorio.html?publication='+stamp,{waitUntil:'networkidle',timeout:30000});
   const labReady=laboratory.status()===200&&
     await page.locator('#laboratorio #labArtboard').count()===1&&

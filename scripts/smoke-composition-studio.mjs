@@ -1,6 +1,6 @@
 import {chromium} from "playwright";
 
-const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/composicao.html";
+const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];
@@ -19,7 +19,7 @@ try{
 
   assert(await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
     "Focused editor did not open");
-  assert(await page.locator("#labStudioToggleText").textContent()==="VOLTAR AO MANUAL",
+  assert(await page.locator("#labStudioToggleText").textContent()==="VOLTAR AO LABORATÓRIO",
     "Focused editor exit is missing");
   assert(await page.locator("[data-studio-tool]").count()===0,
     "Focused mode must not build a second tool architecture");

@@ -46,7 +46,7 @@
     lab.classList.toggle("lm-unified-studio",active);
     inspector?.setAttribute("data-editor-mode",active?"focused":"manual");
     toggle.setAttribute("aria-pressed",String(active));
-    toggleText.textContent=active?"VOLTAR AO MANUAL":"ABRIR EDITOR";
+    toggleText.textContent=active?"VOLTAR AO LABORATÓRIO":"ABRIR EDITOR";
     quickReset.hidden=!active;
     for(const panel of panels)panel.hidden=false;
     if(updateUrl)setUrl(active);

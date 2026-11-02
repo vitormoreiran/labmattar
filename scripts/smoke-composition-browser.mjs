@@ -1,6 +1,6 @@
 import {chromium} from "playwright";
 
-const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/composicao.html";
+const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];
@@ -16,6 +16,11 @@ async function choose(group,value){
 try{
   await page.goto(url,{waitUntil:"load",timeout:60000});
   await page.evaluate(()=>document.fonts.ready);
+  const manual=await page.request.get(new URL("/composicao.html",url).href);
+  assert(manual.status()===200,"Construction chapter must be available");
+  const manualHtml=await manual.text();
+  assert(manualHtml.includes('id="construcao"')&&manualHtml.includes('href="/laboratorio.html"'),"Composition must teach construction and link to 05");
+  assert(!manualHtml.includes('id="labArtboard"'),"Laboratory controls must not be embedded in Composition");
 
   assert(await page.locator("[data-lab-preset]").count()===0,
     "Composition presets must not define separate composition types");

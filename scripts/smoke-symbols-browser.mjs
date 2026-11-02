@@ -24,8 +24,10 @@ try {
   // Each page owns distinct local CSS; a shared title rule must win across them.
   report.manualHeadings=[];
   const areas=['manual.html','tipografia.html','cores.html','composicao.html','laboratorio.html'];
-  for (const [viewportWidth,viewportHeight] of [[1440,900],[768,1024],[390,844],[320,640]]) {
+  report.manualGeometry=[];
+  for (const [viewportWidth,viewportHeight] of [[1440,900],[1024,768],[768,1024],[390,844],[320,640]]) {
     const group=[];
+    const geometry=[];
     for (const area of areas) {
       const areaPage=await browser.newPage({viewport:{width:viewportWidth,height:viewportHeight},reducedMotion:'reduce'});
       try {
@@ -66,6 +68,29 @@ try {
         }
         await areaPage.evaluate(()=>document.fonts.ready);
         await areaPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
+        const cover=areaPage.locator('main > section.lm-manual-cover');
+        assert.equal(await cover.count(),1,'Exactly one shared chapter cover: '+area);
+        const placement=await cover.evaluate(section=>{
+          const inner=section.querySelector(':scope > .inner');
+          const lower=inner?.querySelector(':scope > .bottomline,:scope > .cover-bottom,:scope > .intro-bottom,:scope > .intro');
+          const kicker=inner?.firstElementChild;
+          const title=inner?.querySelector(':scope > h1');
+          const body=lower?.querySelector(':scope > p:first-child');
+          const detail=lower?.querySelector(':scope > p:nth-child(2)');
+          if(!inner||!lower||!kicker||!title||!body||!detail)return {error:'Missing one of five canonical cover fields'};
+          const rect=e=>{const r=e.getBoundingClientRect();return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height}};
+          return {kicker:rect(kicker),title:rect(title),body:rect(body),detail:rect(detail),
+            cover:rect(section),titleOverflow:title.scrollWidth-title.clientWidth,
+            gridColumns:getComputedStyle(inner).gridTemplateColumns.split(' ').length};
+        });
+        assert.ok(!placement.error,'Cover field contract '+area+': '+placement.error);
+        assert.equal(placement.gridColumns,viewportWidth<=700?1:12,'Shared cover grid columns: '+area);
+        assert.ok(placement.titleOverflow<=1.5,'Title fits its assigned column without automatic shrinking: '+area);
+        assert.ok(placement.title.top<placement.body.top,'Cover title precedes copy: '+area);
+        if(viewportWidth<=700)assert.ok(placement.detail.top>=placement.body.top+placement.body.height,
+          'Mobile detail follows the body: '+area);
+        geometry.push({area,...placement});
+
         const audit=await areaPage.evaluate(()=>{
           const text=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
           const seen=[],errors=[];let node;
@@ -123,6 +148,17 @@ try {
         for(const style of styles) group.push({area,...style});
       } finally { await areaPage.close(); }
     }
+    const reference=geometry[0];
+    for(const field of ['kicker.left','kicker.top','title.left','title.top','body.left','body.top','detail.left',...(viewportWidth>700?['detail.top']:[])]) {
+      const [region,coordinate]=field.split('.');
+      for(const current of geometry.slice(1)) {
+        const deviation=Math.abs(current[region][coordinate]-reference[region][coordinate]);
+        assert.ok(deviation<=2,'Shared cover '+field+' diverges by '+deviation.toFixed(2)+' px: '+current.area+'/'+viewportWidth);
+      }
+    }
+    report.manualGeometry.push({viewportWidth,chapters:geometry.map(x=>({
+      area:x.area,kicker:x.kicker,title:x.title,body:x.body,detail:x.detail
+    }))});
     for(const field of ['size','lineHeight','family','weight','tracking']) {
       const values=new Set(group.map(item=>typeof item[field]==='number'?item[field].toFixed(2):item[field]));
       assert.equal(values.size,1,'Uniform opening title '+field+' at '+viewportWidth+': '+JSON.stringify(group));

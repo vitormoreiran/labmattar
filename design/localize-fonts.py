@@ -2,7 +2,7 @@ from pathlib import Path
 import re
 
 root=Path("public")
-files=["manual.html","tipografia.html","cores.html","composicao.html","imagem.html","identidade.html"]
+files=["manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","imagem.html","identidade.html"]
 for name in files:
  p=root/name
  if not p.exists():raise SystemExit(f"Missing page: {name}")

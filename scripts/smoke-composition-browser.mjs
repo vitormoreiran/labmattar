@@ -1,6 +1,6 @@
 import {chromium} from "playwright";
 
-const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/composicao.html";
+const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];
@@ -16,6 +16,11 @@ async function choose(group,value){
 try{
   await page.goto(url,{waitUntil:"load",timeout:60000});
   await page.evaluate(()=>document.fonts.ready);
+  const manual=await page.request.get(new URL("/composicao.html",url).href);
+  assert(manual.status()===200,"Construction chapter must be available");
+  const manualHtml=await manual.text();
+  assert(manualHtml.includes('id="construcao"')&&manualHtml.includes('href="/laboratorio.html"'),"Composition must teach construction and link to 05");
+  assert(!manualHtml.includes('id="labArtboard"'),"Laboratory controls must not be embedded in Composition");
 
   assert(await page.locator("[data-lab-preset]").count()===0,
     "Composition presets must not define separate composition types");
@@ -87,6 +92,31 @@ try{
   assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).display)==="none",
     "M off state must remove the M without changing the composition type");
 
+  const legacy=await browser.newPage();
+  await legacy.goto(new URL("/composicao.html?studio=1#laboratorio",url).href,{waitUntil:"load",timeout:60000});
+  assert(new URL(legacy.url()).pathname==="/laboratorio.html",
+    "Old composition editor links must reopen the independent Laboratory");
+  assert(await legacy.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
+    "Legacy editor links must retain focused mode");
+  await legacy.close();
+  const constructionPage=await browser.newPage({viewport:{width:1440,height:900}});
+  constructionPage.on("pageerror",e=>errors.push("Construction: "+e.message));
+  await constructionPage.goto(new URL("/composicao.html",url).href,{waitUntil:"load",timeout:60000});
+  await constructionPage.evaluate(()=>document.fonts.ready);
+  assert(await constructionPage.locator('#caseFrame').count()===1,
+    "Construction chapter must contain the original applied example");
+  for(const step of ["campo","mascara","completa"]){
+    await constructionPage.locator('[data-case-step="'+step+'"]').click();
+    assert(await constructionPage.locator('#caseFrame').getAttribute("data-step")===step,
+      "Construction layers must remain interactive: "+step);
+  }
+  await constructionPage.screenshot({path:"composition-manual-desktop.png",fullPage:true});
+  await constructionPage.locator('[data-case-format="mobile"]').click();
+  assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
+    "Construction must demonstrate responsive recomposition");
+  await constructionPage.setViewportSize({width:390,height:844});
+  await constructionPage.screenshot({path:"composition-manual-mobile.png",fullPage:true});
+  await constructionPage.close();
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
   console.log("LABMATTAR unified composition browser OK");
 }finally{

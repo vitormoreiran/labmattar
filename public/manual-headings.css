@@ -17,6 +17,36 @@
  --lm-type-body-tracking:0px;
  --lm-type-detail-tracking:.04em;
 }
+/* Semantic fallback: the same three tokens render even before the
+   role classifier runs. JavaScript assigns precise roles for dynamic text. */
+html body{
+ font-family:var(--lm-type-univers);
+ font-size:var(--lm-type-body-size);
+ font-weight:300;
+ line-height:var(--lm-type-body-leading);
+ letter-spacing:var(--lm-type-body-tracking);
+ font-synthesis:none;
+}
+html body :is(h1,h2,.title,.type-title,.big,.transform-rule,.artboard .headline,.lm-lab-title,.lm-lab-heading h2,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3){
+ font-family:var(--lm-type-univers);
+ font-size:var(--lm-type-title-size);
+ font-weight:300;
+ line-height:var(--lm-type-title-leading);
+ letter-spacing:var(--lm-type-title-tracking);
+ text-transform:uppercase;
+}
+html body :is(h1,h2,.title,.type-title,.big,.transform-rule,.artboard .headline,.lm-lab-title,.lm-lab-heading h2,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3) :is(.perpetua,.p,em){
+ font-family:var(--lm-type-perpetua);
+ letter-spacing:0;
+}
+html body :is(nav,header,footer,button,input,textarea,select,option,label,legend,summary,dt,small,figcaption,caption,.detail,.eyebrow,.caption,.micro,.meta,.warning,.status,.notice,.demo-toolbar,.lm-lab-kicker,.lm-lab-bottom,.lm-site-nav){
+ font-family:var(--lm-type-univers);
+ font-size:var(--lm-type-detail-size);
+ font-weight:300;
+ line-height:var(--lm-type-detail-leading);
+ letter-spacing:var(--lm-type-detail-tracking);
+ text-transform:uppercase;
+}
 /* Existing visual containers continue to own positioning, color and spacing.
  * Text elements get one of the three roles from manual-type-roles.js. */
 html body [data-lm-text-role="title"]:not(#__lm_type_guard__){

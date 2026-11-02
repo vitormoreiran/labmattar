@@ -31,8 +31,6 @@ body.lm-studio-open #laboratorio .lm-lab-prep-label{
 }
 body.lm-studio-open #laboratorio .lm-lab-prep-label::after{
   content:"LABMATTAR";
-  font:300 13px/1.3 UniversMattar,Arial,sans-serif;
-  letter-spacing:.01em;
 }
 body.lm-studio-open #laboratorio .lm-lab-presets{
   flex:0 1 auto;
@@ -65,10 +63,6 @@ body.lm-studio-open #laboratorio .lm-lab-presets button[aria-pressed=true]{
   color:var(--studio-ink);
   box-shadow:0 1px 3px rgba(0,0,0,.07);
 }
-body.lm-studio-open #laboratorio .lm-lab-presets .lm-ctrl-preset-text strong{
-  font:300 12px/1.2 UniversMattar,Arial,sans-serif;
-  letter-spacing:0;
-}
 body.lm-studio-open #laboratorio .lm-studio-launch{
   gap:4px;
   margin-left:auto;
@@ -81,8 +75,6 @@ body.lm-studio-open #laboratorio .lm-studio-launch>button{
   color:var(--studio-ink);
   background:transparent;
   padding:4px 9px;
-  font:300 12px/1.2 UniversMattar,Arial,sans-serif;
-  letter-spacing:0;
 }
 body.lm-studio-open #laboratorio .lm-studio-launch>button:hover{
   background:#ebebe8;
@@ -92,7 +84,6 @@ body.lm-studio-open #laboratorio .lm-studio-quickreset{
   align-items:center;justify-content:center;
   width:32px;min-width:32px;
   padding:0!important;
-  font-size:22px!important;
 }
 body.lm-studio-open #laboratorio .lm-studio-launch-symbol{
   display:none;
@@ -112,7 +103,6 @@ body.lm-studio-open #laboratorio .lm-help-trigger-overview:hover{
 body.lm-studio-open #laboratorio .lm-help-trigger-overview>span:first-child{
   width:19px;height:19px;
   border-color:#b1b1ad;
-  font-size:11px;
 }
 /* True two-surface layout: neutral workspace and quiet inspector. */
 body.lm-studio-open #laboratorio .lm-lab-workspace,
@@ -154,12 +144,7 @@ body.lm-studio-open #laboratorio .lm-lab-preview-foot{
   padding:3px 20px 5px;
   background:var(--studio-stage);
   border:0;
-  font:300 11px/1.25 UniversMattar,Arial,sans-serif;
-  letter-spacing:0;
   color:#737370;
-}
-body.lm-studio-open #laboratorio .lm-lab-preview-foot span:first-child{
-  font-size:11px;
 }
 body.lm-studio-open #laboratorio .lm-lab-preview-foot span:last-child{
   margin-left:auto;
@@ -198,8 +183,6 @@ body.lm-studio-open #laboratorio .lm-inspector-head{
 }
 body.lm-studio-open #laboratorio .lm-inspector-head>span{
   color:var(--studio-ink);
-  font:300 16px/1.25 UniversMattar,Arial,sans-serif;
-  letter-spacing:-.015em;
 }
 body.lm-studio-open #laboratorio .lm-inspector-tabs{
   position:static!important;
@@ -220,7 +203,6 @@ body.lm-studio-open #laboratorio .lm-inspector-tabs button{
   border-radius:0;
   background:transparent!important;
   color:#888884;
-  font:300 12px/1.2 UniversMattar,Arial,sans-serif;
 }
 body.lm-studio-open #laboratorio .lm-inspector-tabs button:hover{color:#454542}
 body.lm-studio-open #laboratorio .lm-inspector-tabs button[aria-selected=true]{
@@ -228,7 +210,6 @@ body.lm-studio-open #laboratorio .lm-inspector-tabs button[aria-selected=true]{
   color:var(--studio-ink);
 }
 body.lm-studio-open #laboratorio .lm-inspector-tab-name{
-  font:300 12px/1.15 UniversMattar,Arial,sans-serif;
   white-space:nowrap;
 }
 body.lm-studio-open #laboratorio .lm-inspector-tab-description,
@@ -283,8 +264,6 @@ body.lm-studio-open #laboratorio .lm-inspector-panel .lm-studio-tool[aria-expand
   transform:translateY(-50%) rotate(180deg);
   border:0;
   color:#333;
-  font-size:16px;
-  line-height:1;
 }
 body.lm-studio-open #laboratorio .lm-inspector-panel .lm-studio-tool::after{
   content:"⌄";
@@ -292,17 +271,13 @@ body.lm-studio-open #laboratorio .lm-inspector-panel .lm-studio-tool::after{
   transform:translateY(-50%);
   border:0;
   color:#8b8b86;
-  font:300 16px/1 UniversMattar,Arial,sans-serif;
 }
 body.lm-studio-open #laboratorio .lm-inspector-panel .lm-studio-tool[hidden]{display:none!important}
 body.lm-studio-open #laboratorio .lm-studio-tool-label{
-  font:300 12px/1.2 UniversMattar,Arial,sans-serif;
   color:#373735;
-  letter-spacing:0;
   white-space:nowrap;
 }
 body.lm-studio-open #laboratorio .lm-studio-tool-value{
-  font:300 11px/1.2 UniversMattar,Arial,sans-serif;
   color:#92928d;
   white-space:nowrap;
   text-overflow:ellipsis;
@@ -370,7 +345,6 @@ body.lm-studio-open #laboratorio .lm-lab-mini-actions button{
   border:0;border-radius:5px;
   background:transparent;
   color:#686863;
-  font:300 11px/1.3 UniversMattar,Arial,sans-serif;
 }
 body.lm-studio-open #laboratorio .lm-lab-mini-actions button:hover{
   background:#ececea;
@@ -378,7 +352,6 @@ body.lm-studio-open #laboratorio .lm-lab-mini-actions button:hover{
 }
 body.lm-studio-open #laboratorio .lm-lab-mini-actions .lm-lab-local{
   color:#93938f;
-  font:300 10px/1.2 UniversMattar,Arial,sans-serif;
   text-overflow:ellipsis;
   overflow:hidden;
   white-space:nowrap;
@@ -416,13 +389,11 @@ body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-visual{
   display:none!important;
 }
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-name{
-  font:300 12px/1.2 UniversMattar,Arial,sans-serif;
   color:var(--studio-ink);
   text-align:center;
 }
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-meta{
   display:block;
-  font:300 10px/1 UniversMattar,Arial,sans-serif;
   color:#93938e;
   text-align:center;
 }
@@ -446,7 +417,6 @@ body.lm-studio-open #laboratorio .lm-studio-detail-body select{
   background:#fff;
   border-radius:5px;
   padding:9px 10px;
-  font:300 12px/1.45 UniversMattar,Arial,sans-serif;
   color:#262624;
 }
 body.lm-studio-open #laboratorio .lm-studio-detail-body textarea{
@@ -455,7 +425,7 @@ body.lm-studio-open #laboratorio .lm-studio-detail-body textarea{
 }
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-help-popover{z-index:3000}
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-helper{display:none!important}
-body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-range-limits{color:#999994;font-size:10px}
+body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-range-limits{color:#999994;}
 body.lm-studio-open #laboratorio .lm-studio-detail-body input[type=range]{
   width:100%;accent-color:#4c4c48;
 }
@@ -464,7 +434,6 @@ body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-inspector-precision{
 }
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-lab-field-title,
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-lab-value-row{
-  font:300 12px/1.35 UniversMattar,Arial,sans-serif;
   color:#50504e;
 }
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-lab-fit-info{
@@ -496,8 +465,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block{
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block[hidden]{display:none!important}
 body.lm-studio-open #laboratorio .lm-studio-image-block-label{
-  font:300 11px/1.2 UniversMattar,Arial,sans-serif;
-  letter-spacing:0;
   color:#72726d;
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block--aplicacao,
@@ -551,7 +518,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-visual{
   display:none!important;
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-name{
-  font:300 11px/1.2 UniversMattar,Arial,sans-serif;
   color:#2e2e2c;
   white-space:nowrap;
 }
@@ -567,9 +533,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--fotografia .lm-ctrl-vis
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block--fotografia .lm-ctrl-mini-photo{
   width:70px;max-width:100%;height:29px;
-}
-body.lm-studio-open #laboratorio .lm-studio-image-block--fotografia .lm-ctrl-name{
-  font-size:10px;
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco{
   gap:5px;
@@ -613,9 +576,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--foco input[type=range],
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-ctrl-range-limits{
   display:none!important;
 }
-body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-inspector-precision input{
-  font-size:12px!important;
-}
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(#labFocusX),
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(#labFocusY){
   min-height:25px;
@@ -623,10 +583,10 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-value-row label{display:none}
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(#labFocusX)::before{
-  content:"X";font:300 11px/1 UniversMattar,Arial,sans-serif;color:#6e6e68
+  content:"X";color:#6e6e68
 }
 body.lm-studio-open #laboratorio .lm-studio-image-block--foco .lm-lab-field:has(#labFocusY)::before{
-  content:"Y";font:300 11px/1 UniversMattar,Arial,sans-serif;color:#6e6e68
+  content:"Y";color:#6e6e68
 }
 /* A single segmented control is calmer than a row of individual boxes. */
 body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-choice-grid,
@@ -728,16 +688,13 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
     min-height:28px;height:28px;
     padding:3px 5px;
   }
-  body.lm-studio-open #laboratorio .lm-lab-presets .lm-ctrl-preset-text strong{
-    font-size:10px;
-  }
   body.lm-studio-open #laboratorio .lm-studio-launch{gap:1px}
   body.lm-studio-open #laboratorio .lm-studio-launch>button{
     min-height:28px;height:28px;
     padding:2px 6px;
   }
   body.lm-studio-open #laboratorio #labStudioToggleText{font-size:0}
-  body.lm-studio-open #laboratorio #labStudioToggleText::after{content:"SAIR";font-size:10px}
+  body.lm-studio-open #laboratorio #labStudioToggleText::after{content:"SAIR";}
   body.lm-studio-open #laboratorio .lm-lab-prep>.lm-lab-heading-aside{display:none}
   body.lm-studio-open #laboratorio .lm-lab-workspace,
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])){
@@ -753,7 +710,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   }
   body.lm-studio-open #laboratorio .lm-lab-preview-foot{
     padding:1px 10px 4px;
-    font-size:10px;
   }
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
     padding:0 12px;
@@ -772,8 +728,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
     height:37px;min-height:37px;
     padding:0 19px 0 3px;
   }
-  body.lm-studio-open #laboratorio .lm-studio-tool-label{font-size:11px}
-  body.lm-studio-open #laboratorio .lm-studio-tool-value{font-size:10px}
   body.lm-studio-open #laboratorio .lm-studio-detail{
     padding:8px 7px 9px;
   }
@@ -781,8 +735,6 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
     min-height:34px;
     padding:5px 2px;
   }
-  body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-name{font-size:11px}
-  body.lm-studio-open #laboratorio .lm-studio-detail-body .lm-ctrl-meta{font-size:9px}
   body.lm-studio-open #laboratorio .lm-studio-detail-body textarea{
     min-height:66px;max-height:100px;
   }
@@ -805,14 +757,10 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura{
     grid-column:auto;
   }
-  body.lm-studio-open #laboratorio .lm-studio-image-block-label{
-    font-size:10px;
-  }
   body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-choice{
     height:27px!important;min-height:27px!important;
   }
-  body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-name{
-    font-size:10px;white-space:normal;text-align:center;
+  body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-name{white-space:normal;text-align:center;
   }
   body.lm-studio-open #laboratorio .lm-studio-image-block--fotografia .lm-ctrl-choice{
     min-height:43px!important;height:43px!important;
@@ -883,10 +831,7 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   }
 }
 @media(max-width:450px){
-  body.lm-studio-open #laboratorio .lm-lab-presets .lm-ctrl-preset-text strong{font-size:9px}
   body.lm-studio-open #laboratorio .lm-lab-presets button{padding:3px 4px}
-  body.lm-studio-open #laboratorio .lm-studio-image-block .lm-ctrl-name{font-size:9px}
-  body.lm-studio-open #laboratorio .lm-studio-image-block-label{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){
   body.lm-studio-open #laboratorio .lm-inspector-panel .lm-studio-tool,
@@ -900,14 +845,10 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
 }
 #laboratorio .lm-lab-system-statement{
   display:flex;flex-wrap:wrap;gap:6px 16px;
-  font:300 10px/1.35 UniversMattar,Arial,sans-serif;
-  letter-spacing:.055em;
 }
 #laboratorio .lm-composition-module-index{
   display:flex;flex-wrap:wrap;gap:5px 12px;
   padding:10px 0 12px;border-bottom:1px solid var(--line);
-  font:300 9px/1.2 UniversMattar,Arial,sans-serif;
-  letter-spacing:.06em;
 }
 #laboratorio .lm-composition-module{
   display:block!important;
@@ -918,8 +859,7 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   display:flex;align-items:baseline;justify-content:space-between;gap:12px;
   margin:0 0 10px;
 }
-#laboratorio .lm-composition-module .lm-inspector-panel-heading small{
-  font:300 9px/1.2 UniversMattar,Arial,sans-serif;color:#77736b;
+#laboratorio .lm-composition-module .lm-inspector-panel-heading small{color:#77736b;
 }
 #laboratorio .lm-composition-submodule{
   padding:9px 0 11px;border-top:1px solid var(--line);
@@ -929,11 +869,7 @@ body.lm-studio-open #laboratorio .lm-studio-image-block--assinatura select{
   display:flex;justify-content:space-between;align-items:baseline;gap:10px;
   margin-bottom:8px;
 }
-#laboratorio .lm-composition-submodule-head>span{
-  font:300 10px/1.2 UniversMattar,Arial,sans-serif;letter-spacing:.06em;
-}
-#laboratorio .lm-composition-submodule-head>small{
-  font:300 9px/1.2 UniversMattar,Arial,sans-serif;color:#77736b;
+#laboratorio .lm-composition-submodule-head>small{color:#77736b;
 }
 #laboratorio .lm-image-invariant{margin-bottom:8px;padding-bottom:8px}
 #laboratorio .lm-inspector-more{margin-top:10px}
@@ -985,8 +921,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
 /* Mobile composition editor: canvas first, one module at a time.
    The composition remains one system; only the navigation is compacted. */
 #laboratorio .lm-composition-module-index button{
-  border:0;background:transparent;color:inherit;padding:0;
-  font:inherit;letter-spacing:inherit;white-space:nowrap;
+  border:0;background:transparent;color:inherit;padding:0;white-space:nowrap;
 }
 #laboratorio .lm-composition-module-index button[aria-pressed=true]{
   text-decoration:underline;text-underline-offset:4px;
@@ -1034,14 +969,10 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-lab-preview-head{
     height:20px!important;padding:3px 0 0!important;
-    font-size:8px!important;
   }
   body.lm-studio-open #laboratorio .lm-lab-preview-head span:first-child{
     max-width:58%!important;
     white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
-  }
-  body.lm-studio-open #laboratorio .lm-lab-preview-head #labFormatLabel{
-    font-size:8px!important;
   }
   body.lm-studio-open #laboratorio .lm-lab-stage{
     min-height:0!important;height:100%!important;
@@ -1050,7 +981,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-lab-preview-foot{
     height:20px!important;min-height:20px!important;
-    padding:3px 0!important;font-size:8px!important;
+    padding:3px 0!important;
     white-space:nowrap!important;overflow:hidden!important;
   }
 
@@ -1083,7 +1014,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     min-width:max-content!important;
     height:41px!important;
     padding:0 11px!important;
-    font-size:10px!important;
     text-decoration:none!important;
     border-bottom:1px solid transparent!important;
   }
@@ -1187,12 +1117,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   body.lm-studio-open #laboratorio .lm-ctrl-choice{
     min-height:44px!important;
     padding:7px 5px!important;
-  }
-  body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-name{
-    font-size:11px!important;
-  }
-  body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-meta{
-    font-size:9px!important;
   }
   body.lm-studio-open #laboratorio .lm-control-effect{
     display:none!important;
@@ -1340,7 +1264,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     font-size:0!important;
   }
   body.lm-studio-open #laboratorio #labStudioToggleText::after{
-    content:"SAIR";font-size:11px;letter-spacing:.04em;
+    content:"SAIR";
   }
 
   body.lm-studio-open #laboratorio .lm-lab-workspace,
@@ -1463,8 +1387,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     border:0!important;border-bottom:1px solid transparent!important;
     border-radius:0!important;
     background:transparent!important;
-    font:300 10px/44px UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.045em!important;
     color:#4f4f4a!important;
     white-space:nowrap!important;
   }
@@ -1537,18 +1459,11 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   body.lm-studio-open #laboratorio .lm-ctrl-visual{
     height:28px!important;
   }
-  body.lm-studio-open #laboratorio .lm-ctrl-name{
-    font-size:10px!important;line-height:1.1!important;
-  }
   body.lm-studio-open #laboratorio .lm-ctrl-meta,
   body.lm-studio-open #laboratorio .lm-ctrl-helper,
   body.lm-studio-open #laboratorio .lm-control-effect,
   body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     display:none!important;
-  }
-  body.lm-studio-open #laboratorio .lm-lab-field-title,
-  body.lm-studio-open #laboratorio .lm-lab-value-row label{
-    font-size:11px!important;line-height:1.25!important;
   }
   body.lm-studio-open #laboratorio .lm-lab-value-row{
     margin:0 0 6px!important;
@@ -1613,7 +1528,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-composition-module-index button{
     padding-inline:9px!important;
-    font-size:9.5px!important;
   }
 }
 
@@ -1752,7 +1666,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-composition-module-index button{
     height:46px!important;
-    font-size:10px!important;
     padding-inline:10px!important;
   }
 
@@ -1974,8 +1887,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     border-bottom:1px solid transparent!important;
     border-radius:0!important;
     background:transparent!important;
-    font:300 10px/46px UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.045em!important;
     color:#555!important;
     white-space:nowrap!important;
     pointer-events:auto!important;
@@ -2267,12 +2178,9 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
     border:0!important;
     background:transparent!important;
     color:var(--ui-ink)!important;
-    font:300 11px/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.045em!important;
   }
   body.lm-studio-open #laboratorio .lm-studio-quickreset{
     margin-left:auto!important;
-    font-size:18px!important;
   }
 
   /* navigation becomes a quiet editorial rail, not a row of big labels */
@@ -2289,8 +2197,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
     height:42px!important;
     min-height:42px!important;
     padding:0 11px!important;
-    font:300 10.5px/42px UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.055em!important;
     color:var(--ui-muted)!important;
     border:0!important;
     border-bottom:1px solid transparent!important;
@@ -2317,8 +2223,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   body.lm-studio-open #laboratorio .lm-lab-value-row,
   body.lm-studio-open #laboratorio .lm-lab-value-row label{
     color:var(--ui-ink)!important;
-    font:300 14px/1.25 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:-.012em!important;
   }
   body.lm-studio-open #laboratorio .lm-lab-value-row{
     min-height:28px!important;
@@ -2327,7 +2231,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   }
   body.lm-studio-open #laboratorio .lm-lab-field output{
     color:var(--ui-muted)!important;
-    font:300 13px/1 UniversMattar,Arial,sans-serif!important;
     min-width:auto!important;
     border:0!important;
     padding:0!important;
@@ -2345,7 +2248,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
     border-radius:50%!important;
     background:transparent!important;
     color:#6f6f6a!important;
-    font:300 11px/22px UniversMattar,Arial,sans-serif!important;
     box-shadow:none!important;
   }
   body.lm-studio-open #laboratorio .lm-help-trigger-text{display:none!important}
@@ -2378,13 +2280,10 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   body.lm-studio-open #laboratorio .lm-ctrl-choice::after{display:none!important}
   body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-name{
     color:inherit!important;
-    font:300 11px/1.15 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:-.01em!important;
   }
   body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-meta{
     display:block!important;
     color:var(--ui-faint)!important;
-    font:300 8.5px/1 UniversMattar,Arial,sans-serif!important;
   }
   body.lm-studio-open #laboratorio .lm-ctrl-choice[aria-pressed=true] .lm-ctrl-meta{
     color:#777772!important;
@@ -2427,7 +2326,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   body.lm-studio-open #laboratorio .lm-ctrl-range-limits{
     margin-top:-3px!important;
     color:#969690!important;
-    font:300 9px/1 UniversMattar,Arial,sans-serif!important;
   }
 
   /* details and text inputs */
@@ -2451,8 +2349,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
     min-height:40px!important;
     padding:0!important;
     color:var(--ui-muted)!important;
-    font:300 10px/40px UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.055em!important;
   }
 
   /* remove explanatory debris in focused mode */
@@ -2470,11 +2366,6 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   body.lm-studio-open #laboratorio .lm-inspector-primary,
   body.lm-studio-open #laboratorio .lm-inspector-extra{
     gap:21px!important;
-  }
-  body.lm-studio-open #laboratorio .lm-lab-field-title,
-  body.lm-studio-open #laboratorio .lm-lab-value-row,
-  body.lm-studio-open #laboratorio .lm-lab-value-row label{
-    font-size:13px!important;
   }
 
   body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{
@@ -2531,15 +2422,12 @@ body.lm-studio-open #laboratorio button[data-mobile-module=m]::before{
   content:"M";
   width:15px;height:14px;
   border:0;
-  font:300 13px/14px UniversMattar,Arial,sans-serif;
-  letter-spacing:-.08em;
 }
 /* Text */
 body.lm-studio-open #laboratorio button[data-mobile-module=texto]::before{
   content:"T";
   width:13px;height:14px;
   border:0;
-  font:300 13px/14px UniversMattar,Arial,sans-serif;
 }
 /* Signature */
 body.lm-studio-open #laboratorio button[data-mobile-module=assinatura]::before{
@@ -2620,17 +2508,10 @@ body.lm-studio-open #laboratorio [data-lab-choice=type]::before{
   content:"Aa";
   width:auto;height:22px;
   border:0;
-  font:300 22px/22px UniversMattar,Arial,sans-serif;
-  letter-spacing:-.07em;
   margin-bottom:2px;
-}
-body.lm-studio-open #laboratorio [data-lab-choice=type][data-value=perpetua]::before{
-  font-family:PerpetuaMattar,Georgia,serif;
-  letter-spacing:-.03em;
 }
 body.lm-studio-open #laboratorio [data-lab-choice=type][data-value=alternada]::before{
   content:"Aɑ";
-  font-family:UniversMattar,Arial,sans-serif;
 }
 
 /* Reading-mode glyphs */
@@ -2667,8 +2548,6 @@ body.lm-studio-open #laboratorio [data-lab-choice=mContent]::before{
   content:"M";
   width:auto;height:21px;
   border:0;
-  font:300 20px/21px UniversMattar,Arial,sans-serif;
-  letter-spacing:-.08em;
 }
 body.lm-studio-open #laboratorio [data-lab-choice=mContent][data-value=off]::before{
   color:var(--glyph-muted);
@@ -2859,8 +2738,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
     border-radius:7px!important;
     background:transparent!important;
     color:var(--ui-muted,#777772)!important;
-    font:300 10px/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.035em!important;
     white-space:nowrap!important;
     text-overflow:ellipsis!important;
   }
@@ -2885,7 +2762,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   }
   body.lm-studio-open #laboratorio .lm-composition-module-index button{
     height:40px!important;
-    font-size:9.5px!important;
     padding-inline:8px!important;
   }
 }
@@ -2928,8 +2804,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
     border-radius:7px!important;
     background:transparent!important;
     color:var(--ui-muted,#777772)!important;
-    font:300 0/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:0!important;
     white-space:nowrap!important;
   }
 
@@ -2964,8 +2838,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
     display:block;
     padding:12px 14px 4px;
     color:var(--ui-muted,#777772);
-    font:300 10px/1 UniversMattar,Arial,sans-serif;
-    letter-spacing:.06em;
   }
 }
 
@@ -3100,8 +2972,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
     border-radius:8px!important;
     background:transparent!important;
     color:var(--ui-muted,#777772)!important;
-    font:300 10px/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.04em!important;
     white-space:nowrap!important;
     text-overflow:ellipsis!important;
     pointer-events:auto!important;
@@ -3158,7 +3028,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   body.lm-studio-open #laboratorio .lm-composition-module-index button{
     height:42px!important;
     min-height:42px!important;
-    font-size:9.5px!important;
   }
 }
 
@@ -3192,8 +3061,6 @@ body.lm-studio-open #laboratorio .lm-lab-preview-head,
 body.lm-studio-open #laboratorio .lm-lab-preview-foot{
   color:var(--ui-muted)!important;
   border-color:var(--ui-line)!important;
-  font:300 9px/1.25 UniversMattar,Arial,sans-serif!important;
-  letter-spacing:.05em!important;
 }
 body.lm-studio-open #laboratorio .lm-lab-stage{
   background:#e9e9e5!important;
@@ -3242,12 +3109,9 @@ body.lm-studio-open #laboratorio .lm-inspector-panel-heading{
 }
 body.lm-studio-open #laboratorio .lm-inspector-panel-heading>span{
   color:var(--ui-ink)!important;
-  font:300 12px/1 UniversMattar,Arial,sans-serif!important;
-  letter-spacing:.055em!important;
 }
 body.lm-studio-open #laboratorio .lm-inspector-panel-heading>small{
   color:var(--ui-faint)!important;
-  font:300 10px/1.2 UniversMattar,Arial,sans-serif!important;
 }
 
 /* Vertical rhythm. */
@@ -3261,12 +3125,9 @@ body.lm-studio-open #laboratorio .lm-lab-field{
 body.lm-studio-open #laboratorio .lm-lab-field-title,
 body.lm-studio-open #laboratorio .lm-lab-value-row label{
   color:var(--ui-text)!important;
-  font:300 12px/1.25 UniversMattar,Arial,sans-serif!important;
-  letter-spacing:-.005em!important;
 }
 body.lm-studio-open #laboratorio .lm-lab-value-row output{
   color:var(--ui-muted)!important;
-  font:300 11px/1 UniversMattar,Arial,sans-serif!important;
 }
 
 /* Unified segmented control language. */
@@ -3301,12 +3162,9 @@ body.lm-studio-open #laboratorio .lm-ctrl-choice[aria-pressed=true]{
 }
 body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-name{
   color:inherit!important;
-  font:300 11px/1.15 UniversMattar,Arial,sans-serif!important;
-  letter-spacing:-.005em!important;
 }
 body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-meta{
   color:var(--ui-faint)!important;
-  font:300 9px/1.1 UniversMattar,Arial,sans-serif!important;
 }
 body.lm-studio-open #laboratorio .lm-ctrl-choice[aria-pressed=true] .lm-ctrl-meta{
   color:var(--ui-muted)!important;
@@ -3331,7 +3189,6 @@ body.lm-studio-open #laboratorio input[type=range]{
 }
 body.lm-studio-open #laboratorio .lm-ctrl-range-limits{
   color:var(--ui-faint)!important;
-  font:300 9px/1 UniversMattar,Arial,sans-serif!important;
 }
 
 /* Inputs. */
@@ -3347,7 +3204,6 @@ body.lm-studio-open #laboratorio input:not([type=range]){
   color:var(--ui-ink)!important;
   padding:9px 10px!important;
   box-shadow:none!important;
-  font:300 12px/1.35 UniversMattar,Arial,sans-serif!important;
 }
 body.lm-studio-open #laboratorio textarea:focus,
 body.lm-studio-open #laboratorio select:focus,
@@ -3367,7 +3223,6 @@ body.lm-studio-open #laboratorio .lm-help-trigger{
   border-radius:50%!important;
   background:transparent!important;
   color:var(--ui-muted)!important;
-  font:300 10px/18px UniversMattar,Arial,sans-serif!important;
   box-shadow:none!important;
 }
 body.lm-studio-open #laboratorio .lm-help-trigger-text{display:none!important}
@@ -3430,8 +3285,6 @@ body.lm-studio-open #laboratorio .lm-inspector-more>summary{
   min-height:38px!important;
   padding:0!important;
   color:var(--ui-muted)!important;
-  font:300 10px/38px UniversMattar,Arial,sans-serif!important;
-  letter-spacing:.05em!important;
 }
 
 /* Clean focused mode. */
@@ -3461,8 +3314,6 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     height:42px!important;
     padding:0 10px!important;
     gap:7px!important;
-    font:300 9.5px/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.04em!important;
   }
 
   body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
@@ -3488,7 +3339,6 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
   body.lm-studio-open #laboratorio .lm-composition-module-index button{
     min-height:40px!important;
     height:40px!important;
-    font-size:9px!important;
   }
 
   body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
@@ -3628,11 +3478,6 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     border-bottom:1px solid var(--ui-line,#d9d9d3)!important;
   }
 
-  body.lm-studio-open #laboratorio .lm-inspector-head>span{
-    font:300 14px/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:-.01em!important;
-  }
-
   body.lm-studio-open #laboratorio .lm-composition-module-index{
     position:static!important;
     flex:0 0 auto!important;
@@ -3668,8 +3513,6 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     border-radius:6px!important;
     background:transparent!important;
     color:var(--ui-muted,#7a7a74)!important;
-    font:300 9px/1 UniversMattar,Arial,sans-serif!important;
-    letter-spacing:.035em!important;
     white-space:nowrap!important;
     overflow:hidden!important;
     text-overflow:ellipsis!important;
@@ -3735,14 +3578,6 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     min-height:38px!important;
     padding:5px 6px!important;
     border-radius:6px!important;
-  }
-
-  body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-name{
-    font-size:10px!important;
-  }
-
-  body.lm-studio-open #laboratorio .lm-ctrl-choice .lm-ctrl-meta{
-    font-size:8.5px!important;
   }
 
   body.lm-studio-open #laboratorio .lm-ctrl-photos .lm-ctrl-choice{

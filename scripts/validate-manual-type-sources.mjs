@@ -38,6 +38,12 @@ for (const file of ['public/manual-symbols.js','public/composicao-lab.js','desig
   const code = readFileSync(file,'utf8');
   assert.doesNotMatch(code,/\.style\.fontSize\s*=|\.style\.setProperty\(['"]font-size['"]/,file+': individual font downscaling');
 }
+// Obsolete typography scale variables must not survive the cleanup.
+for (const file of [...pages,...styles]) {
+  assert.doesNotMatch(readFileSync(file,'utf8'),
+    /--(?:manual-title-size|title-size|title-fit|lab-(?:title-base|body-base|detail-base|title-scale))\\s*:/,
+    file+': obsolete alternate typography token');
+}
 const canonical = readFileSync('public/manual-headings.css','utf8');
 for (const token of ['--lm-type-title-size','--lm-type-body-size','--lm-type-detail-size']) {
   assert.ok(canonical.includes(token),'Missing canonical token '+token);

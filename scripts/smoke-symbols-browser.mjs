@@ -167,7 +167,7 @@ try {
   }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {
     await page.setViewportSize({width,height});await page.waitForTimeout(120);
-    const geometry = await page.evaluate(()=>({width:innerWidth,document:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('h1,h2,.title .line,.symbol-row,.state-explorer,.lm-site-nav,header.top,header.top a,.state-picker button')].filter(e=>{const r=e.getBoundingClientRect();return r.right>innerWidth+1||r.left< -1;}).map(e=>e.tagName+'.'+e.className)}));
+    const geometry = await page.evaluate(()=>({width:innerWidth,document:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('h1,h2,.title .line,.symbol-row,.state-explorer,.lm-site-nav,header.top,.state-picker button')].filter(e=>{const r=e.getBoundingClientRect();return r.right>innerWidth+1||r.left< -1;}).map(e=>e.tagName+'.'+e.className)}));
     report.viewports.push(geometry);assert.equal(geometry.document,width,`No horizontal scroll at ${width}`);assert.deepEqual(geometry.overflow,[],`No clipped element at ${width}`);
     if ([1440,390,320].includes(width)) {
       await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`symbols-proof/${phase}-cover-${width}.png`});

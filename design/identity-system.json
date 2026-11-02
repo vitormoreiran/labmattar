@@ -122,5 +122,18 @@
     ],
     "sourceOfTruth": "design/identity-system.json",
     "rule": "Experiments cannot silently overwrite approved identity parameters."
+  },
+  "layout": {
+    "contract": "design/manual-layout-contract.md",
+    "stylesheet": "/manual-layout.css",
+    "chapters": [
+      "symbols",
+      "typography",
+      "color",
+      "composition",
+      "laboratory"
+    ],
+    "typography": "/manual-headings.css",
+    "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides."
   }
 }

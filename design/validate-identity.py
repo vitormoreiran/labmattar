@@ -28,6 +28,8 @@ for page in ("manual.html","tipografia.html","cores.html","composicao.html","lab
  text=(Path("public")/page).read_text(encoding="utf-8")
  assert text.count('href="/manual-headings.css')==1,f"{page} must use one normative typography stylesheet"
  assert text.count('src="/manual-type-roles.js')==1,f"{page} must use one text role classifier"
+ assert text.count('href="/manual-layout.css')==1,f"{page} must use one shared grid stylesheet"
+ assert text.count('lm-manual-cover')==1,f"{page} must have exactly one canonical cover"
 construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
 composition=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
 assert 'id="contraste"' in construction and ("PRETO 20%" in construction or "20% DE PRETO" in construction)

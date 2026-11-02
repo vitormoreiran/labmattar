@@ -8,7 +8,7 @@ const pages = [
   'design/laboratorio.html', 'public/manual.html'
 ];
 const styles = [
-  'public/manual-symbols.css', 'public/composicao-regras.css', 'public/manual-composition-layout.css', 'public/composicao-lab.css',
+  'public/manual-layout.css', 'public/manual-symbols.css', 'public/composicao-regras.css', 'public/manual-composition-layout.css', 'public/composicao-lab.css',
   'public/composicao-lab-controls.css', 'public/composicao-studio.css',
   'public/composicao-editor-clean.css'
 ];

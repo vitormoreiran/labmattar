@@ -1,0 +1,48 @@
+/* LABMATTAR / Identidade visual / abertura de áreas
+ * Uma única régua para os títulos gerais de Símbolos, Tipografia,
+ * Cores, Composição e Imagem. Este arquivo é a fonte de verdade.
+ * Os exemplos internos do manual preservam suas escalas próprias. */
+:root {
+  --lm-manual-page-title-size: clamp(31px, 7vw, 104px);
+  --lm-manual-page-title-leading: .98;
+  --lm-manual-page-title-tracking: -.025em;
+}
+html body main h1.lm-manual-page-title {
+  font-family: UniversMattar, "Univers Mattar", Univers, Arial, sans-serif !important;
+  font-size: var(--lm-manual-page-title-size) !important;
+  font-weight: 300 !important;
+  font-style: normal !important;
+  line-height: var(--lm-manual-page-title-leading) !important;
+  letter-spacing: var(--lm-manual-page-title-tracking) !important;
+  text-align: left !important;
+  text-transform: uppercase !important;
+  font-synthesis: none !important;
+  display: block;
+  width: 100%;
+  max-width: 100% !important;
+  min-width: 0;
+  margin: clamp(44px, 7vw, 92px) 0 clamp(36px, 5vw, 68px) !important;
+  padding: 0 !important;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+html body main h1.lm-manual-page-title :is(.perpetua, .p, em) {
+  font-family: PerpetuaMattar, "Perpetua Mattar", Perpetua, Georgia, serif !important;
+  font-weight: 300 !important;
+  font-style: normal !important;
+  letter-spacing: 0 !important;
+}
+html body main h1.lm-manual-page-title :is(.line, .title-line) {
+  display: block;
+  width: auto !important;
+  max-width: 100%;
+  white-space: normal !important;
+}
+html body main h1.lm-manual-page-title br {display:block}
+@media (max-width: 520px) {
+  html body main h1.lm-manual-page-title {
+    margin-top: clamp(38px, 10vw, 54px) !important;
+    margin-bottom: clamp(34px, 8vw, 48px) !important;
+  }
+}

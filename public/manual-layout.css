@@ -82,6 +82,7 @@ html body main section.lm-manual-cover > .inner{
   max-width:var(--lm-layout-frame)!important;
   margin-inline:auto!important;
   padding:0!important;
+  flex:none!important; /* Override legacy .cover .inner { flex: 1 } in the Symbols page. */
   transform:translateY(var(--lm-layout-local-optical-y));
   min-width:0;
   display:grid!important;

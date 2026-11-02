@@ -92,6 +92,24 @@ try{
   assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).display)==="none",
     "M off state must remove the M without changing the composition type");
 
+  const constructionPage=await browser.newPage({viewport:{width:1440,height:900}});
+  constructionPage.on("pageerror",e=>errors.push("Construction: "+e.message));
+  await constructionPage.goto(new URL("/composicao.html",url).href,{waitUntil:"load",timeout:60000});
+  await constructionPage.evaluate(()=>document.fonts.ready);
+  assert(await constructionPage.locator('#caseFrame').count()===1,
+    "Construction chapter must contain the original applied example");
+  for(const step of ["campo","mascara","completa"]){
+    await constructionPage.locator('[data-case-step="'+step+'"]').click();
+    assert(await constructionPage.locator('#caseFrame').getAttribute("data-step")===step,
+      "Construction layers must remain interactive: "+step);
+  }
+  await constructionPage.screenshot({path:"composition-manual-desktop.png",fullPage:true});
+  await constructionPage.locator('[data-case-format="mobile"]').click();
+  assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
+    "Construction must demonstrate responsive recomposition");
+  await constructionPage.setViewportSize({width:390,height:844});
+  await constructionPage.screenshot({path:"composition-manual-mobile.png",fullPage:true});
+  await constructionPage.close();
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
   console.log("LABMATTAR unified composition browser OK");
 }finally{

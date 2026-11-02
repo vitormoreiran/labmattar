@@ -90,6 +90,7 @@ jobs:
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'

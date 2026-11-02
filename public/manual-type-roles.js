@@ -26,7 +26,9 @@
   }
   if(node.nodeType!==Node.ELEMENT_NODE)return;
   if(node.matches(SKIP))return;
-  if(node.matches('h1,h2,h3,h4,h5,h6,.type-title,.title,.big,.lm-lab-title,.artboard .headline,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3'))annotate(node);
+  const titleContainers='h1,h2,h3,h4,h5,h6,.type-title,.title,.big,.lm-lab-title,.artboard .headline,.transform-rule,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3';
+  if(node.matches(titleContainers))annotate(node);
+  node.querySelectorAll(titleContainers).forEach(annotate);
   const walker=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);
   let text;
   while((text=walker.nextNode())){

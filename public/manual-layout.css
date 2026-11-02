@@ -190,12 +190,78 @@ html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :
   padding-left:var(--lm-layout-col-offset);
 }
 
+/* Section lead wrappers must align to column 2, not to the full-width
+   artwork field. The visual demonstrations stay at all 12 columns. */
+html body main #estrutura .lm-reading-intro{
+  box-sizing:border-box;
+  padding-left:var(--lm-layout-col-offset);
+}
+html body main section.lm-m-guide{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(0,min(100%,var(--lm-layout-frame))) minmax(0,1fr);
+  column-gap:0;
+  align-content:start;
+}
+html body main section.lm-m-guide > *{
+  grid-column:2;
+  min-width:0;
+}
+html body main section.lm-m-guide > :is(.eyebrow,h2,.lm-m-guide-lead,.lm-m-guide-rule){
+  box-sizing:border-box;
+  padding-left:var(--lm-layout-col-offset);
+}
+html body main section.lm-composition-next{display:block!important}
+html body main section.lm-composition-next > .inner{
+  box-sizing:border-box;
+  width:min(100%,var(--lm-layout-frame));
+  max-width:var(--lm-layout-frame);
+  margin-inline:auto;
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:var(--lm-layout-gap);
+  align-items:start;
+}
+html body main section.lm-composition-next > .inner > p.eyebrow{
+  grid-column:2 / 13;
+  grid-row:1;
+  margin:0 0 36px!important;
+}
+html body main section.lm-composition-next > .inner > p:not(.eyebrow){
+  grid-column:2 / 7;
+  grid-row:2;
+  margin:0!important;
+  max-width:50ch;
+}
+html body main section.lm-composition-next > .inner > .lm-composition-next-link{
+  grid-column:10 / 13;
+  grid-row:2;
+  min-width:0;
+}
+html body main section.page .section-head{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  column-gap:var(--lm-layout-gap);
+  align-items:start;
+  margin-left:0!important;
+}
+html body main section.page .section-head > p:first-child{
+  grid-column:2 / 7;
+  margin:0;
+}
+html body main section.page .section-head > p:nth-child(2){
+  grid-column:10 / 13;
+  margin:0;
+}
 /* Tablet: keep the same one-column inset but redistribute reading fields. */
 @media(max-width:1023px) and (min-width:701px){
   :root{--lm-layout-gap:16px;--lm-layout-col-offset:calc(8.333333% + 1.333px)}
   html body main section.lm-manual-cover > .inner > h1{grid-column:2 / 13}
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:first-child{grid-column:2 / 8}
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro) > p:nth-child(2){grid-column:9 / 13}
+  html body main section.lm-composition-next > .inner > p:not(.eyebrow),
+  html body main section.page .section-head > p:first-child{grid-column:2 / 8}
+  html body main section.lm-composition-next > .inner > .lm-composition-next-link,
+  html body main section.page .section-head > p:nth-child(2){grid-column:9 / 13}
 }
 /* No one-off font reduction at narrow widths: long editorial words may
    hyphenate/wrap inside the official column instead of escaping the grid. */
@@ -226,6 +292,14 @@ html body main section:is(.lm-manual-section,.chapter):not(.lm-manual-cover) > :
   html body > header{justify-content:flex-start!important}
   html body > header nav{width:100%}
   html body main section.lm-manual-cover{padding-bottom:clamp(56px,8svh,84px)!important}
+  html body main #estrutura .lm-reading-intro,
+  html body main section.lm-m-guide > :is(.eyebrow,h2,.lm-m-guide-lead,.lm-m-guide-rule){padding-left:0}
+  html body main section.lm-composition-next > .inner,
+  html body main section.page .section-head{grid-template-columns:minmax(0,1fr)!important}
+  html body main section.lm-composition-next > .inner > :is(p.eyebrow,p:not(.eyebrow),.lm-composition-next-link),
+  html body main section.page .section-head > p{grid-column:1!important;grid-row:auto!important}
+  html body main section.lm-composition-next > .inner > .lm-composition-next-link{margin-top:28px}
+  html body main section.page .section-head > p:nth-child(2){margin-top:8px}
   html body main section.lm-manual-cover > .inner,
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro){
     display:grid!important;

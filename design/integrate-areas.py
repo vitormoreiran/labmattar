@@ -9,27 +9,18 @@ NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/imagem.html" data-area="imagem">05 / IMAGEM</a>
 </nav>'''
 STYLE='''<style>
-.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,3vw,48px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;font:300 11px/1.5 UniversMattar,"Univers Mattar","Helvetica Neue",Arial,sans-serif;letter-spacing:.05em}
+.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;gap:clamp(16px,3vw,48px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
 .lm-site-nav a{color:inherit;text-decoration:none;padding:4px 0;border-bottom:1px solid transparent;white-space:nowrap}
 .lm-site-nav a[aria-current=page]{border-color:currentColor}
 .lm-site-nav a:hover{text-decoration:underline;text-underline-offset:4px}
 .lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
-@media(max-width:600px){.lm-site-nav{justify-content:space-between;gap:10px;padding:10px 16px;font-size:10px}}
+@media(max-width:600px){.lm-site-nav{justify-content:space-between;gap:10px;padding:10px 16px}}
 </style>'''
 areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","imagem.html":"imagem"}
 for filename,area in areas.items():
  p=Path("public")/filename
  assert p.exists(),filename
  s=p.read_text(encoding="utf-8")
- # Normalize symbol page with canonical typography, without altering editorial layouts.
- if area=="simbolos":
-  override = """<style>
- @font-face{font-family:UniversMattar;src:local('Univers LT Std 45 Light'),local('UniversLTStd-Light'),url('https://labmattar.com/fonts/univers-lt-std-45-light.otf') format('opentype');font-weight:300;font-display:swap}
- @font-face{font-family:PerpetuaMattar;src:local('Perpetua Titling MT Light'),local('PerpetuaTitlingMT-Light'),url('https://labmattar.com/fonts/perpetua-titling-light.ttf') format('truetype');font-weight:300;font-display:swap}
- body{font-family:UniversMattar,Arial,sans-serif;font-weight:300}
- </style>"""
-  s=s.replace("</head>",override+"</head>",1)
- 
  # Remove the earlier exploratory cross-navigation and its styling.
  s=re.sub(r'<nav class="lm-crossnav"[^>]*>.*?</nav>',"",s,flags=re.S)
  s=re.sub(r'<style>\.lm-crossnav\{.*?</style>',"",s,flags=re.S)
@@ -51,7 +42,9 @@ for filename,area in areas.items():
  if area=="composicao":
   s=s.replace('<h2>', '<h2 class="lm-manual-section-title">')
   s=s.replace('<h2 id="lmCompositionRulesTitle"', '<h2 class="lm-manual-section-title" id="lmCompositionRulesTitle"')
- s=s.replace("</head>",STYLE+'<link rel="stylesheet" href="/manual-headings.css?v=20261102c"><script defer src="/manual-type-roles.js?v=20261102c"></script>'+"</head>",1)
+ assert s.count('href="/manual-headings.css')==1, f"Missing normative typography link: {filename}"
+ assert s.count('src="/manual-type-roles.js')==1, f"Missing text-role classifier: {filename}"
+ s=s.replace("</head>",STYLE+"</head>",1)
  s=s.replace("<body>","<body>"+NAV.replace('data-area="'+area+'"','aria-current="page" data-area="'+area+'"'),1)
  p.write_text(s,encoding="utf-8")
  print(filename, "global navigation OK")

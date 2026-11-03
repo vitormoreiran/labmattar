@@ -12,6 +12,9 @@ on:
       - 'public/composicao-lab-controls.css'
       - 'public/composicao-lab.css'
       - 'public/composicao-lab.js'
+      - 'public/composicao-lab-signature.js'
+      - 'public/composicao-lab-signature.css'
+      - 'scripts/smoke-signature-browser.mjs'
       - 'public/composicao-lab-motion.js'
       - 'public/composicao-studio.css'
       - 'public/composicao-editor-clean.css'
@@ -60,6 +63,8 @@ jobs:
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js

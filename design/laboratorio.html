@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="/composicao-lab-controls.css">
 <link rel="stylesheet" href="/composicao-studio.css">
 <link rel="stylesheet" href="/composicao-editor-clean.css">
+<link rel="stylesheet" href="/composicao-lab-signature.css">
 <link rel="stylesheet" href="/manual-headings.css?v=20261102-normative">
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
@@ -160,8 +161,50 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           <summary><span>ASSINATURA E ENQUADRAMENTO</span></summary>
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusX">Foco horizontal da fotografia</label><output id="labFocusXValue" for="labFocusX">50%</output></div><input id="labFocusX" type="range" min="0" max="100" step="5" value="50"></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labFocusY">Foco vertical da fotografia</label><output id="labFocusYValue" for="labFocusY">50%</output></div><input id="labFocusY" type="range" min="0" max="100" step="5" value="50"></div>
-        <div class="lm-lab-field lm-ctrl-signature-field"><div class="lm-ctrl-signature-title"><label for="labSymbol">Símbolo de assinatura</label><span class="lm-ctrl-signature-figure" aria-hidden="true"><img id="labSymbolPreview" src="/identidade/M.svg" alt=""></span></div><select id="labSymbol"><option value="none">Sem assinatura adicional</option><option value="M.svg">M / master</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select><small class="lm-ctrl-helper">Assinatura independente da máscara M.</small></div></div>
+        </div>
         </details>
+      </section>
+
+      <section class="lm-inspector-panel lm-composition-module lm-signature-panel" id="labPanel-assinatura" data-lab-panel="assinatura" data-module="assinatura">
+        <div class="lm-inspector-panel-heading"><span>ASSINATURA</span></div>
+        <div class="lm-lab-fields lm-inspector-primary lm-signature-controls">
+          <div class="lm-lab-field lm-signature-presets-field">
+            <div class="lm-lab-field-title" id="labSignaturePresetsTitle">Construção</div>
+            <div class="lm-signature-presets" role="group" aria-labelledby="labSignaturePresetsTitle">
+              <button type="button" class="lm-signature-preset" data-signature-preset="none" aria-pressed="false"><span class="lm-signature-mini" data-layout="none" aria-hidden="true"><i></i></span><span>Sem assinatura</span></button>
+              <button type="button" class="lm-signature-preset" data-signature-preset="editorial" aria-pressed="true"><span class="lm-signature-mini" data-layout="editorial" aria-hidden="true"><i></i><i></i><i></i></span><span>Editorial</span></button>
+              <button type="button" class="lm-signature-preset" data-signature-preset="navigation" aria-pressed="false"><span class="lm-signature-mini" data-layout="navigation" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Navegação</span></button>
+              <button type="button" class="lm-signature-preset" data-signature-preset="symbol" aria-pressed="false"><span class="lm-signature-mini" data-layout="symbol" aria-hidden="true"><i></i></span><span>Símbolo isolado</span></button>
+            </div>
+            <p class="lm-signature-preset-status" id="labSignaturePresetStatus">Editorial / identificações nos cantos.</p>
+          </div>
+          <div class="lm-lab-field lm-signature-position-field">
+            <div class="lm-lab-field-title" id="labSignaturePositionTitle">Posições na superfície</div>
+            <div class="lm-signature-map" role="group" aria-labelledby="labSignaturePositionTitle">
+              <button type="button" data-signature-corner="tl" aria-pressed="true" aria-label="Editar canto superior esquerdo"><span>SUP. ESQ.</span><strong data-signature-mini-value="tl">TEXTO</strong></button>
+              <button type="button" data-signature-corner="tr" aria-pressed="false" aria-label="Editar canto superior direito"><span>SUP. DIR.</span><strong data-signature-mini-value="tr">VAZIO</strong></button>
+              <button type="button" data-signature-corner="bl" aria-pressed="false" aria-label="Editar canto inferior esquerdo"><span>INF. ESQ.</span><strong data-signature-mini-value="bl">TEXTO</strong></button>
+              <button type="button" data-signature-corner="br" aria-pressed="false" aria-label="Editar canto inferior direito"><span>INF. DIR.</span><strong data-signature-mini-value="br">TEXTO</strong></button>
+            </div>
+          </div>
+          <div class="lm-lab-field lm-signature-slot-editor">
+            <label class="lm-lab-field-title" id="labSignatureSlotTitle" for="labSignatureKind">SUPERIOR ESQUERDO / CONTEÚDO</label>
+            <select id="labSignatureKind"><option value="none">Vazio</option><option value="brand">Marca LABMATTAR</option><option value="symbol">Símbolo</option><option value="symbol-label">Símbolo + legenda</option><option value="text">Texto / identificação</option></select>
+            <div class="lm-signature-conditional" id="labSignatureSymbolField">
+              <label for="labSignatureSymbol">Símbolo do canto</label>
+              <select id="labSignatureSymbol"><option value="M.svg">M mestre</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select>
+            </div>
+            <div class="lm-signature-conditional" id="labSignatureTextField">
+              <label for="labSignatureText">Identificação / legenda</label>
+              <input id="labSignatureText" type="text" maxlength="100" placeholder="Texto da assinatura">
+            </div>
+          </div>
+          <div class="lm-lab-field lm-signature-scale-field">
+            <div class="lm-lab-value-row"><label for="labSignatureScale">Escala dos símbolos</label><output id="labSignatureScaleValue" for="labSignatureScale">100%</output></div>
+            <input id="labSignatureScale" type="range" min="60" max="140" step="5" value="100">
+          </div>
+          <select id="labSymbol" hidden aria-hidden="true" tabindex="-1"><option value="none">Sem símbolo</option><option value="M.svg">M mestre</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select>
+        </div>
       </section>
       <div class="lm-lab-mini-actions"><button type="button" id="labReset"><span aria-hidden="true" class="lm-ctrl-reset-icon">↺</span> RESTAURAR ESTUDO</button><span class="lm-lab-local" id="labSaveState">Rascunho local.</span></div>
     </aside>
@@ -180,6 +223,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <svg class="lm-lab-m-marker lm-lab-m-marker-bottom" viewBox="0 0 316.29 110.71" preserveAspectRatio="none"><path d="M0 110.71L134.4 16.63C147.46 7.49 168.83 7.49 181.89 16.63L316.29 110.71Z"/></svg>
           </div>
           <img id="labSignature" class="lm-lab-mark" src="/identidade/M.svg" alt="" aria-hidden="true" hidden>
+          <div id="labSignatureLayer" class="lm-lab-signature-layer" aria-hidden="true"></div>
           <div class="lm-lab-reading" id="labReading">
             <p id="labKicker" class="lm-lab-kicker lm-lab-inline-edit" contenteditable="plaintext-only" tabindex="0" role="textbox" aria-multiline="false" aria-label="Editar cabeçalho da composição" data-lab-inline="kicker" spellcheck="false">LABMATTAR / 2026</p>
             <div id="labCopy" class="lm-lab-main-copy">
@@ -204,5 +248,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-motion.js" defer></script>
+<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script>
 </body></html>

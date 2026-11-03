@@ -5,10 +5,46 @@
   const board=by("labArtboard");
   if(!board)return;
   const storageKey="labmattar-composicao-lab-v1";
+  const signatureSymbols=new Set(["M.svg",...Array.from({length:9},(_,i)=>"vaso_"+String(i+1).padStart(2,"0")+".svg")]);
+  const signatureCorners=["tl","tr","bl","br"];
+  const signatureKinds=new Set(["none","brand","symbol","symbol-label","text"]);
+  const freshSignature=()=>({
+    preset:"editorial",scale:100,
+    slots:{
+      tl:{kind:"text",symbol:"M.svg",text:"LABMATTAR / 2026"},
+      tr:{kind:"none",symbol:"vaso_03.svg",text:""},
+      bl:{kind:"text",symbol:"M.svg",text:"GASTROPERFORMANCE & FOOD DESIGN"},
+      br:{kind:"text",symbol:"M.svg",text:"LABMATTAR / IDENTIDADE VISUAL"}
+    }
+  });
+  function sanitizeSignature(input,legacy){
+    const fresh=freshSignature();
+    if(!input||typeof input!=="object"){
+      if(legacy&&typeof legacy==="object"){
+        for(const [corner,key] of [["tl","kicker"],["bl","footerLeft"],["br","footerRight"]])
+          if(typeof legacy[key]==="string")fresh.slots[corner].text=legacy[key].slice(0,100);
+        if(signatureSymbols.has(legacy.symbol))
+          fresh.slots.tr={kind:"symbol",symbol:legacy.symbol,text:""};
+      }
+      return fresh;
+    }
+    const result={preset:["none","editorial","navigation","symbol","custom"].includes(input.preset)?input.preset:"custom",
+      scale:Math.max(60,Math.min(140,Math.round(Number(input.scale)||100))),slots:{}};
+    for(const corner of signatureCorners){
+      const source=input.slots?.[corner],base=fresh.slots[corner];
+      result.slots[corner]={
+        kind:signatureKinds.has(source?.kind)?source.kind:base.kind,
+        symbol:signatureSymbols.has(source?.symbol)?source.symbol:base.symbol,
+        text:typeof source?.text==="string"?source.text.replace(/[\r\n]+/g," ").slice(0,100):base.text
+      };
+    }
+    return result;
+  }
   const defaultMetadata={
     kicker:"LABMATTAR / 2026",
     footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
-    footerRight:"LABMATTAR / IDENTIDADE VISUAL"
+    footerRight:"LABMATTAR / IDENTIDADE VISUAL",
+    signature:freshSignature()
   };
   const presets={
     tipografia:{
@@ -84,6 +120,7 @@
     for(const [key,max] of [["kicker",80],["footerLeft",100],["footerRight",100]]){
       if(typeof data[key]==="string")result[key]=data[key].replace(/[\r\n]+/g," ").slice(0,max);
     }
+    result.signature=sanitizeSignature(data.signature,data);
     return result;
   }
   let state=copy(presets.tipografia);
@@ -272,6 +309,8 @@
     mark.hidden=state.symbol==="none";
     if(!mark.hidden)mark.src="/identidade/"+state.symbol;
     renderTitle();
+    // One canonical signature is assembled separately from the M image mask.
+    window.LabSignatureComposer?.render(state.signature);
     // Do not carry the previous composition's fitted size into this one.
     title.style.removeProperty("font-size");
     body.style.removeProperty("font-size");
@@ -279,6 +318,15 @@
     by("labFormatLabel").textContent=formatNames[state.format];
     requestMeasurement();
   }
+  window.LabSignatureBridge={
+    get:()=>sanitizeSignature(state.signature),
+    update:signature=>{
+      state.signature=sanitizeSignature(signature);
+      activePreset="";
+      render();
+      save();
+    }
+  };
   function requestMeasurement(){
     if(frame)return;
     frame=requestAnimationFrame(()=>{frame=0;measure()});
@@ -449,6 +497,7 @@
   function applyPreset(key){
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
     state=copy(presets[key]);
+    state.signature=sanitizeSignature(state.signature);
     rememberedReadingWidths.clear();
     rememberedReadingWidths.set(state.format,state.textWidth);
     rememberedMScales.clear();

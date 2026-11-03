@@ -62,6 +62,15 @@
       board.append(ink);
       ghosts.push(ink);
     }
+    // Signature details follow the same motion as the other three roles.
+    // Clone them in place: no mutation of the live signature or its saved slots.
+    const signature=board.querySelector("#labSignatureLayer");
+    if(signature?.childElementCount){
+      const clone=cleanClone(signature.cloneNode(true));
+      clone.classList.add("lm-lab-signature-motion-layer");
+      board.append(clone);
+      ghosts.push(clone);
+    }
     return ghosts.map(ghost=>ghost.querySelector(".lm-lab-reading")).filter(Boolean);
   }
 
@@ -115,6 +124,14 @@
       )){
         const unit=prepareLine(line,scale);
         if(unit)prepared.push(unit);
+      }
+    }
+    const signatureGhost=ghosts.find(ghost=>ghost.classList.contains("lm-lab-signature-motion-layer"));
+    if(signatureGhost){
+      targets.push(...signatureGhost.querySelectorAll(".lm-lab-signature-slot"));
+      for(const line of signatureGhost.querySelectorAll(".lm-lab-signature-caption")){
+        const preparedLine=prepareLine(line,scale);
+        if(preparedLine)prepared.push(preparedLine);
       }
     }
     board.dataset.motionPlaying="true";

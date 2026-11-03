@@ -93,6 +93,7 @@
   // previous column width when they return to that format.
   const formatReadingWidths={horizontal:61,vertical:90,quadrado:78,editorial:70};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
+  const rememberedMScales=new Map([[state.format,state.mScale]]);
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
@@ -226,11 +227,14 @@
   }
   function render(){
     const mMax=maxMScale(state.format);
-    if(state.mScale>mMax)state.mScale=mMax;
+    if(state.mPresentation!=="completo"&&state.mScale>mMax)state.mScale=mMax;
+    // An inactive scale control must not overwrite an Elemento value stored
+    // for another surface merely because Completo is selected now.
+    const visibleMax=state.mPresentation==="completo"?Math.max(mMax,state.mScale):mMax;
     const mScaleInput=by("labMScale");
-    mScaleInput.max=String(mMax);
+    mScaleInput.max=String(visibleMax);
     const mPrecision=by("labPrecision-mScale");
-    if(mPrecision)mPrecision.max=String(mMax);
+    if(mPrecision)mPrecision.max=String(visibleMax);
     state.placement="central";
     state.mPosition="centro";
     syncInputs();
@@ -426,6 +430,8 @@
     state=copy(presets[key]);
     rememberedReadingWidths.clear();
     rememberedReadingWidths.set(state.format,state.textWidth);
+    rememberedMScales.clear();
+    rememberedMScales.set(state.format,state.mScale);
     activePreset=key;
     render();save();
   }
@@ -834,14 +840,19 @@
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
       const previousMode=state.mMode;
-      const previousFormat=state.format,previousWidth=state.textWidth;
+      const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale;
       readInputs();
       if(id==="labFormat"&&state.format!==previousFormat){
         rememberedReadingWidths.set(previousFormat,previousWidth);
+        rememberedMScales.set(previousFormat,previousMScale);
         state.textWidth=rememberedReadingWidths.has(state.format)?
           rememberedReadingWidths.get(state.format):formatReadingWidths[state.format];
+        state.mScale=rememberedMScales.has(state.format)?
+          rememberedMScales.get(state.format):Math.min(previousMScale,maxMScale(state.format));
         rememberedReadingWidths.set(state.format,state.textWidth);
+        rememberedMScales.set(state.format,state.mScale);
       }
+      if(id==="labMScale")rememberedMScales.set(state.format,state.mScale);
       // An application is a compositional decision. Entering M mode gives
       // the word and the whole letter separate readable fields, preserving
       // the user's actual content, fonts, format and selected photograph.

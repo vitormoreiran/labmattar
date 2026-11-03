@@ -13,24 +13,24 @@
   const presets={
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"central",relation:"central",gap:0,textWidth:61,titleScale:100,type:"alternada",
-      background:"color",mContent:"off",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      textWidth:61,titleScale:100,type:"alternada",
+      background:"color",mContent:"off",mPresentation:"elemento",photo:"64",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS E\nPROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
-      placement:"central",relation:"central",gap:0,textWidth:40,titleScale:95,type:"alternada",
-      background:"color",mContent:"photo",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
+      textWidth:40,titleScale:95,type:"alternada",
+      background:"color",mContent:"photo",mPresentation:"elemento",photo:"64",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
     },
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
-      placement:"central",relation:"central",gap:0,textWidth:80,titleScale:95,type:"alternada",
-      background:"photo",mContent:"off",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"179",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      textWidth:80,titleScale:95,type:"alternada",
+      background:"photo",mContent:"off",mPresentation:"elemento",photo:"179",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -38,13 +38,13 @@
   };
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
-    placement:"labPlacement",relation:"labRelation",gap:"labGap",marker:"labMarker",textWidth:"labTextWidth",
-    titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",image:"labImage",mMode:"labMMode",photo:"labPhoto",
-    mPosition:"labMPosition",mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
+    marker:"labMarker",textWidth:"labTextWidth",
+    titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
+    mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","gap","textWidth","titleScale","mScale","focusX","focusY"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
   const palette={
     neutral:["#f7f6f2","#181818"],
     beige:["#e6dbcf","#181818"],
@@ -124,7 +124,6 @@
       "M ou marcadores ativos: fundo automático com a mesma fotografia desfocada. Cor e fotografia selecionadas são preservadas para quando o M for desligado.":
       "Sem M nem marcadores: o fundo segue a escolha de cor ou fotografia.";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
-    for(const key of ["mPosition","mMode"])by(fields[key]).disabled=!mActive;
     const fullM=mActive&&state.mPresentation==="completo";
     by("labMPresentationField").hidden=false;
     by("labMPresentation").disabled=!mActive;
@@ -137,7 +136,7 @@
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=false;
     by("labMarker").disabled=fullM;
-    for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMMode","labMPosition","labMScale","labMarker"])
+    for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMScale","labMarker"])
       setFieldVisible(id,true);
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
@@ -235,13 +234,9 @@
     mScaleInput.max=String(visibleMax);
     const mPrecision=by("labPrecision-mScale");
     if(mPrecision)mPrecision.max=String(visibleMax);
-    state.placement="central";
-    state.mPosition="centro";
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.mPresentation=state.mPresentation;
-    board.dataset.placement=state.placement;
-    board.dataset.relation="central";
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     // The lower image is always the SAME selected photo with blur while an
     // M (solid/photo) or its end markers are present. Keep the user's original
@@ -249,14 +244,11 @@
     const blurredBackdrop=markerActive||state.mContent!=="off";
     const effectiveBackground=blurredBackdrop?"photo":state.background;
     const backdrop=blurredBackdrop?"blur":state.background;
-    const legacyImage=state.mContent==="photo"?"recorte":effectiveBackground==="photo"?"inteira":"nenhuma";
-    board.dataset.image=legacyImage;
     board.dataset.background=effectiveBackground;
     board.dataset.backdrop=backdrop;
     board.dataset.backgroundRequested=state.background;
     board.dataset.markerBlur=String(markerActive);
     board.dataset.mContent=state.mContent;
-    board.dataset.mMode=state.mMode;
     board.dataset.guide=state.guides;
     board.dataset.photoText="false";
     board.dataset.mText="false";
@@ -310,15 +302,9 @@
     return {adjusted:false,room:true};
   }
 
-  /*
-   * An entered scale is a requested maximum, never a license to cross a margin.
-   * Measure rendered line boxes after fonts and layout resolve; reduce the title
-   * only as far as necessary. Long unbreakable words are preserved first.
-   * Emergency wrapping is a last resort when a readable whole word cannot fit.
-   */
-  /*
-   * The three LABMATTAR typography roles are fixed. Density is handled
-   * through content, width and format; an individual title never shrinks.
+  /* The three LABMATTAR typography roles are fixed.
+   * Validate the rendered title against the shared reading frame. If content
+   * exceeds it, report the condition; never shrink an individual title.
    */
   function fitTitleToReadingArea(){
     const reading=by("labReading");
@@ -641,10 +627,6 @@
     labMContent:["M",
       "Define se o M está ausente, sólido ou preenchido por fotografia.",
       "O M permanece central e sua escala é independente do fundo."],
-    labImage:["Imagem",
-      "Escolha campo liso, fotografia integral ou máscara M.",
-      "Com texto sobre fotografia, o preto 20% é automático."],
-
     labPhoto:["Fotografia",
       "Escolha a imagem.",
       "O enquadramento pode ser ajustado separadamente."],
@@ -839,7 +821,6 @@
   for(const id of Object.values(fields)){
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
-      const previousMode=state.mMode;
       const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale;
       readInputs();
       if(id==="labFormat"&&state.format!==previousFormat){
@@ -853,13 +834,6 @@
         rememberedMScales.set(state.format,state.mScale);
       }
       if(id==="labMScale")rememberedMScales.set(state.format,state.mScale);
-      // An application is a compositional decision. Entering M mode gives
-      // the word and the whole letter separate readable fields, preserving
-      // the user's actual content, fonts, format and selected photograph.
-
-      if(id==="labMMode"&&previousMode!==state.mMode){
-        if(state.mMode==="janela")state.mScale=Math.min(state.mScale,50);
-      }
       if(id==="labTextWidth"||id==="labBackground"||id==="labMContent")
         rememberedReadingWidths.set(state.format,state.textWidth);
       activePreset="";render();save();

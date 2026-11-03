@@ -7,33 +7,28 @@
 .lm-lab-heading{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(235px,.7fr);align-items:end;gap:clamp(25px,5vw,90px);margin-bottom:36px}
 .lm-lab-heading h2{margin:15px 0 0;}
 .lm-lab-heading p:not(.eyebrow){max-width:43ch;margin:0}
-.lm-lab-prep{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;border-block:1px solid var(--line);padding:17px 0 19px;margin-bottom:24px}
-.lm-lab-presets{display:flex;gap:16px 24px;flex-wrap:wrap}
-.lm-lab-presets button{background:none;border:0;border-bottom:1px solid transparent;color:inherit;cursor:pointer;padding:7px 0}
-.lm-lab-presets button[aria-pressed=true]{border-color:currentColor}
-.lm-lab-presets button:hover,.lm-lab-mini-actions button:hover{opacity:.65}
-.lm-lab-workspace{display:grid;grid-template-columns:minmax(245px,294px) minmax(0,1fr);gap:clamp(21px,3vw,40px);align-items:start}
-.lm-lab-inspector{min-width:0;border-top:1px solid var(--ink)}
-.lm-lab-section{border:0;border-bottom:1px solid var(--line);margin:0;padding:23px 0 28px;min-width:0}
-.lm-lab-section legend{padding:0;float:left;width:100%;margin:0 0 18px}
-.lm-lab-section .lm-lab-fields{clear:both;display:grid;gap:17px}
+.lm-lab-prep{justify-content:space-between;flex-wrap:wrap;border-block:1px solid var(--line);margin-bottom:24px}
+.lm-lab-mini-actions button:hover{opacity:.65}
+.lm-lab-workspace{display:grid;gap:clamp(21px,3vw,40px);align-items:start}
 .lm-lab-field{display:flex;flex-direction:column;gap:7px;min-width:0}
 .lm-lab-field select,.lm-lab-field input:not([type=range]),.lm-lab-field textarea{width:100%;min-width:0;min-height:40px;border:1px solid #aaa8a1;border-radius:0;padding:9px 12px;background:transparent;color:#181818;}
 .lm-lab-field select{padding-right:21px}
 .lm-lab-field textarea{min-height:83px;resize:vertical;}
-.lm-lab-field input[type=range]{display:block;width:100%;accent-color:#181818;min-width:0}
+.lm-lab-field input[type=range]{display:block;accent-color:#181818;min-width:0}
 .lm-lab-field .lm-lab-value-row{display:flex;justify-content:space-between;gap:16px;align-items:center}
-.lm-lab-field output{color:#56534f;white-space:nowrap}
 .lm-lab-field small{color:#625e58}
 .lm-lab-field .lm-lab-fit-info{display:block;margin-top:1px;min-height:15px;color:#62615b}
 .lm-lab-field .lm-lab-fit-info[data-adjusted="true"]{color:#181818}
 .lm-lab-field:has(:disabled){opacity:.44}
-.lm-lab-inspector button:focus-visible,.lm-lab-presets button:focus-visible,.lm-lab-field select:focus-visible,.lm-lab-field input:focus-visible,.lm-lab-field textarea:focus-visible{outline:2px solid #181818;outline-offset:3px}
-.lm-lab-mini-actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:22px 0}
-.lm-lab-mini-actions button{border:1px solid #181818;padding:12px 16px;background:transparent;color:#181818;}
+.lm-lab-inspector button:focus-visible,
+.lm-lab-field select:focus-visible,
+.lm-lab-field input:focus-visible,
+.lm-lab-field textarea:focus-visible{outline:2px solid #181818;outline-offset:3px}
+.lm-lab-mini-actions{display:flex;flex-wrap:wrap;align-items:center;padding:22px 0}
+.lm-lab-mini-actions button{border:1px solid #181818;}
 .lm-lab-mini-actions .lm-lab-local{color:#625e58;}
 .lm-lab-preview{position:sticky;top:77px;min-width:0}
-.lm-lab-preview-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--ink);padding:14px 0;}
+.lm-lab-preview-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0;}
 .lm-lab-stage{min-height:590px;background:#e4e3de;border:1px solid #d3d0c9;display:grid;place-items:center;padding:clamp(8px,1.5vw,24px);min-width:0;overflow:hidden}
 .lm-lab-board{
   --lab-pad:7%;
@@ -59,67 +54,12 @@
 .lm-lab-board[data-format=editorial]{width:min(100%,900px);aspect-ratio:1.414}
 .lm-lab-photo-layer{position:absolute;inset:0;z-index:0;pointer-events:none}
 .lm-lab-photo-ambient{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y);display:block}
-.lm-lab-board[data-image=recorte] .lm-lab-photo-ambient{inset:-7%;width:114%;height:114%;filter:blur(22px) brightness(.72) saturate(.84);transform:scale(1.045)}
-.lm-lab-board[data-image=inteira] .lm-lab-photo-ambient{filter:none}
-/* Three carefully differentiated applications of the SAME published M.
-   Window: the whole letter reads clearly against a quiet ambient photograph.
-   Lateral: intentional bleed. Subtle: a translucent M over a full image. */
-.lm-lab-board[data-image=recorte][data-m-mode=janela] .lm-lab-photo-ambient{
-  filter:blur(42px) brightness(.40) saturate(.58);
-  opacity:.70;
-  transform:scale(1.05);
-}
-.lm-lab-board[data-image=recorte][data-m-mode=corte] .lm-lab-photo-ambient{
-  filter:blur(27px) brightness(.62) saturate(.72);
-  opacity:.83;
-}
-.lm-lab-board[data-image=recorte][data-m-mode=sutil] .lm-lab-photo-ambient{
-  inset:0;width:100%;height:100%;
-  filter:none;opacity:1;transform:none;
-}
-.lm-lab-board[data-image=recorte][data-m-mode=sutil] .lm-lab-m-photo{
-  opacity:.13;
-  background:#f7f6f2;
-}
-.lm-lab-board[data-image=recorte][data-m-mode=sutil] .lm-lab-m-photo img,
-.lm-lab-board[data-image=recorte][data-m-mode=sutil] .lm-lab-m-photo::after{
-  display:none;
-}
-.lm-lab-board[data-image=recorte][data-m-mode=janela] .lm-lab-m-photo{
-  filter:drop-shadow(0 2px 10px rgba(0,0,0,.08));
-}
-.lm-lab-board[data-image=recorte][data-m-mode=corte] .lm-lab-m-photo{
-  filter:none;
-}
-.lm-lab-board[data-image=recorte][data-m-mode=janela][data-relation=separada] .lm-lab-main-copy{
-  width:min(100%,var(--lab-text-width));
-}
-.lm-lab-board[data-format=quadrado][data-image=recorte][data-m-mode=janela] .lm-lab-m-photo{
-  top:62%;
-}
-.lm-lab-board[data-format=vertical][data-image=recorte][data-m-mode=janela] .lm-lab-m-photo{
-  top:74%;
-  width:min(var(--lab-m-size),90cqh);
-}
-/* A portrait cannot support a narrow two-column split between a long word
-   and the M. Stack the editorial title and image on the same reading axis,
-   so the whole word can be fitted without arbitrary character fragments. */
-.lm-lab-board[data-format=vertical][data-image=recorte][data-m-mode=janela][data-relation=separada] .lm-lab-main-copy{
-  /* No independent portrait centering: title remains attached to the ruler. */
-  width:min(100%,calc(100% - var(--lab-text-x)));
-}
-.lm-lab-board[data-format=vertical][data-image=recorte][data-m-mode=corte] .lm-lab-m-photo{
-  top:65%;
-}
-.lm-lab-board[data-format=vertical][data-image=recorte][data-m-mode=sutil] .lm-lab-m-photo{
-  top:54%;
-  width:min(var(--lab-m-size),90cqh);
-}
-
+/* Photograph treatment comes exclusively from data-backdrop below.
+ * There is no extra mask mode, and no separate blur rule per application. */
 .lm-lab-photo-contrast{position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
 .lm-lab-board[data-photo-text=true] .lm-lab-photo-contrast{opacity:1}
 .lm-lab-m-photo{
-  position:absolute;left:var(--lab-m-x);top:50%;
+  position:absolute;
   width:min(var(--lab-m-size),140cqh);
   height:auto;aspect-ratio:990.08/743.18;
   transform:translate(-50%,-50%);
@@ -130,21 +70,18 @@
 .lm-lab-m-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y)}
 .lm-lab-m-photo::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;z-index:1;pointer-events:none}
 .lm-lab-board[data-m-text=true] .lm-lab-m-photo::after{opacity:1}
-.lm-lab-board[data-image=nenhuma] .lm-lab-photo-layer,
-.lm-lab-board[data-image=inteira] .lm-lab-m-photo{display:none}
 .lm-lab-mark{position:absolute;z-index:4;top:var(--lab-pad);right:var(--lab-pad);width:clamp(30px,9cqw,110px);max-height:22cqh;object-fit:contain;pointer-events:none}
 .lm-lab-mark[data-position=esquerda]{right:auto;left:var(--lab-pad)}
-.lm-lab-board[data-image=nenhuma] .lm-lab-mark{mix-blend-mode:multiply}
-.lm-lab-board[data-image=recorte] .lm-lab-mark,
-.lm-lab-board[data-image=inteira] .lm-lab-mark{filter:brightness(0) invert(1)}
+.lm-lab-board[data-backdrop="color"] .lm-lab-mark{mix-blend-mode:multiply}
+.lm-lab-board[data-backdrop="photo"] .lm-lab-mark,
+.lm-lab-board[data-backdrop="blur"] .lm-lab-mark{filter:brightness(0) invert(1)}
 .lm-lab-reading{
   /* A single editorial type system. Page formats change the ratios below;
      resizing the preview cannot change typography relative to the page. */
   
   
   
-  --lab-copy-gap:2cqw;
-  position:absolute;z-index:3;inset:var(--lab-pad);
+  --lab-copy-gap:2cqw;z-index:3;inset:var(--lab-pad);
   display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;
   gap:1.4cqw;
   pointer-events:none;
@@ -152,8 +89,7 @@
 .lm-lab-reading>*{pointer-events:none}
 .lm-lab-kicker{max-width:100%;margin:0}
 .lm-lab-main-copy{
-  position:relative;z-index:1;align-self:flex-start;
-  width:min(100%,var(--lab-text-width));
+  position:relative;z-index:1;
   margin:auto 0;
   display:flex;flex-direction:column;gap:var(--lab-copy-gap);
   min-width:0;
@@ -163,8 +99,6 @@
   text-wrap:balance;
   overflow-wrap:normal;word-break:normal;hyphens:none;
 }
-/* O tamanho pedido pelo controle é apenas um teto. A rotina de medida
-   aplica o maior corpo que cabe, com palavras inteiras sempre que possível. */
 /* Explicit lines remain editorial groups, but phrases can recompose at
  * actual WORD boundaries when a narrower surface requires it. A long phrase
  * must never be clipped or solved by silently shrinking the Title treatment. */
@@ -179,8 +113,6 @@
 .lm-lab-body{margin:0;max-width:100%;overflow-wrap:normal;word-break:normal;hyphens:none;white-space:pre-line}
 .lm-lab-bottom{display:flex;justify-content:space-between;gap:1.5cqw;align-items:end;}
 .lm-lab-bottom span{max-width:48%;overflow-wrap:normal;word-break:normal;hyphens:none}
-.lm-lab-board[data-relation=separada][data-image=recorte] .lm-lab-main-copy{width:min(100%,var(--lab-text-width))}
-.lm-lab-board[data-image=inteira] .lm-lab-main-copy{width:min(100%,var(--lab-text-width))}
 .lm-lab-board[data-guide=grid] .lm-lab-grid{display:block}
 .lm-lab-board[data-guide=margens] .lm-lab-safeline,
 .lm-lab-board[data-guide=grid] .lm-lab-safeline{display:block}
@@ -199,7 +131,6 @@
 .lm-lab-board[data-format=vertical] .lm-lab-bottom span{max-width:100%}
 .lm-lab-board[data-format=vertical] .lm-lab-main-copy{width:min(100%,var(--lab-text-width))}
 .lm-lab-board[data-format=vertical] .lm-lab-m-photo{top:64%;width:min(var(--lab-m-size),96cqh)}
-.lm-lab-board[data-format=vertical][data-relation=separada] .lm-lab-m-photo{top:74%}
 .lm-lab-board[data-format=quadrado] .lm-lab-reading{
   
   
@@ -221,8 +152,8 @@
 .lm-lab-legend p{margin:8px 0 0}
 .lm-lab-lead{margin:35px 0 0;max-width:85ch;}
 @media(max-width:1100px){.lm-lab-workspace{grid-template-columns:244px minmax(0,1fr)}.lm-lab-stage{min-height:480px}}
-@media(max-width:850px){.lm-lab-workspace{display:flex;flex-direction:column}.lm-lab-preview{position:static;order:-1;width:100%}.lm-lab-inspector{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 25px;width:100%}.lm-lab-mini-actions{grid-column:1/-1}.lm-lab-stage{min-height:530px}.lm-lab-heading{grid-template-columns:1fr}.lm-lab-heading p:not(.eyebrow){max-width:60ch}}
-@media(max-width:540px){.lm-lab-inspector{grid-template-columns:1fr}.lm-lab-stage{min-height:455px;padding:8px}.lm-lab-board[data-format=vertical]{width:min(100%,315px)}.lm-lab-legend{grid-template-columns:1fr}.lm-lab-prep{align-items:start}.lm-lab-presets{gap:8px 20px}}
+@media(max-width:850px){.lm-lab-preview{position:static;width:100%}.lm-lab-inspector{gap:0 25px;width:100%}.lm-lab-mini-actions{grid-column:1/-1}.lm-lab-stage{min-height:530px}.lm-lab-heading{grid-template-columns:1fr}.lm-lab-heading p:not(.eyebrow){max-width:60ch}}
+@media(max-width:540px){.lm-lab-inspector{grid-template-columns:1fr}.lm-lab-stage{min-height:455px;padding:8px}.lm-lab-board[data-format=vertical]{width:min(100%,315px)}.lm-lab-legend{grid-template-columns:1fr}.lm-lab-prep{align-items:start}}
 @media(prefers-reduced-motion:reduce){.lm-lab-board{transition:none}}
 
 /* Structural alignment: the text keeps one horizontal ruler; only its height changes.
@@ -235,9 +166,6 @@
   max-width:100%;
 }
 .lm-lab-main-copy .lm-lab-body{margin-inline:0!important}
-.lm-lab-board[data-placement=central] .lm-lab-main-copy{margin:auto 0}
-.lm-lab-board[data-placement=superior] .lm-lab-main-copy{margin-top:clamp(24px,7cqh,85px);margin-bottom:auto}
-.lm-lab-board[data-placement=inferior] .lm-lab-main-copy{margin-top:auto;margin-bottom:4%}
 .lm-lab-m-photo{
   left:var(--lab-m-x)!important;
   top:var(--lab-m-y)!important;
@@ -256,10 +184,6 @@
 .lm-lab-m-markers[data-marker=top] .lm-lab-m-marker-top,
 .lm-lab-m-markers[data-marker=bottom] .lm-lab-m-marker-bottom,
 .lm-lab-m-markers[data-marker=both] .lm-lab-m-marker{display:block}
-.lm-lab-board[data-image=recorte] .lm-lab-m-photo{
-  left:50%!important;
-  top:50%!important;
-}
 
 /* The manual presents the system as a vocabulary, not as a stack of mini-essays. */
 .lm-composition-vocabulary{
@@ -371,7 +295,11 @@
   display:block!important;background:var(--lab-ink)!important;
 }
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo img{display:none!important}
-.lm-lab-board[data-m-content=photo] .lm-lab-m-photo{display:block!important;background:transparent!important}
+.lm-lab-board[data-m-content=photo] .lm-lab-m-photo{
+  display:block!important;
+  background:transparent!important;
+  filter:drop-shadow(0 2px 10px rgba(0,0,0,.08));
+}
 .lm-lab-board[data-m-content=photo] .lm-lab-m-photo img{display:block!important}
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo::after{display:none!important}
 .lm-lab-board[data-m-content=photo] .lm-lab-m-photo,

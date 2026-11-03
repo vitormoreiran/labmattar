@@ -62,7 +62,6 @@
       <section class="lm-inspector-panel lm-composition-module" id="labPanel-texto" data-lab-panel="texto" data-module="texto">
         <div class="lm-inspector-panel-heading"><span>TEXTO</span><small>Título · corpo · largura</small></div>
         <div class="lm-lab-fields lm-inspector-primary">
-        <select id="labPlacement" hidden aria-hidden="true"><option value="superior">Alto</option><option value="central" selected>Centro</option><option value="inferior">Baixo</option></select>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labTypeTitle" class="lm-lab-field-title">Tratamento do título</div><select id="labType" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="alternada">Univers + Perpetua</option><option value="univers">Univers</option><option value="perpetua">Perpetua</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labTypeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="alternada" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="mixed"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Alternado</span><span class="lm-ctrl-meta">U + P</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="univers" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="univers"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Univers</span><span class="lm-ctrl-meta">Estrutural</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="perpetua" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="perpetua"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Perpetua</span><span class="lm-ctrl-meta">Editorial</span></button></div><small class="lm-ctrl-helper">Um único tipo de título.</small></div>
@@ -136,8 +135,6 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <small id="labMPresentationHint" class="lm-ctrl-helper">Elemento preserva a escala. Completo ocupa toda a altura, sem deformação. A sangria depende do formato.</small>
           </div>
         </div>
-        <select id="labImage" hidden aria-hidden="true"><option value="nenhuma" selected>Compatibilidade</option></select>
-        <select id="labMMode" hidden aria-hidden="true"><option value="janela" selected>Aplicação estrutural do M</option></select>
         
         <div class="lm-lab-field lm-ctrl-choice-field lm-marker-field lm-vocab-field">
           <div id="labMarkerTitle" class="lm-lab-field-title">Marcadores do M</div>
@@ -156,9 +153,6 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           
         </div>
         
-        <select id="labRelation" hidden aria-hidden="true"><option value="central" selected>Central</option></select>
-        <input id="labGap" type="hidden" value="0">
-        <select id="labMPosition" hidden aria-hidden="true"><option value="centro" selected>centro</option></select>
         
         <div class="lm-lab-field lm-m-scale-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"></div>
         
@@ -181,7 +175,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
       <div class="lm-lab-preview-head"><span>PROVA DE PÁGINA / CADA CORPO ABRE UM MUNDO</span><span class="lm-lab-preview-edit-note">CLIQUE NO TEXTO PARA EDITAR</span><span id="labFormatLabel">HORIZONTAL / 16:9</span></div>
       <div class="lm-lab-stage">
         <div class="lm-lab-artboard-frame" id="labArtboardFrame">
-        <article id="labArtboard" class="lm-lab-board" data-image="nenhuma" data-format="horizontal" data-placement="esquerda" data-relation="separada" data-guide="nenhuma" data-photo-text="false" data-m-text="false" data-state="ok" aria-label="Prévia experimental de composição LABMATTAR">
+        <article id="labArtboard" class="lm-lab-board" data-format="horizontal" data-guide="nenhuma" data-photo-text="false" data-m-text="false" data-state="ok" aria-label="Prévia experimental de composição LABMATTAR">
           <div class="lm-lab-photo-layer" aria-hidden="true">
             <img class="lm-lab-photo-ambient" id="labAmbientPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
             <div class="lm-lab-photo-contrast"></div>

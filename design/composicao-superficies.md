@@ -2,6 +2,26 @@
 
 **Referência técnica:** o estudo de `04 / COMPOSIÇÃO` utiliza o mesmo núcleo de leitura do `05 / LABORATÓRIO`: `lm-lab-reading` → `lm-lab-kicker`, `lm-lab-main-copy` (Título + Corpo), `lm-lab-bottom`. O arquivo `public/composicao-lab.css` contém essa regra estrutural; `public/composicao-demo.css` apenas adapta o exemplo de imagem, estados e formato.
 
+## Versão oficial — fontes de verdade
+
+Esta é a referência de manutenção da identidade, não um conjunto de exemplos paralelos. Cada regra tem um único responsável:
+
+| Responsabilidade | Arquivo oficial |
+| --- | --- |
+| Estrutura editorial das páginas e orientação do conteúdo | `design/composicao.html` e `design/laboratorio.html` |
+| Título, Corpo e Detalhe, famílias, entrelinha e tracking | `public/manual-headings.css` e `public/manual-type-roles.js` |
+| Vetor M, proporções dos canvases, área útil e camadas fotográficas | `public/composicao-lab.css` |
+| Estado, presets, marcadores, foco da fotografia e validação da leitura | `public/composicao-lab.js` |
+| Controles ilustrados ativos | `public/composicao-lab-controls.css` |
+| Comportamento de editor focado e escala da prévia | `public/composicao-studio.js`, `public/composicao-studio.css` e `public/composicao-editor-clean.css` |
+| Demonstração aplicada do capítulo 04 | `public/composicao-demo.css` e script da página de Composição |
+
+**Estados que devem existir no canvas:** `data-backdrop` (color, photo, blur), `data-m-content` (off, solid, photo), `data-m-presentation` (elemento, completo), `data-marker-blur`, `data-format` e os atributos de contraste e guias. A preferência de fundo é salva separadamente de sua apresentação efetiva.
+
+**Estados que não devem retornar:** `data-image`, `data-m-mode`, `data-relation` e modos de posição personalizados. Não reintroduzir selects invisíveis de compatibilidade nem regras específicas de blur por modo do M. A régua editorial é única; quando o conteúdo não couber, registrar a condição e rever a composição, sem reduzir automaticamente um título.
+
+**Critério de manutenção:** uma correção só é oficial quando preservar a identidade visível, passar a validação estrutural e os testes de navegador do Laboratório, inclusive nos quatro formatos e na prévia móvel. As alterações são feitas sobre a fonte real em `design/` ou `public/`, nunca somente sobre uma cópia compilada.
+
 ## O que permanece
 
 - Os únicos tratamentos de texto são **Título**, **Corpo** e **Detalhe** com Univers e Perpetua; a escala proporcional à superfície é aplicada por `manual-headings.css`, não por fontes adicionais.

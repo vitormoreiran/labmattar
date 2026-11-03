@@ -56,13 +56,23 @@ assert "lm-composition-submodule" in composition
 assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
 assert "dataset.background" in lab_js and "dataset.mContent" in lab_js
 assert 'data-backdrop="blur"' in lab_css and "data-m-content=solid" in lab_css, "Shared photographic blur must be the only M backdrop rule"
+# Deprecated interfaces have no DOM producers. Their CSS must never return,
+# nor should the renderer regain a second competing M/image state machine.
+for stale in (".lm-studio-detail", ".lm-studio-tool", ".lm-studio-image-block",
+              ".lm-lab-presets", ".lm-inspector-tabs", ".lm-ctrl-preset-visual"):
+ for name,stylesheet in (("studio",studio_css),("editor",clean_css),("controls",(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8"))):
+  assert stale not in stylesheet,f"Deprecated selector {stale} returned to {name}"
+assert 'data-image=' not in lab_css and 'data-m-mode=' not in lab_css
+assert lab_css.count('data-backdrop="blur"')>=2, "Photograph blur needs one canonical background state"
+assert composition.count('data-lab-choice="mPresentation"')==2, "Only Elemento/Completo are allowed"
+
 assert "m-publicado.svg" in lab_css
 assert 'id="regras-de-composicao"' in construction, "Composition rules section missing"
 for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):
  assert rule in construction,f"Missing composition rule: {rule}"
 assert 'data-lab-choice="mMode"' not in composition, "Invented M usage modes must not be exposed"
 assert ".20" in lab_css, "Fixed 20% must be preserved"
-assert "state.mMode" in lab_js
+assert "state.mMode" not in lab_js and "dataset.image" not in lab_js, "Deprecated M and image mode states must not survive"
 assert "lm-composition-module" in clean_css and "lm-composition-submodule" in clean_css
 
 
@@ -79,9 +89,9 @@ assert 'data-lab-more="pagina"' in composition
 assert 'data-lab-more="texto"' in composition
 assert 'data-lab-more="imagem"' in composition
 for control in ("labFormat","labColor","labMargin","labGuides",
-                "labPlacement","labType","labTitleScale","labTextWidth","labBodyMode",
-                "labTitleInput","labBodyInput","labBackground","labMContent","labImage","labMMode","labPhoto","labMarker","labRelation",
-                "labMPosition","labGap","labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
+                "labType","labTitleScale","labTextWidth","labBodyMode",
+                "labTitleInput","labBodyInput","labBackground","labMContent","labMPresentation","labPhoto","labMarker",
+                "labMScale","labFocalPreview","labFocusX","labFocusY","labSymbol"):
  assert composition.count('id="'+control+'"')==1,f"Missing or duplicate composition field: {control}"
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
@@ -101,8 +111,11 @@ assert "labHelp-overview" in lab_js
 assert "const inlineEditors=" in lab_js
 assert "rgba(0,0,0,.20)" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 
-assert 'id="labPlacement"' in composition
-assert 'id="labMPosition"' in composition
+for deprecated in ("labPlacement","labMPosition","labImage","labMMode","labRelation","labGap"):
+ assert 'id="'+deprecated+'"' not in composition,f"Inactive legacy field remains: {deprecated}"
+for deprecated in ("data-image","data-m-mode","data-relation","data-placement"):
+ assert deprecated not in lab_css,f"Legacy presentation rule remains in official CSS: {deprecated}"
+assert 'data-backdrop="blur"' in lab_css and 'data-m-presentation="completo"' in lab_css
 assert 'id="labMarker"' in composition
 assert "M central" in composition and "Marcadores" in composition
 assert "lm-marker-grid" in composition

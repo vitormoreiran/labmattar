@@ -152,7 +152,6 @@ html body .compact-band{grid-template-columns:minmax(0,1fr)!important}
 #estrutura .lm-reading-intro>h2.lm-manual-section-title,
 #estrutura .lm-reading-intro>p{grid-column:1/-1}
 /* Zero-sized duplicate labels are visually hidden, not a fourth text style. */
-html body.lm-studio-open #labStudioToggleText,
 html body.lm-studio-open .lm-lab-prep-label{font-size:0!important}
 @media(max-width:760px){
  :root{

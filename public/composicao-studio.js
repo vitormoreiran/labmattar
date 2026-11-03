@@ -48,7 +48,7 @@
     toggle.setAttribute("aria-pressed",String(active));
     toggleText.textContent=active?"VOLTAR AO LABORATÓRIO":"ABRIR EDITOR";
     quickReset.hidden=!active;
-    for(const panel of panels)panel.hidden=false;
+    applyMobileModule(mobileModule);
     if(updateUrl)setUrl(active);
     if(active)requestAnimationFrame(()=>{lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"});fitArtboard();});
   }
@@ -109,14 +109,13 @@
     artboard.style.setProperty("max-height","none","important");
     artboard.style.setProperty("aspect-ratio","auto","important");
 
-    const compact=window.innerWidth<=1180;
-    const pad=compact?16:32;
-    const maxW=compact
-      ? Math.max(160,window.innerWidth-24)
-      : Math.max(160,stage.clientWidth-pad);
-    // The compact preview is not a thumbnail. Use the actual available stage
-    // height rather than capping every page to 174/244 physical pixels.
-    const maxH=Math.max(120,stage.clientHeight-pad);
+    // Fit the logical page inside the actual stage content box, including
+    // its responsive padding. This keeps every edge visible at every format.
+    const stageStyle=getComputedStyle(stage);
+    const horizontalPadding=parseFloat(stageStyle.paddingLeft)+parseFloat(stageStyle.paddingRight);
+    const verticalPadding=parseFloat(stageStyle.paddingTop)+parseFloat(stageStyle.paddingBottom);
+    const maxW=Math.max(1,stage.clientWidth-horizontalPadding);
+    const maxH=Math.max(1,stage.clientHeight-verticalPadding);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
 
     // A logical page is zoomed to fit the stage. Compensate ONLY the three
@@ -173,13 +172,15 @@
     const textMore=textPanel?.querySelector('[data-lab-more="texto"]');
     const imageMore=imagePanel?.querySelector('[data-lab-more="imagem"]');
 
-    if(mobileQuery.matches){
+    if(active){
       pagePanel.hidden=!(name==="superficie"||name==="construcao");
       textPanel.hidden=name!=="texto";
       imagePanel.hidden=!(name==="fundo"||name==="m"||name==="assinatura");
       if(construction)construction.open=name==="construcao";
       if(name!=="texto"&&textMore)textMore.open=false;
       if(imageMore)imageMore.open=name==="assinatura";
+      const imageHeading=imagePanel?.querySelector(".lm-inspector-panel-heading span");
+      if(imageHeading)imageHeading.textContent=activeLabel;
     }else{
       for(const panel of panels)panel.hidden=false;
     }

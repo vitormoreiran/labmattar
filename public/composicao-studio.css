@@ -154,8 +154,6 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
   }
   body.lm-studio-open .lm-studio-quickreset:focus-visible{outline:2px solid #181818;outline-offset:2px}
   body.lm-studio-open .lm-studio-launch>button{padding:5px 7px;gap:4px}
-  body.lm-studio-open #labStudioToggleText{font-size:0}
-  body.lm-studio-open #labStudioToggleText::after{content:"SAIR";}
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
     grid-template-columns:minmax(0,1fr);
   }

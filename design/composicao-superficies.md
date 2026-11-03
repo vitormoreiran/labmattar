@@ -22,16 +22,16 @@ A composição é uma coluna estrutural com três regiões, tal como no Laborat�
 
 Em `16:9`, o núcleo ocupa uma coluna proporcional ao formato. Em `9:16`, essa coluna usa toda a largura disponível e permanece centralizada verticalmente. São reescaladas e redistribuídas as áreas de texto, não comprimidas as letras de uma orientação para outra. O M permanece geométrico ao centro e a imagem preserva contraste adequado.
 
-## Aparição do M no formato vertical
+## Aparição do M em todas as superfícies
 
-A superfície **9:16** oferece duas aplicações do **mesmo vetor oficial** (990,08 × 743,18). Não são símbolos distintos nem deformações do M:
+Todas as superfícies (**16:9, 9:16, 1:1 e editorial**) oferecem duas aplicações do **mesmo vetor oficial** (990,08 × 743,18). Não são símbolos distintos nem deformações do M:
 
 - **Elemento** (padrão, inclusive para composições salvas anteriormente): M inteiro, centralizado no eixo da página, com a escala manual do Laboratório preservada. É o comportamento já existente na ferramenta e na segunda referência.
-- **Completo**: M ocupa exatamente **100% da altura da página**; sua largura decorre do aspecto original (aproximadamente **133,222% da altura**), com sangria simétrica pelas laterais e recortes característicos visíveis nas bordas superior e inferior. É o comportamento do portfólio mostrado na primeira referência. Não esticar, achatar ou converter em outro vetor.
+- **Completo**: M ocupa exatamente **100% da altura de qualquer canvas**; sua largura decorre do aspecto original (aproximadamente **133,222% da altura**). Em 9:16, sangra simetricamente pelas laterais e mostra os recortes das extremidades; em formatos largos, a lateral pode permanecer livre. Não esticar, achatar ou converter em outro vetor.
 
-A seleção é apresentada apenas no vertical, tanto em **04 / Composição** quanto no **05 / Laboratório**. Ao mudar para horizontal, quadrado ou editorial, o M continua com a regra de Elemento; a preferência vertical permanece salva e retorna quando o usuário escolhe 9:16 novamente.
+A seleção é apresentada em **04 / Composição** e no **05 / Laboratório** para todos os formatos. Alterar a proporção não muda a escolha do M. A geometria é recalculada a partir da altura real da nova superfície; o tamanho salvo de Elemento permanece intocado.
 
-No modo Completo, o controle de escala e os marcadores adicionais do M ficam temporariamente inativos para não criar recortes duplicados. Ao retornar para Elemento, a escala e os marcadores anteriormente escolhidos voltam sem perda dos valores. Foto, contraste normativo e campos de texto permanecem independentes do modo do M.
+No modo Completo, em qualquer formato, o controle de escala e os marcadores adicionais do M ficam temporariamente inativos para não criar recortes duplicados. Ao retornar para Elemento, a escala e os marcadores anteriormente escolhidos voltam sem perda dos valores. Foto, contraste normativo e campos de texto permanecem independentes do modo do M.
 
 ## Interações da demonstração
 

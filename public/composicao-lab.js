@@ -91,7 +91,7 @@
   // Format-specific reading widths are genuine layout decisions, not zoom.
   // Switching aspect ratios recomposes the text and restores an author's
   // previous column width when they return to that format.
-  const formatReadingWidths={horizontal:61,vertical:90,quadrado:78,editorial:70};
+  const formatReadingWidths={horizontal:61,vertical:100,quadrado:78,editorial:70};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");

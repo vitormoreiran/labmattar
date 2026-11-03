@@ -92,6 +92,7 @@ jobs:
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash

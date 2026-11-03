@@ -1,7 +1,8 @@
-import {chromium} from "playwright";
+import {chromium,webkit} from "playwright";
 
 const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
-const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
+const engine=process.env.COMPOSITION_BROWSER==="webkit"?webkit:chromium;
+const browser=await engine.launch({headless:true,...(engine===chromium?{args:["--no-sandbox"]}:{})});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];
 page.on("pageerror",e=>errors.push(e.message));

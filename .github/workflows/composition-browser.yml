@@ -35,7 +35,7 @@ jobs:
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
       - name: Preparar pagina e fontes para teste local
         run: |
           for page in tipografia cores composicao laboratorio identidade inicio; do cp "design/$page.html" "public/$page.html"; done
@@ -59,6 +59,7 @@ jobs:
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs

@@ -406,3 +406,14 @@
 .lm-m-presentation-icon[data-presentation="elemento"] i{width:75%}
 .lm-m-presentation-icon[data-presentation="completo"] i{height:100%;width:auto}
 .lm-m-scale-field[data-scale-locked="true"]{opacity:.5}
+
+/* Background and M are independent layers. The previous color rule hid the
+ * entire photographic layer, including its mask. Keep the mask visible when
+ * the canvas is colored, but never leak the ambient photograph into color. */
+.lm-lab-board[data-background="color"][data-m-content="photo"] .lm-lab-photo-layer,
+.lm-lab-board[data-background="color"][data-m-content="solid"] .lm-lab-photo-layer{
+  display:block!important;
+}
+.lm-lab-board[data-background="color"] .lm-lab-photo-ambient{
+  display:none!important;
+}

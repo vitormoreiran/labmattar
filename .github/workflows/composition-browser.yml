@@ -8,6 +8,7 @@ on:
       - 'public/manual-composition-layout.css'
       - 'public/manual-layout.css'
       - 'design/manual-layout-contract.md'
+      - 'design/LABORATORIO_PRODUCAO_EXPORTACAO.md'
       - 'public/composicao-regras.css'
       - 'public/composicao-lab-controls.css'
       - 'public/composicao-lab.css'

@@ -81,9 +81,18 @@
     // calculated: do not let a later selector turn the page into a thumbnail.
     const workspace=lab.querySelector(".lm-lab-workspace");
     if(workspace){
-      if(active&&window.innerWidth<=700)
+      if(active&&window.innerWidth<=700){
         workspace.style.setProperty("grid-template-rows","clamp(300px,54dvh,460px) minmax(0,1fr)","important");
-      else workspace.style.removeProperty("grid-template-rows");
+        // Old editor CSS calls this area "page", while the mobile grid calls
+        // it "preview". Make those names agree rather than creating an auto
+        // third row with a small, content-sized canvas.
+        lab.querySelector(".lm-lab-preview")?.style.setProperty("grid-area","preview","important");
+        inspector?.style.setProperty("grid-area","controls","important");
+      }else{
+        workspace.style.removeProperty("grid-template-rows");
+        lab.querySelector(".lm-lab-preview")?.style.removeProperty("grid-area");
+        inspector?.style.removeProperty("grid-area");
+      }
     }
     const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
     artboard.style.setProperty("width",logicalW+"px","important");

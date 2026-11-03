@@ -2728,3 +2728,14 @@ body.lm-studio-open #laboratorio .lm-lab-inspector .lm-composition-module-index 
   border-color:#262923!important;
   color:#fff!important;
 }
+
+/* The manual's editorial frame must not clip the full-screen workspace. */
+@media(min-width:1181px){
+  html body.lm-studio-open main #laboratorio > .lm-lab-workspace,
+  html body.lm-studio-open main #laboratorio > .lm-lab-prep{max-width:none!important}
+}
+html body.lm-studio-open main #laboratorio .lm-lab-inspector .lm-composition-module-index button[aria-pressed=true]{
+  background:#262923!important;
+  border-color:#262923!important;
+  color:#fff!important;
+}

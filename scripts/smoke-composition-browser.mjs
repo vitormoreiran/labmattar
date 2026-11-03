@@ -163,8 +163,8 @@ try{
       "Vertical page must have a genuine 9:16 surface: "+JSON.stringify(proof));
     assert(proof.title.top>=proof.kicker.bottom+8,
       "Title must begin below its identification: "+JSON.stringify({viewport,proof}));
-    assert(proof.body.top>=proof.title.bottom+14,
-      "The Body must not overlap the Title: "+JSON.stringify({viewport,proof}));
+    assert(proof.body.top>=proof.title.bottom+Math.max(7,proof.frame.width*.037),
+      "The Body must keep a surface-proportional gap below the Title: "+JSON.stringify({viewport,proof}));
     assert(proof.footer.top>=proof.body.bottom+8,
       "Credits must not overlap the Body: "+JSON.stringify({viewport,proof}));
     for(const block of [proof.kicker,proof.title,proof.body,proof.footer]){

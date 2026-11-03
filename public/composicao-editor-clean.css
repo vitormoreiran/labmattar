@@ -2719,3 +2719,12 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura
   body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){padding:22px 20px 32px!important}
   body.lm-studio-open #laboratorio .lm-inspector-primary,body.lm-studio-open #laboratorio .lm-inspector-extra{gap:22px!important}
 }
+
+@media(min-width:1181px){
+  body.lm-studio-open #laboratorio.lm-lab{max-width:none!important}
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector .lm-composition-module-index button[aria-pressed=true]{
+  background:#262923!important;
+  border-color:#262923!important;
+  color:#fff!important;
+}

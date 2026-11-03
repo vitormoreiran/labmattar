@@ -82,7 +82,7 @@
 #laboratorio .lm-lab-document-actions button{
   appearance:none;border:1px solid #bbb8b0;background:transparent;
   color:inherit;padding:10px 8px;min-height:36px;cursor:pointer;
-  text-align:center;font:inherit;
+  text-align:center;
 }
 #laboratorio .lm-lab-document-actions button:hover{background:#eeece7;border-color:#181818}
 #laboratorio .lm-lab-document-actions button:focus-visible{outline:2px solid #181818;outline-offset:2px}

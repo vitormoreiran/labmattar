@@ -186,11 +186,9 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
               <button type="button" data-signature-corner="bl" aria-pressed="false" aria-label="Editar canto inferior esquerdo"><span>INF. ESQ.</span><strong data-signature-mini-value="bl">TEXTO</strong></button>
               <button type="button" data-signature-corner="br" aria-pressed="false" aria-label="Editar canto inferior direito"><span>INF. DIR.</span><strong data-signature-mini-value="br">TEXTO</strong></button>
             </div>
-            <small class="lm-ctrl-helper">Selecione um canto para definir o que aparece nele.</small>
           </div>
           <div class="lm-lab-field lm-signature-slot-editor">
-            <div class="lm-lab-field-title" id="labSignatureSlotTitle">SUPERIOR ESQUERDO</div>
-            <label for="labSignatureKind">Conteúdo</label>
+            <label class="lm-lab-field-title" id="labSignatureSlotTitle" for="labSignatureKind">SUPERIOR ESQUERDO / CONTEÚDO</label>
             <select id="labSignatureKind"><option value="none">Vazio</option><option value="brand">Marca LABMATTAR</option><option value="symbol">Símbolo</option><option value="symbol-label">Símbolo + legenda</option><option value="text">Texto / identificação</option></select>
             <div class="lm-signature-conditional" id="labSignatureSymbolField">
               <label for="labSignatureSymbol">Símbolo do canto</label>
@@ -205,7 +203,6 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <div class="lm-lab-value-row"><label for="labSignatureScale">Escala dos símbolos</label><output id="labSignatureScaleValue" for="labSignatureScale">100%</output></div>
             <input id="labSignatureScale" type="range" min="60" max="140" step="5" value="100">
           </div>
-          <p class="lm-signature-system-note">Símbolos originais, Detalhe normativo e alinhamento nas margens da página. Os pontos são independentes da máscara M.</p>
           <select id="labSymbol" hidden aria-hidden="true" tabindex="-1"><option value="none">Sem símbolo</option><option value="M.svg">M mestre</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select>
         </div>
       </section>

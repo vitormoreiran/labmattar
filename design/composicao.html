@@ -101,8 +101,8 @@
       <button type="button" data-case-format="desktop" aria-pressed="true">Horizontal</button>
       <button type="button" data-case-format="mobile" aria-pressed="false">Vertical</button>
     </div>
-    <div class="lm-case-control lm-case-m-presentation" role="group" aria-label="Aparição do M na vertical" hidden>
-      <span>M / VERTICAL</span>
+    <div class="lm-case-control lm-case-m-presentation" role="group" aria-label="Aparição do M na superfície" hidden>
+      <span>M / SUPERFÍCIE</span>
       <button type="button" data-case-m-presentation="elemento" aria-pressed="true">Elemento</button>
       <button type="button" data-case-m-presentation="completo" aria-pressed="false">Completo</button>
     </div>
@@ -241,10 +241,10 @@
     frame.dataset.format=vertical?"vertical":"horizontal";
     frame.dataset.view=state.view;
     frame.dataset.contrast=state.contrast;
-    frame.dataset.mPresentation=vertical?state.mPresentation:"elemento";
+    frame.dataset.mPresentation=state.mPresentation;
     frame.classList.toggle("is-mobile",vertical);
     const modeControls=document.querySelector(".lm-case-m-presentation");
-    modeControls.hidden=!vertical||state.step==="campo";
+    modeControls.hidden=state.step==="campo";
     document.querySelectorAll("[data-case-m-presentation]").forEach(button=>{
       button.setAttribute("aria-pressed",String(button.dataset.caseMPresentation===state.mPresentation));
     });
@@ -268,7 +268,7 @@
       aside.title.textContent="A leitura se recompõe no vertical.";
       aside.body.textContent="Título e Corpo compartilham o núcleo central, sem deslocar os créditos. "+
         (state.mPresentation==="completo"?
-          "M completo: ocupa a altura da página, sangra lateralmente e preserva os recortes superior e inferior.":
+          "M completo: ocupa toda a altura da superfície, com recorte conforme o formato e sem deformação.":
           "M como elemento: aparece inteiro, alinhado ao eixo e com escala controlada.");
       aside.note.textContent=state.contrast==="on"?
         "CONTRASTE / preto 20% aplicado apenas à fotografia no M.":
@@ -282,7 +282,7 @@
         "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
     }
     frame.setAttribute("aria-label",(vertical?"Composição vertical":"Composição horizontal")+
-      (vertical?", M "+state.mPresentation:"")+
+      ", M "+state.mPresentation+
       (structure?", campos de identificação, título, Corpo e créditos":", imagem, M e leitura editorial"));
   }
   document.querySelectorAll("[data-case-step]").forEach(button=>button.addEventListener("click",()=>{

@@ -8,6 +8,9 @@
 - A origem horizontal, o alinhamento e a margem de leitura são únicos em toda a página.
 - O M conserva vetor, proporções e eixo central. A fotografia pode ser reenquadrada, nunca o vetor.
 - O preto de 20% pertence à fotografia sob o texto e acompanha o recorte do M; o modo 0% existe só para comparação, jamais como nova norma.
+- **Relação entre camadas:** sempre que um M ou qualquer marcador estiver ativo, a camada de fundo exibe **a mesma imagem selecionada, ampliada e desfocada (blur)**. O conteúdo interior do M pode ser fotográfico ou sólido; em ambos os casos, a camada inferior não fica como cor plana nem vazia. A geometria não muda.
+- A opção de fundo (Cor ou Fotografia) continua como preferência salva. Ela só determina a superfície quando M e marcadores estiverem desligados. Desligar o último elemento restaura a escolha original, sem perda de foto, foco ou escala.
+- O blur do fundo e o véu preto de 20% são recursos diferentes: o blur define a camada inferior; o véu depende da sobreposição de texto à fotografia.
 
 ## Horizontal e vertical — uma estrutura comum
 

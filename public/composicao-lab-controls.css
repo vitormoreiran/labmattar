@@ -538,10 +538,7 @@
   .lm-lab-workspace .lm-lab-inspector{display:block!important;width:100%}
   .lm-inspector-panel{padding:22px 0 8px}
 }
-@media(max-width:440px){
-}
-@media(prefers-reduced-motion:reduce){
-}
+
 
 /* Informação sob demanda — as provas de página são a prioridade visual.
    Ajuda é contextual, neutra e acessível; nenhum comando foi suprimido. */
@@ -724,8 +721,7 @@
 .lm-lab>.lm-lab-legend,
 .lm-lab>.lm-lab-lead{display:none!important}
 .lm-lab-inspector .lm-lab-fit-info[data-adjusted=false]{display:none}
-@media(max-width:1120px){
-}
+
 @media(max-width:850px){
   .lm-lab-heading-aside{align-items:flex-start}
 }

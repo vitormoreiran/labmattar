@@ -131,16 +131,12 @@ try{
     "Turning the last M off restores the originally selected color, not an empty blurred layer");
 
 
-  // In portrait the same published M has two geometric appearances.
-
-
-  // In portrait the same published M has two geometric appearances.
-  // Elemento keeps the author-controlled scale; Completo fits page height
-  // without changing the vector ratio or carrying the bleed into other formats.
+  // One published M; Completo fits 100% of every surface's vertical height.
+  // Elemento retains the manually adjusted scale in all four formats.
   await choose("mContent","photo");
   await choose("format","vertical");
   assert(await page.locator("#labMPresentationField").isVisible(),
-    "Portrait format must reveal M appearance controls");
+    "M appearance controls must be accessible across canvas formats");
   await choose("mPresentation","elemento");
   const mMeasurement=async()=>page.locator("#labArtboard").evaluate(board=>{
     const b=board.getBoundingClientRect(),m=board.querySelector("#labMask").getBoundingClientRect();
@@ -179,13 +175,22 @@ try{
   assert(await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-composicao-lab-v1")).mPresentation)==="completo",
     "M appearance must persist in the same saved editor state");
   await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-vertical.png"});
-  await choose("format","horizontal");
-  assert(await page.locator("#labMPresentationField").isHidden() &&
-         (await mMeasurement()).mode==="elemento",
-    "Horizontal must stay unchanged regardless of the vertical M option");
+  // Complete M uses EXACTLY 100% of the canvas height for all four formats;
+  // the original vector ratio is fixed, so horizontal can have free side space.
+  for(const format of ["horizontal","quadrado","editorial","vertical"]){
+    await choose("format",format);
+    assert(await page.locator("#labMPresentationField").isVisible(),
+      "M mode chooser must remain available in "+format);
+    const geometry=await mMeasurement();
+    const frame=geometry.frame, mask=geometry.mask;
+    assert(geometry.mode==="completo" &&
+           Math.abs(mask.height-frame.height)<2 &&
+           Math.abs(mask.width/mask.height-990.08/743.18)<.005 &&
+           Math.abs((mask.left+mask.right)-(frame.left+frame.right))<2,
+      "M Completo must have 100% canvas height, canonical aspect and a centered axis in "+format+": "+JSON.stringify(geometry));
+    await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-"+format+".png"});
+  }
   await choose("format","vertical");
-  assert((await mMeasurement()).mode==="completo",
-    "Returning to portrait must restore the chosen M appearance");
   await choose("mPresentation","elemento");
   assert((await page.locator("#labMScale").inputValue())===savedScale &&
          await page.locator("#labMScale").isEnabled(),
@@ -194,6 +199,23 @@ try{
 
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
+  // The editor may downscale the logical page, but it must never make its
+  // three existing typography roles physically unreadable.
+  for(const format of ["vertical","horizontal","quadrado","editorial"]){
+    await choose("format",format);
+    await page.waitForTimeout(120);
+    const legible=await page.locator("#labArtboard").evaluate(el=>{
+      const zoom=el.getBoundingClientRect().width/el.offsetWidth;
+      const size=selector=>parseFloat(getComputedStyle(el.querySelector(selector)).fontSize)*zoom;
+      return {format:el.dataset.format,zoom,body:size("#labRenderedBody"),
+        title:size("#labRenderedTitle"),detail:size("#labKicker"),
+        preview:el.getBoundingClientRect().height,
+        tokens:["title","body","detail"].map(role=>getComputedStyle(el).getPropertyValue("--lm-type-"+role+"-size").trim())};
+    });
+    assert(legible.preview>150&&legible.title>=31.5&&legible.body>=12.5&&legible.detail>=9.5,
+      "Studio preview must preserve readable Title/Body/Detail and use all 3 canonical roles: "+JSON.stringify(legible));
+  }
+  await choose("format","horizontal");
   assert(await page.locator(".lm-composition-module-index").isVisible(),
     "Mobile module rail must remain visible");
   assert(await page.locator('button[data-mobile-module="superficie"]').getAttribute("aria-pressed")==="true",

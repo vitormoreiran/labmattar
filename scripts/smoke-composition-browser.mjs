@@ -81,12 +81,14 @@ try{
   await choose("marker","none");
   state=await page.locator("#labArtboard").evaluate(el=>({
     background:el.dataset.background,mContent:el.dataset.mContent,
-    photo:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
+    layer:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
+    ambient:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).display,
     m:getComputedStyle(el.querySelector("#labMask")).display,
     mImage:getComputedStyle(el.querySelector("#labMaskPhoto")).display
   }));
-  assert(state.background==="color"&&state.photo==="none"&&state.m!=="none"&&state.mImage!=="none",
-    "Without markers a photographic M must work over a color background");
+  assert(state.background==="color"&&state.layer!=="none"&&state.ambient==="none"&&
+         state.m!=="none"&&state.mImage!=="none"&&await page.locator("#labMask").isVisible(),
+    "Color background must hide only the ambient photo, never the independent photographic M");
 
   await choose("mContent","off");
   assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).display)==="none",

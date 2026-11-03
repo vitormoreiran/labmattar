@@ -157,7 +157,7 @@
 .lm-case-frame[data-view=estrutura] .lm-case-reading p::after{content:"03 / CORPO";}
 .lm-case-frame[data-view=estrutura] .lm-case-footer::after{content:"04 / DETALHE";}
 .lm-case-frame[data-view=estrutura] .lm-case-reading.lm-lab-main-copy{gap:5cqw;}
-.lm-case-frame.is-mobile[data-view=estrutura] .lm-case-reading.lm-lab-main-copy{gap:6cqw;}
+.lm-case-frame.is-mobile[data-view=estrutura] .lm-case-reading.lm-lab-main-copy{gap:7.5cqw;}
 /* Controls: one hierarchy, separate stages and actions without toolbar noise. */
 .lm-case-controls{column-gap:clamp(18px,2.8vw,42px);row-gap:9px;}
 .lm-case-control{gap:8px;}

@@ -112,7 +112,7 @@
   }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
-    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
+    const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     const mActive=state.mContent!=="off";
     const blurBackdrop=mActive||markerActive;
     const backgroundPhoto=state.background==="photo"||blurBackdrop;
@@ -124,15 +124,14 @@
       "Sem M nem marcadores: o fundo segue a escolha de cor ou fotografia.";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     for(const key of ["mPosition","mMode"])by(fields[key]).disabled=!mActive;
-    const portrait=state.format==="vertical";
-    const fullM=portrait&&state.mPresentation==="completo";
-    by("labMPresentationField").hidden=!portrait;
-    by("labMPresentation").disabled=!portrait||!mActive;
+    const fullM=mActive&&state.mPresentation==="completo";
+    by("labMPresentationField").hidden=false;
+    by("labMPresentation").disabled=!mActive;
     by("labMScale").disabled=!mActive||fullM;
     by("labMPresentationHint").textContent=!mActive?
       "Ative o M para escolher sua aparição.":
       fullM?
-      "Completo: altura integral e sangria lateral; a escala manual fica preservada para Elemento.":
+      "Completo: M com 100% da altura do canvas, com proporção preservada. A escala anterior fica salva para Elemento.":
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=false;
@@ -236,10 +235,10 @@
     state.mPosition="centro";
     syncInputs();
     board.dataset.format=state.format;
-    board.dataset.mPresentation=state.format==="vertical"?state.mPresentation:"elemento";
+    board.dataset.mPresentation=state.mPresentation;
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
-    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
+    const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     // The lower image is always the SAME selected photo with blur while an
     // M (solid/photo) or its end markers are present. Keep the user's original
     // background choice in state and restore it when those layers are absent.

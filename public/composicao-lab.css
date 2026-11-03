@@ -365,19 +365,18 @@
 
 /* Entrada de texto / um replay, sem interferir no canvas editavel.
  * Movimento e duracoes seguem a demonstracao normativa de Tipografia. */
-.lm-lab-preview-head .lm-lab-preview-actions{
-  display:flex;align-items:center;justify-content:flex-end;gap:12px;
-  min-width:0;margin-left:auto;white-space:nowrap;
-}
-.lm-lab-preview-head .lm-lab-motion-play{
+#laboratorio .lm-studio-launch #labMotionPlay{
   display:inline-flex;align-items:center;justify-content:center;gap:7px;
-  min-height:29px;padding:4px 10px;border:1px solid #b6b4af;
-  border-radius:0;background:transparent;color:inherit;
+  min-height:34px;padding:6px 12px;border:1px solid #b6b4af;
+  border-radius:0;background:transparent;color:#181818;
   white-space:nowrap;cursor:pointer;
+}
+body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
+  border-color:#b6b4af;background:transparent;color:#181818;
 }
 .lm-lab-motion-play svg{display:block;flex:none}
 .lm-lab-motion-play #labMotionPlayText{flex:none}
-.lm-lab-motion-play:hover{border-color:#181818;color:#181818;background:#eceae5}
+#laboratorio .lm-studio-launch #labMotionPlay:hover{border-color:#181818;color:#181818;background:#eceae5}
 .lm-lab-motion-play:focus-visible{outline:2px solid #181818;outline-offset:2px}
 .lm-lab-motion-status{
   position:absolute;width:1px;height:1px;margin:-1px;padding:0;
@@ -392,10 +391,9 @@
 .lm-lab-solid-contrast[data-motion-clone] *{pointer-events:none!important;user-select:none!important}
 .lm-lab-motion-word{display:inline-block;white-space:pre;vertical-align:baseline}
 @media(max-width:850px){
-  body.lm-studio-open .lm-lab-preview-head .lm-lab-preview-actions{gap:7px}
-  body.lm-studio-open .lm-lab-preview-head .lm-lab-motion-play{min-height:20px;padding:2px 5px}
+  body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{min-height:30px;padding:5px 9px}
 }
 @media(max-width:650px){
-  .lm-lab-preview-head .lm-lab-motion-play #labMotionPlayText{display:none}
-  .lm-lab-preview-head .lm-lab-preview-actions{gap:7px}
+  #laboratorio .lm-studio-launch #labMotionPlayText{display:none}
+  body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{padding:5px 8px}
 }

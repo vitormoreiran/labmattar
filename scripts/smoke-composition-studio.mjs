@@ -188,6 +188,20 @@ try{
            Math.abs(mask.width/mask.height-990.08/743.18)<.005 &&
            Math.abs((mask.left+mask.right)-(frame.left+frame.right))<2,
       "M Completo must have 100% canvas height, canonical aspect and a centered axis in "+format+": "+JSON.stringify(geometry));
+    const reading=await page.locator("#labArtboard").evaluate(board=>{
+      const title=board.querySelector("#labRenderedTitle");
+      const copy=board.querySelector("#labCopy");
+      const safe=board.querySelector("#labReading");
+      const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}};
+      return {title:rect(title),copy:rect(copy),safe:rect(safe),
+        fragments:[...title.querySelectorAll(".lm-lab-title-line")].map(span=>({
+          text:span.textContent,scroll:span.scrollWidth,width:span.clientWidth
+        }))};
+    });
+    assert(reading.fragments.every(line=>line.scroll<=line.width+2) &&
+           reading.title.left>=reading.safe.left-2 &&
+           reading.title.right<=reading.safe.right+2,
+      "The existing Title must wrap at word boundaries without clipping in "+format+": "+JSON.stringify(reading));
     await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-"+format+".png"});
   }
   await choose("format","vertical");

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "p1-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9991538570018333
+  },
+  {
+    "id": "p1-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9993346255098794
+  },
+  {
+    "id": "p2-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9984590800136971
+  },
+  {
+    "id": "p2-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9993065587980352
+  },
+  {
+    "id": "p3-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9996078431372549
+  },
+  {
+    "id": "p3-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9999088838268793
+  },
+  {
+    "id": "p4-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9989554700384827
+  },
+  {
+    "id": "p4-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9995095635115253
+  },
+  {
+    "id": "p5-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9986734693877551
+  },
+  {
+    "id": "p5-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9991069588514117
+  },
+  {
+    "id": "p6-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9995634458672875
+  },
+  {
+    "id": "p6-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9999497386409328
+  },
+  {
+    "id": "p7-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.998102766798419
+  },
+  {
+    "id": "p7-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9980638347805679
+  },
+  {
+    "id": "p8-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9990516987672085
+  },
+  {
+    "id": "p8-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9994194025124037
+  },
+  {
+    "id": "p9-dense",
+    "angle": 0,
+    "pixel_mask_iou": 0.9995957729398857
+  },
+  {
+    "id": "p9-dense",
+    "angle": 90,
+    "pixel_mask_iou": 0.9996726248936031
+  }
+]

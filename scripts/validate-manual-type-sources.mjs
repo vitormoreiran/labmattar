@@ -5,12 +5,12 @@ import { readFileSync } from 'node:fs';
 
 const pages = [
   'design/tipografia.html', 'design/cores.html', 'design/composicao.html',
-  'design/laboratorio.html', 'public/manual.html'
+  'design/laboratorio.html', 'design/motion.html', 'public/manual.html'
 ];
 const styles = [
   'public/manual-layout.css', 'public/manual-symbols.css', 'public/composicao-regras.css', 'public/composicao-demo.css', 'public/manual-composition-layout.css', 'public/composicao-lab.css',
   'public/composicao-lab-controls.css', 'public/composicao-studio.css',
-  'public/composicao-editor-clean.css'
+  'public/composicao-editor-clean.css', 'public/motion.css'
 ];
 // Font faces, scales, tracking, leading and casing belong to the shared CSS.
 // Preserve font-size:0 only where an invisible control label is replaced

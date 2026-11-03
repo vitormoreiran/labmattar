@@ -1,0 +1,56 @@
+[
+  {
+    "id": "P8",
+    "source": "models/dense/P8.glb",
+    "angle": 0,
+    "projection": "orthographic",
+    "resolution": 2048,
+    "traceTolerancePx": 0.75,
+    "contours": 2
+  },
+  {
+    "id": "P3",
+    "source": "models/dense/P3.glb",
+    "angle": 0,
+    "projection": "orthographic",
+    "resolution": 2048,
+    "traceTolerancePx": 0.75,
+    "contours": 8
+  },
+  {
+    "id": "P4",
+    "source": "models/dense/P4.glb",
+    "angle": 0,
+    "projection": "orthographic",
+    "resolution": 2048,
+    "traceTolerancePx": 0.75,
+    "contours": 5
+  },
+  {
+    "id": "P2",
+    "source": "models/dense/P2.glb",
+    "angle": 0,
+    "projection": "orthographic",
+    "resolution": 2048,
+    "traceTolerancePx": 0.75,
+    "contours": 2
+  },
+  {
+    "id": "P9",
+    "source": "models/dense/P9.glb",
+    "angle": 0,
+    "projection": "orthographic",
+    "resolution": 2048,
+    "traceTolerancePx": 0.75,
+    "contours": 7
+  },
+  {
+    "id": "P5",
+    "source": "models/dense/P5.glb",
+    "angle": 0,
+    "projection": "orthographic",
+    "resolution": 2048,
+    "traceTolerancePx": 0.75,
+    "contours": 5
+  }
+]

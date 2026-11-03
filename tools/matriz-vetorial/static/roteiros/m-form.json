@@ -1,0 +1,75 @@
+{
+  "format": "mattar-spatial",
+  "version": 2,
+  "id": "e45642e4-82de-480c-8580-1add1dd32634",
+  "name": "M + Forma · respiração",
+  "color": "#181814",
+  "background": "#f2efe7",
+  "aspect": "1:1",
+  "geometry": "volume",
+  "loop": false,
+  "tracks": [
+    {
+      "id": "3e4f7c59-27f5-4ab8-9667-dd756f384ec1",
+      "name": "M + P8 · respiração",
+      "startAsset": "M",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "scale": 1,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "e90806a6-66d2-4ea0-a5c4-fe4d3c4ef157",
+          "type": "hold",
+          "duration": 0.7,
+          "easing": "smooth"
+        },
+        {
+          "id": "0fcb6795-9a95-40e6-b8b3-af736039c9cc",
+          "type": "rotate",
+          "duration": 1.25,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "5d671fc6-7c7d-4073-bc86-87eaded6d0ae",
+          "type": "morph",
+          "duration": 1.5,
+          "easing": "polished",
+          "target": "P8"
+        },
+        {
+          "id": "773a0c02-da48-492b-ad01-69e9bbe58ed3",
+          "type": "rotate",
+          "duration": 3.9,
+          "easing": "polished",
+          "degrees": 360
+        },
+        {
+          "id": "2dcd81ee-a37a-4c11-bb79-8529737e6072",
+          "type": "morph",
+          "duration": 1.5,
+          "easing": "polished",
+          "target": "M"
+        },
+        {
+          "id": "bdf1d07e-f623-4500-82fd-a0403981fe6a",
+          "type": "rotate",
+          "duration": 1.25,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "e02c0254-7df5-4d61-9995-55f39012ad50",
+          "type": "hold",
+          "duration": 0.7,
+          "easing": "smooth"
+        }
+      ]
+    }
+  ]
+}

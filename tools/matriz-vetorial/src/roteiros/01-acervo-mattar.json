@@ -1,0 +1,350 @@
+{
+  "format": "mattar-spatial",
+  "version": 2,
+  "id": "480bc822-3d5c-402c-ad84-12c6db9d2065",
+  "name": "Assinatura · Acervo vira MATTAR",
+  "color": "#181814",
+  "background": "#f2efe7",
+  "aspect": "16:9",
+  "geometry": "volume",
+  "speed": 1,
+  "loop": false,
+  "tracks": [
+    {
+      "id": "cd201dc4-993a-4616-a174-cf8c2d7fb8ab",
+      "name": "P8 → M · construção",
+      "startAsset": "P8",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -1.2016560530800002,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "e3d44ae5-0fc1-4806-bb44-69b730b1a5dd",
+          "type": "hold",
+          "duration": 0.12,
+          "easing": "polished"
+        },
+        {
+          "id": "f16b3ea2-281a-44de-85dd-d826ca062cc0",
+          "type": "rotate",
+          "duration": 0.62,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "16f69da0-95c6-494a-acb1-5eb49b83ed1a",
+          "type": "morph",
+          "duration": 0.85,
+          "easing": "polished",
+          "target": "M"
+        },
+        {
+          "id": "63087ddd-9f0b-4336-a54f-6896b41f52df",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "f3acb382-4ae8-4876-8dc0-7c1d5483d69c",
+          "type": "hold",
+          "duration": 2.76,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 0.1,
+        "duration": 0.34,
+        "baseline": -0.28,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      }
+    },
+    {
+      "id": "9d3ab262-5b4d-45ef-8eb4-0c4b94a07ed3",
+      "name": "P3 → A1 · construção",
+      "startAsset": "P3",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -0.6604338468000001,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "a4c3f55d-f2b1-4a95-8517-ba9fb9fb247c",
+          "type": "hold",
+          "duration": 0.26,
+          "easing": "polished"
+        },
+        {
+          "id": "dd69cd68-aaf4-4fc5-b22a-d1af5537d7a4",
+          "type": "rotate",
+          "duration": 0.6,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "3b499131-0e70-4661-9232-67b090c46b95",
+          "type": "morph",
+          "duration": 0.8,
+          "easing": "polished",
+          "target": "A1"
+        },
+        {
+          "id": "20fd6db4-f0a8-4d56-a665-f015ddc44fed",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "bbb9bc43-c86f-4275-899b-e9b3c9029a44",
+          "type": "hold",
+          "duration": 2.69,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 0.24,
+        "duration": 0.3,
+        "baseline": -0.28,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      }
+    },
+    {
+      "id": "209df67d-bbec-4561-a261-e618a495b044",
+      "name": "P4 → T1 · construção",
+      "startAsset": "P4",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -0.18292845648000003,
+        "y": 4.4296000000000004e-7
+      },
+      "scale": 0.27999955704,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "f9df75e4-6b98-43d7-8cdc-dcefd495d6e8",
+          "type": "hold",
+          "duration": 0.62,
+          "easing": "polished"
+        },
+        {
+          "id": "c77defa4-84fa-470f-8315-1adfddee6a35",
+          "type": "rotate",
+          "duration": 0.56,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "e1a86a33-892f-49d2-9dd3-d89aabd8ba49",
+          "type": "morph",
+          "duration": 0.72,
+          "easing": "polished",
+          "target": "T1"
+        },
+        {
+          "id": "f010567c-b841-458d-8f94-4a513e77e54a",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "ff1e929e-921c-4378-8065-ddfa2ac836b7",
+          "type": "hold",
+          "duration": 2.45,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 0.6,
+        "duration": 0.26,
+        "baseline": -0.28,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      }
+    },
+    {
+      "id": "633b8033-94c8-451d-925f-b57413d98c89",
+      "name": "P2 → T2 · construção",
+      "startAsset": "P2",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0.3048498572000001,
+        "y": 4.4296000000000004e-7
+      },
+      "scale": 0.27999955704,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "d02fe02a-afe9-4866-9631-05539a73d1e9",
+          "type": "hold",
+          "duration": 0.72,
+          "easing": "polished"
+        },
+        {
+          "id": "71f545b6-fc74-460c-ad03-4702c77aec8d",
+          "type": "rotate",
+          "duration": 0.56,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "d86d9581-aaa9-4e72-b723-e9306256e804",
+          "type": "morph",
+          "duration": 0.7,
+          "easing": "polished",
+          "target": "T2"
+        },
+        {
+          "id": "2f2bb31f-d2df-4c9e-b4e6-32bd48b1268b",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "ee7cd39a-26b4-4834-ab6c-eb2ed34b4acb",
+          "type": "hold",
+          "duration": 2.37,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 0.7,
+        "duration": 0.24,
+        "baseline": -0.28,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      }
+    },
+    {
+      "id": "ae50e417-5f44-46c6-b1ed-2d516f87cf18",
+      "name": "P9 → A2 · construção",
+      "startAsset": "P9",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0.7810068000000001,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "d7a20c34-545e-443f-a292-f51305ff621a",
+          "type": "hold",
+          "duration": 0.82,
+          "easing": "polished"
+        },
+        {
+          "id": "85227344-9351-4132-b9df-0cb0136aff2f",
+          "type": "rotate",
+          "duration": 0.54,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "4c568d69-a84d-43ec-b640-b14379cce6f0",
+          "type": "morph",
+          "duration": 0.68,
+          "easing": "polished",
+          "target": "A2"
+        },
+        {
+          "id": "04ba29b2-8eb3-4c72-accc-7620ceecf761",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "4db7c6f5-b164-41ce-8a7d-a0bdbc5bae95",
+          "type": "hold",
+          "duration": 2.31,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 0.8,
+        "duration": 0.22,
+        "baseline": -0.28,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      }
+    },
+    {
+      "id": "360ddcf3-b936-401e-b73f-25004cf35fbc",
+      "name": "P5 → R · construção",
+      "startAsset": "P5",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 1.2675569205600001,
+        "y": -0.06310606232
+      },
+      "scale": 0.21566969928000002,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "828a79d1-d6bb-4a4f-b03b-6f433a60dc54",
+          "type": "hold",
+          "duration": 1.24,
+          "easing": "polished"
+        },
+        {
+          "id": "5ddd5b78-5c0d-4fe9-beb1-fac6750c1f5c",
+          "type": "rotate",
+          "duration": 0.64,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "8a7a643a-017c-413e-b25b-179b67e0d4fc",
+          "type": "morph",
+          "duration": 0.9,
+          "easing": "polished",
+          "target": "R"
+        },
+        {
+          "id": "31520edc-7faf-4331-a0c1-83b1f5a6b0c0",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "80fd27c2-4ab9-41ce-b3c6-1106f8cb3bf1",
+          "type": "hold",
+          "duration": 1.57,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 1.22,
+        "duration": 0.36,
+        "baseline": -0.28,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      }
+    }
+  ]
+}

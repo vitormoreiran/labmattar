@@ -18,6 +18,8 @@ Repositório de desenvolvimento da prévia independente da identidade LABMATTAR.
 - `scripts/`: instalação, compilação e validação.
 - `.github/workflows/build.yml`: verificação de compilação.
 - `.github/workflows/preview-cloudflare.yml`: publicação exclusiva da prévia `labmattar-identidade-previa`.
+- `tools/matriz-vetorial/`: Matriz atual de Motion, isolada do editor anterior.
+- `design/motion.html` e `scripts/prepare-motion.mjs`: galeria de oito roteiros, vídeos e projetos correspondentes.
 
 O pacote `LABMATTAR_CODIGO_PARA_GITHUB (1).zip` permanece como legado. Os fluxos atuais de compilação e publicação usam os arquivos editáveis, sem extrair o pacote. **Não editar o ZIP**; o código-fonte deve ser alterado nos diretórios acima.
 
@@ -36,6 +38,22 @@ Estrutura preparada:
 - Interface de acervo: player com poster, controles, legendas opcionais, loading e suporte mobile.
 
 Não criar URLs fictícias nem considerar qualquer material aprovado sem validação do autor.
+
+Os exports web de Motion são uma exceção aos originais grandes: somente MP4 otimizados, menores que 20 MiB, entram em `public/motion/videos/`. A correspondência entre vídeo e projeto é verificada no build. As instruções estão em [design/motion-matriz.md](design/motion-matriz.md).
+
+## Motion e Matriz atual
+
+O manual aponta para `/motion.html` e para `/motion/matriz/index.html`. `/editor/` permanece disponível como versão anterior. Motion é uma área do Laboratório; os cinco capítulos e suas regras visuais são preservados.
+
+```sh
+npm ci --prefix tools/matriz-vetorial
+npm test --prefix tools/matriz-vetorial
+npm run build --prefix tools/matriz-vetorial
+node scripts/prepare-motion.mjs
+python3 design/integrate-areas.py motion.html
+```
+
+Os workflows executam essa preparação antes de compilar o manual. O catálogo e os downloads JSON são gerados dos mesmos projetos que alimentam a Matriz. Vídeos desatualizados ou ausentes bloqueiam a publicação; `--allow-pending-exports` serve apenas para prévia local.
 
 ## Proteções
 

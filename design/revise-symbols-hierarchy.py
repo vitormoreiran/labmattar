@@ -33,7 +33,7 @@ for n in range(10):
 section = '''<section class="chapter chapter-spacious" id="transformacao"><div class="inner">
 <p class="eyebrow">03 / Sistema de transformação</p>
 <h2 class="title"><span class="line">UM SÍMBOLO</span><span class="line perpetua">MÚLTIPLOS</span><span class="line">ESTADOS</span></h2>
-<p class="copy section-lead">O M gira e se transforma em vaso. Rotação e mudança de forma acontecem em um movimento contínuo.</p>
+<p class="copy section-lead">Explore as relações entre os contornos. Os giros 3D e os roteiros prontos estão na área Motion.</p>
 <div class="state-explorer" data-symbols-version="20261029-verified" data-ready="false" aria-label="Transformação vetorial interativa">
 <div class="state-heading"><span class="detail">TRANSFORMAÇÃO VETORIAL</span><span class="detail" id="state-name" aria-live="polite">M / SÍMBOLO MASTER</span></div>
 <div class="state-preview"><svg id="state-morph-svg" viewBox="0 0 600 460" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Símbolo master M"><g id="state-morph-paths" fill="currentColor"></g></svg></div>
@@ -67,7 +67,7 @@ if rules:
 copy = {
     'principio': 'Uma assinatura, um símbolo principal e nove vasos.',
     'vasos': 'Os nove vasos integram a identidade e têm a mesma importância. Nenhum é principal.',
-    'ferramenta': 'Organize os estados, ajuste as transições e exporte animações.',
+    'ferramenta': 'Abra a Matriz atual para compor giros, transformações e roteiros. Consulte os vídeos prontos e o estado de aprovação de cada percurso na área Motion.',
 }
 for section_id, text in copy.items():
     pattern = r'(<section\b[^>]*id="'+section_id+r'"[^>]*>.*?<p class="copy">).*?(</p>)'

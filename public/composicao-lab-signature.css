@@ -121,3 +121,35 @@
 .lm-lab-board[data-signature-system=composed] .lm-lab-motion-layer .lm-lab-bottom{visibility:hidden}
 .lm-lab-board[data-motion-playing=true][data-signature-system=composed] > #labSignatureLayer{opacity:0}
 .lm-lab-board .lm-lab-signature-motion-layer{z-index:7;pointer-events:none}
+
+/* Concentrated inspector: the selected module already provides the heading. */
+body.lm-studio-open #laboratorio #labPanel-assinatura .lm-inspector-panel-heading{display:none!important}
+#labPanel-assinatura .lm-signature-controls{gap:10px}
+#labPanel-assinatura .lm-lab-field-title{margin-bottom:6px}
+#labPanel-assinatura .lm-signature-preset{min-height:44px;padding:7px}
+#labPanel-assinatura .lm-signature-map button{min-height:44px;padding:6px}
+#labPanel-assinatura .lm-signature-slot-editor{gap:5px;padding-top:8px!important}
+#labPanel-assinatura .lm-signature-slot-editor label{margin-top:2px}
+#labPanel-assinatura .lm-signature-slot-editor select,
+#labPanel-assinatura .lm-signature-slot-editor input[type=text]{min-height:32px;padding:5px 8px}
+#labPanel-assinatura .lm-signature-scale-field{padding-top:4px!important}
+#labPanel-assinatura .lm-signature-scale-field[hidden],
+#labSignaturePresetStatus[hidden]{display:none!important}
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio #labPanel-assinatura .lm-signature-presets{
+    grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;
+  }
+  body.lm-studio-open #laboratorio #labPanel-assinatura .lm-signature-preset{
+    flex-direction:column;justify-content:center;gap:4px;
+    min-height:61px;padding:5px 2px;text-align:center;
+  }
+  body.lm-studio-open #laboratorio #labPanel-assinatura .lm-signature-mini{
+    width:31px;height:22px;
+  }
+  body.lm-studio-open #laboratorio #labPanel-assinatura .lm-signature-map button{
+    min-height:43px;padding:5px;
+  }
+  body.lm-studio-open #laboratorio #labPanel-assinatura .lm-signature-controls{
+    gap:9px;
+  }
+}

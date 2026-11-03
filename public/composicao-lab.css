@@ -165,9 +165,17 @@
 }
 /* O tamanho pedido pelo controle é apenas um teto. A rotina de medida
    aplica o maior corpo que cabe, com palavras inteiras sempre que possível. */
-/* Explicit editorial title lines stay intact. The fitting algorithm
-   scales the type down before allowing a word group to break. */
-.lm-lab-title .lm-lab-title-line{display:block;max-width:100%;white-space:nowrap}
+/* Explicit lines remain editorial groups, but phrases can recompose at
+ * actual WORD boundaries when a narrower surface requires it. A long phrase
+ * must never be clipped or solved by silently shrinking the Title treatment. */
+.lm-lab-title .lm-lab-title-line{
+  display:block;
+  max-width:100%;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+  hyphens:none;
+}
 .lm-lab-body{margin:0;max-width:100%;overflow-wrap:normal;word-break:normal;hyphens:none;white-space:pre-line}
 .lm-lab-bottom{display:flex;justify-content:space-between;gap:1.5cqw;align-items:end;}
 .lm-lab-bottom span{max-width:48%;overflow-wrap:normal;word-break:normal;hyphens:none}
@@ -332,13 +340,32 @@
   .lm-rules-index{grid-template-columns:1fr}
 }
 
-/* One composition, independent layers. */
-.lm-lab-board[data-background=color] .lm-lab-photo-layer{display:none!important}
-.lm-lab-board[data-background=photo] .lm-lab-photo-layer{display:block!important}
-.lm-lab-board[data-background=photo] .lm-lab-photo-ambient{
+/* One source of truth for the lower layer: a blurred copy of the SAME
+ * selected photo whenever the M or one of its end markers is active.
+ * Without M/markers, the user's requested Cor or Fotografia remains valid.
+ * data-backdrop is the rendered state; data-background records the same
+ * effective family for existing controls/validation. */
+.lm-lab-board[data-backdrop="color"] .lm-lab-photo-layer{display:none!important}
+.lm-lab-board[data-backdrop="photo"] .lm-lab-photo-layer,
+.lm-lab-board[data-backdrop="blur"] .lm-lab-photo-layer{display:block!important}
+.lm-lab-board[data-backdrop="color"] .lm-lab-photo-ambient{display:none!important}
+.lm-lab-board[data-backdrop="photo"] .lm-lab-photo-ambient{
+  display:block!important;
   inset:0!important;width:100%!important;height:100%!important;
-  filter:none!important;transform:none!important;
+  object-fit:cover!important;
+  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
+  filter:none!important;transform:none!important;opacity:1!important;
 }
+.lm-lab-board[data-backdrop="blur"] .lm-lab-photo-ambient{
+  display:block!important;
+  inset:-7%!important;width:114%!important;height:114%!important;
+  object-fit:cover!important;
+  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
+  filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86)!important;
+  transform:scale(1.045)!important;
+  opacity:1!important;
+}
+/* Foreground M remains a separate layer, photo or solid. */
 .lm-lab-board[data-m-content=off] .lm-lab-m-photo{display:none!important}
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
   display:block!important;background:var(--lab-ink)!important;
@@ -352,30 +379,14 @@
   left:50%!important;top:50%!important;
 }
 
-/* M marker rule: any active M marker forces the composition photograph
-   into the background, synchronized with the same focal point, with blur. */
-.lm-lab-board[data-marker-blur="true"] .lm-lab-photo-layer{
-  display:block!important;
-}
-.lm-lab-board[data-marker-blur="true"] .lm-lab-photo-ambient{
-  inset:-6%!important;
-  width:112%!important;
-  height:112%!important;
-  object-fit:cover!important;
-  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
-  filter:blur(34px) brightness(.72) saturate(.86)!important;
-  transform:scale(1.045)!important;
-  opacity:1!important;
-}
-
-/* M / vertical — two appearances, one immutable vector.
-   Elemento uses the existing --lab-m-size. Completo fills the 9:16 page's
-   HEIGHT and bleeds symmetrically beyond the sides, as on portfolio covers.
-   Horizontal, square and editorial formats are not affected. */
-.lm-lab-board[data-format="vertical"][data-m-presentation="completo"] .lm-lab-m-photo{
+/* One M vector, two presentations, in EVERY surface.
+ * Elemento retains the user scale. Completo fits 100% of the canvas HEIGHT.
+ * Horizontal, 9:16, square and editorial all use the same height-based math,
+ * with clipping only when the vector naturally exceeds the canvas width. */
+.lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo{
   left:50%!important;
   top:50%!important;
-  width:133.222cqh!important; /* 100cqh × 990.08 / 743.18 */
+  width:133.222cqh!important; /* 1.33222 × 100% of artboard height */
   height:100cqh!important;
   max-width:none!important;
   transform:translate(-50%,-50%);
@@ -407,13 +418,5 @@
 .lm-m-presentation-icon[data-presentation="completo"] i{height:100%;width:auto}
 .lm-m-scale-field[data-scale-locked="true"]{opacity:.5}
 
-/* Background and M are independent layers. The previous color rule hid the
- * entire photographic layer, including its mask. Keep the mask visible when
- * the canvas is colored, but never leak the ambient photograph into color. */
-.lm-lab-board[data-background="color"][data-m-content="photo"] .lm-lab-photo-layer,
-.lm-lab-board[data-background="color"][data-m-content="solid"] .lm-lab-photo-layer{
-  display:block!important;
-}
-.lm-lab-board[data-background="color"] .lm-lab-photo-ambient{
-  display:none!important;
-}
+/* Only data-backdrop decides whether the lower photograph is visible.
+ * Do not add data-background=color selectors that could hide this image again. */

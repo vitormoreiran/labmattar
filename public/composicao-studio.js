@@ -76,6 +76,32 @@
   function fitArtboard(){
     if(!artboard||!artboardFrame||!stage)return;
     const format=artboard.dataset.format||"horizontal";
+    // The focused phone layout has several legacy !important grid overrides.
+    // Own the preview allocation at the same place where artboard zoom is
+    // calculated: do not let a later selector turn the page into a thumbnail.
+    const workspace=lab.querySelector(".lm-lab-workspace");
+    if(workspace){
+      if(active&&window.innerWidth<=700){
+        // Some historic rules turn this workspace back into flex. Grid
+        // tracks have NO effect unless the actual display is grid.
+        workspace.style.setProperty("display","grid","important");
+        workspace.style.setProperty("grid-template-columns","minmax(0,1fr)","important");
+        workspace.style.setProperty("grid-template-areas",'"preview" "controls"',"important");
+        workspace.style.setProperty("grid-template-rows","clamp(300px,54dvh,460px) minmax(0,1fr)","important");
+        // Old editor CSS calls this area "page", while the mobile grid calls
+        // it "preview". Make those names agree rather than creating an auto
+        // third row with a small, content-sized canvas.
+        lab.querySelector(".lm-lab-preview")?.style.setProperty("grid-area","preview","important");
+        inspector?.style.setProperty("grid-area","controls","important");
+      }else{
+        workspace.style.removeProperty("display");
+        workspace.style.removeProperty("grid-template-columns");
+        workspace.style.removeProperty("grid-template-areas");
+        workspace.style.removeProperty("grid-template-rows");
+        lab.querySelector(".lm-lab-preview")?.style.removeProperty("grid-area");
+        inspector?.style.removeProperty("grid-area");
+      }
+    }
     const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
     artboard.style.setProperty("width",logicalW+"px","important");
     artboard.style.setProperty("height",logicalH+"px","important");
@@ -88,11 +114,23 @@
     const maxW=compact
       ? Math.max(160,window.innerWidth-24)
       : Math.max(160,stage.clientWidth-pad);
-    const compactPreviewH=window.innerWidth<=700?174:244;
-    const maxH=compact
-      ? compactPreviewH
-      : Math.max(120,stage.clientHeight-pad);
+    // The compact preview is not a thumbnail. Use the actual available stage
+    // height rather than capping every page to 174/244 physical pixels.
+    const maxH=Math.max(120,stage.clientHeight-pad);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
+
+    // A logical page is zoomed to fit the stage. Compensate ONLY the three
+    // existing normative text roles for the preview zoom. Their fonts, weights,
+    // tracking and leading still come exclusively from manual-headings.css.
+    // No per-title shrinking or fourth typography treatment is introduced.
+    const nominalTitle=104*(Number(by("labTitleScale")?.value||100)/100);
+    const title=Math.max(nominalTitle,32/scale);
+    const body=Math.max(window.innerWidth<=760?16:18,13/scale);
+    const detail=Math.max(window.innerWidth<=760?12:13,10/scale);
+    artboard.style.setProperty("--lm-type-title-size",title.toFixed(3)+"px");
+    artboard.style.setProperty("--lm-type-body-size",body.toFixed(3)+"px");
+    artboard.style.setProperty("--lm-type-detail-size",detail.toFixed(3)+"px");
+    artboard.dataset.previewZoom=scale.toFixed(4);
 
     artboard.style.setProperty("transform-origin","top left","important");
     artboard.style.setProperty("transform","scale("+scale+")","important");
@@ -103,6 +141,7 @@
 
   const fitObserver=new ResizeObserver(()=>fitArtboard());
   if(stage)fitObserver.observe(stage);
+  by("labTitleScale")?.addEventListener("input",()=>requestAnimationFrame(fitArtboard));
   if(artboard)new MutationObserver(fitArtboard).observe(artboard,{attributes:true,attributeFilter:["data-format"]});
   window.addEventListener("resize",fitArtboard,{passive:true});
   window.visualViewport?.addEventListener("resize",fitArtboard,{passive:true});

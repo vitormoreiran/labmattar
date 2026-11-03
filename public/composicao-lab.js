@@ -15,7 +15,7 @@
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"central",relation:"central",gap:0,textWidth:61,titleScale:100,type:"alternada",
       background:"color",mContent:"off",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
-      title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
+      title:"PRÁTICAS\nMATERIAIS E\nPROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },
@@ -91,8 +91,9 @@
   // Format-specific reading widths are genuine layout decisions, not zoom.
   // Switching aspect ratios recomposes the text and restores an author's
   // previous column width when they return to that format.
-  const formatReadingWidths={horizontal:61,vertical:90,quadrado:78,editorial:70};
+  const formatReadingWidths={horizontal:61,vertical:100,quadrado:78,editorial:70};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
+  const rememberedMScales=new Map([[state.format,state.mScale]]);
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
@@ -112,22 +113,26 @@
   }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
-    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
-    const backgroundPhoto=state.background==="photo"||markerActive;
+    const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     const mActive=state.mContent!=="off";
+    const blurBackdrop=mActive||markerActive;
+    const backgroundPhoto=state.background==="photo"||blurBackdrop;
     const mPhoto=state.mContent==="photo";
     const activeImage=backgroundPhoto||mPhoto;
+    const backdropContext=by("labBackdropContext");
+    if(backdropContext)backdropContext.textContent=blurBackdrop?
+      "M ou marcadores ativos: fundo automático com a mesma fotografia desfocada. Cor e fotografia selecionadas são preservadas para quando o M for desligado.":
+      "Sem M nem marcadores: o fundo segue a escolha de cor ou fotografia.";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     for(const key of ["mPosition","mMode"])by(fields[key]).disabled=!mActive;
-    const portrait=state.format==="vertical";
-    const fullM=portrait&&state.mPresentation==="completo";
-    by("labMPresentationField").hidden=!portrait;
-    by("labMPresentation").disabled=!portrait||!mActive;
+    const fullM=mActive&&state.mPresentation==="completo";
+    by("labMPresentationField").hidden=false;
+    by("labMPresentation").disabled=!mActive;
     by("labMScale").disabled=!mActive||fullM;
     by("labMPresentationHint").textContent=!mActive?
       "Ative o M para escolher sua aparição.":
       fullM?
-      "Completo: altura integral e sangria lateral; a escala manual fica preservada para Elemento.":
+      "Completo: M com 100% da altura do canvas, com proporção preservada. A escala anterior fica salva para Elemento.":
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=false;
@@ -222,23 +227,33 @@
   }
   function render(){
     const mMax=maxMScale(state.format);
-    if(state.mScale>mMax)state.mScale=mMax;
+    if(state.mPresentation!=="completo"&&state.mScale>mMax)state.mScale=mMax;
+    // An inactive scale control must not overwrite an Elemento value stored
+    // for another surface merely because Completo is selected now.
+    const visibleMax=state.mPresentation==="completo"?Math.max(mMax,state.mScale):mMax;
     const mScaleInput=by("labMScale");
-    mScaleInput.max=String(mMax);
+    mScaleInput.max=String(visibleMax);
     const mPrecision=by("labPrecision-mScale");
-    if(mPrecision)mPrecision.max=String(mMax);
+    if(mPrecision)mPrecision.max=String(visibleMax);
     state.placement="central";
     state.mPosition="centro";
     syncInputs();
     board.dataset.format=state.format;
-    board.dataset.mPresentation=state.format==="vertical"?state.mPresentation:"elemento";
+    board.dataset.mPresentation=state.mPresentation;
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
-    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
-    const effectiveBackground=markerActive?"photo":state.background;
+    const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
+    // The lower image is always the SAME selected photo with blur while an
+    // M (solid/photo) or its end markers are present. Keep the user's original
+    // background choice in state and restore it when those layers are absent.
+    const blurredBackdrop=markerActive||state.mContent!=="off";
+    const effectiveBackground=blurredBackdrop?"photo":state.background;
+    const backdrop=blurredBackdrop?"blur":state.background;
     const legacyImage=state.mContent==="photo"?"recorte":effectiveBackground==="photo"?"inteira":"nenhuma";
     board.dataset.image=legacyImage;
     board.dataset.background=effectiveBackground;
+    board.dataset.backdrop=backdrop;
+    board.dataset.backgroundRequested=state.background;
     board.dataset.markerBlur=String(markerActive);
     board.dataset.mContent=state.mContent;
     board.dataset.mMode=state.mMode;
@@ -365,7 +380,7 @@
   function measure(){
     const titleFit=fitTitleToReadingArea();
     alignMToCopy();
-    const backgroundPhoto=state.background==="photo";
+    const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;
     const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];
@@ -415,6 +430,8 @@
     state=copy(presets[key]);
     rememberedReadingWidths.clear();
     rememberedReadingWidths.set(state.format,state.textWidth);
+    rememberedMScales.clear();
+    rememberedMScales.set(state.format,state.mScale);
     activePreset=key;
     render();save();
   }
@@ -823,14 +840,19 @@
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
       const previousMode=state.mMode;
-      const previousFormat=state.format,previousWidth=state.textWidth;
+      const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale;
       readInputs();
       if(id==="labFormat"&&state.format!==previousFormat){
         rememberedReadingWidths.set(previousFormat,previousWidth);
+        rememberedMScales.set(previousFormat,previousMScale);
         state.textWidth=rememberedReadingWidths.has(state.format)?
           rememberedReadingWidths.get(state.format):formatReadingWidths[state.format];
+        state.mScale=rememberedMScales.has(state.format)?
+          rememberedMScales.get(state.format):Math.min(previousMScale,maxMScale(state.format));
         rememberedReadingWidths.set(state.format,state.textWidth);
+        rememberedMScales.set(state.format,state.mScale);
       }
+      if(id==="labMScale")rememberedMScales.set(state.format,state.mScale);
       // An application is a compositional decision. Entering M mode gives
       // the word and the whole letter separate readable fields, preserving
       // the user's actual content, fonts, format and selected photograph.

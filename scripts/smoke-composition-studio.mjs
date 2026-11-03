@@ -111,19 +111,34 @@ try{
     "Choosing a color while an M marker is active must keep the blurred photo background");
   await choose("marker","none");
   const restoredAfterMarker=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,markerBlur:el.dataset.markerBlur
+    background:el.dataset.background,requested:el.dataset.backgroundRequested,
+    backdrop:el.dataset.backdrop,markerBlur:el.dataset.markerBlur,
+    ambient:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).display,
+    filter:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).filter
   }));
-  assert(restoredAfterMarker.background==="color"&&restoredAfterMarker.markerBlur==="false",
-    "Disabling M markers must restore the previously selected background");
+  assert(restoredAfterMarker.background==="photo"&&restoredAfterMarker.requested==="color"&&
+         restoredAfterMarker.backdrop==="blur"&&restoredAfterMarker.markerBlur==="false"&&
+         restoredAfterMarker.ambient!=="none"&&restoredAfterMarker.filter.includes("blur("),
+    "After removing markers, an active M must STILL have the photo blurred underneath");
+  assert((await page.locator("#labBackdropContext").textContent()).includes("fotografia desfocada"),
+    "Background inspector must explain why the selected color is temporarily overridden");
+  await choose("mContent","off");
+  const restoredAfterM=await page.locator("#labArtboard").evaluate(el=>({
+    background:el.dataset.background,backdrop:el.dataset.backdrop,
+    layer:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display
+  }));
+  assert(restoredAfterM.background==="color"&&restoredAfterM.backdrop==="color"&&restoredAfterM.layer==="none",
+    "Turning the last M off restores the originally selected color, not an empty blurred layer");
 
 
-  // In portrait the same published M has two geometric appearances.
-  // Elemento keeps the author-controlled scale; Completo fits page height
-  // without changing the vector ratio or carrying the bleed into other formats.
+  // One published M; Completo fits 100% of every surface's vertical height.
+  // Elemento retains the manually adjusted scale in all four formats.
   await choose("mContent","photo");
   await choose("format","vertical");
+  assert(await page.locator("#labTextWidth").inputValue()==="100",
+    "Vertical must use the whole reading width inside the established margins, not crop the last word");
   assert(await page.locator("#labMPresentationField").isVisible(),
-    "Portrait format must reveal M appearance controls");
+    "M appearance controls must be accessible across canvas formats");
   await choose("mPresentation","elemento");
   const mMeasurement=async()=>page.locator("#labArtboard").evaluate(board=>{
     const b=board.getBoundingClientRect(),m=board.querySelector("#labMask").getBoundingClientRect();
@@ -139,6 +154,16 @@ try{
     "Elemento must preserve the visible, aligned variable-size M: "+JSON.stringify(mElement));
   await choose("mPresentation","completo");
   const mFull=await mMeasurement();
+  const fullBackdrop=await page.locator("#labArtboard").evaluate(el=>{
+    const ambient=el.querySelector(".lm-lab-photo-ambient");
+    return {mode:el.dataset.backdrop,filter:getComputedStyle(ambient).filter,
+      display:getComputedStyle(ambient).display,
+      samePhoto:ambient.getAttribute("src")===el.querySelector("#labMaskPhoto").getAttribute("src")};
+  });
+  assert(fullBackdrop.mode==="blur"&&fullBackdrop.filter.includes("blur(")&&
+         fullBackdrop.display!=="none"&&fullBackdrop.samePhoto,
+    "Completo in 9:16 keeps the SAME blurred photograph below the full-height M: "+JSON.stringify(fullBackdrop));
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-completo.png"});
   assert(await page.locator("#labMask").isVisible(),
     "M must remain visible when the background is a solid color");
   assert(mFull.mode==="completo" && Math.abs(mFull.mask.height-mFull.frame.height)<2 &&
@@ -152,13 +177,36 @@ try{
   assert(await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-composicao-lab-v1")).mPresentation)==="completo",
     "M appearance must persist in the same saved editor state");
   await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-vertical.png"});
-  await choose("format","horizontal");
-  assert(await page.locator("#labMPresentationField").isHidden() &&
-         (await mMeasurement()).mode==="elemento",
-    "Horizontal must stay unchanged regardless of the vertical M option");
+  // Complete M uses EXACTLY 100% of the canvas height for all four formats;
+  // the original vector ratio is fixed, so horizontal can have free side space.
+  for(const format of ["horizontal","quadrado","editorial","vertical"]){
+    await choose("format",format);
+    assert(await page.locator("#labMPresentationField").isVisible(),
+      "M mode chooser must remain available in "+format);
+    const geometry=await mMeasurement();
+    const frame=geometry.frame, mask=geometry.mask;
+    assert(geometry.mode==="completo" &&
+           Math.abs(mask.height-frame.height)<2 &&
+           Math.abs(mask.width/mask.height-990.08/743.18)<.005 &&
+           Math.abs((mask.left+mask.right)-(frame.left+frame.right))<2,
+      "M Completo must have 100% canvas height, canonical aspect and a centered axis in "+format+": "+JSON.stringify(geometry));
+    const reading=await page.locator("#labArtboard").evaluate(board=>{
+      const title=board.querySelector("#labRenderedTitle");
+      const copy=board.querySelector("#labCopy");
+      const safe=board.querySelector("#labReading");
+      const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}};
+      return {title:rect(title),copy:rect(copy),safe:rect(safe),
+        fragments:[...title.querySelectorAll(".lm-lab-title-line")].map(span=>({
+          text:span.textContent,scroll:span.scrollWidth,width:span.clientWidth
+        }))};
+    });
+    assert(reading.fragments.every(line=>line.scroll<=line.width+2) &&
+           reading.title.left>=reading.safe.left-2 &&
+           reading.title.right<=reading.safe.right+2,
+      "The existing Title must wrap at word boundaries without clipping in "+format+": "+JSON.stringify(reading));
+    await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-"+format+".png"});
+  }
   await choose("format","vertical");
-  assert((await mMeasurement()).mode==="completo",
-    "Returning to portrait must restore the chosen M appearance");
   await choose("mPresentation","elemento");
   assert((await page.locator("#labMScale").inputValue())===savedScale &&
          await page.locator("#labMScale").isEnabled(),
@@ -167,6 +215,40 @@ try{
 
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
+  const previewGeometry=await page.evaluate(()=>{
+    const workspace=document.querySelector(".lm-lab-workspace");
+    const preview=document.querySelector(".lm-lab-preview");
+    const stage=document.querySelector(".lm-lab-stage");
+    const artboard=document.querySelector("#labArtboard");
+    return {viewport:innerWidth,active:document.body.classList.contains("lm-studio-open"),
+      workspaceStyle:workspace.getAttribute("style"),
+      rows:getComputedStyle(workspace).gridTemplateRows,
+      workspaceHeight:workspace.getBoundingClientRect().height,
+      previewHeight:preview.getBoundingClientRect().height,
+      previewCSSHeight:getComputedStyle(preview).height,
+      stageHeight:stage.getBoundingClientRect().height,
+      boardFormat:artboard.dataset.format,boardStyle:artboard.getAttribute("style")};
+  });
+  assert(previewGeometry.previewHeight>=300,
+    "Mobile studio must give its real canvas enough room instead of a 220px thumbnail: "+JSON.stringify(previewGeometry));
+  // The editor may downscale the logical page, but it must never make its
+  // three existing typography roles physically unreadable.
+  for(const format of ["vertical","horizontal","quadrado","editorial"]){
+    await choose("format",format);
+    await page.waitForTimeout(120);
+    const legible=await page.locator("#labArtboard").evaluate(el=>{
+      const zoom=el.getBoundingClientRect().width/el.offsetWidth;
+      const size=selector=>parseFloat(getComputedStyle(el.querySelector(selector)).fontSize)*zoom;
+      return {format:el.dataset.format,zoom,body:size("#labRenderedBody"),
+        title:size("#labRenderedTitle"),detail:size("#labKicker"),
+        preview:el.getBoundingClientRect().height,
+        tokens:["title","body","detail"].map(role=>getComputedStyle(el).getPropertyValue("--lm-type-"+role+"-size").trim())};
+    });
+    assert(legible.preview>150&&legible.title>=31.5&&legible.body>=12.5&&legible.detail>=9.5,
+      "Studio preview must preserve readable Title/Body/Detail and use all 3 canonical roles: "+JSON.stringify(legible));
+    await page.locator("#labArtboard").screenshot({path:"laboratorio-tipografia-"+format+".png"});
+  }
+  await choose("format","horizontal");
   assert(await page.locator(".lm-composition-module-index").isVisible(),
     "Mobile module rail must remain visible");
   assert(await page.locator('button[data-mobile-module="superficie"]').getAttribute("aria-pressed")==="true",

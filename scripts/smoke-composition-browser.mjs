@@ -78,21 +78,81 @@ try{
   }));
   assert(state.background==="photo"&&state.markerBlur==="true"&&state.mImage!=="none",
     "Active M-tip markers preserve the blurred photographic background");
+  // The lower layer is a blurred rendition of the selected photograph in
+  // EVERY composition containing M or M markers, even if Cor was selected.
+  const backdrop=async()=>page.locator("#labArtboard").evaluate(el=>{
+    const ambient=el.querySelector(".lm-lab-photo-ambient");
+    const mask=el.querySelector("#labMaskPhoto");
+    const layer=el.querySelector(".lm-lab-photo-layer");
+    return {
+      requested:el.dataset.backgroundRequested,background:el.dataset.background,
+      backdrop:el.dataset.backdrop,markerBlur:el.dataset.markerBlur,
+      layer:getComputedStyle(layer).display,display:getComputedStyle(ambient).display,
+      opacity:getComputedStyle(ambient).opacity,filter:getComputedStyle(ambient).filter,
+      src:ambient.getAttribute("src"),maskSrc:mask.getAttribute("src"),
+      loaded:ambient.complete&&ambient.naturalWidth>0,
+      focus:getComputedStyle(ambient).objectPosition,
+      m:getComputedStyle(el.querySelector("#labMask")).display,
+      mImage:getComputedStyle(mask).display
+    };
+  });
+  const assertBlur=async(label)=>{
+    const b=await backdrop();
+    assert(b.backdrop==="blur"&&b.background==="photo"&&b.layer!=="none"&&
+           b.display!=="none"&&b.opacity==="1"&&b.loaded&&b.filter.includes("blur("),
+      label+": lower layer must contain a LOADED blurred photograph: "+JSON.stringify(b));
+    return b;
+  };
+  let blurred=await assertBlur("M with both markers over color");
+  assert(blurred.requested==="color"&&blurred.src===blurred.maskSrc,
+    "Both layers must use exactly the same selected photograph");
+
   await choose("marker","none");
-  state=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,mContent:el.dataset.mContent,
-    layer:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
-    ambient:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).display,
-    m:getComputedStyle(el.querySelector("#labMask")).display,
-    mImage:getComputedStyle(el.querySelector("#labMaskPhoto")).display
-  }));
-  assert(state.background==="color"&&state.layer!=="none"&&state.ambient==="none"&&
-         state.m!=="none"&&state.mImage!=="none"&&await page.locator("#labMask").isVisible(),
-    "Color background must hide only the ambient photo, never the independent photographic M");
+  blurred=await assertBlur("M without markers, color requested");
+  assert(blurred.markerBlur==="false"&&blurred.m!=="none"&&blurred.mImage!=="none"&&
+         await page.locator("#labMask").isVisible(),
+    "Disabling markers must NOT hide blur while a photographic M remains");
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-m.png"});
+
+  await choose("mContent","solid");
+  blurred=await assertBlur("solid M");
+  assert(blurred.m!=="none"&&blurred.mImage==="none",
+    "Solid M still preserves its blurred photograph below");
+  await choose("mContent","photo");
+  await choose("marker","top");
+  blurred=await assertBlur("top marker");
+  assert(blurred.markerBlur==="true",
+    "Top marker must activate photo blur");
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-marcador.png"});
+  await choose("marker","bottom");
+  await assertBlur("bottom marker");
+  await choose("marker","both");
+  await assertBlur("both markers");
+  await choose("marker","none");
+
+  await choose("photo","179");
+  blurred=await assertBlur("updated selected photograph");
+  assert(blurred.src?.includes("179")&&blurred.src===blurred.maskSrc,
+    "Changing the photo must update both blurred background and the M immediately");
 
   await choose("mContent","off");
-  assert(await page.locator("#labMask").evaluate(el=>getComputedStyle(el).display)==="none",
-    "M off state must remove the M without changing the composition type");
+  let restored=await backdrop();
+  assert(restored.backdrop==="color"&&restored.requested==="color"&&restored.layer==="none"&&
+         restored.display==="none"&&restored.m==="none",
+    "Only with M and markers off should the chosen plain color return: "+JSON.stringify(restored));
+  await choose("marker","top");
+  blurred=await assertBlur("marker without a central M");
+  assert(blurred.m==="none"&&blurred.markerBlur==="true",
+    "The marker alone must produce the same blurred photograph underneath");
+  await choose("marker","none");
+  restored=await backdrop();
+  assert(restored.backdrop==="color"&&restored.layer==="none",
+    "Turning the final marker off restores the saved color background");
+  await choose("background","photo");
+  restored=await backdrop();
+  assert(restored.backdrop==="photo"&&restored.layer!=="none"&&
+         restored.display!=="none"&&!restored.filter.includes("blur("),
+    "Without M or markers a chosen photograph is not forcibly blurred");
 
   const legacy=await browser.newPage();
   await legacy.goto(new URL("/composicao.html?studio=1#laboratorio",url).href,{waitUntil:"load",timeout:60000});
@@ -165,12 +225,15 @@ try{
     "Sidebar must describe the complete vertical behavior");
   await constructionPage.locator("#caseFrame").screenshot({path:"composition-vertical-m-completo.png"});
   await constructionPage.locator('[data-case-format="desktop"]').click();
-  assert(await constructionPage.locator(".lm-case-m-presentation").isHidden() &&
-         await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="elemento",
-    "Horizontal format must not inherit the portrait full-bleed mask");
+  const horizontalFull=await measureM();
+  assert(await constructionPage.locator(".lm-case-m-presentation").isVisible() &&
+         horizontalFull.mode==="completo" &&
+         Math.abs(horizontalFull.mask.height-horizontalFull.frame.height)<2 &&
+         Math.abs(horizontalFull.mask.width/horizontalFull.mask.height-990.08/743.18)<.005,
+    "Horizontal case must also allow a full-height M without distorting the vector: "+JSON.stringify(horizontalFull));
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="completo",
-    "Portrait M appearance must be restored after switching formats");
+    "Changing orientation must preserve M presentation mode");
   await constructionPage.locator('[data-case-m-presentation="elemento"]').click();
   const checkVertical=async(viewport)=>{
     await constructionPage.setViewportSize(viewport);

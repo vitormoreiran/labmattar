@@ -3631,3 +3631,26 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     padding-top:11px!important;
   }
 }
+
+/* Preview priority on phones: the old 190–220px thumbnail obscured the
+ * normative hierarchy. Give the actual canvas sufficient space, then let the
+ * inspector scroll below. This changes ONLY the editor's available preview
+ * area; it does not add any new type styles or move editorial fields. */
+@media(max-width:700px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labArtboard[data-format]){
+    /* #labArtboard outranks legacy per-format :has(.lm-lab-board...) rules. */
+    grid-template-rows:clamp(300px,54dvh,460px) minmax(0,1fr)!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-preview{
+    grid-area:preview!important;
+    height:100%!important;
+    max-height:none!important;
+    min-height:0!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-stage{
+    height:100%!important;
+    min-height:0!important;
+    max-height:none!important;
+    padding:12px!important;
+  }
+}

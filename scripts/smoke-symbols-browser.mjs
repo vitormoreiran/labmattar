@@ -142,9 +142,14 @@ try {
             const sizes=width?vertical?
               {title:scale(18,.096,38,width),body:scale(9,.0365,14,width),detail:scale(7,.0255,10,width)}:
               {title:scale(12,.069,84,width),body:scale(8,.0175,18,width),detail:scale(6,.0125,13,width)}:null;
-            const nominal=sizes?{title:{size:sizes.title,leading:sizes.title*.98},
-              body:{size:sizes.body,leading:sizes.body*(innerWidth<=760?1.5:1.45)},
-              detail:{size:sizes.detail,leading:sizes.detail*(innerWidth<=760?1.4:1.35)}}[role]:expect[role];
+            const lab=e.closest('#labArtboard');
+            const labVars=lab?getComputedStyle(lab):null;
+            const labSize=labVars?parseFloat(labVars.getPropertyValue('--lm-type-'+role+'-size')):NaN;
+            const nominal=Number.isFinite(labSize)?
+              {size:labSize,leading:labSize*(role==='title'?.98:role==='body'?(innerWidth<=760?1.5:1.45):(innerWidth<=760?1.4:1.35))}:
+              sizes?{title:{size:sizes.title,leading:sizes.title*.98},
+                body:{size:sizes.body,leading:sizes.body*(innerWidth<=760?1.5:1.45)},
+                detail:{size:sizes.detail,leading:sizes.detail*(innerWidth<=760?1.4:1.35)}}[role]:expect[role];
             const item={role,tag:e.tagName,className:String(e.className).slice(0,90),text:value.slice(0,50),size:parseFloat(cs.fontSize),leading:parseFloat(cs.lineHeight),weight:cs.fontWeight,family:cs.fontFamily,tracking:parseFloat(cs.letterSpacing)||0};
             seen.push(item);
             if(!nominal){errors.push({...item,reason:'missing role'});continue;}
@@ -164,7 +169,13 @@ try {
               if(!value||value==='none'||value==='normal'||value==='""'||value==="''"||c.display==='none'||c.visibility==='hidden')continue;
               pseudoCount++;
               const actual={text:String(value).slice(0,40),pseudo,element:e.tagName+'.'+String(e.className).slice(0,45),size:parseFloat(c.fontSize),leading:parseFloat(c.lineHeight),family:c.fontFamily,weight:c.fontWeight,tracking:parseFloat(c.letterSpacing)||0};
-              if(Math.abs(actual.size-detail)>.12||Math.abs(actual.leading-expect.detail.leading)>.25||actual.weight!=='300'||!actual.family.startsWith('UniversMattar')||Math.abs(actual.tracking-.04*detail)>.12)
+              const pseudoLab=e.closest('#labArtboard');
+              const pseudoSize=pseudoLab?
+                parseFloat(getComputedStyle(pseudoLab).getPropertyValue('--lm-type-detail-size')):detail;
+              const pseudoLeading=pseudoSize*(innerWidth<=760?1.4:1.35);
+              if(Math.abs(actual.size-pseudoSize)>.12||Math.abs(actual.leading-pseudoLeading)>.25||
+                 actual.weight!=='300'||!actual.family.startsWith('UniversMattar')||
+                 Math.abs(actual.tracking-.04*pseudoSize)>.12)
                 errors.push({...actual,reason:'CSS-generated label is not Detalhe'});
             }
           }

@@ -67,7 +67,7 @@
 <button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="univers" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="univers"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Univers</span><span class="lm-ctrl-meta">Estrutural</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="perpetua" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="perpetua"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Perpetua</span><span class="lm-ctrl-meta">Editorial</span></button></div><small class="lm-ctrl-helper">Um único tipo de título.</small></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTitleScale">Escala do título</label><output id="labTitleScaleValue" for="labTitleScale">100%</output></div><input type="range" id="labTitleScale" min="70" max="140" step="5" value="100"><div class="lm-control-effect" data-control-effect="title" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">Ajusta a escala do título.</span></div><small class="lm-lab-fit-info" id="labTitleFitInfo" data-adjusted="false" role="status" aria-live="polite">O título permanece dentro da área útil.</small></div>
-        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTextWidth">Largura da coluna</label><output for="labTextWidth" id="labTextWidthValue">61%</output></div><input type="range" id="labTextWidth" min="40" max="90" step="2" value="61"><div class="lm-control-effect" data-control-effect="width" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">Define a largura do bloco de texto.</span></div></div>
+        <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTextWidth">Largura da coluna</label><output for="labTextWidth" id="labTextWidthValue">61%</output></div><input type="range" id="labTextWidth" min="40" max="100" step="1" value="61"><div class="lm-control-effect" data-control-effect="width" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">Define a largura do bloco de texto.</span></div></div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labBodyModeTitle" class="lm-lab-field-title">Texto de leitura</div><select id="labBodyMode" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="oculto">Somente título</option><option value="visivel">Título + texto</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labBodyModeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="bodyMode" data-value="oculto" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-relation" data-relation="title"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Só título</span><span class="lm-ctrl-meta">Uma hierarquia</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="bodyMode" data-value="visivel" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-relation" data-relation="body"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Título + texto</span><span class="lm-ctrl-meta">Duas hierarquias</span></button></div><small class="lm-ctrl-helper">Controla a presença do texto de apoio.</small></div></div>
         <details class="lm-inspector-more" data-lab-more="texto">
@@ -93,6 +93,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
               <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="color" aria-pressed="false"><span class="lm-ctrl-name">Cor</span></button>
               <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
             </div>
+            <small class="lm-ctrl-helper" id="labBackdropContext" aria-live="polite">Sem M nem marcadores, o fundo segue a escolha de cor ou fotografia.</small>
           </div>
         </div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labColorTitle" class="lm-lab-field-title">Cor do fundo</div><select id="labColor" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
@@ -117,8 +118,8 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
               <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
             </div>
           </div>
-          <div id="labMPresentationField" class="lm-lab-field lm-ctrl-choice-field lm-m-presentation-field" hidden>
-            <div id="labMPresentationTitle" class="lm-lab-field-title">Aparição do M / vertical</div>
+          <div id="labMPresentationField" class="lm-lab-field lm-ctrl-choice-field lm-m-presentation-field">
+            <div id="labMPresentationTitle" class="lm-lab-field-title">Aparição do M / superfície</div>
             <select id="labMPresentation" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
               <option value="elemento">Elemento</option><option value="completo">Completo</option>
             </select>
@@ -129,10 +130,10 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
               </button>
               <button type="button" class="lm-ctrl-choice" data-lab-choice="mPresentation" data-value="completo" aria-pressed="false">
                 <span class="lm-m-presentation-icon" data-presentation="completo" aria-hidden="true"><i></i></span>
-                <span class="lm-ctrl-name">Completo</span><span class="lm-ctrl-meta">Ocupa a altura · laterais cortadas</span>
+                <span class="lm-ctrl-name">Completo</span><span class="lm-ctrl-meta">100% da altura · proporção fixa</span>
               </button>
             </div>
-            <small id="labMPresentationHint" class="lm-ctrl-helper">Elemento preserva a escala. Completo sangra pelas laterais sem deformar o M.</small>
+            <small id="labMPresentationHint" class="lm-ctrl-helper">Elemento preserva a escala. Completo ocupa toda a altura, sem deformação. A sangria depende do formato.</small>
           </div>
         </div>
         <select id="labImage" hidden aria-hidden="true"><option value="nenhuma" selected>Compatibilidade</option></select>

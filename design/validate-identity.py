@@ -55,7 +55,7 @@ assert "UMA COMPOSIÇÃO" in composition
 assert "lm-composition-submodule" in composition
 assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
 assert "dataset.background" in lab_js and "dataset.mContent" in lab_js
-assert "data-background=photo" in lab_css and "data-m-content=solid" in lab_css
+assert 'data-backdrop="blur"' in lab_css and "data-m-content=solid" in lab_css, "Shared photographic blur must be the only M backdrop rule"
 assert "m-publicado.svg" in lab_css
 assert 'id="regras-de-composicao"' in construction, "Composition rules section missing"
 for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):

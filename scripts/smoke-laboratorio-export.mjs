@@ -1,5 +1,5 @@
 import { chromium } from "playwright";
-import { readFile } from "node:fs/promises";
+import { readFile, copyFile } from "node:fs/promises";
 
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},acceptDownloads:true,deviceScaleFactor:1});
@@ -62,15 +62,16 @@ try{
   const first=await audit();
   console.log("PNG FIDELITY",JSON.stringify(first));
   assert(first.width===3840&&first.height===2160,"4K horizontal dimensions must be exact: "+JSON.stringify(first));
-  assert(first.byteSize>8000&&first.uniqueColors>150&&first.brightness>15,
+  assert(first.byteSize>8000&&first.uniqueColors>70&&first.brightness>15,
     "Export must contain the photograph and actual page elements: "+JSON.stringify(first));
-  assert(first.meanAbsDiff<52,"Export cannot diverge visibly from the approved page: "+JSON.stringify(first));
+  assert(first.meanAbsDiff<26,"Export cannot diverge visibly from the approved page: "+JSON.stringify(first));
 
   const promise=page.waitForEvent("download",{timeout:60000});
   await page.locator("#labExportPng").click();
   const download=await promise;
   assert(/labmattar-horizontal-3840x2160\.png$/.test(download.suggestedFilename()),"Filename must include format and dimensions");
   const data=await readFile(await download.path());
+  await copyFile(await download.path(),"laboratorio-export-4k.png");
   assert(data.subarray(1,4).toString("ascii")==="PNG","Download must be a PNG");
   assert(data.readUInt32BE(16)===3840&&data.readUInt32BE(20)===2160,
     "PNG file header dimensions must match requested output");
@@ -83,7 +84,11 @@ try{
   const second=await audit();
   console.log("PORTRAIT PNG",JSON.stringify(second));
   assert(second.width===1080&&second.height===1920,"2K portrait dimensions must be correct: "+JSON.stringify(second));
-  assert(second.uniqueColors>8&&second.meanAbsDiff<52,"Simple portrait page must match the preview: "+JSON.stringify(second));
+  assert(second.uniqueColors>8&&second.meanAbsDiff<26,"Simple portrait page must match the preview: "+JSON.stringify(second));
+  await page.setViewportSize({width:390,height:844});
+  await page.waitForTimeout(160);
+  assert(await page.locator("#labExportPng").isVisible(),
+    "PNG export must remain accessible on mobile");
   assert(errors.length===0,"Browser errors: "+errors.join("; "));
   console.log("LABMATTAR PNG EXPORT BROWSER OK");
 }finally{

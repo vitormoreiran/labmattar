@@ -316,7 +316,7 @@ try{
 
   const selectedStyle=await page.locator('button[data-mobile-module="texto"]').evaluate(el=>({
     pressed:el.getAttribute("aria-pressed"), background:getComputedStyle(el).backgroundColor,
-    color:getComputedStyle(el).color, body:document.body.className, matches:el.matches("html body.lm-studio-open main #laboratorio .lm-lab-inspector .lm-composition-module-index button[aria-pressed=true]"), ancestors:el.parentElement.parentElement.className, rules:(()=>{const out=[]; const scan=rules=>{for(const rule of rules){if(rule.cssRules){if(!rule.conditionText||matchMedia(rule.conditionText).matches)scan(rule.cssRules)}else if(rule.selectorText){try{if(el.matches(rule.selectorText)&&(rule.style.background||rule.style.backgroundColor||rule.style.color))out.push([rule.selectorText,rule.style.background,rule.style.color])}catch{}}}};for(const sheet of document.styleSheets){try{scan(sheet.cssRules)}catch{}}return out.slice(-12)})()
+    color:getComputedStyle(el).color
   }));
   assert(selectedStyle.pressed==="true" && selectedStyle.background==="rgb(38, 41, 35)" && selectedStyle.color==="rgb(255, 255, 255)",
     "Selected mobile module must remain clearly visible: "+JSON.stringify(selectedStyle));

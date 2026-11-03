@@ -111,10 +111,27 @@ try{
     "Choosing a color while an M marker is active must keep the blurred photo background");
   await choose("marker","none");
   const restoredAfterMarker=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,markerBlur:el.dataset.markerBlur
+    background:el.dataset.background,requested:el.dataset.backgroundRequested,
+    backdrop:el.dataset.backdrop,markerBlur:el.dataset.markerBlur,
+    ambient:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).display,
+    filter:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).filter
   }));
-  assert(restoredAfterMarker.background==="color"&&restoredAfterMarker.markerBlur==="false",
-    "Disabling M markers must restore the previously selected background");
+  assert(restoredAfterMarker.background==="photo"&&restoredAfterMarker.requested==="color"&&
+         restoredAfterMarker.backdrop==="blur"&&restoredAfterMarker.markerBlur==="false"&&
+         restoredAfterMarker.ambient!=="none"&&restoredAfterMarker.filter.includes("blur("),
+    "After removing markers, an active M must STILL have the photo blurred underneath");
+  assert((await page.locator("#labBackdropContext").textContent()).includes("fotografia desfocada"),
+    "Background inspector must explain why the selected color is temporarily overridden");
+  await choose("mContent","off");
+  const restoredAfterM=await page.locator("#labArtboard").evaluate(el=>({
+    background:el.dataset.background,backdrop:el.dataset.backdrop,
+    layer:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display
+  }));
+  assert(restoredAfterM.background==="color"&&restoredAfterM.backdrop==="color"&&restoredAfterM.layer==="none",
+    "Turning the last M off restores the originally selected color, not an empty blurred layer");
+
+
+  // In portrait the same published M has two geometric appearances.
 
 
   // In portrait the same published M has two geometric appearances.
@@ -139,6 +156,16 @@ try{
     "Elemento must preserve the visible, aligned variable-size M: "+JSON.stringify(mElement));
   await choose("mPresentation","completo");
   const mFull=await mMeasurement();
+  const fullBackdrop=await page.locator("#labArtboard").evaluate(el=>{
+    const ambient=el.querySelector(".lm-lab-photo-ambient");
+    return {mode:el.dataset.backdrop,filter:getComputedStyle(ambient).filter,
+      display:getComputedStyle(ambient).display,
+      samePhoto:ambient.getAttribute("src")===el.querySelector("#labMaskPhoto").getAttribute("src")};
+  });
+  assert(fullBackdrop.mode==="blur"&&fullBackdrop.filter.includes("blur(")&&
+         fullBackdrop.display!=="none"&&fullBackdrop.samePhoto,
+    "Completo in 9:16 keeps the SAME blurred photograph below the full-height M: "+JSON.stringify(fullBackdrop));
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-completo.png"});
   assert(await page.locator("#labMask").isVisible(),
     "M must remain visible when the background is a solid color");
   assert(mFull.mode==="completo" && Math.abs(mFull.mask.height-mFull.frame.height)<2 &&

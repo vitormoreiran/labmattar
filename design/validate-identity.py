@@ -56,6 +56,16 @@ assert "lm-composition-submodule" in composition
 assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
 assert "dataset.background" in lab_js and "dataset.mContent" in lab_js
 assert 'data-backdrop="blur"' in lab_css and "data-m-content=solid" in lab_css, "Shared photographic blur must be the only M backdrop rule"
+# Deprecated interfaces have no DOM producers. Their CSS must never return,
+# nor should the renderer regain a second competing M/image state machine.
+for stale in (".lm-studio-detail", ".lm-studio-tool", ".lm-studio-image-block",
+              ".lm-lab-presets", ".lm-inspector-tabs", ".lm-ctrl-preset-visual"):
+ for name,stylesheet in (("studio",studio_css),("editor",clean_css),("controls",(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8"))):
+  assert stale not in stylesheet,f"Deprecated selector {stale} returned to {name}"
+assert 'data-image=' not in lab_css and 'data-m-mode=' not in lab_css
+assert lab_css.count('data-backdrop="blur"')>=2, "Photograph blur needs one canonical background state"
+assert composition.count('data-lab-choice="mPresentation"')==2, "Only Elemento/Completo are allowed"
+
 assert "m-publicado.svg" in lab_css
 assert 'id="regras-de-composicao"' in construction, "Composition rules section missing"
 for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):

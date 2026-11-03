@@ -389,8 +389,8 @@
   opacity:0;
 }
 .lm-lab-motion-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
-.lm-lab-motion-layer .lm-lab-reading,
-.lm-lab-solid-contrast[data-motion-clone] .lm-lab-reading{pointer-events:none}
+.lm-lab-motion-layer *,
+.lm-lab-solid-contrast[data-motion-clone] *{pointer-events:none!important;user-select:none!important}
 .lm-lab-motion-word{display:inline-block;white-space:pre;vertical-align:baseline}
 @media(max-width:850px){
   body.lm-studio-open .lm-lab-preview-head .lm-lab-preview-actions{gap:7px}

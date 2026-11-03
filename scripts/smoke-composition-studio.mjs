@@ -214,6 +214,7 @@ try{
     });
     assert(legible.preview>150&&legible.title>=31.5&&legible.body>=12.5&&legible.detail>=9.5,
       "Studio preview must preserve readable Title/Body/Detail and use all 3 canonical roles: "+JSON.stringify(legible));
+    await page.locator("#labArtboard").screenshot({path:"laboratorio-tipografia-"+format+".png"});
   }
   await choose("format","horizontal");
   assert(await page.locator(".lm-composition-module-index").isVisible(),

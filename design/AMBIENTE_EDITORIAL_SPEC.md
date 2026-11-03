@@ -1,5 +1,7 @@
 # LABMATTAR — Ambiente Editorial
-Especificacao funcional v0.1 | 2026-10-28 | Estado: proposta, sem alterar normas aprovadas
+Especificacao funcional v0.1 | 2026-10-28 | Estado: proposta historica, sem alterar normas aprovadas
+
+> **Atualização de 03/11/2026:** o contrato vigente para desenvolvimento de produção, acervo, sequências e exportação está em [LABORATORIO_PRODUCAO_EXPORTACAO.md](LABORATORIO_PRODUCAO_EXPORTACAO.md). Em caso de conflito, preservar os únicos tratamentos aprovados **Título, Corpo e Detalhe**, as fontes oficiais de identidade e a **Matriz Vetorial atual** em `tools/matriz-vetorial/`, já integrada ao manual; não usar o antigo `app/editor/` como fonte da Matriz atual. Esta especificação permanece como registro de investigação editorial anterior, não como autorização para novos estilos de texto.
 
 ## Proposito
 Ambiente unico de criacao, composicao, organizacao e publicacao de paginas editoriais para apresentacoes, projetos e narrativas visuais. A pagina e a unidade de edicao; uma publicacao e uma sequencia de paginas. Conteudo e apresentacao visual devem ser separados para permitir reuso.
@@ -32,7 +34,7 @@ Ambiente unico de criacao, composicao, organizacao e publicacao de paginas edito
 - Project content existente: fonte externa para selecionar/instanciar material; nao duplicar editor atual.
 
 ## Edicao de texto
-Tres funcoes editoriais solicitadas: titulo, subtitulo e corpo. O registro atual em identity-system.json usa title/body/detail; compatibilidade e status desses papeis devem ser resolvidos explicitamente antes de alterar tokens. Campos de texto compartilham eixo de alinhamento; texto quebra naturalmente, sem posicionamento por caracteres soltos. Controles de edicao: conteudo inline, funcao tipografica, quebra, largura, posicao vertical, espacamento previsto pelo sistema. Fonte e peso fora do sistema so por excecao aprovada.
+Tres tratamentos de texto aprovados: Titulo, Corpo e Detalhe (title/body/detail). Subtitulos, legendas e creditos sao funcoes de conteudo e devem ser mapeados a esses tratamentos; nao criar uma quarta tipografia. Campos de texto compartilham eixo de alinhamento; texto quebra naturalmente, sem posicionamento por caracteres soltos. Controles de edicao: conteudo inline, funcao tipografica, quebra, largura, posicao vertical, espacamento previsto pelo sistema. Fonte e peso fora do sistema so por excecao aprovada.
 
 ## Imagens e midia
 Galeria central pesquisavel e filtravel por projeto, tipo, orientacao e credito. Upload e referencia a acervo existente; nenhuma duplicacao obrigatoria. Na instancia da pagina: inserir/substituir, fit (cover/contain), focal point, crop, escala, posicao, legenda, texto alternativo e creditos. Preservar original; armazenamento de media nao deve usar arquivos grandes no Git. Video usa posterior/legendas/controles e estados de carregamento.
@@ -56,7 +58,7 @@ D. Trocar modelo -> preservar texto/imagens -> remapear slots -> mostrar conflit
 - design/identity-system.json: fonte inicial de tokens, status e elementos oficiais; title/body/detail (nao reinterpretar como approved automaticamente).
 - design/composicao.html: experimento de artboard, margens, grid, disposicao de titulo, cores, simbolos; referencial, NAO motor completo de paginas.
 - design/imagem.html: experimento de upload local, fit/crop/foco e sobreposicao de texto; reutilizar conceitos e testar extracao.
-- design/EditorialAssembly.tsx e app/editor/page.tsx: sequenciamento e edicao do sistema vetorial; nao acoplar motor de morph ao editor de paginas.
+- Matriz Vetorial atual em `tools/matriz-vetorial/`: roteiro, timeline e exports de motion em desenvolvimento continuo; conferir `design/motion-matriz.md` e o contrato de produção antes de integrar. A antiga `app/editor/page.tsx` permanece historica e nao e fonte de verdade da Matriz atual; nao acoplar o motor de morph ao editor de paginas.
 - content/media.json e schema: catalogo inicial de midia (principalmente video); validar extensao de schema para imagens se necessario.
 - editor.labmattar.com: interface observada de gestao de projetos, sequencia e captions, mas origem de codigo/contrato API ainda NAO estabelecidos neste repositorio.
 - labmattar.com: comportamento visual/responsivo tomado como referencia do produto; auditoria tecnica do codigo de producao pendente, sem assumir correspondencia com este repositorio.

@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/composicao-studio.css">
 <link rel="stylesheet" href="/composicao-editor-clean.css">
 <link rel="stylesheet" href="/composicao-lab-signature.css">
+<link rel="stylesheet" href="/composicao-lab-export.css">
 <link rel="stylesheet" href="/manual-headings.css?v=20261102-normative">
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
@@ -25,6 +26,11 @@
     <div class="lm-studio-launch">
       <button type="button" class="lm-lab-motion-play" id="labMotionPlay" aria-controls="labArtboard" aria-label="Reproduzir entrada dos textos" title="Reproduzir a entrada de Título, Corpo e Detalhe"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1 0.5 9 5 1 9.5Z"/></svg><span id="labMotionPlayText">ENTRADA</span></button>
       <span id="labMotionStatus" class="lm-lab-motion-status" role="status" aria-live="polite"></span>
+      <div class="lm-lab-export-tools" role="group" aria-label="Exportar imagem da composição">
+        <label class="lm-lab-export-label" for="labExportSize">QUALIDADE</label>
+        <select id="labExportSize" aria-label="Resolução do PNG"><option value="3840">4K</option><option value="1920">2K</option></select>
+        <button type="button" id="labExportPng" aria-describedby="labExportStatus" title="Exportar PNG nas dimensões reais, com checagem de imagens e texto"><span class="lm-lab-export-verb">EXPORTAR</span> PNG</button>
+      </div>
       <button type="button" id="labStudioToggle" aria-pressed="false" aria-controls="labArtboard">
         <span id="labStudioToggleText">ABRIR EDITOR</span><span class="lm-studio-launch-symbol" aria-hidden="true">↗</span>
       </button>
@@ -237,7 +243,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         </article>
         </div>
       </div>
-      <div class="lm-lab-preview-foot"><strong id="labStatus" role="status" data-state="ok">COMPOSIÇÃO / SUPERFÍCIE NEUTRA</strong><span id="labPhotoStatus">SEM TRATAMENTO FOTOGRÁFICO</span></div>
+      <div class="lm-lab-preview-foot"><strong id="labStatus" role="status" data-state="ok">COMPOSIÇÃO / SUPERFÍCIE NEUTRA</strong><span id="labPhotoStatus">SEM TRATAMENTO FOTOGRÁFICO</span><span id="labExportStatus" class="lm-lab-export-status" role="status" aria-live="polite" data-state="idle"></span></div>
     </div>
   </div>
   <div class="lm-lab-legend">
@@ -248,5 +254,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script>
+<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script>
 </body></html>

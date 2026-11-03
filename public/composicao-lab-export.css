@@ -1,0 +1,69 @@
+/* LABMATTAR / Controles de exportacao sem nova tipografia. */
+#laboratorio .lm-lab-export-tools{
+  display:flex;align-items:center;justify-content:flex-end;gap:5px;
+  min-width:0;margin:0 8px;
+}
+#laboratorio .lm-lab-export-label{
+  position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);
+}
+#laboratorio .lm-lab-export-tools select,
+#laboratorio .lm-lab-export-tools button{
+  appearance:none;border-radius:0;border:1px solid #181818;
+  background:transparent;color:#181818;
+  min-height:34px;padding:6px 9px;line-height:1.25;
+  font:inherit;white-space:nowrap;cursor:pointer;
+}
+#laboratorio .lm-lab-export-tools select{
+  width:58px;min-width:58px;text-align:center;
+}
+#laboratorio .lm-lab-export-tools button{
+  display:inline-flex;justify-content:center;align-items:center;gap:4px;
+}
+#laboratorio .lm-lab-export-tools button:hover{background:#e4e2dc}
+#laboratorio .lm-lab-export-tools button:disabled{opacity:.55;cursor:progress}
+#laboratorio .lm-lab-export-tools :is(button,select):focus-visible{
+  outline:2px solid #181818;outline-offset:2px;
+}
+#laboratorio .lm-lab-export-status:empty{display:none}
+#laboratorio .lm-lab-export-status{
+  max-width:100%;overflow-wrap:anywhere;
+}
+#laboratorio .lm-lab-export-status[data-state=error]{color:#a54427}
+#laboratorio .lm-lab-export-status[data-state=success]{color:#355837}
+#laboratorio .lm-lab-export-status[data-state=warning]{color:#8e5823}
+@media(max-width:650px){
+  #laboratorio .lm-lab-export-tools{margin:0 3px;gap:3px}
+  #laboratorio .lm-lab-export-tools select{
+    width:45px;min-width:45px;min-height:29px;padding:4px;
+  }
+  #laboratorio .lm-lab-export-tools button{
+    min-height:29px;padding:4px 5px;
+  }
+  body.lm-studio-open #laboratorio .lm-studio-launch{
+    gap:4px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-studio-launch #labStudioToggle{
+    padding:5px 5px!important;
+  }
+}
+
+/* Keep the single export action reachable while the mobile inspector scrolls,
+   aligned beside the already fixed Play control (no second toolbar). */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-lab-export-tools{
+    position:fixed!important;top:8px!important;right:54px!important;
+    z-index:2499!important;display:flex!important;gap:4px!important;
+    margin:0!important;padding:0!important;
+    background:#f7f6f2!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-export-tools :is(button,select){
+    min-height:34px!important;padding:5px 7px!important;
+    background:#f7f6f2!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-export-tools .lm-lab-export-verb{
+    display:none!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-export-tools select{
+    width:46px!important;min-width:46px!important;
+  }
+}

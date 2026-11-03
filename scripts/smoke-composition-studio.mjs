@@ -199,6 +199,9 @@ try{
 
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
+  const previewArea=await page.locator(".lm-lab-preview").evaluate(el=>el.getBoundingClientRect().height);
+  assert(previewArea>=300,
+    "Mobile studio must give its real canvas enough room instead of a 220px thumbnail: "+previewArea);
   // The editor may downscale the logical page, but it must never make its
   // three existing typography roles physically unreadable.
   for(const format of ["vertical","horizontal","quadrado","editorial"]){

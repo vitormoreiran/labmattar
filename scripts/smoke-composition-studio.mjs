@@ -41,6 +41,53 @@ try{
       group+" choices must show function labels, not editorial filler");
   }
   await page.screenshot({path:"laboratorio-interface-desktop.png"});
+  // Reproduce the exact text entrance used in the normative Typography chapter.
+  // Playback must be reversible and must never mutate authored or editable text.
+  const playButton=page.locator("#labMotionPlay");
+  assert(await playButton.isVisible(),"Play must be available next to the page preview");
+  await choose("bodyMode","visivel");
+  const authored=await page.locator("#labReading").evaluate(reading=>reading.textContent);
+  await playButton.click();
+  const firstPass=await page.locator("#labArtboard").evaluate(board=>({
+    active:board.dataset.motionPlaying,
+    layers:board.querySelectorAll(".lm-lab-motion-layer").length,
+    roles:[...board.querySelectorAll(".lm-lab-motion-layer .lm-lab-kicker, .lm-lab-motion-layer .lm-lab-title, .lm-lab-motion-layer .lm-lab-body, .lm-lab-motion-layer .lm-lab-bottom")].length,
+    source:board.querySelector("#labReading").textContent,
+    duplicates:board.querySelectorAll("#labRenderedTitle").length,
+    ghostA11y:board.querySelector(".lm-lab-motion-layer")?.getAttribute("aria-hidden"),
+    motion:board.querySelector(".lm-lab-motion-word")?.getAnimations().length||0
+  }));
+  assert(firstPass.active==="true"&&firstPass.layers===1&&firstPass.roles===4&&
+    firstPass.source===authored&&firstPass.duplicates===1&&firstPass.ghostA11y==="true",
+    "Text entrance must animate 3 existing roles without cloning editable IDs: "+JSON.stringify(firstPass));
+  assert(await playButton.locator("#labMotionPlayText").textContent()==="REINICIAR",
+    "Play must replay immediately, not change to a dead button");
+  await playButton.click();
+  assert(await page.locator("#labArtboard").getAttribute("data-motion-playing")==="true",
+    "Play must restart the same animation on every click");
+  await page.waitForTimeout(1650);
+  const finished=await page.locator("#labArtboard").evaluate(board=>({
+    active:board.hasAttribute("data-motion-playing"),
+    ghosts:board.querySelectorAll(".lm-lab-motion-layer, [data-motion-clone]").length,
+    source:board.querySelector("#labReading").textContent
+  }));
+  assert(!finished.active&&finished.ghosts===0&&finished.source===authored,
+    "Playback must restore the original editable document after completion: "+JSON.stringify(finished));
+
+  await choose("mContent","solid");
+  await playButton.click();
+  const solidPass=await page.locator("#labArtboard").evaluate(board=>({
+    active:board.dataset.motionPlaying,
+    base:board.querySelectorAll(".lm-lab-motion-layer").length,
+    contrast:board.querySelectorAll(".lm-lab-solid-contrast[data-motion-clone]").length
+  }));
+  assert(solidPass.active==="true"&&solidPass.base===1&&solidPass.contrast===1,
+    "A solid M requires the same moving dark text inside its vector mask: "+JSON.stringify(solidPass));
+  await page.locator('button[data-mobile-module="texto"]').click();
+  assert(await page.locator(".lm-lab-motion-layer, .lm-lab-solid-contrast[data-motion-clone]").count()===0,
+    "Changing a tool must stop playback and unblock direct editing");
+  await choose("mContent","off");
+  await choose("bodyMode","oculto");
   const presentationHelp=page.locator('[data-lab-help="labMPresentation"]');
   assert(await presentationHelp.count()===1,
     "The M mode explanation must be available through a real help button");

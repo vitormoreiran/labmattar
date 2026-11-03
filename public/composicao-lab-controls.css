@@ -11,9 +11,7 @@
   display:grid;
   grid-template-columns:1fr;
   align-items:start;
-  gap:16px;
   padding:19px 0 22px;
-  margin-bottom:26px;
 }
 .lm-lab-workspace{grid-template-columns:minmax(302px,344px) minmax(0,1fr);gap:clamp(26px,3vw,48px)}
 .lm-lab-inspector{border-top:0;min-width:0;padding-right:2px}

@@ -89,6 +89,16 @@ try{
   await page.waitForTimeout(160);
   assert(await page.locator("#labExportPng").isVisible(),
     "PNG export must remain accessible on mobile");
+  const mobile=await page.evaluate(()=>{
+    const exportBar=document.querySelector("#laboratorio .lm-lab-export-tools").getBoundingClientRect();
+    const play=document.getElementById("labMotionPlay").getBoundingClientRect();
+    return {exportBar:{left:exportBar.left,right:exportBar.right,top:exportBar.top},
+      play:{left:play.left,right:play.right,top:play.top},viewport:innerWidth};
+  });
+  assert(mobile.exportBar.left>=0&&mobile.exportBar.right<=mobile.viewport&&
+    mobile.play.right<=mobile.viewport&&mobile.play.left-mobile.exportBar.right>=2,
+    "Export and Play must remain visible without overlapping on mobile: "+JSON.stringify(mobile));
+  await page.screenshot({path:"laboratorio-export-controles-mobile.png"});
   assert(errors.length===0,"Browser errors: "+errors.join("; "));
   console.log("LABMATTAR PNG EXPORT BROWSER OK");
 }finally{

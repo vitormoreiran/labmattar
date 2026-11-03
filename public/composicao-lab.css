@@ -399,10 +399,14 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 }
 
 
-/* The fixed Studio shell is not a scroller. overflow:hidden still allows
- * scrollIntoView() to move its contents (hiding Play and Exit on phones).
- * Clip prevents that accidental programmatic scroll; the inspector keeps
- * its own independent scroll area. */
-body.lm-studio-open #laboratorio.lm-lab:has(#labMotionPlay){
-  overflow:clip!important;
+/* On a phone the Studio's internal controls can programmatically scroll the
+ * top bar out of view. Keep the one Play action reachable without moving the
+ * page canvas, introducing a second toolbar or affecting export geometry. */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
+    position:fixed!important;top:8px!important;right:10px!important;
+    z-index:2500!important;min-width:34px;min-height:34px!important;
+    padding:5px 8px!important;background:#f7f6f2!important;
+    border:1px solid #b6b4af!important;
+  }
 }

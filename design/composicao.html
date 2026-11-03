@@ -101,6 +101,11 @@
       <button type="button" data-case-format="desktop" aria-pressed="true">Horizontal</button>
       <button type="button" data-case-format="mobile" aria-pressed="false">Vertical</button>
     </div>
+    <div class="lm-case-control lm-case-m-presentation" role="group" aria-label="Aparição do M na vertical" hidden>
+      <span>M / VERTICAL</span>
+      <button type="button" data-case-m-presentation="elemento" aria-pressed="true">Elemento</button>
+      <button type="button" data-case-m-presentation="completo" aria-pressed="false">Completo</button>
+    </div>
     <div class="lm-case-control" role="group" aria-label="Comparar 0% e 20% de preto com a mesma imagem e texto">
       <span>CONTRASTE / COMPARAR</span>
       <button type="button" data-case-contrast="off" aria-pressed="false">0%</button>
@@ -114,7 +119,7 @@
   </div>
   <div class="lm-case-layout">
     <div class="lm-case-stage">
-      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-format="horizontal" data-view="resultado" data-contrast="on"
+      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-format="horizontal" data-view="resultado" data-contrast="on" data-m-presentation="elemento"
            role="img" aria-label="Composição horizontal com identificação, título, corpo, créditos e fotografia recortada pelo M">
         <img class="lm-case-ambient" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
         <div class="lm-case-veil" aria-hidden="true"></div>
@@ -162,7 +167,7 @@
   </div>
   <div class="lm-case-validation">
     <div><p class="eyebrow">O QUE PERMANECE</p><p>A régua, as margens, o eixo central do M e os três tratamentos de texto.</p></div>
-    <div><p class="eyebrow">O QUE SE ADAPTA</p><p>Formato, escala do M, presença dos marcadores e enquadramento da imagem. A página vertical é recomposta, nunca apenas reduzida.</p></div>
+    <div><p class="eyebrow">O QUE SE ADAPTA</p><p>Formato, enquadramento e aparição do M: Elemento (inteiro, com escala própria) ou Completo (altura total com sangria lateral). O vertical recompõe a página sem deformar o vetor.</p></div>
   </div>
 </section>
   <section class="chapter lm-m-guide lm-manual-section" id="regras-de-composicao" aria-labelledby="lmCompositionRulesTitle">
@@ -223,7 +228,7 @@
     note:document.getElementById("caseContrastNote"),
     fields:document.getElementById("caseReadingMap")
   };
-  const state={step:"completa",format:"desktop",view:"resultado",contrast:"on"};
+  const state={step:"completa",format:"desktop",view:"resultado",contrast:"on",mPresentation:"elemento"};
   const steps={
     campo:["01 / CAMPO","O campo cria a atmosfera.","A fotografia desfocada forma a superfície. Texto e M ainda não aparecem."],
     mascara:["02 / MÁSCARA","O M organiza a imagem.","O recorte usa o vetor publicado, preservando proporção e eixo. Sem texto, não há véu adicional."],
@@ -236,7 +241,13 @@
     frame.dataset.format=vertical?"vertical":"horizontal";
     frame.dataset.view=state.view;
     frame.dataset.contrast=state.contrast;
+    frame.dataset.mPresentation=vertical?state.mPresentation:"elemento";
     frame.classList.toggle("is-mobile",vertical);
+    const modeControls=document.querySelector(".lm-case-m-presentation");
+    modeControls.hidden=!vertical||state.step==="campo";
+    document.querySelectorAll("[data-case-m-presentation]").forEach(button=>{
+      button.setAttribute("aria-pressed",String(button.dataset.caseMPresentation===state.mPresentation));
+    });
     for(const key of ["step","format","view","contrast"]){
       document.querySelectorAll("[data-case-"+key+"]").forEach(button=>{
         const selected=button.dataset["case"+key.charAt(0).toUpperCase()+key.slice(1)]===state[key];
@@ -255,7 +266,10 @@
       aside.note.textContent="ESTRUTURA / sem fotografia, para observar a distribuição.";
     }else if(full&&vertical){
       aside.title.textContent="A leitura se recompõe no vertical.";
-      aside.body.textContent="Título e Corpo acima dos créditos, em um núcleo central compartilhado. A identificação fica no alto; o M permanece no eixo.";
+      aside.body.textContent="Título e Corpo compartilham o núcleo central, sem deslocar os créditos. "+
+        (state.mPresentation==="completo"?
+          "M completo: ocupa a altura da página, sangra lateralmente e preserva os recortes superior e inferior.":
+          "M como elemento: aparece inteiro, alinhado ao eixo e com escala controlada.");
       aside.note.textContent=state.contrast==="on"?
         "CONTRASTE / preto 20% aplicado apenas à fotografia no M.":
         "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
@@ -268,6 +282,7 @@
         "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
     }
     frame.setAttribute("aria-label",(vertical?"Composição vertical":"Composição horizontal")+
+      (vertical?", M "+state.mPresentation:"")+
       (structure?", campos de identificação, título, Corpo e créditos":", imagem, M e leitura editorial"));
   }
   document.querySelectorAll("[data-case-step]").forEach(button=>button.addEventListener("click",()=>{
@@ -277,6 +292,10 @@
   }));
   document.querySelectorAll("[data-case-format]").forEach(button=>button.addEventListener("click",()=>{
     state.format=button.dataset.caseFormat;
+    update();
+  }));
+  document.querySelectorAll("[data-case-m-presentation]").forEach(button=>button.addEventListener("click",()=>{
+    state.mPresentation=button.dataset.caseMPresentation;
     update();
   }));
   document.querySelectorAll("[data-case-view]").forEach(button=>button.addEventListener("click",()=>{

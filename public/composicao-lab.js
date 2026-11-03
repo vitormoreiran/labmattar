@@ -14,7 +14,7 @@
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"central",relation:"central",gap:0,textWidth:61,titleScale:100,type:"alternada",
-      background:"color",mContent:"off",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      background:"color",mContent:"off",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
@@ -22,7 +22,7 @@
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
       placement:"central",relation:"central",gap:0,textWidth:40,titleScale:95,type:"alternada",
-      background:"color",mContent:"photo",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
+      background:"color",mContent:"photo",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -30,7 +30,7 @@
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"central",relation:"central",gap:0,textWidth:80,titleScale:95,type:"alternada",
-      background:"photo",mContent:"off",image:"nenhuma",mMode:"janela",photo:"179",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      background:"photo",mContent:"off",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"179",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -40,7 +40,7 @@
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
     placement:"labPlacement",relation:"labRelation",gap:"labGap",marker:"labMarker",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",image:"labImage",mMode:"labMMode",photo:"labPhoto",
-    mPosition:"labMPosition",mScale:"labMScale",focusX:"labFocusX",
+    mPosition:"labMPosition",mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
@@ -112,16 +112,26 @@
   }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
-    const markerActive=state.marker!=="none";
+    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
     const backgroundPhoto=state.background==="photo"||markerActive;
     const mActive=state.mContent!=="off";
     const mPhoto=state.mContent==="photo";
     const activeImage=backgroundPhoto||mPhoto;
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     for(const key of ["mPosition","mMode"])by(fields[key]).disabled=!mActive;
-    by("labMScale").disabled=!mActive;
+    const portrait=state.format==="vertical";
+    const fullM=portrait&&state.mPresentation==="completo";
+    by("labMPresentationField").hidden=!portrait;
+    by("labMPresentation").disabled=!portrait||!mActive;
+    by("labMScale").disabled=!mActive||fullM;
+    by("labMPresentationHint").textContent=!mActive?
+      "Ative o M para escolher sua aparição.":
+      fullM?
+      "Completo: altura integral e sangria lateral; a escala manual fica preservada para Elemento.":
+      "Elemento: M inteiro, centralizado e com escala ajustável.";
+    by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=false;
-    by("labMarker").disabled=false;
+    by("labMarker").disabled=fullM;
     for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMMode","labMPosition","labMScale","labMarker"])
       setFieldVisible(id,true);
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
@@ -221,9 +231,10 @@
     state.mPosition="centro";
     syncInputs();
     board.dataset.format=state.format;
+    board.dataset.mPresentation=state.format==="vertical"?state.mPresentation:"elemento";
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
-    const markerActive=state.marker!=="none";
+    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
     const effectiveBackground=markerActive?"photo":state.background;
     const legacyImage=state.mContent==="photo"?"recorte":effectiveBackground==="photo"?"inteira":"nenhuma";
     board.dataset.image=legacyImage;
@@ -241,7 +252,7 @@
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
-    by("labMMarkers").dataset.marker=state.marker;
+    by("labMMarkers").dataset.marker=markerActive?state.marker:"none";
     const [bg,ink]=effectiveBackground==="color"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);

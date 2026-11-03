@@ -117,6 +117,54 @@ try{
     "Disabling M markers must restore the previously selected background");
 
 
+  // In portrait the same published M has two geometric appearances.
+  // Elemento keeps the author-controlled scale; Completo fits page height
+  // without changing the vector ratio or carrying the bleed into other formats.
+  await choose("mContent","photo");
+  await choose("format","vertical");
+  assert(await page.locator("#labMPresentationField").isVisible(),
+    "Portrait format must reveal M appearance controls");
+  await choose("mPresentation","elemento");
+  const mMeasurement=async()=>page.locator("#labArtboard").evaluate(board=>{
+    const b=board.getBoundingClientRect(),m=board.querySelector("#labMask").getBoundingClientRect();
+    return {mode:board.dataset.mPresentation,
+      frame:{left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height},
+      mask:{left:m.left,right:m.right,top:m.top,bottom:m.bottom,width:m.width,height:m.height}};
+  });
+  const mElement=await mMeasurement();
+  const savedScale=await page.locator("#labMScale").inputValue();
+  assert(mElement.mode==="elemento"&&mElement.mask.width>50 &&
+         mElement.mask.width<mElement.frame.width &&
+         await page.locator("#labMask").isVisible(),
+    "Elemento must preserve the visible, aligned variable-size M: "+JSON.stringify(mElement));
+  await choose("mPresentation","completo");
+  const mFull=await mMeasurement();
+  assert(await page.locator("#labMask").isVisible(),
+    "M must remain visible when the background is a solid color");
+  assert(mFull.mode==="completo" && Math.abs(mFull.mask.height-mFull.frame.height)<2 &&
+         mFull.mask.left<mFull.frame.left-10&&mFull.mask.right>mFull.frame.right+10 &&
+         Math.abs(mFull.mask.width/mFull.mask.height-990.08/743.18)<.005,
+    "Complete M should cover portrait height with symmetric side bleed and no deformation: "+JSON.stringify(mFull));
+  assert(await page.locator("#labMScale").isDisabled() && await page.locator("#labMarker").isDisabled(),
+    "Manual scale and duplicate end markers must be inactive in Completo");
+  assert((await page.locator("#labMScale").inputValue())===savedScale,
+    "Completo must not overwrite Elemento's saved scale");
+  assert(await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-composicao-lab-v1")).mPresentation)==="completo",
+    "M appearance must persist in the same saved editor state");
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-vertical.png"});
+  await choose("format","horizontal");
+  assert(await page.locator("#labMPresentationField").isHidden() &&
+         (await mMeasurement()).mode==="elemento",
+    "Horizontal must stay unchanged regardless of the vertical M option");
+  await choose("format","vertical");
+  assert((await mMeasurement()).mode==="completo",
+    "Returning to portrait must restore the chosen M appearance");
+  await choose("mPresentation","elemento");
+  assert((await page.locator("#labMScale").inputValue())===savedScale &&
+         await page.locator("#labMScale").isEnabled(),
+    "Returning to Elemento must restore its previous scale");
+  await choose("format","horizontal");
+
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
   assert(await page.locator(".lm-composition-module-index").isVisible(),

@@ -112,7 +112,7 @@
   }
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
-    const markerActive=state.marker!=="none";
+    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
     const backgroundPhoto=state.background==="photo"||markerActive;
     const mActive=state.mContent!=="off";
     const mPhoto=state.mContent==="photo";
@@ -131,7 +131,7 @@
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=false;
-    by("labMarker").disabled=false;
+    by("labMarker").disabled=fullM;
     for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMMode","labMPosition","labMScale","labMarker"])
       setFieldVisible(id,true);
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
@@ -234,7 +234,7 @@
     board.dataset.mPresentation=state.format==="vertical"?state.mPresentation:"elemento";
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
-    const markerActive=state.marker!=="none";
+    const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
     const effectiveBackground=markerActive?"photo":state.background;
     const legacyImage=state.mContent==="photo"?"recorte":effectiveBackground==="photo"?"inteira":"nenhuma";
     board.dataset.image=legacyImage;
@@ -252,7 +252,7 @@
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
-    by("labMMarkers").dataset.marker=state.marker;
+    by("labMMarkers").dataset.marker=markerActive?state.marker:"none";
     const [bg,ink]=effectiveBackground==="color"?palette[state.color]:["#111713","#f7f6f2"];
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);

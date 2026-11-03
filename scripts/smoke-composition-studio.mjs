@@ -39,6 +39,7 @@ try{
     assert(await page.locator('[data-lab-choice="'+group+'"] .lm-ctrl-meta').count()===0,
       group+" choices must show function labels, not editorial filler");
   }
+  await page.screenshot({path:"laboratorio-interface-desktop.png"});
   const presentationHelp=page.locator('[data-lab-help="labMPresentation"]');
   assert(await presentationHelp.count()===1,
     "The M mode explanation must be available through a real help button");
@@ -299,6 +300,7 @@ try{
          await page.locator("#labPanel-pagina").isHidden(),
     "Mobile Text module must show only text controls");
 
+  await page.screenshot({path:"laboratorio-interface-mobile.png"});
   const mobileLayout=await page.evaluate(()=>{
     const workspace=document.querySelector(".lm-lab-workspace").getBoundingClientRect();
     const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();

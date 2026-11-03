@@ -94,7 +94,7 @@
   // The editorial sheet is wide but shorter than the other formats: its default
   // reading column needs room for authored title groups and visible body/footer.
   // The user may still narrow the column; overflow remains a validation error.
-  const formatReadingWidths={horizontal:61,vertical:100,quadrado:78,editorial:90};
+  const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");

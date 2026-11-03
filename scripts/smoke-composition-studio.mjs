@@ -11,7 +11,7 @@ const assert=(v,m)=>{if(!v)throw Error(m)};
 async function choose(group,value){
   const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",marker:"m",mPresentation:"m",photo:"m",type:"texto",bodyMode:"texto"}[group];
   if(module && await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
-    await page.locator('[data-mobile-module="'+module+'"]').click();
+    await page.locator('button[data-mobile-module="'+module+'"]').click();
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
 }
@@ -42,7 +42,7 @@ try{
   const presentationHelp=page.locator('[data-lab-help="labMPresentation"]');
   assert(await presentationHelp.count()===1,
     "The M mode explanation must be available through a real help button");
-  await page.locator('[data-mobile-module="m"]').click();
+  await page.locator('button[data-mobile-module="m"]').click();
   await presentationHelp.click();
   assert(await page.locator("#labHelp-labMPresentation").isVisible(),
     "The M presentation help must open on demand");
@@ -164,7 +164,7 @@ try{
   await choose("format","vertical");
   assert(await page.locator("#labTextWidth").inputValue()==="100",
     "Vertical must use the whole reading width inside the established margins, not crop the last word");
-  await page.locator('[data-mobile-module="m"]').click();
+  await page.locator('button[data-mobile-module="m"]').click();
   assert(await page.locator("#labMPresentationField").isVisible(),
     "M appearance controls must be accessible across canvas formats");
   await choose("mPresentation","elemento");
@@ -209,7 +209,7 @@ try{
   // the original vector ratio is fixed, so horizontal can have free side space.
   for(const format of ["horizontal","quadrado","editorial","vertical"]){
     await choose("format",format);
-    await page.locator('[data-mobile-module="m"]').click();
+    await page.locator('button[data-mobile-module="m"]').click();
     assert(await page.locator("#labMPresentationField").isVisible(),
       "M mode chooser must remain available in "+format);
     const geometry=await mMeasurement();

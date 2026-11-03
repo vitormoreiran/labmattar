@@ -33,6 +33,13 @@ jobs:
         run: chmod +x scripts/*.sh
       - name: Validar contrato funcional do Ambiente Editorial
         run: node scripts/validate-editorial.mjs
+      - name: Compilar e validar Matriz de roteiros
+        run: |
+          npm ci --prefix tools/matriz-vetorial
+          npm test --prefix tools/matriz-vetorial
+          npm run format:check --prefix tools/matriz-vetorial
+          npm run build --prefix tools/matriz-vetorial
+          node scripts/prepare-motion-matrix.mjs
       - name: Compilar
         run: npm run build
       - name: Validar entrada editorial e arquivos

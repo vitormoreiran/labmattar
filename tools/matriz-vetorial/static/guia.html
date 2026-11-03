@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Movimento e roteiros · LABMATTAR</title>
+    <link rel="stylesheet" href="/manual-composition-layout.css" />
+    <link rel="stylesheet" href="/manual-headings.css" />
+    <link rel="stylesheet" href="/manual-layout.css" />
+    <script defer src="/manual-type-roles.js"></script>
+  </head>
+  <body>
+    <main>
+      <section class="chapter lm-manual-section">
+        <div class="inner">
+          <p class="eyebrow">LABORATÓRIO / MOVIMENTO</p>
+          <h1 class="lm-manual-page-title">MATRIZ DE ROTEIROS</h1>
+          <p>Uma biblioteca de nove pictogramas e seis posições da assinatura para construir giros, transformações e ritmos. Os roteiros são pontos de partida editáveis. Combinações experimentais precisam de revisão antes da aplicação.</p>
+          <p><a href="./index.html">ABRIR A MATRIZ</a> · <a href="/laboratorio.html">VOLTAR AO LABORATÓRIO</a> · <a href="https://github.com/vitormoreiran/labmattar/blob/main/design/matriz-movimento.md">DOCUMENTAÇÃO COMPLETA NO GITHUB</a></p>
+        </div>
+      </section>
+      <section class="chapter lm-manual-section" id="usar">
+        <div class="inner">
+          <p class="eyebrow">01 / USO</p>
+          <h2 class="lm-manual-section-title">DO ROTEIRO AO VÍDEO</h2>
+          <ol>
+            <li>Escolha um roteiro à esquerda. M + Forma concentra uma transformação; MATTAR · onda e resposta alterna entradas e retornos entre letras; MATTAR · composição oferece um percurso mais espaçado.</li>
+            <li>Em Esta letra, selecione a posição da assinatura, troque o ícone e ajuste transformação, giro e duração. O par preparado aparece identificado; a troca vale para a ida e a volta.</li>
+            <li>Em Roteiro inteiro, ajuste velocidade, cores e formato. A velocidade geral mantém as relações entre os tempos das pistas. Confira o reenquadramento após mudar a proporção.</li>
+            <li>Use os trechos da linha do tempo para editar pausas, curvas e ordem. Uma mudança de giro pode exigir alinhamento antes da próxima passagem; revise a duração resultante.</li>
+            <li>Salve e baixe o JSON. Exporte PNG para um quadro ou MP4 para movimento. Assista ao arquivo exportado, inclusive às junções, vazados e fechamento do loop.</li>
+          </ol>
+          <p>O salvamento fica neste navegador e neste domínio. Para trazer um projeto do endereço local ou continuar em outro computador, use o JSON. MP4 exige WebCodecs e codificação H.264 compatível; mantenha a página aberta até terminar.</p>
+        </div>
+      </section>
+      <section class="chapter lm-manual-section" id="logica">
+        <div class="inner">
+          <p class="eyebrow">02 / CONSTRUÇÃO</p>
+          <h2 class="lm-manual-section-title">GIRAR, TRANSFORMAR, RETORNAR</h2>
+          <p>Letra → perfil de 90° → transformação → giro do pictograma → perfil compatível → retorno. Os giros usam volumes 3D nativos; a passagem interpola contornos em 2D no perfil. Esta versão não faz morph volumétrico 3D nem reproduz os vídeos quadro a quadro.</p>
+          <p>As voltas são acumuladas: 90° + 360° termina em 450°. O próximo trecho continua dessa orientação. O perfil do M deriva de sua malha, e o retorno reutiliza a correspondência da ida.</p>
+          <p>Assinatura usa volumes densos: M→P8, A1→P3, T1→P4, T2→P2, A2→P9, R→P5. Estudos usa volumes leves e inverte os destinos dos dois T: T1→P2 e T2→P4. Preserve o conjunto de origem ao comparar. P1, P6 e P7 também estão disponíveis para experimentação.</p>
+        </div>
+      </section>
+      <section class="chapter lm-manual-section" id="aplicar">
+        <div class="inner">
+          <p class="eyebrow">03 / APLICAÇÃO</p>
+          <h2 class="lm-manual-section-title">ESCOLHER O RITMO</h2>
+          <p>M + Forma · respiração dura 10,8 s em 1× e serve como ponto de partida para vinhetas ou pontuações. MATTAR · onda e resposta dura 5,8 s, com entradas da esquerda para a direita e retorno inverso. MATTAR · composição dura 18,2 s, com percursos longos defasados entre as letras.</p>
+          <p>Essas durações descrevem os presets, não uma regra obrigatória da marca. Ajuste o ritmo ao suporte e ao tempo de leitura. Reserve pausas e um encerramento reconhecível. Consulte <a href="/cores.html">Cores</a> e <a href="/composicao.html">Composição</a> para aplicar o movimento ao restante da identidade.</p>
+        </div>
+      </section>
+      <section class="chapter lm-manual-section" id="cuidados">
+        <div class="inner">
+          <p class="eyebrow">04 / DOS &amp; DON'TS</p>
+          <h2 class="lm-manual-section-title">PRESERVAR A LEITURA</h2>
+          <ul>
+            <li>Faça: parta dos pares preparados, confira a ida e o retorno e revise novas associações. Evite: apresentar toda combinação disponível como aplicação aprovada.</li>
+            <li>Faça: transforme no perfil compatível e preserve proporções, pivôs e posição das letras. Evite: saltar entre frentes, esticar letras ou usar um frame intermediário como novo símbolo oficial.</li>
+            <li>Faça: use pausas e defasagens com intenção. Evite: competir com textos longos ou depender da animação para comunicar a única informação da peça.</li>
+            <li>Faça: confira 1:1, 16:9 ou 9:16 nos extremos do giro. Evite: cortes essenciais ao reaproveitar enquadramentos.</li>
+            <li>Faça: aplique a paleta do manual e mantenha contraste. Evite: transformar a liberdade do seletor de cores em uma nova regra cromática.</li>
+            <li>Faça: reveja o MP4 e preserve o JSON. Evite: entregar só a prévia ou depender do navegador como arquivo permanente.</li>
+          </ul>
+          <p>Os vídeos originais de comparação permanecem no acervo local e não acompanham o Git. Sua ausência não impede os roteiros, os giros ou a exportação. Instalação local, dependências e critérios de manutenção estão na documentação completa.</p>
+          <p><a href="./index.html">ABRIR A MATRIZ</a> · <a href="/laboratorio.html">VOLTAR AO LABORATÓRIO</a></p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

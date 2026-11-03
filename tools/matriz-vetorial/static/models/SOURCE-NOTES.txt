@@ -1,0 +1,57 @@
+NATIVE ASSETS — LAB MATTAR
+
+All files were produced from read-only copies of the original Blender geometry.
+Original source: acervo-local/Sequencia-1.blend
+No original file was saved or changed.
+
+CORE
+- glb/p1-light.glb ... p9-light.glb: nine native light meshes, un-decimated.
+- glb/m.glb, a1.glb, t1.glb, t2.glb, a2.glb, r.glb: six native letter volumes split by connected components from Ativo 11.001. Every original component is preserved.
+- Each file has one mesh and one node. Letters have one optional morph target named Native Key 1, default weight zero.
+- core-manifest.json: source IDs, geometry counts, normalization and baked native phase.
+- word-layout.json: use its positions and relative scales to restore the source word's proportions, rather than fitting every glyph independently to the same height.
+
+DENSE BRANCH
+- glb-dense/p1-dense.glb ... p9-dense.glb: dense native volumes reduced from about1.5million faces each to60k faces each. Approximately1.08MB per asset, no textures or Draco decoding required.
+- dense-manifest.json: provenance and normalization.
+- dense-projection-comparison.json: original versus reduced pixelmask intersection/union at0 and90degrees. Range .9980–.99995 at384px. Other views were not exhaustively compared.
+
+COORDINATES
+- GLTF +Y is vertical; look from +Z toward the origin.
+- Canonical front is asset rotationY=0. Positive turns are around Y.
+- All models have front geometry height2. Native turn axes are retained; only vertical centering, normalization and source word splitting were applied.
+- P2's initial source phase180degrees is ALREADY BAKED into both light and dense models. Do not add180degrees again. Its relative canonical angle0 faces the same direction as the SVG.
+- SVG-to-model conversion for projected dense profiles: xWorld=(svgX-512)*.003125; yWorld=(512-svgY)*.003125. Camera view height3.2, origin[512,512]. Full viewBox1024 is intentional; do not silently auto-fit away its native axis alignment.
+
+PROJECTED PROFILES
+- profiles-dense/p1-dense-90.svg ... p9-dense-90.svg were orthographically projected from exported dense GLBs at relative90degrees, rendered at1024px, boundary traced and simplified0.75px.
+- fill-rule evenodd retains native holes, including the small P8 hole. P3 preserves two additional small native contours.
+- profiles-dense/manifest.json provides SVG pixel/world bounds and axis anchor.
+- profiles-dense/validation.json compares re-rasterized SVG versus native projection: .99765–.99877 pixelmask IoU.
+
+RECOVERED ANIMATION
+Re-enabling the excluded original Collection restores authored animation:
+frame48: picto0degrees, word Key1=0
+frame120: picto90degrees, word Key1=1
+frame192: picto180degrees, word Key1=0
+frame264: picto270degrees, word Key1=1
+frame336: picto360degrees, word Key1=0
+The previous audit's constant-Key1 observation was caused by the collection being excluded from evaluation.
+
+The native rigid quarter turns of individual Basis letters match their original Key1-front silhouettes closely. For M, rigid90/Key1-front normalized silhouette IoU=.9977. The M quarter view is slightly elliptical, aspect1.025, while m1.svg is a perfect circle; fit the bridge endpoint consistently to avoid a small snap.
+
+EXISTING BRIDGES RESOLVED
+Saved Premiere recipes use dense90 profiles, not the light pN.svg profiles:
+export(17), video atlas V13 -> dense P8 (M recipe)
+export(18), V14 -> dense P3 (A1)
+export(7), V20 -> dense P4 (T1)
+export(9), V22 -> dense P2 (T2)
+export(10), V06 -> dense P9 (A2)
+export(14), V10 -> dense P5 (R)
+The T1/T2 targets are swapped versus the SVG-study folder assignments. That is an existing version difference, not an export mistake. Endpoint comparisons in dense-export-endpoints.json give normalized silhouette IoU .9497–.9773 using the archived JPEG frames, supporting the identities but not proving exact per-frame registration.
+
+DIAGNOSTICS
+- diagnostic-montage.jpg: all light pictos and letters at front/90.
+- rigid-vs-key1.jpg: six letters rigid90 versus original Key1 viewed front.
+- dense-montage.jpg: nine dense variants front/90.
+- dense-movie-compare.jpg: comparison with corrected T1/P4 and T2/P2 labels. See dense-export-endpoints.json for quantitative mapping.

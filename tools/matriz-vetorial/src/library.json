@@ -1,0 +1,178 @@
+{
+  "assets": [
+    {
+      "id": "P1",
+      "name": "Vaso de duas alças",
+      "kind": "picto",
+      "front": "./library/P1-front.svg",
+      "profile": "./library/P1-profile.svg",
+      "model": "./models/light/P1.glb",
+      "volumeModel": "./models/dense/P1.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P2",
+      "name": "Jarra de bico e alça figurativa",
+      "kind": "picto",
+      "front": "./library/P2-front.svg",
+      "profile": "./library/P2-profile.svg",
+      "model": "./models/light/P2.glb",
+      "volumeModel": "./models/dense/P2.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P3",
+      "name": "Vaso arredondado com volutas",
+      "kind": "picto",
+      "front": "./library/P3-front.svg",
+      "profile": "./library/P3-profile.svg",
+      "model": "./models/light/P3.glb",
+      "volumeModel": "./models/dense/P3.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P4",
+      "name": "Vaso com figura no topo",
+      "kind": "picto",
+      "front": "./library/P4-front.svg",
+      "profile": "./library/P4-profile.svg",
+      "model": "./models/light/P4.glb",
+      "volumeModel": "./models/dense/P4.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P5",
+      "name": "Vaso sustentado por figuras",
+      "kind": "picto",
+      "front": "./library/P5-front.svg",
+      "profile": "./library/P5-profile.svg",
+      "model": "./models/light/P5.glb",
+      "volumeModel": "./models/dense/P5.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P6",
+      "name": "Taça de alças altas",
+      "kind": "picto",
+      "front": "./library/P6-front.svg",
+      "profile": "./library/P6-profile.svg",
+      "model": "./models/light/P6.glb",
+      "volumeModel": "./models/dense/P6.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P7",
+      "name": "Vaso com tampa e figuras laterais",
+      "kind": "picto",
+      "front": "./library/P7-front.svg",
+      "profile": "./library/P7-profile.svg",
+      "model": "./models/light/P7.glb",
+      "volumeModel": "./models/dense/P7.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P8",
+      "name": "Vaso figurativo com vazado",
+      "kind": "picto",
+      "front": "./library/P8-front.svg",
+      "profile": "./library/P8-profile.svg",
+      "model": "./models/light/P8.glb",
+      "volumeModel": "./models/dense/P8.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "P9",
+      "name": "Ânfora alta com volutas",
+      "kind": "picto",
+      "front": "./library/P9-front.svg",
+      "profile": "./library/P9-profile.svg",
+      "model": "./models/light/P9.glb",
+      "volumeModel": "./models/dense/P9.glb",
+      "source": "Geometria original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "M",
+      "name": "M",
+      "kind": "letter",
+      "front": "./library/M-front.svg",
+      "profile": "./library/M-profile.svg",
+      "model": "./models/letters/M.glb",
+      "source": "Letra original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "A1",
+      "name": "A · primeira",
+      "kind": "letter",
+      "front": "./library/A1-front.svg",
+      "profile": "./library/A1-profile.svg",
+      "model": "./models/letters/A1.glb",
+      "source": "Letra original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "T1",
+      "name": "T · primeiro",
+      "kind": "letter",
+      "front": "./library/T1-front.svg",
+      "profile": "./library/T1-profile.svg",
+      "model": "./models/letters/T1.glb",
+      "source": "Letra original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "T2",
+      "name": "T · segundo",
+      "kind": "letter",
+      "front": "./library/T2-front.svg",
+      "profile": "./library/T2-profile.svg",
+      "model": "./models/letters/T2.glb",
+      "source": "Letra original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "A2",
+      "name": "A · segunda",
+      "kind": "letter",
+      "front": "./library/A2-front.svg",
+      "profile": "./library/A2-profile.svg",
+      "model": "./models/letters/A2.glb",
+      "source": "Letra original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    },
+    {
+      "id": "R",
+      "name": "R",
+      "kind": "letter",
+      "front": "./library/R-front.svg",
+      "profile": "./library/R-profile.svg",
+      "model": "./models/letters/R.glb",
+      "source": "Letra original · Blender",
+      "nativeFrontAngle": 0,
+      "nativeProfileAngle": 90
+    }
+  ]
+}

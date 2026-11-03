@@ -1,0 +1,11 @@
+{
+  "asset": "M",
+  "source": "models/letters/M.glb",
+  "method": "Native +90 degree Y turn, orthographic projection at 2048px; traced boundary, 0.75px simplification.",
+  "profile": "library/M-native-profile.svg",
+  "screenValidation": {
+    "nativeToVectorSilhouetteIoU": 0.9987362720024071,
+    "forwardReverseMidpointIoU": 0.9998566343990176
+  },
+  "note": "This corrects geometric registration. It does not establish approval of the artistic timing."
+}

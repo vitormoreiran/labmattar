@@ -6,6 +6,8 @@ on:
     branches: [main, fix/manual-symbols-verified]
     paths:
       - '.github/workflows/preview-cloudflare.yml'
+      - 'tools/matriz-vetorial/**'
+      - 'scripts/prepare-motion-matrix.mjs'
       - 'app/**'
       - 'public/**'
       - 'design/**'
@@ -68,6 +70,13 @@ jobs:
           cache: npm
       - name: Validar tres tratamentos de texto
         run: node scripts/validate-manual-type-sources.mjs
+      - name: Compilar e validar Matriz de roteiros
+        run: |
+          npm ci --prefix tools/matriz-vetorial
+          npm test --prefix tools/matriz-vetorial
+          npm run format:check --prefix tools/matriz-vetorial
+          npm run build --prefix tools/matriz-vetorial
+          node scripts/prepare-motion-matrix.mjs
       - name: Instalar e compilar
         run: |
           npm ci

@@ -16,3 +16,6 @@ media-originals/
 *.avi
 *.mkv
 *.webm
+
+# Matriz de roteiros: gerada a partir de tools/matriz-vetorial
+public/matriz-vetorial/

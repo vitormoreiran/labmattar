@@ -46,3 +46,18 @@ Não criar URLs fictícias nem considerar qualquer material aprovado sem valida�
 ## Situação da migração
 
 A versão atual de `main` contém os fontes editáveis e o workflow de prévia não depende mais do ZIP. Os scripts em `design/` ainda transformam arquivos durante a publicação; mantenha essa etapa enquanto os resultados finais não forem convertidos em páginas-fonte definitivas. A entrada `/` continua direcionando para `/manual.html`; a introdução editorial separada encontra-se em `/inicio.html`.
+
+## Matriz de roteiros e movimento
+
+A versão atual da biblioteca espacial está em [`tools/matriz-vetorial`](tools/matriz-vetorial/README.md), isolada do editor `/editor/` e do compositor. O [guia de movimento](design/matriz-movimento.md) reúne uso, lógica, pares preparados, aplicações e dos & don'ts. O Laboratório oferece acesso ao guia e à ferramenta.
+
+Para preparar a ferramenta antes de `npm run dev` ou do build do manual:
+
+```sh
+npm ci --prefix tools/matriz-vetorial
+npm test --prefix tools/matriz-vetorial
+npm run build --prefix tools/matriz-vetorial
+node scripts/prepare-motion-matrix.mjs
+```
+
+As rotas geradas são `/matriz-vetorial/index.html` e `/matriz-vetorial/guia.html`. Os workflows de CI e da prévia fazem essa preparação automaticamente. A ferramenta tem seu próprio lockfile, CSS e dependências; não substitui os SVGs oficiais, as regras editoriais ou o editor de contornos do manual. Originais de vídeo continuam fora do Git.

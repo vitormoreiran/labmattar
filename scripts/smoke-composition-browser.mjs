@@ -138,8 +138,38 @@ try{
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
     "Construction must demonstrate responsive recomposition");
-  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("Corpo acima dos créditos"),
-    "The construction manual must explain real tall-surface recomposition");
+  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("M como elemento"),
+    "The vertical example must explain the M in Elemento mode");
+  assert(await constructionPage.locator(".lm-case-m-presentation").isVisible(),
+    "Vertical mode must expose the two M appearances");
+  const measureM=async()=>constructionPage.locator("#caseFrame").evaluate(frame=>{
+    const b=frame.getBoundingClientRect();
+    const m=frame.querySelector(".lm-case-image").getBoundingClientRect();
+    return {frame:{left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height},
+      mask:{left:m.left,right:m.right,top:m.top,bottom:m.bottom,width:m.width,height:m.height},
+      mode:frame.dataset.mPresentation};
+  });
+  const initialM=await measureM();
+  assert(initialM.mode==="elemento"&&initialM.mask.width<initialM.frame.width,
+    "Elemento must preserve the original fully visible aligned M: "+JSON.stringify(initialM));
+  await constructionPage.locator('[data-case-m-presentation="completo"]').click();
+  const fullM=await measureM();
+  assert(fullM.mode==="completo"&&Math.abs(fullM.mask.height-fullM.frame.height)<2 &&
+         fullM.mask.left<fullM.frame.left-10&&fullM.mask.right>fullM.frame.right+10,
+    "Completo must fit the full page height and bleed symmetrically beyond the sides: "+JSON.stringify(fullM));
+  assert(Math.abs(fullM.mask.width/fullM.mask.height-990.08/743.18)<.005,
+    "Completo must preserve the published M vector aspect: "+JSON.stringify(fullM));
+  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("M completo"),
+    "Sidebar must describe the complete vertical behavior");
+  await constructionPage.locator("#caseFrame").screenshot({path:"composition-vertical-m-completo.png"});
+  await constructionPage.locator('[data-case-format="desktop"]').click();
+  assert(await constructionPage.locator(".lm-case-m-presentation").isHidden() &&
+         await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="elemento",
+    "Horizontal format must not inherit the portrait full-bleed mask");
+  await constructionPage.locator('[data-case-format="mobile"]').click();
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="completo",
+    "Portrait M appearance must be restored after switching formats");
+  await constructionPage.locator('[data-case-m-presentation="elemento"]').click();
   const checkVertical=async(viewport)=>{
     await constructionPage.setViewportSize(viewport);
     await constructionPage.evaluate(()=>document.fonts.ready);

@@ -1,0 +1,64 @@
+{
+  "format": "mattar-spatial",
+  "version": 2,
+  "id": "9a4f2e31-788d-4c53-b8f5-ba450d7e0532",
+  "name": "Transição · Forma e intervalo",
+  "color": "#181814",
+  "background": "#f2efe7",
+  "aspect": "1:1",
+  "geometry": "volume",
+  "speed": 1,
+  "loop": false,
+  "tracks": [
+    {
+      "id": "a6099e41-592f-494d-a2e0-00b0a7492398",
+      "name": "P3 · entrada e saída",
+      "startAsset": "P3",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "scale": 0.8,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "22bcde74-6afb-4e2b-bd4c-07ceb10f3f74",
+          "type": "hold",
+          "duration": 0.1,
+          "easing": "polished"
+        },
+        {
+          "id": "304f9340-4afe-4069-808e-5375eaac3dba",
+          "type": "rotate",
+          "duration": 1.25,
+          "easing": "polished",
+          "degrees": 360
+        },
+        {
+          "id": "f6eea926-beb9-434c-8ee2-ae6e27d5e283",
+          "type": "hold",
+          "duration": 0.85,
+          "easing": "polished"
+        }
+      ],
+      "entrance": {
+        "type": "line",
+        "start": 0.08,
+        "duration": 0.32,
+        "baseline": -0.8,
+        "lineFraction": 0.12,
+        "easing": "easeOut"
+      },
+      "exit": {
+        "type": "line",
+        "start": 1.65,
+        "duration": 0.35,
+        "baseline": -0.8,
+        "lineFraction": 0.12,
+        "easing": "polished"
+      }
+    }
+  ]
+}

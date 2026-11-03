@@ -1,0 +1,421 @@
+{
+  "format": "mattar-spatial",
+  "version": 2,
+  "id": "f1da500b-7304-4968-b53f-e654690c8aa8",
+  "name": "MATTAR · onda e resposta",
+  "color": "#181814",
+  "background": "#f2efe7",
+  "aspect": "16:9",
+  "geometry": "volume",
+  "loop": false,
+  "tracks": [
+    {
+      "id": "99a6baa6-d17d-4237-8055-111657ccece3",
+      "name": "M · pulso 1",
+      "startAsset": "M",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -1.2016560530800002,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "2f4a9481-91a2-4dc9-823a-030a225513db",
+          "type": "hold",
+          "duration": 0.4,
+          "easing": "smooth"
+        },
+        {
+          "id": "630ba79c-5935-48d3-908e-82c57c72e4fd",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeIn",
+          "degrees": 90
+        },
+        {
+          "id": "edec4bc4-f60b-4b43-8662-b88add8a5938",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "P8"
+        },
+        {
+          "id": "ff6d0ff3-e0e9-4a87-9e94-e3a71b62f00e",
+          "type": "rotate",
+          "duration": 1.1,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "f5657d92-b010-4c35-8947-537063209274",
+          "type": "hold",
+          "duration": 1.9000000000000004,
+          "easing": "smooth"
+        },
+        {
+          "id": "3541c70e-c61d-48e7-a0d5-cca0541184b4",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "M"
+        },
+        {
+          "id": "8a2cc960-7e1a-4be3-8f9c-edab7a71a201",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeOut",
+          "degrees": -90
+        },
+        {
+          "id": "3142db40-dbc6-425a-b156-7c44ed330d12",
+          "type": "hold",
+          "duration": 0.7999999999999996,
+          "easing": "smooth"
+        }
+      ]
+    },
+    {
+      "id": "05ab46ef-2782-447d-a565-08e09739cff5",
+      "name": "A1 · pulso 2",
+      "startAsset": "A1",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -0.6604338468000001,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "11c22841-5656-4baa-a23a-42d7ce83b6cc",
+          "type": "hold",
+          "duration": 0.5800000000000001,
+          "easing": "smooth"
+        },
+        {
+          "id": "9925f6ae-6607-43a1-9f8a-af88b4f706b8",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeIn",
+          "degrees": 90
+        },
+        {
+          "id": "067b7a32-4ed9-4458-8397-ed502421b364",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "P3"
+        },
+        {
+          "id": "62736fc9-09c1-4679-bf31-bab7a75e7902",
+          "type": "rotate",
+          "duration": 0.95,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "a6169ddd-4a5a-47c9-9c0a-e74206a2e620",
+          "type": "hold",
+          "duration": 1.7300000000000006,
+          "easing": "smooth"
+        },
+        {
+          "id": "85a9d674-22d8-4466-828a-55eec8b999c4",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "A1"
+        },
+        {
+          "id": "0a4a751e-4f1f-4b2b-8b62-e40948a2e1e2",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeOut",
+          "degrees": -90
+        },
+        {
+          "id": "36e93ba8-c7ef-429b-b2ef-e4a4d37c4671",
+          "type": "hold",
+          "duration": 0.9399999999999993,
+          "easing": "smooth"
+        }
+      ]
+    },
+    {
+      "id": "81ecb899-7c56-46f0-aecf-107e220556ff",
+      "name": "T1 · pulso 3",
+      "startAsset": "T1",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -0.18292845648000003,
+        "y": 4.4296000000000004e-7
+      },
+      "scale": 0.27999955704,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "0f946c96-e208-4f46-84d3-b90e5858d909",
+          "type": "hold",
+          "duration": 0.76,
+          "easing": "smooth"
+        },
+        {
+          "id": "832ff700-68d1-4279-843a-0c79c8d49528",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeIn",
+          "degrees": 90
+        },
+        {
+          "id": "43c86ab1-c9b3-4179-bba2-db702fb700a7",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "P4"
+        },
+        {
+          "id": "44ef54ec-0a00-419c-96a0-bb94318e21d5",
+          "type": "rotate",
+          "duration": 1.2,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "3c904cc7-8465-4fc1-b778-f01ccf0be78e",
+          "type": "hold",
+          "duration": 1.1600000000000004,
+          "easing": "smooth"
+        },
+        {
+          "id": "6c7fbbbb-afaa-440f-81d3-833065ac2279",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "T1"
+        },
+        {
+          "id": "f3945917-73eb-4bc6-8774-ec98ebb9e6ba",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeOut",
+          "degrees": -90
+        },
+        {
+          "id": "4492882c-cbfa-449e-94a5-e4a5dd6bdcf4",
+          "type": "hold",
+          "duration": 1.0799999999999998,
+          "easing": "smooth"
+        }
+      ]
+    },
+    {
+      "id": "33d047f0-84dd-49c0-933b-885cc5eb4a97",
+      "name": "T2 · pulso 4",
+      "startAsset": "T2",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0.3048498572000001,
+        "y": 4.4296000000000004e-7
+      },
+      "scale": 0.27999955704,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "8d8ec166-0e77-4288-bea8-7cdc8f8c217f",
+          "type": "hold",
+          "duration": 0.9400000000000001,
+          "easing": "smooth"
+        },
+        {
+          "id": "85766ce8-1061-4f91-b34c-2f09ba4dc526",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeIn",
+          "degrees": 90
+        },
+        {
+          "id": "7eb6f987-8b21-47d2-b338-7409cca3c0ae",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "P2"
+        },
+        {
+          "id": "a8b4886b-f74e-4b77-ab20-1fb76ee810e8",
+          "type": "rotate",
+          "duration": 0.95,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "f6b384ee-cbf5-4361-848c-77d8af9d5495",
+          "type": "hold",
+          "duration": 1.0900000000000005,
+          "easing": "smooth"
+        },
+        {
+          "id": "1144ad54-4cc2-4be6-9e26-097b989544a4",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "T2"
+        },
+        {
+          "id": "716a5776-b6a4-466c-baa1-1618c354e9b2",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeOut",
+          "degrees": -90
+        },
+        {
+          "id": "2aaf1c57-23f8-4d3e-9522-42a0151cc336",
+          "type": "hold",
+          "duration": 1.2199999999999995,
+          "easing": "smooth"
+        }
+      ]
+    },
+    {
+      "id": "fdd317a1-150e-4a0a-8cb9-7141fcf3a92b",
+      "name": "A2 · pulso 5",
+      "startAsset": "A2",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0.7810068000000001,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "21620108-97ae-4467-a6cf-f002e9420d6d",
+          "type": "hold",
+          "duration": 1.12,
+          "easing": "smooth"
+        },
+        {
+          "id": "cd4b9caa-f651-4f27-a6e0-e49b621e915b",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeIn",
+          "degrees": 90
+        },
+        {
+          "id": "b4489619-a703-438e-900e-7e181bc4d6d9",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "P9"
+        },
+        {
+          "id": "5f97d4bf-e072-4a84-8325-26b5e0ad5305",
+          "type": "rotate",
+          "duration": 1.1,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "2de82301-fe99-4d36-a476-d66213de5b93",
+          "type": "hold",
+          "duration": 0.6200000000000001,
+          "easing": "smooth"
+        },
+        {
+          "id": "43938086-0226-4201-85e6-1d3b3dfad533",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "A2"
+        },
+        {
+          "id": "74644dad-bfe0-4649-9c4e-1ef7a5fcc337",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeOut",
+          "degrees": -90
+        },
+        {
+          "id": "dfe4ca9c-7b02-457b-9f96-3033641fba82",
+          "type": "hold",
+          "duration": 1.3599999999999997,
+          "easing": "smooth"
+        }
+      ]
+    },
+    {
+      "id": "5ae70506-c25d-4a48-b5bd-e2fd01321d42",
+      "name": "R · pulso 6",
+      "startAsset": "R",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 1.2675569205600001,
+        "y": -0.06310606232
+      },
+      "scale": 0.21566969928000002,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "c6e6e19f-1ea7-480b-aa76-8efc8666dad3",
+          "type": "hold",
+          "duration": 1.2999999999999998,
+          "easing": "smooth"
+        },
+        {
+          "id": "d529ee13-67a6-4040-834c-706c04ec0a0c",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeIn",
+          "degrees": 90
+        },
+        {
+          "id": "0829d5fc-4b28-45a9-98ea-e151358ddc39",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "P5"
+        },
+        {
+          "id": "1f9e6302-f808-4328-bfad-e64737507e21",
+          "type": "rotate",
+          "duration": 1.2,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "4373a243-719b-4899-bc00-2fc74313518e",
+          "type": "hold",
+          "duration": 0.2000000000000004,
+          "easing": "smooth"
+        },
+        {
+          "id": "06fc5324-f226-4526-9534-05e91e275219",
+          "type": "morph",
+          "duration": 0.44,
+          "easing": "smooth",
+          "target": "R"
+        },
+        {
+          "id": "a90b1753-0940-4efe-86a7-19d8cf4a8bf5",
+          "type": "rotate",
+          "duration": 0.36,
+          "easing": "easeOut",
+          "degrees": -90
+        },
+        {
+          "id": "84a922fc-81e0-4879-8fce-9e84ba9e6289",
+          "type": "hold",
+          "duration": 1.4999999999999998,
+          "easing": "smooth"
+        }
+      ]
+    }
+  ]
+}

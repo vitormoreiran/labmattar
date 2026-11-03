@@ -1,0 +1,391 @@
+{
+  "evaluation": [
+    {
+      "frame": 48,
+      "picto_z_deg": 0.0,
+      "word_key": 0.0
+    },
+    {
+      "frame": 120,
+      "picto_z_deg": 90.00000250447816,
+      "word_key": 1.0
+    },
+    {
+      "frame": 192,
+      "picto_z_deg": 180.00001866933468,
+      "word_key": 0.0
+    },
+    {
+      "frame": 264,
+      "picto_z_deg": 270.000028004002,
+      "word_key": 1.0
+    },
+    {
+      "frame": 336,
+      "picto_z_deg": 360.00003733866936,
+      "word_key": 0.0
+    }
+  ],
+  "assets": [
+    {
+      "id": "p1-light",
+      "source": "Ativo 1.001",
+      "file": "acervo-local/p1-light.glb",
+      "vertices": 19110,
+      "triangles": 38224,
+      "bytes": 689000,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -0.6244888305664062
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.1416430702047536,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 1.39
+    },
+    {
+      "id": "p2-light",
+      "source": "Ativo 2",
+      "file": "acervo-local/p2-light.glb",
+      "vertices": 12786,
+      "triangles": 25572,
+      "bytes": 461312,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -0.9605205059051514
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.14158791114567848,
+      "sourceObjectScale": [
+        0.4317767322063446,
+        0.4317767322063446,
+        0.4317767322063446
+      ],
+      "nativeInitialPhaseDeg": 180,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.12
+    },
+    {
+      "id": "p3-light",
+      "source": "Ativo 1.003",
+      "file": "acervo-local/p3-light.glb",
+      "vertices": 22498,
+      "triangles": 45000,
+      "bytes": 810968,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        0.6635837554931641
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.1416430702047536,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.2
+    },
+    {
+      "id": "p4-light",
+      "source": "Ativo 1.004",
+      "file": "acervo-local/p4-light.glb",
+      "vertices": 25828,
+      "triangles": 51668,
+      "bytes": 930896,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -0.4413797855377197
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.1416431658715097,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.22
+    },
+    {
+      "id": "p5-light",
+      "source": "Ativo 1.005",
+      "file": "acervo-local/p5-light.glb",
+      "vertices": 35036,
+      "triangles": 70084,
+      "bytes": 1262384,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -0.5258748531341553
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.1416429554048169,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.27
+    },
+    {
+      "id": "p6-light",
+      "source": "Ativo 1.006",
+      "file": "acervo-local/p6-light.glb",
+      "vertices": 15972,
+      "triangles": 31948,
+      "bytes": 576068,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -0.6281962394714355
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.14164296497147116,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.14
+    },
+    {
+      "id": "p7-light",
+      "source": "Ativo 1.007",
+      "file": "acervo-local/p7-light.glb",
+      "vertices": 31514,
+      "triangles": 63032,
+      "bytes": 1135548,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        1.2658557891845703
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.1416430702047536,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.25
+    },
+    {
+      "id": "p8-light",
+      "source": "Ativo 1.008",
+      "file": "acervo-local/p8-light.glb",
+      "vertices": 26416,
+      "triangles": 52832,
+      "bytes": 951992,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -0.07361888885498047
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.14164305107141792,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.2
+    },
+    {
+      "id": "p9-light",
+      "source": "Ativo 1.009",
+      "file": "acervo-local/p9-light.glb",
+      "vertices": 29854,
+      "triangles": 59728,
+      "bytes": 1075884,
+      "sourceCenterAfterBaseX90": [
+        0.0,
+        0.0,
+        -1.124049186706543
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.14164305107141792,
+      "sourceObjectScale": [
+        0.43417924642562866,
+        0.43417924642562866,
+        0.43417924642562866
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": null,
+      "seconds": 0.24
+    },
+    {
+      "id": "m",
+      "source": "Ativo 11.001",
+      "file": "acervo-local/m.glb",
+      "vertices": 7348,
+      "triangles": 14692,
+      "bytes": 442348,
+      "sourceCenterAfterBaseX90": [
+        -13.584549903869629,
+        0.003322124481201172,
+        -0.7203249931335449
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.4089921035336151,
+      "sourceObjectScale": [
+        0.6822189092636108,
+        0.6822189092636108,
+        0.6822189092636108
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": "Native Key 1",
+      "seconds": 0.14
+    },
+    {
+      "id": "a1",
+      "source": "Ativo 11.001",
+      "file": "acervo-local/a1.glb",
+      "vertices": 7890,
+      "triangles": 15776,
+      "bytes": 474872,
+      "sourceCenterAfterBaseX90": [
+        -7.4661102294921875,
+        0.003322124481201172,
+        -0.7203249931335449
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.4089921035336151,
+      "sourceObjectScale": [
+        0.6822189092636108,
+        0.6822189092636108,
+        0.6822189092636108
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": "Native Key 1",
+      "seconds": 0.15
+    },
+    {
+      "id": "t1",
+      "source": "Ativo 11.001",
+      "file": "acervo-local/t1.glb",
+      "vertices": 7800,
+      "triangles": 15596,
+      "bytes": 469508,
+      "sourceCenterAfterBaseX90": [
+        -2.0679800510406494,
+        0.0033220648765563965,
+        5.0067901611328125e-06
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.31592033449275375,
+      "sourceObjectScale": [
+        0.6822189092636108,
+        0.6822189092636108,
+        0.6822189092636108
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": "Native Key 1",
+      "seconds": 0.14
+    },
+    {
+      "id": "t2",
+      "source": "Ativo 11.001",
+      "file": "acervo-local/t2.glb",
+      "vertices": 7835,
+      "triangles": 15666,
+      "bytes": 471604,
+      "sourceCenterAfterBaseX90": [
+        3.446284055709839,
+        0.003322124481201172,
+        5.0067901611328125e-06
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.31592033449275375,
+      "sourceObjectScale": [
+        0.6822189092636108,
+        0.6822189092636108,
+        0.6822189092636108
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": "Native Key 1",
+      "seconds": 0.15
+    },
+    {
+      "id": "a2",
+      "source": "Ativo 11.001",
+      "file": "acervo-local/a2.glb",
+      "vertices": 7880,
+      "triangles": 15756,
+      "bytes": 474272,
+      "sourceCenterAfterBaseX90": [
+        8.829170227050781,
+        0.003322124481201172,
+        -0.7203249931335449
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.4089921035336151,
+      "sourceObjectScale": [
+        0.6822189092636108,
+        0.6822189092636108,
+        0.6822189092636108
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": "Native Key 1",
+      "seconds": 0.16
+    },
+    {
+      "id": "r",
+      "source": "Ativo 11.001",
+      "file": "acervo-local/r.glb",
+      "vertices": 7916,
+      "triangles": 15828,
+      "bytes": 476428,
+      "sourceCenterAfterBaseX90": [
+        14.329549789428711,
+        0.003322124481201172,
+        -0.7134050130844116
+      ],
+      "normalizationScaleBeforeSourceObjectScale": 0.4101529053423189,
+      "sourceObjectScale": [
+        0.6822189092636108,
+        0.6822189092636108,
+        0.6822189092636108
+      ],
+      "nativeInitialPhaseDeg": 0,
+      "units": "height=2 in canonical front",
+      "gltfConvention": "+Y up; camera at +Z; positive turn around +Y; canonical front uses source X90 plus nativeInitialPhaseDeg Z",
+      "morphTarget": "Native Key 1",
+      "seconds": 0.15
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+{
+  "format": "mattar-spatial",
+  "version": 2,
+  "id": "e5e9249a-51d0-4b1d-ac8f-593f4e0871c1",
+  "name": "Assinatura · Abertura e fecho",
+  "color": "#181814",
+  "background": "#f2efe7",
+  "aspect": "16:9",
+  "geometry": "volume",
+  "speed": 1,
+  "loop": false,
+  "tracks": [
+    {
+      "id": "52c19d35-89f3-4640-b632-17ca870575ee",
+      "name": "M ↔ P8 · resposta das pontas",
+      "startAsset": "M",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -1.2016560530800002,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "037dbd22-6a61-4861-bdfb-156aa65f465b",
+          "type": "hold",
+          "duration": 2.3,
+          "easing": "polished"
+        },
+        {
+          "id": "1d91e490-550d-4148-b4d2-5d2ec7b624c0",
+          "type": "rotate",
+          "duration": 0.58,
+          "easing": "smooth",
+          "degrees": 90
+        },
+        {
+          "id": "d5722efa-638f-4cff-959e-416e52afff5f",
+          "type": "morph",
+          "duration": 0.78,
+          "easing": "polished",
+          "target": "P8"
+        },
+        {
+          "id": "0305ac45-8add-43ff-83cf-1b6253eee080",
+          "type": "rotate",
+          "duration": 1.05,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "cdb2f152-ce90-48dd-84ff-e89990a35976",
+          "type": "morph",
+          "duration": 0.76,
+          "easing": "polished",
+          "target": "M"
+        },
+        {
+          "id": "0e37c2c4-da46-4a7a-9dbf-dd2cc3842abf",
+          "type": "rotate",
+          "duration": 0.65,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "19229474-017d-4621-8cc0-a0847d0d02e6",
+          "type": "hold",
+          "duration": 1.78,
+          "easing": "polished"
+        }
+      ]
+    },
+    {
+      "id": "aeba5593-7a3b-4783-911f-a53aa733a70f",
+      "name": "A1 ↔ P3 · abertura central",
+      "startAsset": "A1",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -0.6604338468000001,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "a29de134-47d8-4c4e-9281-8ff5ea8cc4a8",
+          "type": "hold",
+          "duration": 0.62,
+          "easing": "polished"
+        },
+        {
+          "id": "78119e1b-1b24-4f73-922a-02cd854b2d81",
+          "type": "rotate",
+          "duration": 0.52,
+          "easing": "smooth",
+          "degrees": 90
+        },
+        {
+          "id": "e03e3932-e4bd-4ed8-a6ed-52038def72e7",
+          "type": "morph",
+          "duration": 0.7,
+          "easing": "polished",
+          "target": "P3"
+        },
+        {
+          "id": "59b5f671-5840-4466-bdc8-617f49317338",
+          "type": "rotate",
+          "duration": 1.08,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "ab948a69-90c4-43d0-9163-2342f5928264",
+          "type": "morph",
+          "duration": 0.68,
+          "easing": "polished",
+          "target": "A1"
+        },
+        {
+          "id": "6fa9817a-6220-4260-91ce-5d8cb9b3c7a2",
+          "type": "rotate",
+          "duration": 0.56,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "3f4d782e-ca96-4a27-86dc-c29bc04e5bbb",
+          "type": "hold",
+          "duration": 3.74,
+          "easing": "polished"
+        }
+      ]
+    },
+    {
+      "id": "cf7f1143-76a2-40aa-8964-f38fa868c24a",
+      "name": "T1 ↔ P4 · abertura central",
+      "startAsset": "T1",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": -0.18292845648000003,
+        "y": 4.4296000000000004e-7
+      },
+      "scale": 0.27999955704,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "760187c2-6be2-40ed-99a8-6576f2d4bcce",
+          "type": "hold",
+          "duration": 0.38,
+          "easing": "polished"
+        },
+        {
+          "id": "49bd1bef-daac-4cb4-942e-de47893aedad",
+          "type": "rotate",
+          "duration": 0.46,
+          "easing": "smooth",
+          "degrees": 90
+        },
+        {
+          "id": "3a451433-de8b-4f16-946a-5e3580cff32d",
+          "type": "morph",
+          "duration": 0.72,
+          "easing": "polished",
+          "target": "P4"
+        },
+        {
+          "id": "7b90f636-ed7a-4432-90c8-e3c702dd299d",
+          "type": "rotate",
+          "duration": 1.14,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "f98aae0d-df0d-4f20-935f-0b881c7a862a",
+          "type": "morph",
+          "duration": 0.7,
+          "easing": "polished",
+          "target": "T1"
+        },
+        {
+          "id": "61d15bb8-ca6d-4bec-8270-36735f272055",
+          "type": "rotate",
+          "duration": 0.58,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "4e97ea27-fed4-4d8f-b5cc-30875cf13aa1",
+          "type": "hold",
+          "duration": 3.92,
+          "easing": "polished"
+        }
+      ]
+    },
+    {
+      "id": "4b3cf5d4-fb67-4f8e-a66d-0baf5df9799f",
+      "name": "T2 ↔ P2 · abertura central",
+      "startAsset": "T2",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0.3048498572000001,
+        "y": 4.4296000000000004e-7
+      },
+      "scale": 0.27999955704,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "1e04ba62-f559-4b2a-a77f-26053f3a3002",
+          "type": "hold",
+          "duration": 0.49,
+          "easing": "polished"
+        },
+        {
+          "id": "d90e5691-3848-4ed4-b5f0-cf18c9400c27",
+          "type": "rotate",
+          "duration": 0.52,
+          "easing": "smooth",
+          "degrees": 90
+        },
+        {
+          "id": "d1c6ac17-0574-4897-9514-0f9ed27f45a4",
+          "type": "morph",
+          "duration": 0.68,
+          "easing": "polished",
+          "target": "P2"
+        },
+        {
+          "id": "43556497-722e-41bf-95dd-01ac0cd1c810",
+          "type": "rotate",
+          "duration": 1.16,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "8fb3583c-902d-4c6e-a3de-af7b9359eeeb",
+          "type": "morph",
+          "duration": 0.72,
+          "easing": "polished",
+          "target": "T2"
+        },
+        {
+          "id": "f52bd98b-c76c-4b53-98d8-d8c4a97a26e2",
+          "type": "rotate",
+          "duration": 0.6,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "e7161f89-f276-4787-9457-d2335e1b3ce9",
+          "type": "hold",
+          "duration": 3.73,
+          "easing": "polished"
+        }
+      ]
+    },
+    {
+      "id": "64f800ee-7267-41de-8259-b067c79ce70b",
+      "name": "A2 ↔ P9 · abertura central",
+      "startAsset": "A2",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0.7810068000000001,
+        "y": -0.06371818684
+      },
+      "scale": 0.21628181316000003,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "907c2e37-4740-4bc3-8512-7bbbf516b44d",
+          "type": "hold",
+          "duration": 0.77,
+          "easing": "polished"
+        },
+        {
+          "id": "584328ef-7903-429e-83bc-b331dbbc37f3",
+          "type": "rotate",
+          "duration": 0.58,
+          "easing": "smooth",
+          "degrees": 90
+        },
+        {
+          "id": "04b8e007-476e-491a-a5d0-95339ad32c5d",
+          "type": "morph",
+          "duration": 0.75,
+          "easing": "polished",
+          "target": "P9"
+        },
+        {
+          "id": "9c8fc8e7-aac1-4f9c-8cca-2931108788cf",
+          "type": "rotate",
+          "duration": 1.08,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "8873ad4b-5fc1-4284-883e-8b95e7d613a6",
+          "type": "morph",
+          "duration": 0.7,
+          "easing": "polished",
+          "target": "A2"
+        },
+        {
+          "id": "66099ac0-3c6b-4ed9-85af-fe0e3416ef39",
+          "type": "rotate",
+          "duration": 0.62,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "ec0be6b6-6dc1-42f2-b078-3dc7ce0771f3",
+          "type": "hold",
+          "duration": 3.4,
+          "easing": "polished"
+        }
+      ]
+    },
+    {
+      "id": "8a9cf41a-4d6a-4aaf-8639-a904eebdfae6",
+      "name": "R ↔ P5 · resposta das pontas",
+      "startAsset": "R",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 1.2675569205600001,
+        "y": -0.06310606232
+      },
+      "scale": 0.21566969928000002,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "ec93cb8b-18ec-4c56-8bdd-e0450495e1e2",
+          "type": "hold",
+          "duration": 2.58,
+          "easing": "polished"
+        },
+        {
+          "id": "4d7f492e-b9c2-4ada-970a-e82d9e5fae60",
+          "type": "rotate",
+          "duration": 0.64,
+          "easing": "smooth",
+          "degrees": 90
+        },
+        {
+          "id": "3f08c4ca-5f2e-4fc9-b0f3-3754937aaee0",
+          "type": "morph",
+          "duration": 0.82,
+          "easing": "polished",
+          "target": "P5"
+        },
+        {
+          "id": "c6e38b64-50b5-411b-ac5b-48b74b9f73f7",
+          "type": "rotate",
+          "duration": 1.16,
+          "easing": "smooth",
+          "degrees": 360
+        },
+        {
+          "id": "35eca02a-2870-4b7c-99b3-cc78a15a609c",
+          "type": "morph",
+          "duration": 0.78,
+          "easing": "polished",
+          "target": "R"
+        },
+        {
+          "id": "68b4f9d0-e427-4aa6-a41a-784784338ada",
+          "type": "rotate",
+          "duration": 0.7,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "d77e5afe-4933-4206-b233-ef9f474603da",
+          "type": "hold",
+          "duration": 1.22,
+          "easing": "polished"
+        }
+      ]
+    }
+  ]
+}

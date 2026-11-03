@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_2" data-name="Camada 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 284.17 67.07">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ce241b;
+      }
+    </style>
+  </defs>
+  <g id="Camada_1-2" data-name="Camada 1">
+    <g id="Objeto_generativo_0_0_" data-name="Objeto generativo (0, 0)">
+      <g id="Layer_1" data-name="Layer 1">
+        <path class="cls-1" d="M128.71,65.84l9.94-6.96c.97-.68,2.55-.68,3.51,0l9.94,6.96c.97.68,2.72,1.23,3.9,1.23h128.16L279.7,0h-128.62c-1.18,0-2.64.82-3.26,1.83l-6.29,10.36c-.61,1.01-1.61,1.01-2.23,0l-6.29-10.36c-.61-1.01-2.08-1.83-3.26-1.83H4.47L0,67.07h124.81c1.18,0,2.93-.55,3.9-1.23h0Z"/>
+      </g>
+    </g>
+  </g>
+</svg>

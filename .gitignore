@@ -16,3 +16,14 @@ media-originals/
 *.avi
 *.mkv
 *.webm
+
+# Motion: ferramenta compilada, projetos e pôsteres são gerados no build
+public/motion/matriz/
+public/motion/projects/
+
+# Somente exports web otimizados de Motion; originais continuam ignorados
+!public/motion/videos/
+!public/motion/videos/*.mp4
+public/motion.html
+content/motion.json
+.sites-runtime/

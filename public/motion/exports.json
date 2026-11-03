@@ -1,0 +1,82 @@
+{
+  "m-form": {
+    "projectHash": "c1cd98ec30ef87b58434d69a6f249f3974d16085fb328d24ec7631c7338a1e5b",
+    "sha256": "b1e175f2d254616a6e6983717fb173120e6e93c97317f86df36d38e4c7974377",
+    "bytes": 1705605,
+    "durationSeconds": 10.8,
+    "width": 1080,
+    "height": 1080,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "mattar-rhythm": {
+    "projectHash": "11fabebda4334d1049b29cab4fb702d17694342f08a3f648d238bb5867ea8f26",
+    "sha256": "17a1d1a8f0aa89ee91d555bed360de6d736763b1a5f8b80e79de958ca9b7c512",
+    "bytes": 360048,
+    "durationSeconds": 5.833333333333333,
+    "width": 1080,
+    "height": 608,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "composition": {
+    "projectHash": "c78742b959481f79a2b5316096df6051e01a674d00efc7d6e14cf9c587394c21",
+    "sha256": "0bacdef481593926939486497623897a8f17d9b25e449a87b1852bca2b89b265",
+    "bytes": 1624177,
+    "durationSeconds": 18.2,
+    "width": 1080,
+    "height": 608,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "acervo-mattar": {
+    "projectHash": "552af81a57fcc49e1c06828871ebc31ff1b1624b282e446fd95d3c484bacd638",
+    "sha256": "6d466110a78ac28d9ac613f73b0445a7db089f2d7ff696f70cfafc06389af7e9",
+    "bytes": 240157,
+    "durationSeconds": 5,
+    "width": 1080,
+    "height": 608,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "abertura-fecho": {
+    "projectHash": "7fa99061d150885dc9bda595ecd560b66f3a4df4bf8fd226484500d30e73c5bd",
+    "sha256": "ce54f25a55634b9ff61a00425669aac14b03c6d9a3a2392bcb7e15922a1c3a02",
+    "bytes": 455540,
+    "durationSeconds": 7.9,
+    "width": 1080,
+    "height": 608,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "perfil-corte": {
+    "projectHash": "076733e01749be1f0f07e2a88ef395222f58625c942b9633f3a14a06c808f9c1",
+    "sha256": "7a743ddf265f65c22843d0b0a1f576393de9ec0fb912b5ec95b6b19cf2fb76ed",
+    "bytes": 230736,
+    "durationSeconds": 1.7,
+    "width": 1080,
+    "height": 1080,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "passagem-bastao": {
+    "projectHash": "7db1fafd4f5b0edfe0a29d1c218d06d272a311033cbc326090b8da4eed710631",
+    "sha256": "bf8e092cad25387d9f593c7cdd3ddea6cf5c27a202124cb303ae961a12979a19",
+    "bytes": 119912,
+    "durationSeconds": 1.7666666666666666,
+    "width": 1080,
+    "height": 608,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  },
+  "forma-intervalo": {
+    "projectHash": "b37be63beccd2d29b53dadbeba95dc186ee38ddcaac568b4656cb737b7c1726f",
+    "sha256": "a1d055ab25879ee15ac723ac3aae8dcfc01f17a554a6a1812b380b0d04ce56aa",
+    "bytes": 353296,
+    "durationSeconds": 2.2,
+    "width": 1080,
+    "height": 1080,
+    "rendererHash": "6591ca758561d13758bf31a64579dceb98d2cd0221cac42013b9f1deef1616d5",
+    "rendererCommit": "1e0771797b4b6d3f9194973906a65c97d751591b"
+  }
+}

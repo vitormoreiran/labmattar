@@ -1,0 +1,62 @@
+{
+  "format": "mattar-spatial",
+  "version": 2,
+  "id": "fe8d47d9-6018-4d1c-93df-b894b0abd11f",
+  "name": "Transição · Perfil e corte",
+  "color": "#181814",
+  "background": "#f2efe7",
+  "aspect": "1:1",
+  "geometry": "volume",
+  "speed": 1,
+  "loop": false,
+  "tracks": [
+    {
+      "id": "3d2c9f75-aa0e-4b57-909d-d8c3e4dc07a9",
+      "name": "M → P8 · corte no perfil",
+      "startAsset": "M",
+      "startAngle": 0,
+      "delay": 0,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "scale": 0.8,
+      "enabled": true,
+      "steps": [
+        {
+          "id": "4510f65c-9ef4-4401-a3c4-89a2bcc4cadb",
+          "type": "hold",
+          "duration": 0.18,
+          "easing": "polished"
+        },
+        {
+          "id": "a1ec62fc-b1d2-4236-810c-378038895b4d",
+          "type": "rotate",
+          "duration": 0.38,
+          "easing": "polished",
+          "degrees": 90
+        },
+        {
+          "id": "25e1952b-47f5-4f4f-9f3c-0f0349c3615f",
+          "type": "morph",
+          "duration": 0.52,
+          "easing": "polished",
+          "target": "P8"
+        },
+        {
+          "id": "87efc4f3-9309-48a6-ba0f-bf1e1a6cdaa1",
+          "type": "rotate",
+          "duration": 0.38,
+          "easing": "polished",
+          "degrees": -90
+        },
+        {
+          "id": "0de7c49f-70f2-4574-9647-876f4210b2f2",
+          "type": "hold",
+          "duration": 0.24,
+          "easing": "polished"
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import sys
 
 NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/manual.html" data-area="simbolos">01 / SÍMBOLOS</a>
@@ -18,6 +19,12 @@ STYLE='''<style>
 @media(max-width:600px){.lm-site-nav{justify-content:flex-start;gap:18px;padding:10px 16px;min-height:48px}}
 </style>'''
 areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","laboratorio.html":"laboratorio"}
+if Path("public/motion.html").exists():
+ areas["motion.html"]="laboratorio"
+if len(sys.argv)>1:
+ requested=set(sys.argv[1:])
+ assert requested <= set(areas), "Unknown page for shared navigation"
+ areas={name:area for name,area in areas.items() if name in requested}
 for filename,area in areas.items():
  p=Path("public")/filename
  assert p.exists(),filename

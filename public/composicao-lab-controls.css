@@ -818,3 +818,42 @@
 @media(max-width:540px){
   .lm-marker-field .lm-marker-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
+
+
+/* The three text treatments stay in one editorial system. "Detalhe" is
+ * an action into the existing Signature editor, never another text scale. */
+#labPanel-texto .lm-lab-detail-access{
+  border-top:1px solid #d4d2cb;
+  margin-top:3px;
+  padding-top:0;
+}
+#labPanel-texto .lm-lab-detail-jump{
+  appearance:none;
+  display:flex;
+  width:100%;
+  min-height:46px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:6px 12px;
+  padding:10px 0;
+  border:0;
+  background:transparent;
+  color:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+#labPanel-texto .lm-lab-detail-jump-action{
+  display:inline-flex;align-items:center;gap:6px;
+  color:#77736b;
+  white-space:nowrap;
+}
+#labPanel-texto .lm-lab-detail-jump:hover .lm-lab-detail-jump-action{
+  color:#181818;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+#labPanel-texto .lm-lab-detail-jump:focus-visible{
+  outline:2px solid #181818;
+  outline-offset:3px;
+}

@@ -2625,9 +2625,9 @@ body.lm-studio-open #laboratorio{
 body.lm-studio-open #laboratorio .lm-lab-inspector{background:var(--ui-panel)!important}
 body.lm-studio-open #laboratorio .lm-inspector-head{
   color:var(--ui-ink)!important;
-  font-size:11px!important;
-  font-weight:700!important;
-  letter-spacing:.12em!important;
+
+
+
 }
 body.lm-studio-open #laboratorio .lm-composition-module-index{
   background:var(--ui-panel)!important;
@@ -2635,8 +2635,8 @@ body.lm-studio-open #laboratorio .lm-composition-module-index{
   gap:5px!important;
 }
 body.lm-studio-open #laboratorio .lm-composition-module-index button{
-  font-size:10px!important;
-  letter-spacing:.025em!important;
+
+
   color:#60625b!important;
 }
 body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
@@ -2653,15 +2653,15 @@ body.lm-studio-open #laboratorio .lm-inspector-panel-heading{
   padding-bottom:13px!important;
 }
 body.lm-studio-open #laboratorio .lm-inspector-panel-heading>span{
-  font-size:13px!important;
-  font-weight:700!important;
-  letter-spacing:.08em!important;
+
+
+
 }
 body.lm-studio-open #laboratorio .lm-lab-field-title,
 body.lm-studio-open #laboratorio .lm-lab-value-row label{
   color:var(--ui-text)!important;
-  font-size:11px!important;
-  font-weight:600!important;
+
+
 }
 body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{
   background:#eaeae4!important;

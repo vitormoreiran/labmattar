@@ -275,8 +275,8 @@ try{
   });
   assert(previewGeometry.previewHeight>=300,
     "Mobile studio must give its real canvas enough room instead of a 220px thumbnail: "+JSON.stringify(previewGeometry));
-  // The editor may downscale the logical page, but it must never make its
-  // three existing typography roles physically unreadable.
+  // A preview must scale the complete page uniformly, including all three
+  // typography roles. Screen-size minimums must not change the composition.
   for(const format of ["vertical","horizontal","quadrado","editorial"]){
     await choose("format",format);
     await page.waitForTimeout(120);
@@ -288,8 +288,16 @@ try{
         preview:el.getBoundingClientRect().height,
         tokens:["title","body","detail"].map(role=>getComputedStyle(el).getPropertyValue("--lm-type-"+role+"-size").trim())};
     });
-    assert(legible.preview>150&&legible.title>=31.5&&legible.body>=12.5&&legible.detail>=9.5,
-      "Studio preview must preserve readable Title/Body/Detail and use all 3 canonical roles: "+JSON.stringify(legible));
+    assert(legible.preview>150&&legible.tokens.every(token=>parseFloat(token)>0),
+      "Preview must keep all three page-relative typography roles: "+JSON.stringify(legible));
+    await page.setViewportSize({width:1440,height:900});
+    await page.waitForTimeout(120);
+    const desktopTokens=await page.locator("#labArtboard").evaluate(el=>
+      ["title","body","detail"].map(role=>getComputedStyle(el).getPropertyValue("--lm-type-"+role+"-size").trim()));
+    assert(JSON.stringify(legible.tokens)===JSON.stringify(desktopTokens),
+      "Resizing the preview must not change the logical typography in "+format);
+    await page.setViewportSize({width:390,height:844});
+    await page.waitForTimeout(120);
     await page.locator("#labArtboard").screenshot({path:"laboratorio-tipografia-"+format+".png"});
   }
   await choose("format","horizontal");
@@ -397,6 +405,32 @@ try{
     }));
     assert(scrollState.y>0,
       "Compact editor document must scroll to controls at "+vp.width+"x"+vp.height);
+  }
+
+  // Reproduce the reported saved mobile composition, not only a blank preset.
+  await page.setViewportSize({width:390,height:720});
+  await choose("format","vertical");
+  await choose("mContent","solid");
+  await choose("bodyMode","visivel");
+  await page.locator("#labTitleInput").fill("PRÁTICAS\nMATERIAIS E\nPROCESSOS");
+  await page.locator("#labTitleInput").dispatchEvent("input");
+  const inspectCopy=()=>page.locator("#labArtboard").evaluate(board=>{
+    const safe=board.querySelector("#labReading").getBoundingClientRect();
+    const nodes=[...board.querySelectorAll(".lm-lab-title-line, #labRenderedBody, #labKicker, .lm-lab-bottom span")];
+    return {contrast:getComputedStyle(board.querySelector("#labReading")).mixBlendMode,
+      fits:nodes.every(node=>{
+        const range=document.createRange(); range.selectNodeContents(node);
+        return [...range.getClientRects()].every(r=>r.left>=safe.left-1&&r.right<=safe.right+1&&r.top>=safe.top-1&&r.bottom<=safe.bottom+1);
+      })};
+  });
+  for(const format of ["vertical","horizontal","quadrado","editorial"]){
+    await choose("format",format);
+    await page.waitForTimeout(120);
+    const copy=await inspectCopy();
+    assert(copy.fits,"Saved mobile title and body must stay inside the page: "+format);
+    assert(copy.contrast==="difference","White copy must remain visible across the solid M");
+    await page.locator(".lm-lab-workspace").scrollIntoViewIfNeeded();
+    await page.screenshot({path:"laboratorio-regressao-mobile-"+format+".png"});
   }
 
   await page.locator("#labStudioToggle").click();

@@ -540,7 +540,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     border-bottom:1px solid #d7d7d3!important;
     background:#f8f8f7!important;
   }
-  body.lm-studio-open #laboratorio .lm-lab-system-statement{display:none!important}
   body.lm-studio-open #laboratorio .lm-studio-launch{
     display:flex!important;align-items:center!important;gap:8px!important;
   }
@@ -1001,7 +1000,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     align-items:center!important;
     justify-content:flex-end!important;
   }
-  body.lm-studio-open #laboratorio .lm-lab-system-statement{display:none!important}
 
   body.lm-studio-open #laboratorio .lm-lab-workspace,
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])),
@@ -1209,7 +1207,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]>summary{display:none!important}
 
-  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-image-invariant,
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-submodule=m],
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-marker-field,
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-m-scale-field,

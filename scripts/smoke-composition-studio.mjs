@@ -135,6 +135,8 @@ try{
   // Elemento retains the manually adjusted scale in all four formats.
   await choose("mContent","photo");
   await choose("format","vertical");
+  assert(await page.locator("#labTextWidth").inputValue()==="100",
+    "Vertical must use the whole reading width inside the established margins, not crop the last word");
   assert(await page.locator("#labMPresentationField").isVisible(),
     "M appearance controls must be accessible across canvas formats");
   await choose("mPresentation","elemento");

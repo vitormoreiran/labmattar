@@ -18,18 +18,15 @@ body.lm-studio-open #laboratorio.lm-lab{
   width:100%;max-width:none;min-width:0;
   height:100vh;height:100dvh;
   box-sizing:border-box;overflow:hidden;
-  display:grid;grid-template-rows:60px minmax(0,1fr);
-  background:#f7f6f2;
-  padding:0 16px 13px;
+  display:grid;
   margin:0;border:0;
 }
 body.lm-studio-open #laboratorio>.lm-lab-heading,
 body.lm-studio-open #laboratorio>.lm-lab-legend,
 body.lm-studio-open #laboratorio>.lm-lab-lead{display:none!important}
 body.lm-studio-open #laboratorio .lm-lab-prep{
-  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
-  gap:20px;min-width:0;min-height:0;
-  margin:0;padding:6px 0;border-bottom:1px solid #c8c5bf;border-top:0;
+  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;min-width:0;min-height:0;
+  margin:0;border-top:0;
   width:100%;
 }
 body.lm-studio-open .lm-studio-launch{flex:0 0 auto;gap:8px;margin-left:auto}
@@ -52,9 +49,7 @@ body.lm-studio-open .lm-help-trigger-overview>span:first-child{width:21px;height
 body.lm-studio-open .lm-help-trigger-overview .lm-help-trigger-text{display:none}
 body.lm-studio-open #laboratorio .lm-lab-workspace{
   display:grid!important;
-  grid-template-columns:minmax(0,1fr) 378px;
-  grid-template-areas:"page inspector";
-  gap:13px;min-height:0;height:100%;width:100%;
+  grid-template-areas:"page inspector";min-height:0;height:100%;width:100%;
   margin:0;align-items:stretch;
 }
 body.lm-studio-open #laboratorio .lm-lab-preview{
@@ -68,7 +63,6 @@ body.lm-studio-open .lm-lab-preview-head{
   margin:0;padding:6px 0;
   min-height:0;border-top:0;
   border-bottom:1px solid #d0cdc6;
-  color:#5b5852;
 }
 body.lm-studio-open .lm-lab-preview-head span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body.lm-studio-open .lm-lab-preview-head .lm-lab-preview-edit-note{
@@ -77,7 +71,7 @@ body.lm-studio-open .lm-lab-preview-head .lm-lab-preview-edit-note{
 }
 body.lm-studio-open .lm-lab-preview-head #labFormatLabel{
   font-variant-numeric:tabular-nums;
-  white-space:nowrap;margin-left:auto;color:#181818;
+  white-space:nowrap;margin-left:auto;
 }
 body.lm-studio-open .lm-lab-stage{
   box-sizing:border-box;
@@ -86,15 +80,13 @@ body.lm-studio-open .lm-lab-stage{
   min-height:0!important;min-width:0;height:100%;width:100%;
   padding:clamp(9px,1.5vw,24px)!important;
   overflow:hidden;
-  border:1px solid #dedbd4;
-  border-top:0;background:#e9e7e2;
+  border-top:0;
 }
 body.lm-studio-open .lm-lab-board{
   box-sizing:border-box;
   width:auto;max-width:none!important;max-height:none!important;
   flex:none;min-width:0;min-height:0;
   margin:0;
-  box-shadow:0 7px 24px rgba(22,22,22,.12);
 }
 body.lm-studio-open .lm-lab-preview-foot{
   display:flex;align-items:center;justify-content:space-between;
@@ -109,40 +101,32 @@ body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
   grid-area:inspector;order:initial;
   display:grid!important;
   grid-template-columns:minmax(0,1fr);
-  grid-template-rows:34px 64px minmax(0,1fr) 49px;
   min-width:0;min-height:0;height:100%;width:100%;
-  padding:0 0 0 13px;border:0;border-left:1px solid #cbc8c1;
+  padding:0 0 0 13px;border:0;
   overflow:hidden;
 }
 body.lm-studio-open .lm-inspector-head{
-  min-height:0;padding:8px 0;
+  min-height:0;
   border-top:0;
-  display:flex;align-items:center;
 }
 body.lm-studio-open .lm-inspector-panel{
   position:relative;display:flex;flex-direction:column;
-  padding:12px 0 7px;
   min-width:0;min-height:0;overflow:hidden;
   border:0;
 }
 body.lm-studio-open .lm-inspector-panel[hidden]{display:none!important}
 body.lm-studio-open .lm-inspector-panel-heading{
-  display:flex;align-items:center;min-height:19px;
-  margin:0 0 9px;
-}
-body.lm-studio-open .lm-inspector-panel-heading>span{color:#6b665f;
+  display:flex;align-items:center;
 }
 body.lm-studio-open .lm-inspector-primary,
 body.lm-studio-open .lm-inspector-more{display:none!important}
 body.lm-studio-open .lm-lab-mini-actions{
   display:flex;align-items:center;justify-content:space-between;
-  gap:12px;min-width:0;margin:0;
-  border-top:1px solid #cbc8c1;border-bottom:0;
+  gap:12px;min-width:0;margin:0;border-bottom:0;
   padding:8px 0 6px;
 }
 body.lm-studio-open .lm-lab-mini-actions button{
-  min-height:31px;padding:5px 9px;
-  background:transparent;color:#181818;border:1px solid #a7a39c;white-space:nowrap;
+  min-height:31px;padding:5px 9px;white-space:nowrap;
 }
 body.lm-studio-open .lm-lab-mini-actions button:hover{background:#ebe9e3}
 body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
@@ -169,10 +153,6 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
   body.lm-studio-open .lm-lab-mini-actions{padding:5px 0}
 }
 @media(max-width:850px){
-  body.lm-studio-open #laboratorio.lm-lab{
-    grid-template-rows:49px minmax(0,1fr);
-    padding:0 9px 8px;
-  }
   body.lm-studio-open .lm-lab-prep{gap:4px}
   body.lm-studio-open .lm-studio-launch>.lm-studio-quickreset{
     display:inline-flex;align-items:center;justify-content:center;
@@ -185,24 +165,18 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
   body.lm-studio-open #labStudioToggleText::after{content:"SAIR";}
   body.lm-studio-open #laboratorio .lm-lab-workspace{
     display:grid!important;
-    grid-template-columns:minmax(0,1fr);
     grid-template-rows:minmax(0,1fr) 270px;
-    grid-template-areas:"page" "inspector";
-    gap:6px;min-height:0;
+    grid-template-areas:"page" "inspector";min-height:0;
   }
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
     display:grid!important;
     grid-template-columns:minmax(0,1fr);
-    grid-template-rows:53px minmax(0,1fr);
-    border:0;border-top:1px solid #cbc8c1;
-    padding:0;min-height:0;
+    border:0;min-height:0;
   }
   body.lm-studio-open .lm-inspector-head,
   body.lm-studio-open .lm-lab-mini-actions{display:none!important}
-  body.lm-studio-open .lm-inspector-panel{
-    padding:5px 0 2px;min-height:0;
+  body.lm-studio-open .lm-inspector-panel{min-height:0;
   }
-  body.lm-studio-open .lm-inspector-panel-heading{margin-bottom:4px;min-height:14px}
   body.lm-studio-open .lm-lab-preview{
     display:grid;grid-template-rows:27px minmax(0,1fr) 26px;min-height:0;
   }

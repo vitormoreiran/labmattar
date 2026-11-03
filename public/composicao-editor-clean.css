@@ -225,7 +225,6 @@ body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem]{
   body.lm-studio-open #laboratorio .lm-lab-prep{gap:7px;
   }
   body.lm-studio-open #laboratorio .lm-studio-launch{gap:1px}
-  body.lm-studio-open #laboratorio #labStudioToggleText{font-size:0}
   body.lm-studio-open #laboratorio .lm-lab-prep>.lm-lab-heading-aside{display:none}
   body.lm-studio-open #laboratorio .lm-lab-workspace,
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])){
@@ -547,12 +546,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     height:30px!important;min-height:30px!important;
     padding:0 8px!important;
     border:0!important;background:transparent!important;
-  }
-  body.lm-studio-open #laboratorio #labStudioToggleText{
-    font-size:0!important;
-  }
-  body.lm-studio-open #laboratorio #labStudioToggleText::after{
-    content:"SAIR";
   }
 
   body.lm-studio-open #laboratorio .lm-lab-workspace,
@@ -2623,22 +2616,13 @@ body.lm-studio-open #laboratorio{
   --studio-stage:#e8e9e4;
 }
 body.lm-studio-open #laboratorio .lm-lab-inspector{background:var(--ui-panel)!important}
-body.lm-studio-open #laboratorio .lm-inspector-head{
-  color:var(--ui-ink)!important;
-
-
-
-}
+body.lm-studio-open #laboratorio .lm-inspector-head{color:var(--ui-ink)!important}
 body.lm-studio-open #laboratorio .lm-composition-module-index{
   background:var(--ui-panel)!important;
   padding:12px!important;
   gap:5px!important;
 }
-body.lm-studio-open #laboratorio .lm-composition-module-index button{
-
-
-  color:#60625b!important;
-}
+body.lm-studio-open #laboratorio .lm-composition-module-index button{color:#60625b!important}
 body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
   background:#262923!important;
   border-color:#262923!important;
@@ -2652,16 +2636,10 @@ body.lm-studio-open #laboratorio .lm-inspector-panel-heading{
   margin-bottom:20px!important;
   padding-bottom:13px!important;
 }
-body.lm-studio-open #laboratorio .lm-inspector-panel-heading>span{
 
-
-
-}
 body.lm-studio-open #laboratorio .lm-lab-field-title,
 body.lm-studio-open #laboratorio .lm-lab-value-row label{
   color:var(--ui-text)!important;
-
-
 }
 body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{
   background:#eaeae4!important;
@@ -2738,4 +2716,10 @@ html body.lm-studio-open main #laboratorio .lm-lab-inspector .lm-composition-mod
   background:#262923!important;
   border-color:#262923!important;
   color:#fff!important;
+}
+
+/* Focused editor: the inspector belongs entirely inside its grid track. */
+@media(min-width:1181px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{margin:0!important}
+  body.lm-studio-open #laboratorio .lm-composition-module-index{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }

@@ -412,6 +412,7 @@ try{
   await choose("format","vertical");
   await choose("mContent","solid");
   await choose("bodyMode","visivel");
+  await page.locator('[data-lab-more="texto"] > summary').click();
   await page.locator("#labTitleInput").fill("PRÁTICAS\nMATERIAIS E\nPROCESSOS");
   await page.locator("#labTitleInput").dispatchEvent("input");
   const inspectCopy=()=>page.locator("#labArtboard").evaluate(board=>{

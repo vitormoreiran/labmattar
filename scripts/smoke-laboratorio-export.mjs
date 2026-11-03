@@ -100,6 +100,7 @@ try{
     "Document 4K profile must match the exported PNG");
 
   await page.locator('button[data-mobile-module="texto"]').click();
+  await page.locator('#labPanel-texto [data-lab-more="texto"]').evaluate(details=>{details.open=true;});
   await page.locator("#labTitleInput").fill("TÍTULO ALTERADO PROVISORIAMENTE");
   await page.locator("#labTitleInput").dispatchEvent("input");
   assert((await page.locator("#labRenderedTitle").textContent()).includes("ALTERADO"),

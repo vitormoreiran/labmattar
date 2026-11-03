@@ -361,3 +361,42 @@
 }
 .lm-lab-solid-contrast .lm-lab-reading{color:#181818}
 .lm-lab-solid-contrast *{pointer-events:none!important;user-select:none!important}
+
+
+/* Entrada de texto / um replay, sem interferir no canvas editavel.
+ * Movimento e duracoes seguem a demonstracao normativa de Tipografia. */
+.lm-lab-preview-head .lm-lab-preview-actions{
+  display:flex;align-items:center;justify-content:flex-end;gap:12px;
+  min-width:0;margin-left:auto;white-space:nowrap;
+}
+.lm-lab-preview-head .lm-lab-motion-play{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:29px;padding:4px 10px;border:1px solid #b6b4af;
+  border-radius:0;background:transparent;color:inherit;
+  font-family:var(--lm-type-univers);font-size:var(--lm-type-detail-size);
+  font-weight:300;line-height:1;letter-spacing:var(--lm-type-detail-tracking);
+  white-space:nowrap;cursor:pointer;
+}
+.lm-lab-motion-play b{font:inherit;letter-spacing:inherit}
+.lm-lab-motion-play:hover{border-color:#181818;color:#181818;background:#eceae5}
+.lm-lab-motion-play:focus-visible{outline:2px solid #181818;outline-offset:2px}
+.lm-lab-motion-status{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0;
+}
+.lm-lab-board[data-motion-playing="true"] > #labReading,
+.lm-lab-board[data-motion-playing="true"] > .lm-lab-solid-contrast:not([data-motion-clone]){
+  opacity:0;
+}
+.lm-lab-motion-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.lm-lab-motion-layer .lm-lab-reading,
+.lm-lab-solid-contrast[data-motion-clone] .lm-lab-reading{pointer-events:none}
+.lm-lab-motion-word{display:inline-block;white-space:pre;vertical-align:baseline}
+@media(max-width:850px){
+  body.lm-studio-open .lm-lab-preview-head .lm-lab-preview-actions{gap:7px}
+  body.lm-studio-open .lm-lab-preview-head .lm-lab-motion-play{min-height:20px;padding:2px 5px}
+}
+@media(max-width:650px){
+  .lm-lab-preview-head .lm-lab-motion-play b{display:none}
+  .lm-lab-preview-head .lm-lab-preview-actions{gap:7px}
+}

@@ -1,40 +1,43 @@
-# LABMATTAR — contrato de composição por superfície
+# LABMATTAR — Composição aplicada: prova de página
 
-**Escopo:** demonstração de construção da página em `04 / Composição` (horizontal 16:9 e vertical 9:16).
-**Norma tipográfica:** `public/manual-headings.css`. Nunca criar um quarto formato de texto.
+**Referência técnica:** o estudo de `04 / COMPOSIÇÃO` utiliza o mesmo núcleo de leitura do `05 / LABORATÓRIO`: `lm-lab-reading` → `lm-lab-kicker`, `lm-lab-main-copy` (Título + Corpo), `lm-lab-bottom`. O arquivo `public/composicao-lab.css` contém essa regra estrutural; `public/composicao-demo.css` apenas adapta o exemplo de imagem, estados e formato.
 
 ## O que permanece
 
-1. Os papéis semânticos são sempre **Título**, **Corpo**, **Detalhe**, com Univers e Perpetua conforme a identidade. A aplicação em miniatura usa a escala relativa ao próprio canvas, nunca ao viewport do navegador.
-2. Margens do campo de leitura são comuns aos quatro blocos: identificação, título, Corpo e créditos.
-3. O M mantém a geometria, as proporções e o eixo central. A fotografia pode ser reenquadrada; o M não é deformado.
-4. O véu preto de 20% só é ativado na fotografia sob texto na etapa `03 / Página`, quando `20%` estiver selecionado. `0%` serve como comparação, não como regra alternativa.
+- Os únicos tratamentos de texto são **Título**, **Corpo** e **Detalhe** com Univers e Perpetua; a escala proporcional à superfície é aplicada por `manual-headings.css`, não por fontes adicionais.
+- A origem horizontal, o alinhamento e a margem de leitura são únicos em toda a página.
+- O M conserva vetor, proporções e eixo central. A fotografia pode ser reenquadrada, nunca o vetor.
+- O preto de 20% pertence à fotografia sob o texto e acompanha o recorte do M; o modo 0% existe só para comparação, jamais como nova norma.
 
-## Regras do vertical (9:16)
+## Horizontal e vertical — uma estrutura comum
 
-- **Identificação:** fixa no topo da área útil, dentro das margens.
-- **Título:** área superior, com quebras editoriais em grupos de palavras; nunca pode ultrapassar a largura da área de leitura, cortar letras ou colidir com Corpo.
-- **Centro visual:** campo livre para o M e a fotografia, sem exigir que os textos acompanhem o centro geométrico do M.
-- **Corpo:** bloco independente, encostado ao fim do campo de leitura, *acima* dos créditos; preserva entrelinha do papel Corpo.
-- **Créditos / detalhes:** faixa final separada. Nenhum crédito se mistura com o parágrafo.
-- **Escala:** token de Título, Corpo e Detalhe calculado em `cqw` a partir da largura real da superfície; esse é um único perfil de escala para cada orientação, sem ajuste automático por palavra e sem mudanças manuais de `font-size`.
-- **Margens:** o guia `Área de leitura` evidencia a régua mas não atravessa a tipografia. A legenda da guia aparece abaixo do campo, sem cobrir a identificação.
+A composição é uma coluna estrutural com três regiões, tal como no Laboratório:
 
-## Regras do horizontal (16:9)
+1. **Identificação — Detalhe:** topo da área útil.
+2. **Núcleo editorial — Título + Corpo:** bloco central, com o Corpo acompanhando imediatamente o Título e nunca aparecendo no rodapé por sobreposição.
+3. **Créditos — Detalhe:** rodapé independente, dentro da mesma margem.
 
-- Mantém a leitura central, com identificação no topo e créditos ao fim.
-- Usa os mesmos papéis tipográficos, dimensionados pela largura real do quadro horizontal.
-- Mudança de formato **recompõe a página**, nunca usa o título do horizontal apenas espremido no vertical.
+Em `16:9`, o núcleo ocupa uma coluna proporcional ao formato. Em `9:16`, essa coluna usa toda a largura disponível e permanece centralizada verticalmente. São reescaladas e redistribuídas as áreas de texto, não comprimidas as letras de uma orientação para outra. O M permanece geométrico ao centro e a imagem preserva contraste adequado.
 
-## Verificação de regressão
+## Interações da demonstração
 
-A prova visual e a verificação em navegador devem inspecionar o vertical em janelas de 1440, 390 e 320 px de largura, e conferir que:
+- **Camadas:** Campo → Máscara → Página. As duas primeiras fases mostram a imagem sem tipografia.
+- **Formato:** Horizontal (16:9) / Vertical (9:16). Recompõe os campos; não estica um cartão existente.
+- **Leitura:** Resultado / Estrutura. No Resultado o estudo está completo. Estrutura retira a fotografia e contorna os próprios elementos de texto, revelando quatro campos reais (identificação; título; corpo; créditos). Não se usa um retângulo verde de segurança.
+- **Contraste:** 0% / 20%. Comparação disponível na Página em modo Resultado, sem modificar disposição dos elementos.
 
-- `Identificação.bottom < Título.top`;
-- `Título.bottom < Corpo.top`;
-- `Corpo.bottom < Créditos.top`;
-- todos os campos, inclusive os grupos do Título, permanecem dentro da régua;
-- a tipografia se ajusta ao tamanho da própria página de prova (não ao viewport);
-- camadas, comparação de contraste e exibição de guias continuam interativas.
+A lateral da demonstração explica o estado escolhido, sem comentários redundantes. Os contornos do modo Estrutura correspondem a elementos reais no DOM, portanto se adaptam ao formato.
 
-**Importante:** corrigir o exemplo não altera escala nem posições gerais das cinco capas do manual; essas são governadas por `design/manual-layout-contract.md`.
+## Verificação obrigatória
+
+Validar navegador em desktop (1440×900) e celular (390×844, 320×640), em 16:9 e 9:16:
+
+- Nenhuma palavra do Título extrapola a área de leitura;
+- Identificação, Título, Corpo e Créditos não se sobrepõem;
+- Textos permanecem dentro da área útil e alinhados ao mesmo eixo;
+- Os controles refletem o estado visível e funcionam por teclado;
+- A interface Estrutura usa os campos reais, sem o antigo guia verde;
+- Alternar formato, etapas, modos de leitura e contraste não quebra o layout;
+- Nenhuma mudança afeta o funcionamento do Laboratório nem as cinco capas do manual.
+
+**Não usar ajustes por elemento para resolver colisões:** corrigir a régua compartilhada e os conteúdos editoriais quando necessário.

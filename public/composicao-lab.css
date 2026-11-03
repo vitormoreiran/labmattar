@@ -96,7 +96,9 @@
 }
 .lm-lab-title{
   margin:0;min-width:0;max-width:100%;
-  text-wrap:balance;
+  /* Explicit editorial lines should only break if they cannot fit.
+     Balancing creates unnecessary extra lines and displaces the footer. */
+  text-wrap:wrap;
   overflow-wrap:normal;word-break:normal;hyphens:none;
 }
 /* Explicit lines remain editorial groups, but phrases can recompose at

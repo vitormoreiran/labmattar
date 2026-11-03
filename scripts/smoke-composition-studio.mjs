@@ -133,10 +133,14 @@ try{
   });
   const mElement=await mMeasurement();
   const savedScale=await page.locator("#labMScale").inputValue();
-  assert(mElement.mode==="elemento"&&mElement.mask.width<mElement.frame.width,
-    "Elemento must preserve the aligned variable-size M: "+JSON.stringify(mElement));
+  assert(mElement.mode==="elemento"&&mElement.mask.width>50 &&
+         mElement.mask.width<mElement.frame.width &&
+         await page.locator("#labMask").isVisible(),
+    "Elemento must preserve the visible, aligned variable-size M: "+JSON.stringify(mElement));
   await choose("mPresentation","completo");
   const mFull=await mMeasurement();
+  assert(await page.locator("#labMask").isVisible(),
+    "M must remain visible when the background is a solid color");
   assert(mFull.mode==="completo" && Math.abs(mFull.mask.height-mFull.frame.height)<2 &&
          mFull.mask.left<mFull.frame.left-10&&mFull.mask.right>mFull.frame.right+10 &&
          Math.abs(mFull.mask.width/mFull.mask.height-990.08/743.18)<.005,

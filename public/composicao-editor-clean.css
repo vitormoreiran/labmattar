@@ -2611,3 +2611,111 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
     padding:12px!important;
   }
 }
+
+/* Focused editor: a single active tool and a quiet, generous work surface. */
+body.lm-studio-open #laboratorio{
+  --ui-panel:#f7f6f2;
+  --ui-surface:#fff;
+  --ui-ink:#22231f;
+  --ui-text:#30312c;
+  --ui-muted:#666860;
+  --ui-line:#ddded6;
+  --studio-stage:#e8e9e4;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector{background:var(--ui-panel)!important}
+body.lm-studio-open #laboratorio .lm-inspector-head{
+  color:var(--ui-ink)!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  letter-spacing:.12em!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index{
+  background:var(--ui-panel)!important;
+  padding:12px!important;
+  gap:5px!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index button{
+  font-size:10px!important;
+  letter-spacing:.025em!important;
+  color:#60625b!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
+  background:#262923!important;
+  border-color:#262923!important;
+  color:#fff!important;
+  box-shadow:none!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
+  background:var(--ui-panel)!important;
+}
+body.lm-studio-open #laboratorio .lm-inspector-panel-heading{
+  margin-bottom:20px!important;
+  padding-bottom:13px!important;
+}
+body.lm-studio-open #laboratorio .lm-inspector-panel-heading>span{
+  font-size:13px!important;
+  font-weight:700!important;
+  letter-spacing:.08em!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-field-title,
+body.lm-studio-open #laboratorio .lm-lab-value-row label{
+  color:var(--ui-text)!important;
+  font-size:11px!important;
+  font-weight:600!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{
+  background:#eaeae4!important;
+  border-color:#e2e3dc!important;
+  gap:3px!important;
+  padding:3px!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice{
+  min-height:44px!important;
+  color:#595b53!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice[aria-pressed=true]{
+  background:#fff!important;
+  border-color:#b6b9ad!important;
+  color:#1c1f1a!important;
+  box-shadow:0 1px 3px rgba(27,30,22,.09)!important;
+}
+body.lm-studio-open #laboratorio button:focus-visible,
+body.lm-studio-open #laboratorio input:focus-visible,
+body.lm-studio-open #laboratorio textarea:focus-visible,
+body.lm-studio-open #laboratorio select:focus-visible{
+  outline:2px solid #506d2c!important;
+  outline-offset:2px!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-board{
+  box-shadow:0 2px 5px rgba(25,28,22,.08),0 20px 55px rgba(25,28,22,.14)!important;
+}
+/* The same navigation model applies at every viewport width. */
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=superficie] #labPanel-pagina [data-lab-more=pagina],
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina>.lm-inspector-primary,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]>summary,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-submodule=m],
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-marker-field,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-m-scale-field,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-lab-more=imagem],
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labPanel-imagem [data-submodule=fundo],
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labPanel-imagem .lm-lab-field:has(#labColor),
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labPanel-imagem [data-lab-more=imagem],
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem>.lm-inspector-primary,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem [data-lab-more=imagem]>summary,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem [data-lab-more=imagem] .lm-lab-field:not(.lm-ctrl-signature-field){display:none!important}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina],
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=assinatura] #labPanel-imagem [data-lab-more=imagem]{
+  display:block!important;
+  border:0!important;
+  margin:0!important;
+  padding:0!important;
+}
+@media(min-width:1181px){
+  body.lm-studio-open #laboratorio .lm-lab-workspace,
+  body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])){grid-template-columns:minmax(0,1fr) 380px!important}
+  body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{width:380px!important;min-width:380px!important;max-width:380px!important}
+  body.lm-studio-open #laboratorio .lm-composition-module-index{grid-auto-rows:40px!important}
+  body.lm-studio-open #laboratorio .lm-composition-module-index button{height:40px!important;min-height:40px!important}
+  body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){padding:22px 20px 32px!important}
+  body.lm-studio-open #laboratorio .lm-inspector-primary,body.lm-studio-open #laboratorio .lm-inspector-extra{gap:22px!important}
+}

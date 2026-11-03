@@ -51,7 +51,7 @@ assert 'id="labStudioToggle"' in composition, "Focused editing entry must be vis
 assert "lm-unified-studio" in studio_js and "lm-studio-open" in studio_js
 assert "data-studio-tool" not in studio_js, "Focused mode must not build a second tool architecture"
 assert "lm-composition-module-index" in composition
-assert "UMA COMPOSIÇÃO" in composition
+assert "UMA COMPOSIÇÃO" not in composition, "Static slogan must not occupy inspector space"
 assert "lm-composition-submodule" in composition
 assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
 assert "dataset.background" in lab_js and "dataset.mContent" in lab_js
@@ -100,10 +100,14 @@ assert "setFieldVisible" in lab_js and "selectPanel(activePanel)" in lab_js
 assert 'id="labOverviewHelp"' in composition
 assert '<strong>01 / Tipografia</strong>' not in composition
 for field in ("labFormat","labMargin","labTitleScale","labType","labBackground","labMContent",
-              "labMarker","labMScale","labFocalPreview","labSymbol"):
+              "labMPresentation","labMarker","labMScale","labFocalPreview","labSymbol"):
  assert field+':["' in lab_js,f"Missing contextual help for {field}"
 assert "showHelp(trigger,panel)" in lab_js
 assert "trigger.dataset.labHelp=id" in lab_js and 'aria-expanded' in lab_js, "Help triggers must expose contextual targets and accessible state"
+for obsolete in ("lm-image-invariant","lm-composition-submodule-head","lm-inspector-more-count"):
+ assert obsolete not in composition,f"Inert inspector legend returned: {obsolete}"
+for redundant in ("Camadas independentes da mesma composição","Título · corpo · largura","GEOMETRIA FIXA"):
+ assert redundant not in composition,f"Redundant text returned to inspector: {redundant}"
 assert ".lm-help-popover[hidden]" in controls
 assert ".lm-lab>.lm-lab-legend" in controls
 assert "labHelp-overview" in lab_js
@@ -117,7 +121,7 @@ for deprecated in ("data-image","data-m-mode","data-relation","data-placement"):
  assert deprecated not in lab_css,f"Legacy presentation rule remains in official CSS: {deprecated}"
 assert 'data-backdrop="blur"' in lab_css and 'data-m-presentation="completo"' in lab_css
 assert 'id="labMarker"' in composition
-assert "M central" in composition and "Marcadores" in composition
+assert 'id="labMContent"' in composition and 'id="labMarker"' in composition, "Functional M and marker controls must remain"
 assert "lm-marker-grid" in composition
 for key in ("title","body","kicker","footerLeft","footerRight"):
  assert 'data-lab-inline="'+key+'"' in composition,f"Missing editable text layer: {key}"
@@ -144,7 +148,7 @@ for selector in ('lm-lab-workspace','lm-lab-m-photo','lm-lab-main-copy','lm-lab-
 for action in ('labFormat','labMarker','labMScale','labFocusX','labTitleScale','labTitleInput','labBodyInput','labReset'):
  assert action in composition and action in lab_js,f"Unwired lab control: {action}"
 assert 'id="labBackground"' in composition and 'id="labMContent"' in composition
-assert "UMA COMPOSIÇÃO" in composition
+assert "UMA COMPOSIÇÃO" not in composition, "Static slogan must not occupy inspector space"
 assert "lm-composition-module-index" in composition
 assert "data-lab-preset" not in composition, "Presets must not define composition types"
 assert "lm-inspector-tabs" not in composition, "Contextual tabs must not divide the single composition"

@@ -269,9 +269,6 @@ body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem]{
 #laboratorio .lm-lab-single-system{
   display:flex;align-items:center;justify-content:space-between;gap:18px;
 }
-#laboratorio .lm-lab-system-statement{
-  display:flex;flex-wrap:wrap;gap:6px 16px;
-}
 #laboratorio .lm-composition-module-index{
   display:flex;flex-wrap:wrap;gap:5px 12px;
   padding:10px 0 12px;border-bottom:1px solid var(--line);
@@ -285,19 +282,10 @@ body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem]{
   display:flex;align-items:baseline;justify-content:space-between;gap:12px;
   margin:0 0 10px;
 }
-#laboratorio .lm-composition-module .lm-inspector-panel-heading small{color:#77736b;
-}
 #laboratorio .lm-composition-submodule{
   padding:9px 0 11px;border-top:1px solid var(--line);
 }
 #laboratorio .lm-composition-submodule:first-child{border-top:0;padding-top:0}
-#laboratorio .lm-composition-submodule-head{
-  display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-  margin-bottom:8px;
-}
-#laboratorio .lm-composition-submodule-head>small{color:#77736b;
-}
-#laboratorio .lm-image-invariant{margin-bottom:8px;padding-bottom:8px}
 #laboratorio .lm-inspector-more{margin-top:10px}
 #laboratorio .lm-inspector-more summary{
   min-height:32px;padding:7px 0;
@@ -347,10 +335,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
 
 @media(max-width:850px){
   body.lm-studio-open{overflow:hidden!important}
-  body.lm-studio-open #laboratorio .lm-lab-system-statement{
-    display:none!important;
-  }
-
   body.lm-studio-open #laboratorio .lm-lab-workspace{
     height:calc(100dvh - 44px)!important;
     min-height:0!important;
@@ -474,7 +458,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
 
 
 @media(max-width:850px){
-  body.lm-studio-open #laboratorio .lm-lab-system-statement,
   body.lm-studio-open #laboratorio .lm-inspector-head{
     display:none!important;
   }
@@ -557,7 +540,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     border-bottom:1px solid #d7d7d3!important;
     background:#f8f8f7!important;
   }
-  body.lm-studio-open #laboratorio .lm-lab-system-statement{display:none!important}
   body.lm-studio-open #laboratorio .lm-studio-launch{
     display:flex!important;align-items:center!important;gap:8px!important;
   }
@@ -737,9 +719,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   body.lm-studio-open #laboratorio .lm-composition-submodule{
     border:0!important;
   }
-  body.lm-studio-open #laboratorio .lm-composition-submodule-head{
-    margin:0 0 8px!important;
-  }
 
   body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{
     display:grid!important;
@@ -801,7 +780,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]>summary{display:none!important}
 
-  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-image-invariant,
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-submodule=m],
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-marker-field,
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-m-scale-field,
@@ -1022,7 +1000,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     align-items:center!important;
     justify-content:flex-end!important;
   }
-  body.lm-studio-open #laboratorio .lm-lab-system-statement{display:none!important}
 
   body.lm-studio-open #laboratorio .lm-lab-workspace,
   body.lm-studio-open #laboratorio .lm-lab-workspace:has(#labPanel-imagem:not([hidden])),
@@ -1230,7 +1207,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]>summary{display:none!important}
 
-  body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-image-invariant,
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem [data-submodule=m],
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-marker-field,
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=fundo] #labPanel-imagem .lm-m-scale-field,

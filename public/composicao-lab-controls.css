@@ -463,10 +463,6 @@
 }
 .lm-inspector-more[open]>summary::after{content:"−"}
 .lm-inspector-more>summary:focus-visible{outline:2px solid var(--ctrl-ink);outline-offset:2px}
-.lm-inspector-more-count{
-  color:var(--ctrl-sub);
-  margin-left:auto;
-}
 .lm-inspector-more .lm-inspector-extra{padding:7px 0 23px}
 .lm-lab-inspector .lm-ctrl-choice{
   min-height:88px;
@@ -618,7 +614,6 @@
 .lm-lab-inspector .lm-inspector-primary,
 .lm-lab-inspector .lm-inspector-extra{gap:20px}
 .lm-lab-inspector .lm-inspector-more{margin-top:22px}
-.lm-inspector-more-count{display:none}
 .lm-lab-field{position:relative;min-width:0}
 .lm-help-label-inline{
   display:inline-flex;
@@ -779,11 +774,6 @@
 /* Compact visual vocabulary for Image / M.
    Choices stay complete, but the interface gives them different visual weight. */
 .lm-image-vocabulary{gap:14px}
-.lm-image-invariant{
-  display:flex;flex-wrap:wrap;gap:6px 12px;
-  padding:0 0 12px;border-bottom:1px solid var(--line);
-}
-.lm-image-invariant span{white-space:nowrap}
 .lm-vocab-field{gap:7px}
 .lm-vocab-field .lm-lab-field-title{margin-bottom:0}
 .lm-vocab-field .lm-ctrl-choice-grid{gap:5px}
@@ -826,6 +816,5 @@
   min-height:74px;
 }
 @media(max-width:540px){
-  .lm-image-invariant{gap:5px 9px;}
   .lm-marker-field .lm-marker-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 }

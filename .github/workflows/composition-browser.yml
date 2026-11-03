@@ -69,5 +69,6 @@ jobs:
           name: composition-lab-visual-proof
           path: |
             composition-*.png
+            laboratorio-*.png
             symbols-proof/
           if-no-files-found: ignore

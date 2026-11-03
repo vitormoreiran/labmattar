@@ -428,7 +428,7 @@ try{
         text:(node.textContent||"").slice(0,80),
         rect:[r.left,r.top,r.right,r.bottom].map(x=>Math.round(x*10)/10),
         safe:[safe.left,safe.top,safe.right,safe.bottom].map(x=>Math.round(x*10)/10)
-      })));
+      }));
     });
     return {contrast:!!board.querySelector('.lm-lab-solid-contrast[aria-hidden="true"]'),
       fits:failures.length===0,failures};

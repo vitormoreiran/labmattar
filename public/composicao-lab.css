@@ -361,3 +361,52 @@
 }
 .lm-lab-solid-contrast .lm-lab-reading{color:#181818}
 .lm-lab-solid-contrast *{pointer-events:none!important;user-select:none!important}
+
+
+/* Entrada de texto / um replay, sem interferir no canvas editavel.
+ * Movimento e duracoes seguem a demonstracao normativa de Tipografia. */
+#laboratorio .lm-studio-launch #labMotionPlay{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:34px;padding:6px 12px;border:1px solid #b6b4af;
+  border-radius:0;background:transparent;color:#181818;
+  white-space:nowrap;cursor:pointer;
+}
+body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
+  border-color:#b6b4af;background:transparent;color:#181818;
+}
+.lm-lab-motion-play svg{display:block;flex:none}
+.lm-lab-motion-play #labMotionPlayText{flex:none}
+#laboratorio .lm-studio-launch #labMotionPlay:hover{border-color:#181818;color:#181818;background:#eceae5}
+.lm-lab-motion-play:focus-visible{outline:2px solid #181818;outline-offset:2px}
+.lm-lab-motion-status{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  clip-path:inset(50%);overflow:hidden;white-space:nowrap;border:0;
+}
+.lm-lab-board[data-motion-playing="true"] > #labReading,
+.lm-lab-board[data-motion-playing="true"] > .lm-lab-solid-contrast:not([data-motion-clone]){
+  opacity:0;
+}
+.lm-lab-motion-layer{position:absolute;inset:0;z-index:3;pointer-events:none}
+.lm-lab-motion-layer *,
+.lm-lab-solid-contrast[data-motion-clone] *{pointer-events:none!important;user-select:none!important}
+.lm-lab-motion-word{display:inline-block;white-space:pre;vertical-align:baseline}
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{min-height:30px;padding:5px 9px}
+}
+@media(max-width:650px){
+  #laboratorio .lm-studio-launch #labMotionPlayText{display:none}
+  body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{padding:5px 8px}
+}
+
+
+/* On a phone the Studio's internal controls can programmatically scroll the
+ * top bar out of view. Keep the one Play action reachable without moving the
+ * page canvas, introducing a second toolbar or affecting export geometry. */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
+    position:fixed!important;top:8px!important;right:10px!important;
+    z-index:2500!important;min-width:34px;min-height:34px!important;
+    padding:5px 8px!important;background:#f7f6f2!important;
+    border:1px solid #b6b4af!important;
+  }
+}

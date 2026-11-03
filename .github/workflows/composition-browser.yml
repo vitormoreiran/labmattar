@@ -12,6 +12,7 @@ on:
       - 'public/composicao-lab-controls.css'
       - 'public/composicao-lab.css'
       - 'public/composicao-lab.js'
+      - 'public/composicao-lab-motion.js'
       - 'public/composicao-studio.css'
       - 'public/composicao-editor-clean.css'
       - 'public/composicao-studio.js'

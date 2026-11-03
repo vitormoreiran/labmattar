@@ -1,8 +1,9 @@
-/* LABMATTAR / Studio — interface first, documentation second.
-   Restrained, Pages-like inspector. The official identity, composition rules,
-   published M vector, masks and photo treatment remain in the original CSS.
-   This stylesheet only runs when the focused studio is open.
+/* LABMATTAR / Editor de composição — versão oficial.
+ * Responsável apenas pela interface: superfície de trabalho, menu, controles,
+ * prévia responsiva e inspetor. O vetor M, o blur, a régua de leitura e os
+ * três tratamentos tipográficos pertencem aos módulos normativos.
  */
+
 body.lm-studio-open #laboratorio.lm-lab{
   --studio-ink:#252525;
   --studio-muted:#737371;
@@ -471,7 +472,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
 }
 
-/* Mobile hard fixes: visible artboard + truly exclusive modules. */
+
 @media(max-width:850px){
   body.lm-studio-open #laboratorio .lm-lab-system-statement,
   body.lm-studio-open #laboratorio .lm-inspector-head{
@@ -517,8 +518,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
 }
 
-/* 2026-10-30 MOBILE RESET — authoritative responsive layer.
-   One stable mobile layout, independent of old experimental rules. */
+
 @media (max-width:850px){
   html:has(body.lm-studio-open),
   body.lm-studio-open{
@@ -793,7 +793,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
     height:78px!important;min-height:78px!important;
   }
 
-  /* Module-specific isolation, independent from legacy selectors. */
+  
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=superficie] #labPanel-pagina [data-lab-more=pagina]{display:none!important}
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina>.lm-inspector-primary{display:none!important}
   body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=construcao] #labPanel-pagina [data-lab-more=pagina]{
@@ -994,9 +994,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-focus-field{
   }
 }
 
-/* 2026-10-30 COMPACT FLOW RESET
-   Below desktop width the editor uses normal document flow.
-   No viewport locking, no overlapping panes, no fixed-height inspector. */
+
 @media (max-width:1180px){
 
   body.lm-studio-open #laboratorio.lm-lab{
@@ -1330,8 +1328,7 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   }
 }
 
-/* 2026-10-30 COMPACT UI POLISH
-   Visual refinement only: keep the stable preview mechanics untouched. */
+
 @media (max-width:1180px){
   body.lm-studio-open #laboratorio{
     --ui-ink:#20201e;
@@ -1540,8 +1537,7 @@ body.lm-studio-open #laboratorio .lm-lab-artboard-frame>.lm-lab-board{
   }
 }
 
-/* 2026-10-30 PROFESSIONAL GLYPH SYSTEM
-   High-end inspector language: function-first, monoline, consistent scale. */
+
 body.lm-studio-open #laboratorio{
   --glyph-ink:#30302d;
   --glyph-muted:#8f8f89;
@@ -1791,8 +1787,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   }
 }
 
-/* 2026-10-30 SCROLL FIX
-   Safari/iPad must always scroll the document; sticky preview must not trap gestures. */
+
 @media (max-width:1180px){
   html:has(body.lm-studio-open),
   body.lm-studio-open{
@@ -1832,9 +1827,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   }
 }
 
-/* 2026-10-30 COMPLETE COMPACT MENU
-   All six modules remain visible at once on phone/tablet. */
-
 
 @media (max-width:520px){
   body.lm-studio-open #laboratorio .lm-composition-module-index button{
@@ -1842,9 +1834,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   }
 }
 
-/* 2026-10-30 COMPACT TOOLBAR NAV
-   Replace tall compact grid with a single-row icon toolbar.
-   All six modules stay visible; only active module shows its label. */
+
 @media (max-width:1180px){
   body.lm-studio-open #laboratorio .lm-composition-module-index{
     position:sticky!important;
@@ -1879,9 +1869,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   }
 }
 
-/* 2026-10-30 COMPACT SAFE MODE
-   Authoritative compact layout: no sticky layers, no clipped navigation.
-   Preview -> complete module menu -> active controls, all in normal document flow. */
+
 @media (max-width:1180px){
   html,
   body,
@@ -2033,11 +2021,6 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
   }
 }
 
-/* ======================================================================
-   FINAL PRODUCT LAYER / 2026-10-30
-   One authoritative visual system for the composition editor.
-   Mechanics remain untouched; this layer resolves historical style drift.
-   ====================================================================== */
 
 body.lm-studio-open #laboratorio{
   --ui-bg:#f4f4f1;
@@ -2361,11 +2344,7 @@ body.lm-studio-open #laboratorio .lm-lab-fit-info[data-adjusted=false]{
   }
 }
 
-/* ======================================================================
-   DESKTOP AUTHORITATIVE LAYOUT / 2026-11-01
-   Desktop is a canvas-first professional editor. Compact/mobile rules below
-   1180px remain untouched.
-   ====================================================================== */
+
 @media (min-width:1181px){
   html:has(body.lm-studio-open),
   body.lm-studio-open{

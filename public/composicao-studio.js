@@ -194,6 +194,21 @@
   for(const button of moduleButtons)
     button.addEventListener("click",()=>applyMobileModule(button.dataset.mobileModule,{scroll:true}));
 
+  // Detalhe is the third normative text treatment. The existing Signature
+  // editor already owns corner labels, captions and identifications; reuse it
+  // instead of creating duplicated text fields or a fourth typography scale.
+  const detailJump=by("labEditDetail");
+  detailJump?.addEventListener("click",()=>{
+    applyMobileModule("assinatura");
+    const panel=by("labPanel-assinatura");
+    if(active){
+      if(panel)panel.scrollTop=0;
+      by("labSignatureKind")?.focus({preventScroll:true});
+    }else{
+      panel?.scrollIntoView({block:"start",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth"});
+    }
+  });
+
   mobileQuery.addEventListener?.("change",()=>applyMobileModule(mobileModule));
   applyMobileModule(mobileModule);
   toggle.addEventListener("click",()=>setActive(!active));

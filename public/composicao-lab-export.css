@@ -51,7 +51,7 @@
    aligned beside the already fixed Play control (no second toolbar). */
 @media(max-width:850px){
   body.lm-studio-open #laboratorio .lm-lab-export-tools{
-    position:fixed!important;top:8px!important;right:54px!important;
+    position:fixed!important;top:8px!important;right:58px!important;
     z-index:2499!important;display:flex!important;gap:4px!important;
     margin:0!important;padding:0!important;
     background:#f7f6f2!important;

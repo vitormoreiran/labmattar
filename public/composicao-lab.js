@@ -15,7 +15,7 @@
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       placement:"central",relation:"central",gap:0,textWidth:61,titleScale:100,type:"alternada",
       background:"color",mContent:"off",mPresentation:"elemento",image:"nenhuma",mMode:"janela",photo:"64",mPosition:"centro",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
-      title:"PRÁTICAS\nMATERIAIS\nE PROCESSOS",
+      title:"PRÁTICAS\nMATERIAIS E\nPROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
     },

@@ -223,17 +223,17 @@
     note:document.getElementById("caseContrastNote"),
     fields:document.getElementById("caseReadingMap")
   };
-  const state={step:"completa",format:"horizontal",view:"resultado",contrast:"on"};
+  const state={step:"completa",format:"desktop",view:"resultado",contrast:"on"};
   const steps={
     campo:["01 / CAMPO","O campo cria a atmosfera.","A fotografia desfocada forma a superfície. Texto e M ainda não aparecem."],
     mascara:["02 / MÁSCARA","O M organiza a imagem.","O recorte usa o vetor publicado, preservando proporção e eixo. Sem texto, não há véu adicional."],
     completa:["03 / PÁGINA","Uma estrutura, dois formatos.","Identificação no alto, núcleo de leitura no centro e créditos no rodapé."]
   };
   function update(){
-    const vertical=state.format==="vertical";
+    const vertical=state.format==="mobile";
     const structure=state.view==="estrutura";
     frame.dataset.step=state.step;
-    frame.dataset.format=state.format;
+    frame.dataset.format=vertical?"vertical":"horizontal";
     frame.dataset.view=state.view;
     frame.dataset.contrast=state.contrast;
     frame.classList.toggle("is-mobile",vertical);

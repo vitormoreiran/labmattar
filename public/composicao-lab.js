@@ -628,7 +628,7 @@
       "Define se o M está ausente, sólido ou preenchido por fotografia.",
       "O M permanece central e sua geometria não muda."],
     labMPresentation:["Aparição do M",
-      "Elemento mantém o M inteiro e permite ajustar sua escala; Completo ocupa toda a altura da superfície.",
+      "Elemento mantém o M inteiro e permite ajustar sua escala; Completo ocupa 100% da altura da superfície.",
       "A escala configurada para Elemento é preservada ao alternar entre os modos."],
     labPhoto:["Fotografia",
       "Escolha a imagem.",

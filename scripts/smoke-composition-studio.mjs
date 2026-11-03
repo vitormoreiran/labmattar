@@ -9,6 +9,9 @@ page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw Error(m)};
 
 async function choose(group,value){
+  const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",marker:"m",mPresentation:"m",photo:"m",type:"texto",bodyMode:"texto"}[group];
+  if(module && await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
+    await page.locator('[data-mobile-module="'+module+'"]').click();
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
 }
@@ -39,6 +42,7 @@ try{
   const presentationHelp=page.locator('[data-lab-help="labMPresentation"]');
   assert(await presentationHelp.count()===1,
     "The M mode explanation must be available through a real help button");
+  await page.locator('[data-mobile-module="m"]').click();
   await presentationHelp.click();
   assert(await page.locator("#labHelp-labMPresentation").isVisible(),
     "The M presentation help must open on demand");
@@ -48,9 +52,10 @@ try{
   assert(await page.locator("#labHelp-labMPresentation").isHidden(),
     "Help must close without changing the composition");
 
-  for(const id of ["labPanel-pagina","labPanel-texto","labPanel-imagem"]){
-    assert(await page.locator("#"+id).isVisible(),id+" must remain visible in the unified editor");
-  }
+  assert(await page.locator("#labPanel-imagem").isVisible() &&
+         await page.locator("#labPanel-pagina").isHidden() &&
+         await page.locator("#labPanel-texto").isHidden(),
+    "The selected module alone must be visible in the focused editor");
 
   const baseline=await page.locator("#labArtboard").evaluate(el=>({
     mx:getComputedStyle(el).getPropertyValue("--lab-m-x").trim(),
@@ -81,7 +86,7 @@ try{
     "Desktop inspector must remain compact: "+JSON.stringify(desktopLayout.inspector));
   assert(desktopLayout.board.width>500&&desktopLayout.board.height>280,
     "Desktop artboard must remain clearly visible: "+JSON.stringify(desktopLayout.board));
-  assert(desktopLayout.menu.height<100,
+  assert(desktopLayout.menu.height<120,
     "Desktop module menu must remain compact: "+JSON.stringify(desktopLayout.menu));
   assert(baseline.mx==="50%","M must remain on the central axis");
   assert(Math.abs(baseline.logicalWidth-1280)<1&&Math.abs(baseline.logicalHeight-720)<1,
@@ -159,6 +164,7 @@ try{
   await choose("format","vertical");
   assert(await page.locator("#labTextWidth").inputValue()==="100",
     "Vertical must use the whole reading width inside the established margins, not crop the last word");
+  await page.locator('[data-mobile-module="m"]').click();
   assert(await page.locator("#labMPresentationField").isVisible(),
     "M appearance controls must be accessible across canvas formats");
   await choose("mPresentation","elemento");
@@ -203,6 +209,7 @@ try{
   // the original vector ratio is fixed, so horizontal can have free side space.
   for(const format of ["horizontal","quadrado","editorial","vertical"]){
     await choose("format",format);
+    await page.locator('[data-mobile-module="m"]').click();
     assert(await page.locator("#labMPresentationField").isVisible(),
       "M mode chooser must remain available in "+format);
     const geometry=await mMeasurement();

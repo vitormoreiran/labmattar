@@ -48,7 +48,7 @@
     toggle.setAttribute("aria-pressed",String(active));
     toggleText.textContent=active?"VOLTAR AO LABORATÓRIO":"ABRIR EDITOR";
     quickReset.hidden=!active;
-    for(const panel of panels)panel.hidden=false;
+    applyMobileModule(mobileModule);
     if(updateUrl)setUrl(active);
     if(active)requestAnimationFrame(()=>{lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"});fitArtboard();});
   }
@@ -173,13 +173,15 @@
     const textMore=textPanel?.querySelector('[data-lab-more="texto"]');
     const imageMore=imagePanel?.querySelector('[data-lab-more="imagem"]');
 
-    if(mobileQuery.matches){
+    if(active){
       pagePanel.hidden=!(name==="superficie"||name==="construcao");
       textPanel.hidden=name!=="texto";
       imagePanel.hidden=!(name==="fundo"||name==="m"||name==="assinatura");
       if(construction)construction.open=name==="construcao";
       if(name!=="texto"&&textMore)textMore.open=false;
       if(imageMore)imageMore.open=name==="assinatura";
+      const imageHeading=imagePanel?.querySelector(".lm-inspector-panel-heading span");
+      if(imageHeading)imageHeading.textContent=activeLabel;
     }else{
       for(const panel of panels)panel.hidden=false;
     }

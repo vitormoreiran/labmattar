@@ -82,6 +82,11 @@
     const workspace=lab.querySelector(".lm-lab-workspace");
     if(workspace){
       if(active&&window.innerWidth<=700){
+        // Some historic rules turn this workspace back into flex. Grid
+        // tracks have NO effect unless the actual display is grid.
+        workspace.style.setProperty("display","grid","important");
+        workspace.style.setProperty("grid-template-columns","minmax(0,1fr)","important");
+        workspace.style.setProperty("grid-template-areas",'"preview" "controls"',"important");
         workspace.style.setProperty("grid-template-rows","clamp(300px,54dvh,460px) minmax(0,1fr)","important");
         // Old editor CSS calls this area "page", while the mobile grid calls
         // it "preview". Make those names agree rather than creating an auto
@@ -89,6 +94,9 @@
         lab.querySelector(".lm-lab-preview")?.style.setProperty("grid-area","preview","important");
         inspector?.style.setProperty("grid-area","controls","important");
       }else{
+        workspace.style.removeProperty("display");
+        workspace.style.removeProperty("grid-template-columns");
+        workspace.style.removeProperty("grid-template-areas");
         workspace.style.removeProperty("grid-template-rows");
         lab.querySelector(".lm-lab-preview")?.style.removeProperty("grid-area");
         inspector?.style.removeProperty("grid-area");

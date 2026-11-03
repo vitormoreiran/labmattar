@@ -397,3 +397,12 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
   #laboratorio .lm-studio-launch #labMotionPlayText{display:none}
   body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{padding:5px 8px}
 }
+
+
+/* The fixed Studio shell is not a scroller. overflow:hidden still allows
+ * scrollIntoView() to move its contents (hiding Play and Exit on phones).
+ * Clip prevents that accidental programmatic scroll; the inspector keeps
+ * its own independent scroll area. */
+body.lm-studio-open #laboratorio.lm-lab:has(#labMotionPlay){
+  overflow:clip!important;
+}

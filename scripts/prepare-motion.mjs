@@ -3,11 +3,12 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {motionProjects} from '../tools/matriz-vetorial/src/motion-catalog.mjs';
-import {fingerprint} from './motion-fingerprint.mjs';
+import {fingerprint,rendererFingerprint} from './motion-fingerprint.mjs';
 
 const root=path.resolve(import.meta.dirname,'..');
 const allowPending=process.argv.includes('--allow-pending-exports');
 const entries=motionProjects();
+const rendererHash=await rendererFingerprint();
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const projectsDirectory=path.join(root,'public/motion/projects');
 await mkdir(projectsDirectory,{recursive:true});
@@ -20,8 +21,7 @@ for(const entry of entries){
   const poster=`/motion/posters/${entry.id}.png`;
   const record=exported[entry.id];
   let ready=false;
-  if(record){
-    assert.equal(record.projectHash,projectHash,`Export desatualizado: ${entry.id}`);
+  if(record && record.projectHash===projectHash && record.rendererHash===rendererHash){
     const bytes=await readFile(path.join(root,'public',video));
     assert.ok(bytes.length>32&&bytes.subarray(4,8).toString()==='ftyp',`MP4 inválido: ${entry.id}`);
     assert.equal(createHash('sha256').update(bytes).digest('hex'),record.sha256,`Vídeo alterado sem registro: ${entry.id}`);
@@ -29,7 +29,7 @@ for(const entry of entries){
     assert.ok((await stat(path.join(root,'public',poster))).size>0,`Pôster ausente: ${entry.id}`);
     ready=true;
   }
-  assert.ok(ready||allowPending,`Falta exportar ${entry.id}; use --allow-pending-exports somente para revisão local.`);
+  assert.ok(ready||allowPending,`Export ausente ou desatualizado: ${entry.id}; use --allow-pending-exports somente para revisão local.`);
   await writeFile(path.join(projectsDirectory,`${entry.id}.json`),JSON.stringify(entry.project,null,2)+'\n');
   catalog.push({id:entry.id,title:entry.title,status:entry.status,group:entry.group,duration:entry.duration,aspect:entry.project.aspect,cut:entry.cut??null,projectHash,video:ready?video:null,poster:ready?poster:null,project:`/motion/projects/${entry.id}.json`,editor:`/motion/matriz/index.html?roteiro=${entry.id}`});
 }

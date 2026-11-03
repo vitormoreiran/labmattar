@@ -1,7 +1,7 @@
 // Reproducible asset build on an isolated CI browser, using the same UI and
 // WebCodecs exporter as the Matriz. No local browser/profile is accessed.
 import { chromium } from 'playwright';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -9,6 +9,10 @@ import assert from 'node:assert/strict';
 
 const root=process.env.GITHUB_WORKSPACE||process.cwd();
 const {motionProjects}=await import(pathToFileURL(path.join(root,'tools/matriz-vetorial/src/motion-catalog.mjs')));
+const {fingerprint,rendererFingerprint}=await import(pathToFileURL(path.join(root,'scripts/motion-fingerprint.mjs')));
+const rendererHash=await rendererFingerprint();
+let existing={};
+try{existing=JSON.parse(await readFile(path.join(root,'public/motion/exports.json'),'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
 const output=path.join(root,'motion-render-output');
 await mkdir(output,{recursive:true});
 const base=process.env.MOTION_URL||'http://127.0.0.1:8768';
@@ -22,6 +26,11 @@ async function download(page,selector,file){
 }
 try{
   for(const entry of motionProjects()){
+    if(existing[entry.id]?.projectHash===fingerprint(entry.project)&&existing[entry.id]?.rendererHash===rendererHash){
+      report.exports.push({id:entry.id,status:'verified-existing',duration:entry.duration});
+      console.log('RENDER_REUSED',entry.id);
+      continue;
+    }
     const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});
     const errors=[];
     page.on('pageerror',e=>errors.push(e.message));
@@ -32,7 +41,7 @@ try{
       await page.waitForFunction(()=>{
         const button=document.querySelector('#play');
         return button&&!button.disabled;
-      },{timeout:60000});
+      },undefined,{timeout:60000});
       assert.equal(await page.locator('#project-name').inputValue(),entry.project.name);
       const posterTime=entry.cut??entry.duration;
       await page.locator('#time-input').fill(String(posterTime));
@@ -51,7 +60,7 @@ try{
       });
       assert.ok(encoding.supported,'H.264 não disponível neste ambiente: '+JSON.stringify(encoding));
       await download(page,'#export-mp4',video);
-      await page.waitForFunction(()=>document.querySelector('#export-notice')?.textContent.includes('Vídeo concluído'),{timeout:10000});
+      await page.waitForFunction(()=>document.querySelector('#export-notice')?.textContent.includes('Vídeo concluído'),undefined,{timeout:10000});
       assert.deepEqual(errors,[],entry.id+': erro durante a renderização');
       const registration=execFileSync(process.execPath,[path.join(root,'scripts/register-motion-export.mjs'),entry.id,video,poster,project],{cwd:root,encoding:'utf8'});
       console.log(registration.trim());

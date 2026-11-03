@@ -23,7 +23,7 @@ import { reviewProjects, reviewFromLink } from "./review-projects.mjs";
 import { transitionOptions } from "./transition-projects.mjs";
 const LOCAL = "mattar-spatial-current-v2",
   SAVED = "mattar-spatial-projects-v2";
-let project = createProject();
+let project = createProject("m-form");
 try {
   const raw = localStorage.getItem(LOCAL);
   if (raw) project = sanitizeProject(JSON.parse(raw));

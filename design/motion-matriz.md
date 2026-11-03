@@ -58,3 +58,9 @@ O registro verifica H.264, formato, duração e correspondência do projeto com 
 Somente os exports web otimizados, menores que 20 MiB cada, são versionados em `public/motion/videos/`. Os vídeos originais do acervo e os arquivos de produção grandes continuam fora do Git. Não subir `node_modules/`, saídas compiladas, dados pessoais de navegador ou identidade de outro Site.
 
 Os workflows preparam Motion antes de compilar o manual. Testar também importação e edição pelos oito links, reprodução deliberada, download dos arquivos e leitura em desktop e celular. A publicação continua limitada ao Worker de prévia; não alterar `labmattar.com`.
+
+## Exportação reproduzível em CI
+
+O workflow **Exportar roteiros Motion** abre uma instância isolada da própria Matriz e usa seus botões para exportar os oito JSON, PNG e MP4 em 1080 px / 30 fps. Valida os arquivos com o mesmo registrador, verifica reprodução na galeria em desktop e celular e disponibiliza o pacote como artefato do Actions.
+
+O job tem apenas `contents: read`: não envia commits, não publica e não acessa um perfil de navegador local. Depois de baixar o artefato, copie `public/motion/videos/`, `public/motion/posters/` e `public/motion/exports.json` para o checkout e rode o preparo estrito. Os arquivos finais são integrados pelo fluxo normal de revisão do repositório.

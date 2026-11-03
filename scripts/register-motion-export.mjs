@@ -3,7 +3,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {motionProjects} from '../tools/matriz-vetorial/src/motion-catalog.mjs';
-import {fingerprint} from './motion-fingerprint.mjs';
+import {fingerprint,rendererFingerprint} from './motion-fingerprint.mjs';
 
 const [id,videoPath,posterPath,projectPath]=process.argv.slice(2);
 assert.ok(id&&videoPath&&posterPath&&projectPath,'Uso: node scripts/register-motion-export.mjs ID VIDEO.mp4 POSTER.png PROJETO.json');
@@ -55,6 +55,6 @@ await copyFile(posterPath,path.join(root,'public/motion/posters',id+'.png'));
 const manifestPath=path.join(root,'public/motion/exports.json');
 let manifest={};
 try{manifest=JSON.parse(await readFile(manifestPath,'utf8'));}catch(error){if(error.code!=='ENOENT')throw error;}
-manifest[id]={projectHash,sha256:createHash('sha256').update(video).digest('hex'),bytes:video.length,durationSeconds:duration,width,height};
+manifest[id]={projectHash,rendererHash:await rendererFingerprint(),rendererCommit:process.env.GITHUB_SHA??null,sha256:createHash('sha256').update(video).digest('hex'),bytes:video.length,durationSeconds:duration,width,height};
 await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n');
 console.log(`${entry.title}: ${width}×${height}, ${duration.toFixed(2)} s; export verificado.`);

@@ -181,3 +181,19 @@
   .lm-case-frame.is-mobile{width:min(100%,350px);}
   .lm-case-reading-map>div{grid-template-columns:minmax(0,1fr);}
 }
+
+/* The same two M appearances also apply to the 04 / Composição example.
+   This selection changes the vector mask only, never the text ruler. */
+.lm-case-frame.is-mobile[data-m-presentation="completo"] .lm-case-symbol{
+  transform:none;
+}
+.lm-case-frame.is-mobile[data-m-presentation="completo"] .lm-case-symbol .lm-case-image{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:133.222cqh!important;
+  height:100cqh!important;
+  max-width:none!important;
+}
+.lm-case-m-presentation[hidden]{display:none!important}

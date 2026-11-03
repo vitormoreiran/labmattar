@@ -21,6 +21,12 @@ Repositório de desenvolvimento da prévia independente da identidade LABMATTAR.
 - `tools/matriz-vetorial/`: Matriz atual de Motion, isolada do editor anterior.
 - `design/motion.html` e `scripts/prepare-motion.mjs`: galeria de oito roteiros, vídeos e projetos correspondentes.
 
+## Contrato de produção e exportação do Laboratório
+
+A direção aprovada para a próxima etapa do Laboratório está documentada em **[design/LABORATORIO_PRODUCAO_EXPORTACAO.md](design/LABORATORIO_PRODUCAO_EXPORTACAO.md)**: renderização de alta qualidade, acervo e sequências, PDF/PPTX/web e intercâmbio editável com After Effects.
+
+A **Matriz Vetorial atual** já integra o manual em `/motion/matriz/index.html`. Seus controles de timeline, roteiros e saídas PNG/MP4/JSON são uma referência real para o desenvolvimento, **não** uma funcionalidade a reconstruir. A Matriz segue sendo atualizada em paralelo; conferir a versão corrente de `tools/matriz-vetorial/` antes de qualquer integração. O contrato distingue explicitamente recursos existentes, metas e critérios de aceite e **não publica recursos novos por si só**.
+
 O pacote `LABMATTAR_CODIGO_PARA_GITHUB (1).zip` permanece como legado. Os fluxos atuais de compilação e publicação usam os arquivos editáveis, sem extrair o pacote. **Não editar o ZIP**; o código-fonte deve ser alterado nos diretórios acima.
 
 ### Observação sobre a prévia

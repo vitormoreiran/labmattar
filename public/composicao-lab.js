@@ -363,9 +363,41 @@
     board.style.setProperty("--lab-m-y","50%");
   }
 
+  function syncSolidContrast(){
+    let overlay=board.querySelector(".lm-lab-solid-contrast");
+    if(state.mContent!=="solid"){
+      overlay?.remove();
+      return;
+    }
+    if(!overlay){
+      overlay=document.createElement("div");
+      overlay.className="lm-lab-solid-contrast";
+      overlay.setAttribute("aria-hidden","true");
+      overlay.inert=true;
+      board.append(overlay);
+    }
+    const mask=by("labMask"),reading=by("labReading").cloneNode(true);
+    for(const node of [reading,...reading.querySelectorAll("*")]){
+      node.removeAttribute("id");
+      node.removeAttribute("contenteditable");
+      node.removeAttribute("tabindex");
+      node.removeAttribute("role");
+      node.removeAttribute("aria-label");
+    }
+    overlay.replaceChildren(reading);
+    const w=mask.offsetWidth,h=mask.offsetHeight;
+    const size=w+"px "+h+"px";
+    const position=(mask.offsetLeft-w/2)+"px "+(mask.offsetTop-h/2)+"px";
+    overlay.style.maskSize=size;
+    overlay.style.webkitMaskSize=size;
+    overlay.style.maskPosition=position;
+    overlay.style.webkitMaskPosition=position;
+  }
+
   function measure(){
     const titleFit=fitTitleToReadingArea();
     alignMToCopy();
+    syncSolidContrast();
     const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;

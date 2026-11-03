@@ -76,6 +76,54 @@ try{
   assert(data.readUInt32BE(16)===3840&&data.readUInt32BE(20)===2160,
     "PNG file header dimensions must match requested output");
 
+  // Same authoring state must also be reversible as a versioned document.
+  // This does not assert the Matriz motion renderer is already connected.
+  await page.locator('button[data-mobile-module="construcao"]').click();
+  assert(await page.locator("#labDownloadDocument").isVisible(),
+    "The document action must be accessible in Construction");
+  const authored=await page.evaluate(()=>window.LabProductionBridge.snapshot().state);
+  const projectDownloadPromise=page.waitForEvent("download",{timeout:30000});
+  await page.locator("#labDownloadDocument").click();
+  const projectDownload=await projectDownloadPromise;
+  assert(/-composicao-v1\.json$/.test(projectDownload.suggestedFilename()),
+    "Project download must have a versioned JSON filename");
+  const projectJson=await readFile(await projectDownload.path(),"utf8");
+  const project=JSON.parse(projectJson);
+  assert(project.kind==="labmattar.composition"&&project.schemaVersion===1,
+    "Project must use a versioned document contract");
+  assert(project.pages[0].m.maskAssetId==="identity:m-mask"&&
+    project.assets.some(asset=>asset.uri==="/ambiente-editorial/media/m-publicado.svg"),
+    "Document must reference the original identity vector");
+  assert(project.motion.engine==="matriz-vetorial"&&project.motion.projectRef===null,
+    "The Matriz must be referenced but not falsely claimed as integrated");
+  assert(project.output.width===3840&&project.output.height===2160,
+    "Document 4K profile must match the exported PNG");
+
+  await page.locator('button[data-mobile-module="texto"]').click();
+  await page.locator("#labTitleInput").fill("TÍTULO ALTERADO PROVISORIAMENTE");
+  await page.locator("#labTitleInput").dispatchEvent("input");
+  assert((await page.locator("#labRenderedTitle").textContent()).includes("ALTERADO"),
+    "The edit before import should actually affect the page");
+  const incoming={name:"restaurar-v1.json",mimeType:"application/json",buffer:Buffer.from(projectJson)};
+  await page.locator("#labDocumentFile").setInputFiles(incoming);
+  await page.waitForTimeout(160);
+  const restored=await page.evaluate(()=>window.LabProductionBridge.snapshot().state);
+  assert(JSON.stringify(restored)===JSON.stringify(authored),
+    "Import must faithfully restore the authored state and all three text roles");
+  assert(await page.locator("#labDocumentStatus").getAttribute("data-state")==="success",
+    "A valid document must be acknowledged");
+
+  const rejected=JSON.parse(projectJson);
+  rejected.pages[0].m.maskAssetId="vector:not-official";
+  await page.locator("#labDocumentFile").setInputFiles({
+    name:"vetor-invalido.json",mimeType:"application/json",buffer:Buffer.from(JSON.stringify(rejected))
+  });
+  await page.waitForTimeout(100);
+  assert(await page.locator("#labDocumentStatus").getAttribute("data-state")==="error",
+    "A foreign or corrupted M vector must fail before import");
+  assert(JSON.stringify(await page.evaluate(()=>window.LabProductionBridge.snapshot().state))===
+    JSON.stringify(authored),"Rejected document must not modify the existing composition");
+
   await choose("format","vertical");
   await choose("mContent","off");
   await choose("background","color");

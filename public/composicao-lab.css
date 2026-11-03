@@ -367,3 +367,42 @@
   transform:scale(1.045)!important;
   opacity:1!important;
 }
+
+/* M / vertical — two appearances, one immutable vector.
+   Elemento uses the existing --lab-m-size. Completo fills the 9:16 page's
+   HEIGHT and bleeds symmetrically beyond the sides, as on portfolio covers.
+   Horizontal, square and editorial formats are not affected. */
+.lm-lab-board[data-format="vertical"][data-m-presentation="completo"] .lm-lab-m-photo{
+  left:50%!important;
+  top:50%!important;
+  width:133.222cqh!important; /* 100cqh × 990.08 / 743.18 */
+  height:100cqh!important;
+  max-width:none!important;
+  transform:translate(-50%,-50%);
+}
+#labMPresentationField[hidden]{display:none!important}
+.lm-m-presentation-field .lm-ctrl-choice{min-width:0}
+.lm-m-presentation-icon{
+  display:block;
+  overflow:hidden;
+  position:relative;
+  width:52px;
+  height:64px;
+  margin:0 auto 5px;
+  border:1px solid currentColor;
+  opacity:.85;
+}
+.lm-m-presentation-icon i{
+  display:block;
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  background:currentColor;
+  aspect-ratio:990.08/743.18;
+  -webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;
+  mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;
+}
+.lm-m-presentation-icon[data-presentation="elemento"] i{width:75%}
+.lm-m-presentation-icon[data-presentation="completo"] i{height:100%;width:auto}
+.lm-m-scale-field[data-scale-locked="true"]{opacity:.5}

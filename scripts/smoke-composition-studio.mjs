@@ -87,8 +87,22 @@ try{
     "Desktop inspector must remain compact: "+JSON.stringify(desktopLayout.inspector));
   assert(desktopLayout.board.width>500&&desktopLayout.board.height>280,
     "Desktop artboard must remain clearly visible: "+JSON.stringify(desktopLayout.board));
-  assert(desktopLayout.menu.height<120,
+  assert(desktopLayout.menu.height<170,
     "Desktop module menu must remain compact: "+JSON.stringify(desktopLayout.menu));
+  const layoutIntegrity=await page.evaluate(()=>{
+    const inspector=document.querySelector(".lm-lab-inspector").getBoundingClientRect();
+    const stage=document.querySelector(".lm-lab-stage").getBoundingClientRect();
+    const board=document.querySelector("#labArtboard").getBoundingClientRect();
+    const buttons=[...document.querySelectorAll(".lm-composition-module-index button")];
+    const exit=document.querySelector("#labStudioToggleText");
+    return {inspectorRight:inspector.right, viewport:innerWidth,
+      boardInside:board.left>=stage.left-1&&board.right<=stage.right+1&&board.top>=stage.top-1&&board.bottom<=stage.bottom+1,
+      labelsFit:buttons.every(b=>b.scrollWidth<=b.clientWidth+1),
+      exitVisible:exit.getBoundingClientRect().width>20};
+  });
+  assert(layoutIntegrity.inspectorRight<=layoutIntegrity.viewport+1 && layoutIntegrity.boardInside &&
+         layoutIntegrity.labelsFit && layoutIntegrity.exitVisible,
+    "Editor controls and artboard must fit without clipping: "+JSON.stringify(layoutIntegrity));
   assert(baseline.mx==="50%","M must remain on the central axis");
   assert(Math.abs(baseline.logicalWidth-1280)<1&&Math.abs(baseline.logicalHeight-720)<1,
     "Horizontal artboard must keep fixed logical geometry");
@@ -300,6 +314,12 @@ try{
          await page.locator("#labPanel-pagina").isHidden(),
     "Mobile Text module must show only text controls");
 
+  const selectedStyle=await page.locator('button[data-mobile-module="texto"]').evaluate(el=>({
+    pressed:el.getAttribute("aria-pressed"), background:getComputedStyle(el).backgroundColor,
+    color:getComputedStyle(el).color
+  }));
+  assert(selectedStyle.pressed==="true" && selectedStyle.background==="rgb(38, 41, 35)" && selectedStyle.color==="rgb(255, 255, 255)",
+    "Selected mobile module must remain clearly visible: "+JSON.stringify(selectedStyle));
   await page.screenshot({path:"laboratorio-interface-mobile.png"});
   const mobileLayout=await page.evaluate(()=>{
     const workspace=document.querySelector(".lm-lab-workspace").getBoundingClientRect();

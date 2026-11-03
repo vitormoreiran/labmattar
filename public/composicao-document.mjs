@@ -14,7 +14,7 @@ const CHOICES={
   mContent:["off","solid","photo"],
   mPresentation:["elemento","completo"],
   bodyMode:["oculto","visivel"],
-  marker:["none","cantos","laterais","todos"],
+  marker:["none","top","bottom","both"],
   symbol:["none","M.svg",...Array.from({length:9},(_,i)=>"vaso_"+String(i+1).padStart(2,"0")+".svg")]
 };
 const CORNERS=["tl","tr","bl","br"];

@@ -225,12 +225,15 @@ try{
     "Sidebar must describe the complete vertical behavior");
   await constructionPage.locator("#caseFrame").screenshot({path:"composition-vertical-m-completo.png"});
   await constructionPage.locator('[data-case-format="desktop"]').click();
-  assert(await constructionPage.locator(".lm-case-m-presentation").isHidden() &&
-         await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="elemento",
-    "Horizontal format must not inherit the portrait full-bleed mask");
+  const horizontalFull=await measureM();
+  assert(await constructionPage.locator(".lm-case-m-presentation").isVisible() &&
+         horizontalFull.mode==="completo" &&
+         Math.abs(horizontalFull.mask.height-horizontalFull.frame.height)<2 &&
+         Math.abs(horizontalFull.mask.width/horizontalFull.mask.height-990.08/743.18)<.005,
+    "Horizontal case must also allow a full-height M without distorting the vector: "+JSON.stringify(horizontalFull));
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="completo",
-    "Portrait M appearance must be restored after switching formats");
+    "Changing orientation must preserve M presentation mode");
   await constructionPage.locator('[data-case-m-presentation="elemento"]').click();
   const checkVertical=async(viewport)=>{
     await constructionPage.setViewportSize(viewport);

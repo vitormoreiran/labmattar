@@ -377,6 +377,16 @@ try{
   assert(selectedStyle.pressed==="true" && selectedStyle.background==="rgb(38, 41, 35)" && selectedStyle.color==="rgb(255, 255, 255)",
     "Selected mobile module must remain clearly visible: "+JSON.stringify(selectedStyle));
   await page.screenshot({path:"laboratorio-interface-mobile.png"});
+  const mobilePlay=await playButton.evaluate(button=>{
+    const r=button.getBoundingClientRect();
+    return {visible:getComputedStyle(button).display!=="none"&&
+      getComputedStyle(button).visibility!=="hidden",
+      x:r.x,y:r.y,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight};
+  });
+  assert(mobilePlay.visible&&mobilePlay.x>=0&&mobilePlay.y>=0&&
+    mobilePlay.x+mobilePlay.width<=mobilePlay.viewportWidth+1&&
+    mobilePlay.y+mobilePlay.height<=mobilePlay.viewportHeight+1,
+    "Text Play must stay inside the mobile editor viewport: "+JSON.stringify(mobilePlay));
   const mobileLayout=await page.evaluate(()=>{
     const workspace=document.querySelector(".lm-lab-workspace").getBoundingClientRect();
     const preview=document.querySelector(".lm-lab-preview").getBoundingClientRect();

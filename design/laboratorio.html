@@ -61,7 +61,17 @@
           <summary><span>GUIAS DE CONSTRUÇÃO</span></summary>
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labGuidesTitle" class="lm-lab-field-title">Guias de construção</div><select id="labGuides" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="nenhuma">Ocultar</option><option value="margens">Área útil</option><option value="grid">Área útil + 12 colunas</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labGuidesTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="nenhuma" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="none"><i></i><i></i></span></span><span class="lm-ctrl-name">Sem guias</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="margens" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="safe"><i></i><i></i></span></span><span class="lm-ctrl-name">Margens</span></button>
-<button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="grid" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="grid"><i></i><i></i></span></span><span class="lm-ctrl-name">12 colunas</span></button></div><small class="lm-ctrl-helper">As guias servem apenas à construção.</small></div></div>
+<button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="grid" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="grid"><i></i><i></i></span></span><span class="lm-ctrl-name">12 colunas</span></button></div><small class="lm-ctrl-helper">As guias servem apenas à construção.</small></div>
+          <div class="lm-lab-field lm-lab-document-field">
+            <div class="lm-lab-field-title">DOCUMENTO DE PRODUÇÃO / V1</div>
+            <div class="lm-lab-document-actions">
+              <button type="button" id="labDownloadDocument" title="Salvar composição editável como documento versionado JSON">BAIXAR JSON</button>
+              <button type="button" id="labImportDocument" title="Abrir documento JSON compatível com o Laboratório">ABRIR JSON</button>
+              <input type="file" id="labDocumentFile" accept=".json,application/json" hidden>
+            </div>
+            <small class="lm-ctrl-helper">Projeto editável com referências dos vetores oficiais. Fotografias originais não estão incluídas; este arquivo não é um master gráfico nem um projeto da Matriz.</small>
+            <output id="labDocumentStatus" role="status" aria-live="polite"></output>
+          </div></div>
         </details>
       </section>
       <section class="lm-inspector-panel lm-composition-module" id="labPanel-texto" data-lab-panel="texto" data-module="texto">
@@ -257,5 +267,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script>
+<script src="/composicao-lab.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script><script type="module" src="/composicao-document-ui.mjs"></script>
 </body></html>

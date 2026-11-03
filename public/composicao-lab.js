@@ -327,6 +327,22 @@
       save();
     }
   };
+  // Read-only bridge for the versioned production document.  The existing
+  // state remains the single source of truth; imports use its normal renderer
+  // and local-draft persistence rather than rewriting the canvas DOM.
+  window.LabProductionBridge={
+    snapshot:()=>({state:JSON.parse(JSON.stringify(state)),photoCatalog:{...photos}}),
+    restore:next=>{
+      state=sanitize(next);
+      rememberedReadingWidths.clear();
+      rememberedReadingWidths.set(state.format,state.textWidth);
+      rememberedMScales.clear();
+      rememberedMScales.set(state.format,state.mScale);
+      activePreset="";
+      render();
+      save();
+    }
+  };
   function requestMeasurement(){
     if(frame)return;
     frame=requestAnimationFrame(()=>{frame=0;measure()});

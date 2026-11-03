@@ -4,6 +4,16 @@
 
 **Prioridade máxima:** fidelidade visual e qualidade do arquivo final. A composição aprovada deve corresponder ao resultado exportado, sem depender da resolução da tela, sem rasterizar desnecessariamente a identidade e sem perder editabilidade quando o destino a suporta.
 
+## Marco 1A — Documento reversível (escopo de implementação)
+
+**Implementado no Laboratório:** botão para baixar e abrir um documento JSON `labmattar.composition` (schema v1), com um único quadro editável, Título/Corpo/Detalhe, assinatura, ajustes da página, M e marcadores, fotografia selecionada, foco e referências explícitas aos SVG oficiais. O documento declara a resolução do perfil 2K/4K e faz round-trip para o estado do editor com validação antes de substituir o rascunho. O PNG 2K/4K permanece no renderizador Canvas 2D já testado.
+
+**Compatibilidade preparada, ainda não conectada:** o campo `motion` referencia a Matriz Vetorial apenas como origem futura, com `projectRef: null`. Os paths de identidade (`/identidade/` e `m-publicado.svg`) não são tratados como iguais às malhas e SVGs próprios da Matriz. Não há timeline, morfologia ou geometria 3D reimplementada no Laboratório.
+
+**Limites observáveis:** o JSON não incorpora fotografias ou fontes, e o acervo atual refere amostras locais, ainda sem confirmação de master original, hash, resolução efetiva ou licença de incorporação. `output.masterVerified` é `false`. Isso não conclui o aceite de master 4K original, SVG/PDF vetorial, acervo durável, multipágina, PPTX ou After Effects.
+
+**Arquivos do marco:** `public/composicao-document.mjs`, `public/composicao-document-ui.mjs`, `scripts/test-composicao-document.mjs` e teste de download/importação em `scripts/smoke-laboratorio-export.mjs`. O estado de autoria continua no editor atual; o documento é serializado a partir dele, sem criar um segundo editor ou depender da viewport.
+
 ## 1. Objetivo e fronteiras
 
 Evoluir o **05 / Laboratório** de prova de identidade para uma ferramenta de produção de composições estáticas, sequências editoriais e entregas audiovisuais. Um mesmo documento deve alimentar redes sociais, apresentações, PDFs, páginas do site e preparação de materiais para After Effects.

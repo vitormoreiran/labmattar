@@ -8,12 +8,16 @@ on:
       - 'public/manual-composition-layout.css'
       - 'public/manual-layout.css'
       - 'design/manual-layout-contract.md'
+      - 'design/LABORATORIO_PRODUCAO_EXPORTACAO.md'
       - 'public/composicao-regras.css'
       - 'public/composicao-lab-controls.css'
       - 'public/composicao-lab.css'
       - 'public/composicao-lab.js'
       - 'public/composicao-lab-export.js'
       - 'public/composicao-lab-export.css'
+      - 'public/composicao-document.mjs'
+      - 'public/composicao-document-ui.mjs'
+      - 'scripts/test-composicao-document.mjs'
       - 'scripts/smoke-laboratorio-export.mjs'
       - 'public/composicao-lab-signature.js'
       - 'public/composicao-lab-signature.css'
@@ -39,6 +43,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Validar contrato de documento v1
+        run: node scripts/test-composicao-document.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2

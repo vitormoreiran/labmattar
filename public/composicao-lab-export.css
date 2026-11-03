@@ -67,3 +67,26 @@
     width:46px!important;min-width:46px!important;
   }
 }
+
+
+/* Documento de producao / intercambio JSON versionado.
+ * A interface utiliza os tratamentos existentes do manual. */
+#laboratorio .lm-lab-document-field{
+  padding-top:16px;
+  border-top:1px solid #d4d2cb;
+  display:grid;gap:9px;
+}
+#laboratorio .lm-lab-document-actions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;
+}
+#laboratorio .lm-lab-document-actions button{
+  appearance:none;border:1px solid #bbb8b0;background:transparent;
+  color:inherit;padding:10px 8px;min-height:36px;cursor:pointer;
+  text-align:center;
+}
+#laboratorio .lm-lab-document-actions button:hover{background:#eeece7;border-color:#181818}
+#laboratorio .lm-lab-document-actions button:focus-visible{outline:2px solid #181818;outline-offset:2px}
+#laboratorio #labDocumentStatus:empty{display:none}
+#laboratorio #labDocumentStatus{display:block;overflow-wrap:anywhere}
+#laboratorio #labDocumentStatus[data-state=error]{color:#a54427}
+#laboratorio #labDocumentStatus[data-state=success]{color:#355837}

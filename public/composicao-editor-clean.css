@@ -261,10 +261,7 @@ body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem]{
     grid-template-rows:minmax(0,1fr) minmax(430px,63dvh);
   }
 }
-@media(max-width:450px){
-}
-@media(prefers-reduced-motion:reduce){
-}
+
 
 /* Unified composition architecture.
    The focused editor is the same inspector, enlarged: no presets, tabs or alternate tool tree. */
@@ -1837,8 +1834,7 @@ body.lm-studio-open #laboratorio .lm-ctrl-colors .lm-ctrl-meta{display:none!impo
 
 /* 2026-10-30 COMPLETE COMPACT MENU
    All six modules remain visible at once on phone/tablet. */
-@media (max-width:1180px){
-}
+
 
 @media (max-width:520px){
   body.lm-studio-open #laboratorio .lm-composition-module-index button{

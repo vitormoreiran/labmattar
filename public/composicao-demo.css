@@ -1,0 +1,183 @@
+/*
+ * LABMATTAR — estudo aplicado, 04 / COMPOSIÇÃO.
+ * Leitura derivada do mesmo núcleo flexível do Laboratório:
+ * .lm-lab-reading > .lm-lab-kicker + .lm-lab-main-copy + .lm-lab-bottom.
+ * Os tratamentos Título / Corpo / Detalhe pertencem a manual-headings.css.
+ */
+.lm-case-frame {
+  --lab-pad:var(--lm-safe);
+  --lab-text-width:73%;
+  background:#141813;
+}
+.lm-case-frame .lm-case-content.lm-lab-reading{
+  position:absolute;
+  z-index:3;
+  inset:var(--lm-safe);
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:1.8cqw;
+  padding:0!important;
+  pointer-events:none;
+}
+.lm-case-frame .lm-case-kicker.lm-lab-kicker{
+  flex:none;
+  width:100%;
+  margin:0!important;
+  min-width:0;
+  position:relative;
+}
+.lm-case-frame .lm-case-reading.lm-lab-main-copy{
+  position:relative;
+  z-index:2;
+  display:flex!important;
+  flex-direction:column!important;
+  align-self:flex-start;
+  justify-content:flex-start;
+  width:min(100%,var(--lab-text-width));
+  max-width:100%;
+  min-width:0;
+  margin:auto 0!important;
+  gap:2.3cqw;
+  padding:0!important;
+}
+.lm-case-frame .lm-case-reading h3.lm-lab-title{
+  display:block;
+  position:relative;
+  width:100%;
+  max-width:100%;
+  margin:0!important;
+  padding:0!important;
+  text-wrap:initial;
+}
+.lm-case-frame .lm-case-reading h3 .lm-lab-title-line{
+  display:block;
+  width:100%;
+  max-width:100%;
+  white-space:nowrap;
+}
+.lm-case-frame .lm-case-reading p.lm-lab-body{
+  position:relative;
+  width:100%;
+  max-width:100%;
+  margin:0!important;
+  padding:0!important;
+}
+.lm-case-frame .lm-case-footer.lm-lab-bottom{
+  position:relative;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:1.5cqw;
+  flex:none;
+  min-width:0;
+  margin:0!important;
+  padding:0!important;
+}
+.lm-case-frame .lm-case-footer span{
+  display:block;
+  max-width:48%;
+  min-width:0;
+  overflow-wrap:normal;
+}
+.lm-case-frame.is-mobile{
+  --lm-safe:clamp(20px,7cqw,28px);
+  --lab-pad:var(--lm-safe);
+  --lab-text-width:100%;
+}
+.lm-case-frame.is-mobile .lm-case-content.lm-lab-reading{gap:2.8cqw;}
+.lm-case-frame.is-mobile .lm-case-reading.lm-lab-main-copy{
+  width:100%;
+  max-width:100%;
+  gap:3.3cqw;
+}
+.lm-case-frame.is-mobile .lm-case-symbol{
+  transform:translateY(9%);
+}
+.lm-case-frame.is-mobile .lm-case-symbol .lm-case-image{
+  width:88%;
+  max-width:88%;
+}
+.lm-case-frame.is-mobile .lm-case-reading h3.lm-lab-title{
+  width:100%;
+  max-width:100%;
+  margin:0!important;
+}
+.lm-case-frame.is-mobile .lm-case-reading p.lm-lab-body{
+  width:100%;
+  max-width:100%;
+}
+.lm-case-frame.is-mobile .lm-case-footer.lm-lab-bottom{
+  flex-direction:column!important;
+  align-items:flex-start;
+  justify-content:flex-end;
+  gap:1cqw;
+}
+.lm-case-frame.is-mobile .lm-case-footer span{max-width:100%;}
+/* Estrutura is not a decorative green safe-area rectangle.
+ * It points to ACTUAL layout elements; outlines follow their measured boxes. */
+.lm-case-frame[data-view=estrutura]{
+  background:#f7f6f2;
+  color:#181818;
+}
+.lm-case-frame[data-view=estrutura] .lm-case-ambient,
+.lm-case-frame[data-view=estrutura] .lm-case-veil{opacity:0;}
+.lm-case-frame[data-view=estrutura] .lm-case-symbol{opacity:.11;filter:grayscale(1);}
+.lm-case-frame[data-view=estrutura] :is(
+  .lm-case-kicker,
+  .lm-case-reading h3,
+  .lm-case-reading p,
+  .lm-case-footer
+){
+  outline:1px solid rgba(55,55,55,.48);
+  outline-offset:4px;
+}
+.lm-case-frame[data-view=estrutura] :is(
+  .lm-case-kicker,
+  .lm-case-reading h3,
+  .lm-case-reading p,
+  .lm-case-footer
+)::after{
+  position:absolute;
+  left:0;
+  top:-2.2em;
+  display:block;
+  width:max-content;
+  max-width:100%;
+  color:#44443f;
+  background:#f7f6f2;
+  padding:0 3px;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.lm-case-frame[data-view=estrutura] .lm-case-kicker::after{content:"01 / DETALHE";}
+.lm-case-frame[data-view=estrutura] .lm-case-reading h3::after{content:"02 / TÍTULO";}
+.lm-case-frame[data-view=estrutura] .lm-case-reading p::after{content:"03 / CORPO";}
+.lm-case-frame[data-view=estrutura] .lm-case-footer::after{content:"04 / DETALHE";}
+.lm-case-frame[data-view=estrutura] .lm-case-reading.lm-lab-main-copy{gap:5cqw;}
+.lm-case-frame.is-mobile[data-view=estrutura] .lm-case-reading.lm-lab-main-copy{gap:6cqw;}
+/* Controls: one hierarchy, separate stages and actions without toolbar noise. */
+.lm-case-controls{column-gap:clamp(18px,2.8vw,42px);row-gap:9px;}
+.lm-case-control{gap:8px;}
+.lm-case-control>span{opacity:.72;}
+.lm-case-control button{cursor:pointer;}
+.lm-case-control button:hover:not(:disabled){opacity:.68;}
+.lm-case-control button:disabled{opacity:.36;cursor:not-allowed;}
+.lm-case-reading-map{margin:23px 0 0;padding:0;border-top:1px solid var(--line);}
+.lm-case-reading-map[hidden]{display:none;}
+.lm-case-reading-map>div{
+  display:grid;
+  grid-template-columns:minmax(0,.85fr) minmax(0,1fr);
+  gap:12px;
+  border-bottom:1px solid var(--line);
+  padding:11px 0;
+}
+.lm-case-reading-map dt,.lm-case-reading-map dd{min-width:0;margin:0;}
+.lm-case-reading-map dd{color:#514f4b;}
+@media(max-width:700px){
+  .lm-case-stage{min-height:0;}
+  .lm-case-frame.is-mobile{width:min(100%,350px);}
+  .lm-case-reading-map>div{grid-template-columns:minmax(0,1fr);}
+}

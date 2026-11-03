@@ -12,6 +12,9 @@ on:
       - 'public/composicao-lab-controls.css'
       - 'public/composicao-lab.css'
       - 'public/composicao-lab.js'
+      - 'public/composicao-lab-export.js'
+      - 'public/composicao-lab-export.css'
+      - 'scripts/smoke-laboratorio-export.mjs'
       - 'public/composicao-lab-signature.js'
       - 'public/composicao-lab-signature.css'
       - 'scripts/smoke-signature-browser.mjs'
@@ -64,6 +67,7 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-laboratorio-export.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
           mkdir -p public/vendor

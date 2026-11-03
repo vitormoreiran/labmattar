@@ -73,6 +73,7 @@
     for(const button of presetsButtons)
       button.setAttribute("aria-pressed",String(button.dataset.signaturePreset===signature.preset));
     const stateLabel=by("labSignaturePresetStatus");
+    stateLabel.hidden=signature.preset!=="custom";
     stateLabel.textContent=signature.preset==="custom"?
       "Personalizada / composição dos quatro pontos":
       ({none:"Sem assinatura / nenhum elemento no quadro",editorial:"Editorial / identificação, símbolo e créditos",
@@ -84,7 +85,7 @@
       if(value)value.textContent=kindNames[slot.kind]||"VAZIO";
       button.dataset.empty=String(slot.kind==="none");
     }
-    by("labSignatureSlotTitle").textContent=cornerNames[activeCorner];
+    by("labSignatureSlotTitle").textContent=cornerNames[activeCorner]+" / CONTEÚDO";
     const slot=signature.slots[activeCorner];
     kind.value=slot.kind;
     symbol.value=slot.symbol;
@@ -94,7 +95,9 @@
     text.placeholder=slot.kind==="symbol-label"?"MENU / SUMÁRIO / ...":"Texto de identificação";
     scale.value=String(signature.scale);
     by("labSignatureScaleValue").textContent=signature.scale+"%";
-    by("labSignatureScale").disabled=!Object.values(signature.slots).some(item=>["symbol","symbol-label","brand"].includes(item.kind));
+    const hasSymbol=Object.values(signature.slots).some(item=>["symbol","symbol-label","brand"].includes(item.kind));
+    by("labSignatureScale").disabled=!hasSymbol;
+    by("labSignatureScale").closest(".lm-signature-scale-field").hidden=!hasSymbol;
   }
 
   function render(signature){

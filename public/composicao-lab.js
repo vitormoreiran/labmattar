@@ -113,10 +113,15 @@
   function syncInputs(){
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
-    const backgroundPhoto=state.background==="photo"||markerActive;
     const mActive=state.mContent!=="off";
+    const blurBackdrop=mActive||markerActive;
+    const backgroundPhoto=state.background==="photo"||blurBackdrop;
     const mPhoto=state.mContent==="photo";
     const activeImage=backgroundPhoto||mPhoto;
+    const backdropContext=by("labBackdropContext");
+    if(backdropContext)backdropContext.textContent=blurBackdrop?
+      "M ou marcadores ativos: fundo automático com a mesma fotografia desfocada. Cor e fotografia selecionadas são preservadas para quando o M for desligado.":
+      "Sem M nem marcadores: o fundo segue a escolha de cor ou fotografia.";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     for(const key of ["mPosition","mMode"])by(fields[key]).disabled=!mActive;
     const portrait=state.format==="vertical";
@@ -235,10 +240,17 @@
     board.dataset.placement=state.placement;
     board.dataset.relation="central";
     const markerActive=state.marker!=="none" && !(state.format==="vertical"&&state.mPresentation==="completo");
-    const effectiveBackground=markerActive?"photo":state.background;
+    // The lower image is always the SAME selected photo with blur while an
+    // M (solid/photo) or its end markers are present. Keep the user's original
+    // background choice in state and restore it when those layers are absent.
+    const blurredBackdrop=markerActive||state.mContent!=="off";
+    const effectiveBackground=blurredBackdrop?"photo":state.background;
+    const backdrop=blurredBackdrop?"blur":state.background;
     const legacyImage=state.mContent==="photo"?"recorte":effectiveBackground==="photo"?"inteira":"nenhuma";
     board.dataset.image=legacyImage;
     board.dataset.background=effectiveBackground;
+    board.dataset.backdrop=backdrop;
+    board.dataset.backgroundRequested=state.background;
     board.dataset.markerBlur=String(markerActive);
     board.dataset.mContent=state.mContent;
     board.dataset.mMode=state.mMode;
@@ -365,7 +377,7 @@
   function measure(){
     const titleFit=fitTitleToReadingArea();
     alignMToCopy();
-    const backgroundPhoto=state.background==="photo";
+    const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;
     const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];

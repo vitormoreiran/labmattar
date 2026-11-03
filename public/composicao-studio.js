@@ -76,6 +76,15 @@
   function fitArtboard(){
     if(!artboard||!artboardFrame||!stage)return;
     const format=artboard.dataset.format||"horizontal";
+    // The focused phone layout has several legacy !important grid overrides.
+    // Own the preview allocation at the same place where artboard zoom is
+    // calculated: do not let a later selector turn the page into a thumbnail.
+    const workspace=lab.querySelector(".lm-lab-workspace");
+    if(workspace){
+      if(active&&window.innerWidth<=700)
+        workspace.style.setProperty("grid-template-rows","clamp(300px,54dvh,460px) minmax(0,1fr)","important");
+      else workspace.style.removeProperty("grid-template-rows");
+    }
     const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
     artboard.style.setProperty("width",logicalW+"px","important");
     artboard.style.setProperty("height",logicalH+"px","important");

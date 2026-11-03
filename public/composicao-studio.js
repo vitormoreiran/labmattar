@@ -121,10 +121,10 @@
     // Typography belongs to the logical page, never to the screen zoom.
     // Scale all three canonical roles with page width so resizing the editor
     // cannot change line breaks, clipping or the relationship with the M.
-    const pageRatio=logicalW/1280;
+    const pageRatio=Math.min(1,logicalW/900);
     const title=104*pageRatio*(Number(by("labTitleScale")?.value||100)/100);
-    const body=22.4*pageRatio;
-    const detail=16*pageRatio;
+    const body=32*pageRatio;
+    const detail=24*pageRatio;
     artboard.style.setProperty("--lm-type-title-size",title.toFixed(3)+"px");
     artboard.style.setProperty("--lm-type-body-size",body.toFixed(3)+"px");
     artboard.style.setProperty("--lm-type-detail-size",detail.toFixed(3)+"px");

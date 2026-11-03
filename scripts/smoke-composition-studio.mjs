@@ -377,6 +377,36 @@ try{
   assert(selectedStyle.pressed==="true" && selectedStyle.background==="rgb(38, 41, 35)" && selectedStyle.color==="rgb(255, 255, 255)",
     "Selected mobile module must remain clearly visible: "+JSON.stringify(selectedStyle));
   await page.screenshot({path:"laboratorio-interface-mobile.png"});
+  // Three normative text treatments must be explicit and operational.
+  const hierarchy=await page.locator("#labPanel-texto").evaluate(panel=>({
+    title:panel.querySelector("#labTypeTitle")?.textContent.trim(),
+    body:panel.querySelector("#labBodyModeTitle")?.textContent.trim(),
+    detail:panel.querySelector("#labEditDetail")?.textContent.trim()
+  }));
+  assert(hierarchy.title?.includes("01 / TÍTULO")&&
+         hierarchy.body?.includes("02 / CORPO")&&
+         hierarchy.detail?.includes("03 / DETALHE"),
+    "Text panel must explain the exact 3 normative treatments: "+JSON.stringify(hierarchy));
+  const titleBefore=await page.locator("#labRenderedTitle").textContent();
+  const bodyBefore=await page.locator("#labRenderedBody").textContent();
+  await page.locator("#labEditDetail").click();
+  assert(await page.locator("#labPanel-assinatura").isVisible()&&
+         await page.locator('button[data-mobile-module="assinatura"]').getAttribute("aria-pressed")==="true",
+    "Detail action must open the actual Signature editor, not an inert explanation");
+  const detailEditor=page.locator("#labSignatureText");
+  const previousDetail=await detailEditor.inputValue();
+  await detailEditor.fill("DETALHE DE TESTE / 2026");
+  const detailApplied=await page.locator("#labArtboard").evaluate(board=>
+    [...board.querySelectorAll(".lm-lab-signature-slot[data-corner=tl] .lm-lab-signature-caption")]
+      .some(node=>node.textContent==="DETALHE DE TESTE / 2026"));
+  assert(detailApplied&&
+         await page.locator("#labRenderedTitle").textContent()===titleBefore&&
+         await page.locator("#labRenderedBody").textContent()===bodyBefore,
+    "Editing Detalhe must alter only its existing signature content");
+  await detailEditor.fill(previousDetail);
+  await page.locator('button[data-mobile-module="texto"]').click();
+  assert(await page.locator("#labEditDetail").isVisible(),
+    "Return to Text must restore the Detalhe action");
   const mobilePlay=await playButton.evaluate(button=>{
     const r=button.getBoundingClientRect();
     return {visible:getComputedStyle(button).display!=="none"&&

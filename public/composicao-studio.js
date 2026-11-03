@@ -109,14 +109,13 @@
     artboard.style.setProperty("max-height","none","important");
     artboard.style.setProperty("aspect-ratio","auto","important");
 
-    const compact=window.innerWidth<=1180;
-    const pad=compact?16:32;
-    const maxW=compact
-      ? Math.max(160,window.innerWidth-24)
-      : Math.max(160,stage.clientWidth-pad);
-    // The compact preview is not a thumbnail. Use the actual available stage
-    // height rather than capping every page to 174/244 physical pixels.
-    const maxH=Math.max(120,stage.clientHeight-pad);
+    // Fit the logical page inside the actual stage content box, including
+    // its responsive padding. This keeps every edge visible at every format.
+    const stageStyle=getComputedStyle(stage);
+    const horizontalPadding=parseFloat(stageStyle.paddingLeft)+parseFloat(stageStyle.paddingRight);
+    const verticalPadding=parseFloat(stageStyle.paddingTop)+parseFloat(stageStyle.paddingBottom);
+    const maxW=Math.max(1,stage.clientWidth-horizontalPadding);
+    const maxH=Math.max(1,stage.clientHeight-verticalPadding);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
 
     // A logical page is zoomed to fit the stage. Compensate ONLY the three

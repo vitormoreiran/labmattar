@@ -22,6 +22,15 @@ Esta é a referência de manutenção da identidade, não um conjunto de exemplo
 
 **Critério de manutenção:** uma correção só é oficial quando preservar a identidade visível, passar a validação estrutural e os testes de navegador do Laboratório, inclusive nos quatro formatos e na prévia móvel. As alterações são feitas sobre a fonte real em `design/` ou `public/`, nunca somente sobre uma cópia compilada.
 
+## Interface do Laboratório
+
+O inspetor é uma ferramenta de edição, não uma repetição do manual.
+
+- **Visível:** nome do controle, opções acionáveis, proporções de superfície, valores numéricos, foco selecionado e títulos dos grupos ou painéis que podem ser abertos.
+- **Sob demanda:** explicações, justificativas e limites de uso ficam nos botões de ajuda `?` relacionados ao próprio controle. Cada botão de ajuda deve abrir conteúdo útil e acessível por teclado.
+- **Fora do inspetor:** faixas estáticas como “M central / escala variável / geometria fixa”, subtítulos que repetem as opções disponíveis e etiquetas como “uma hierarquia / duas hierarquias” ou “neutro / acento / estudo”. Essas regras pertencem ao manual, não devem parecer opções de interface.
+- A limpeza de interface **não altera** Título, Corpo, Detalhe, geometria oficial do M, blur, marcadores ou a régua dos quatro formatos.
+
 ## O que permanece
 
 - Os únicos tratamentos de texto são **Título**, **Corpo** e **Detalhe** com Univers e Perpetua; a escala proporcional à superfície é aplicada por `manual-headings.css`, não por fontes adicionais.

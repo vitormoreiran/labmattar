@@ -419,7 +419,7 @@ try{
   const inspectCopy=()=>page.locator("#labArtboard").evaluate(board=>{
     const safe=board.querySelector("#labReading").getBoundingClientRect();
     const nodes=[...board.querySelectorAll(".lm-lab-title-line, #labRenderedBody, #labKicker, .lm-lab-bottom span")];
-    return {contrast:getComputedStyle(board.querySelector("#labReading")).mixBlendMode,
+    return {contrast:!!board.querySelector('.lm-lab-solid-contrast[aria-hidden="true"]'),
       fits:nodes.every(node=>{
         const range=document.createRange(); range.selectNodeContents(node);
         return [...range.getClientRects()].every(r=>r.left>=safe.left-1&&r.right<=safe.right+1&&r.top>=safe.top-1&&r.bottom<=safe.bottom+1);
@@ -430,7 +430,7 @@ try{
     await page.waitForTimeout(120);
     const copy=await inspectCopy();
     assert(copy.fits,"Saved mobile title and body must stay inside the page: "+format);
-    assert(copy.contrast==="difference","White copy must remain visible across the solid M");
+    assert(copy.contrast,"White copy must remain visible across the solid M");
     await page.locator(".lm-lab-workspace").evaluate(el=>el.scrollIntoView({block:"start"}));
     await page.screenshot({path:"laboratorio-regressao-mobile-"+format+".png"});
   }

@@ -215,9 +215,22 @@ try{
 
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
-  const previewArea=await page.locator(".lm-lab-preview").evaluate(el=>el.getBoundingClientRect().height);
-  assert(previewArea>=300,
-    "Mobile studio must give its real canvas enough room instead of a 220px thumbnail: "+previewArea);
+  const previewGeometry=await page.evaluate(()=>{
+    const workspace=document.querySelector(".lm-lab-workspace");
+    const preview=document.querySelector(".lm-lab-preview");
+    const stage=document.querySelector(".lm-lab-stage");
+    const artboard=document.querySelector("#labArtboard");
+    return {viewport:innerWidth,active:document.body.classList.contains("lm-studio-open"),
+      workspaceStyle:workspace.getAttribute("style"),
+      rows:getComputedStyle(workspace).gridTemplateRows,
+      workspaceHeight:workspace.getBoundingClientRect().height,
+      previewHeight:preview.getBoundingClientRect().height,
+      previewCSSHeight:getComputedStyle(preview).height,
+      stageHeight:stage.getBoundingClientRect().height,
+      boardFormat:artboard.dataset.format,boardStyle:artboard.getAttribute("style")};
+  });
+  assert(previewGeometry.previewHeight>=300,
+    "Mobile studio must give its real canvas enough room instead of a 220px thumbnail: "+JSON.stringify(previewGeometry));
   // The editor may downscale the logical page, but it must never make its
   // three existing typography roles physically unreadable.
   for(const format of ["vertical","horizontal","quadrado","editorial"]){

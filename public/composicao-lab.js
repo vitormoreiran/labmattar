@@ -237,8 +237,6 @@
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.mPresentation=state.mPresentation;
-    // One editorial axis: the centrally aligned reading block is normative.
-    board.dataset.placement="central";
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     // The lower image is always the SAME selected photo with blur while an
     // M (solid/photo) or its end markers are present. Keep the user's original
@@ -304,15 +302,9 @@
     return {adjusted:false,room:true};
   }
 
-  /*
-   * An entered scale is a requested maximum, never a license to cross a margin.
-   * Measure rendered line boxes after fonts and layout resolve; reduce the title
-   * only as far as necessary. Long unbreakable words are preserved first.
-   * Emergency wrapping is a last resort when a readable whole word cannot fit.
-   */
-  /*
-   * The three LABMATTAR typography roles are fixed. Density is handled
-   * through content, width and format; an individual title never shrinks.
+  /* The three LABMATTAR typography roles are fixed.
+   * Validate the rendered title against the shared reading frame. If content
+   * exceeds it, report the condition; never shrink an individual title.
    */
   function fitTitleToReadingArea(){
     const reading=by("labReading");

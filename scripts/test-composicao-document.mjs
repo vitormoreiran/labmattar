@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
 import {
   DOCUMENT_KIND,SCHEMA_VERSION,OFFICIAL_M_MASK,
   createProductionDocument,readProductionDocument,verifyRoundTrip,dimensionsFor
@@ -89,3 +90,17 @@ test("trata ausência de originais como pendência, não como um master declarad
   assert.equal(doc.pages[0].media.photoAssetId,"photo:179");
 });
 console.log("LABMATTAR COMPOSITION DOCUMENT V1 OK");
+
+test("o contrato consulta a fonte real de IDs da Matriz sem copiar o motor",()=>{
+  const doc=generate();
+  const file=doc.motion.catalogPath;
+  assert.equal(file,"tools/matriz-vetorial/src/library.json");
+  const catalog=JSON.parse(readFileSync(file,"utf8"));
+  const ids=new Set(catalog.assets.map(asset=>asset.id));
+  for(const expected of ["M","P1","P8","P9"]){
+    assert.ok(ids.has(expected),"ID ausente do catálogo da Matriz: "+expected);
+  }
+  assert.equal(doc.motion.status,"não-vinculado");
+  assert.equal(doc.pages[0].m.maskAssetId,"identity:m-mask");
+  assert.notEqual(doc.pages[0].m.maskAssetId,"M");
+});

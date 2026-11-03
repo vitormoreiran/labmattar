@@ -348,3 +348,11 @@
 
 /* Only data-backdrop decides whether the lower photograph is visible.
  * Do not add data-background=color selectors that could hide this image again. */
+
+/* Solid M and white copy share the same ink on the blurred backdrop.
+   Invert the reading layer against the solid silhouette so intersecting
+   letters remain visible without moving either element or changing type. */
+.lm-lab-board[data-m-content="solid"] .lm-lab-reading{
+  color:#fff;
+  mix-blend-mode:difference;
+}

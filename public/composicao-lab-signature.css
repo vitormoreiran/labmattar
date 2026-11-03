@@ -114,3 +114,10 @@
   body.lm-studio-open #laboratorio .lm-signature-map button{min-height:50px}
   body.lm-studio-open #laboratorio .lm-signature-controls{gap:12px}
 }
+
+/* The same typography entrance also animates the composed signature.
+ * Old metadata stays hidden in playback clones; only the current slots move. */
+.lm-lab-board[data-signature-system=composed] .lm-lab-motion-layer .lm-lab-kicker,
+.lm-lab-board[data-signature-system=composed] .lm-lab-motion-layer .lm-lab-bottom{visibility:hidden}
+.lm-lab-board[data-motion-playing=true][data-signature-system=composed] > #labSignatureLayer{opacity:0}
+.lm-lab-board .lm-lab-signature-motion-layer{z-index:7;pointer-events:none}

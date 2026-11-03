@@ -2622,7 +2622,7 @@ body.lm-studio-open #laboratorio .lm-composition-module-index{
   padding:12px!important;
   gap:5px!important;
 }
-body.lm-studio-open #laboratorio .lm-composition-module-index button{color:#60625b!important}
+body.lm-studio-open #laboratorio .lm-composition-module-index button{color:#60625b!important;transition:none!important}
 body.lm-studio-open #laboratorio .lm-composition-module-index button[aria-pressed=true]{
   background:#262923!important;
   border-color:#262923!important;

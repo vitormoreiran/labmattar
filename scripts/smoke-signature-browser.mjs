@@ -28,6 +28,7 @@ try{
   assert(await page.locator("#labPanel-assinatura").isVisible(),"Assinatura needs its own inspector panel");
   assert(await page.locator("#labPanel-imagem").isHidden(),"Signature must not expose image and M controls");
   assert(await page.locator("#labSignatureKind").isVisible(),"Corner content type must be editable");
+  await page.screenshot({path:"laboratorio-assinatura-controles-desktop.png"});
   assert(await page.locator("[data-signature-corner]").count()===4,"Four signature corners must be reachable");
   const originalTitle=(await inspect()).title;
 
@@ -101,6 +102,16 @@ try{
     restored.slots.find(x=>x.corner==="bl")?.image?.includes("vaso_09.svg"),
     "Custom signatures must persist across reloads");
 
+  await page.locator('button[data-mobile-module="assinatura"]').click();
+  await page.setViewportSize({width:390,height:844});
+  await page.locator('button[data-mobile-module="assinatura"]').click();
+  await page.waitForTimeout(180);
+  assert(await page.locator("#labPanel-assinatura").isVisible()&&
+         await page.locator("#labSignatureKind").isVisible(),
+    "Signature controls must remain accessible on mobile");
+  await page.screenshot({path:"laboratorio-assinatura-controles-mobile.png"});
+  await page.setViewportSize({width:1440,height:900});
+  await page.waitForTimeout(120);
   await page.locator('button[data-mobile-module="assinatura"]').click();
   await choosePreset("symbol");
   const only=await inspect();

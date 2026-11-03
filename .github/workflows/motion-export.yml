@@ -1,0 +1,57 @@
+name: Exportar roteiros Motion
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/motion-matriz-atual]
+    paths:
+      - '.github/workflows/motion-export.yml'
+      - 'scripts/render-motion-exports.mjs'
+      - 'scripts/register-motion-export.mjs'
+      - 'tools/matriz-vetorial/src/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: motion-exports-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+          cache: npm
+          cache-dependency-path: tools/matriz-vetorial/package-lock.json
+      - name: Compilar Matriz e preparar galeria de trabalho
+        run: |
+          npm ci --prefix tools/matriz-vetorial
+          npm test --prefix tools/matriz-vetorial
+          npm run build --prefix tools/matriz-vetorial
+          node scripts/prepare-motion.mjs --allow-pending-exports
+      - name: Preparar ambiente isolado de renderização
+        run: |
+          mkdir -p /tmp/motion-render
+          npm install --prefix /tmp/motion-render playwright@1.58.2
+          /tmp/motion-render/node_modules/.bin/playwright install --with-deps chrome
+          cp scripts/render-motion-exports.mjs /tmp/motion-render/render.mjs
+      - name: Exportar e verificar os oito roteiros
+        run: |
+          python3 -m http.server 8768 --bind 127.0.0.1 --directory public > /tmp/motion-http.log 2>&1 &
+          node /tmp/motion-render/render.mjs
+      - name: Guardar vídeos e evidências da galeria
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: motion-exports-${{ github.sha }}
+          path: |
+            motion-render-output/
+            public/motion/videos/
+            public/motion/posters/
+            public/motion/exports.json
+          if-no-files-found: warn

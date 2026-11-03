@@ -1,0 +1,116 @@
+/* LABMATTAR / Assinatura como sistema de composicao editorial.
+ * A regua de quatro pontos nao move o M nem cria tratamento de texto novo.
+ * Tipografia e herdada exclusivamente de manual-headings.css. */
+#labPanel-assinatura .lm-signature-controls{
+  display:flex;flex-direction:column;gap:16px;min-width:0;
+}
+#labPanel-assinatura .lm-lab-field{
+  padding:0;min-width:0;
+}
+#labPanel-assinatura .lm-lab-field-title{margin-bottom:10px}
+.lm-signature-presets{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+.lm-signature-preset{
+  display:flex;align-items:center;gap:9px;
+  width:100%;min-height:58px;padding:9px;
+  border:1px solid #d1cec7;background:#f7f6f2;color:#181818;
+  cursor:pointer;text-align:left;
+}
+.lm-signature-preset:hover{border-color:#77736d}
+.lm-signature-preset[aria-pressed="true"]{
+  border-color:#181818;background:#eae8e2;
+}
+.lm-signature-preset:focus-visible,
+.lm-signature-map button:focus-visible{outline:2px solid #181818;outline-offset:2px}
+.lm-signature-mini{
+  position:relative;display:block;flex:none;width:42px;height:31px;
+  border:1px solid #a9a59d;background:#e2dfd8;overflow:hidden;
+}
+.lm-signature-mini i{
+  position:absolute;width:10px;height:3px;background:#262923;display:block;
+}
+.lm-signature-mini[data-layout=editorial] i:nth-child(1){top:5px;left:5px;width:12px}
+.lm-signature-mini[data-layout=editorial] i:nth-child(2){top:4px;right:6px;width:5px;height:8px}
+.lm-signature-mini[data-layout=editorial] i:nth-child(3){bottom:5px;left:5px;width:28px}
+.lm-signature-mini[data-layout=navigation] i:nth-child(1){top:4px;left:5px;width:11px}
+.lm-signature-mini[data-layout=navigation] i:nth-child(2){top:4px;right:5px;width:6px;height:7px}
+.lm-signature-mini[data-layout=navigation] i:nth-child(3){bottom:4px;left:5px;width:6px;height:7px}
+.lm-signature-mini[data-layout=navigation] i:nth-child(4){bottom:5px;right:5px;width:9px}
+.lm-signature-mini[data-layout=symbol] i:first-child{top:5px;right:6px;width:8px;height:9px}
+.lm-signature-preset-status{margin:8px 0 0;color:#74716b}
+.lm-signature-map{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;
+  padding:9px;background:#e9e7e1;border:1px solid #d1cec7;
+}
+.lm-signature-map button{
+  display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;
+  min-height:58px;min-width:0;padding:8px;
+  background:#f7f6f2;border:1px solid transparent;
+  text-align:left;color:#181818;cursor:pointer;
+}
+.lm-signature-map button:nth-child(even){align-items:flex-end;text-align:right}
+.lm-signature-map button:nth-child(n+3){justify-content:flex-end}
+.lm-signature-map button[aria-pressed=true]{
+  border-color:#181818;background:#e0ded7;
+}
+.lm-signature-map button[data-empty=true] strong{opacity:.4}
+.lm-signature-map strong{overflow:hidden;max-width:100%;text-overflow:ellipsis;white-space:nowrap}
+.lm-signature-slot-editor{
+  display:flex;flex-direction:column;gap:8px;
+  padding-top:12px!important;border-top:1px solid #d1cec7;
+}
+.lm-signature-slot-editor .lm-lab-field-title{margin:0 0 4px!important}
+.lm-signature-slot-editor label{display:block;margin-top:5px}
+.lm-signature-slot-editor select,
+.lm-signature-slot-editor input[type=text]{
+  width:100%;box-sizing:border-box;min-height:38px;
+  padding:7px 9px;background:#f7f6f2;color:#181818;
+  border:1px solid #b7b3aa;border-radius:0;
+}
+.lm-signature-slot-editor select:focus-visible,
+.lm-signature-slot-editor input:focus-visible{outline:2px solid #181818;outline-offset:2px}
+.lm-signature-conditional{display:flex;flex-direction:column;gap:6px}
+.lm-signature-conditional[hidden]{display:none!important}
+.lm-signature-system-note{
+  margin:0;padding-top:10px;border-top:1px solid #d1cec7;color:#74716b;
+}
+#labSignatureScale:disabled{opacity:.35}
+.lm-lab-board[data-signature-system=composed] > #labSignature{display:none!important}
+.lm-lab-board[data-signature-system=composed] #labKicker,
+.lm-lab-board[data-signature-system=composed] #labReading>.lm-lab-bottom{visibility:hidden}
+.lm-lab-signature-layer{
+  position:absolute;inset:var(--lab-pad);
+  z-index:6;pointer-events:none;color:var(--lab-ink);
+}
+.lm-lab-signature-slot{
+  position:absolute;max-width:47%;
+  display:flex;flex-direction:column;gap:1.2cqw;
+  min-width:0;pointer-events:none;
+}
+.lm-lab-signature-slot[data-corner=tl]{top:0;left:0;align-items:flex-start;text-align:left}
+.lm-lab-signature-slot[data-corner=tr]{top:0;right:0;align-items:flex-end;text-align:right}
+.lm-lab-signature-slot[data-corner=bl]{bottom:0;left:0;align-items:flex-start;text-align:left}
+.lm-lab-signature-slot[data-corner=br]{bottom:0;right:0;align-items:flex-end;text-align:right}
+.lm-lab-signature-slot img{
+  display:block;height:auto;max-width:100%;object-fit:contain;
+  filter:var(--lab-signature-filter,brightness(0));
+}
+.lm-lab-signature-slot .lm-signature-brand{
+  width:calc(12cqw * var(--lab-signature-scale,1));
+}
+.lm-lab-signature-slot .lm-signature-symbol{
+  width:calc(6.5cqw * var(--lab-signature-scale,1));
+}
+.lm-lab-signature-slot[data-kind=symbol-label]{align-items:center;text-align:center}
+.lm-lab-signature-slot[data-kind=brand]{max-width:48%}
+.lm-lab-signature-caption{
+  display:block;max-width:100%;white-space:normal;overflow-wrap:normal;
+  word-break:normal;hyphens:none;
+}
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-signature-presets{gap:6px}
+  body.lm-studio-open #laboratorio .lm-signature-preset{min-height:50px;padding:7px}
+  body.lm-studio-open #laboratorio .lm-signature-map button{min-height:50px}
+  body.lm-studio-open #laboratorio .lm-signature-controls{gap:12px}
+}

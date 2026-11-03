@@ -169,7 +169,13 @@ try {
               if(!value||value==='none'||value==='normal'||value==='""'||value==="''"||c.display==='none'||c.visibility==='hidden')continue;
               pseudoCount++;
               const actual={text:String(value).slice(0,40),pseudo,element:e.tagName+'.'+String(e.className).slice(0,45),size:parseFloat(c.fontSize),leading:parseFloat(c.lineHeight),family:c.fontFamily,weight:c.fontWeight,tracking:parseFloat(c.letterSpacing)||0};
-              if(Math.abs(actual.size-detail)>.12||Math.abs(actual.leading-expect.detail.leading)>.25||actual.weight!=='300'||!actual.family.startsWith('UniversMattar')||Math.abs(actual.tracking-.04*detail)>.12)
+              const pseudoLab=e.closest('#labArtboard');
+              const pseudoSize=pseudoLab?
+                parseFloat(getComputedStyle(pseudoLab).getPropertyValue('--lm-type-detail-size')):detail;
+              const pseudoLeading=pseudoSize*(innerWidth<=760?1.4:1.35);
+              if(Math.abs(actual.size-pseudoSize)>.12||Math.abs(actual.leading-pseudoLeading)>.25||
+                 actual.weight!=='300'||!actual.family.startsWith('UniversMattar')||
+                 Math.abs(actual.tracking-.04*pseudoSize)>.12)
                 errors.push({...actual,reason:'CSS-generated label is not Detalhe'});
             }
           }

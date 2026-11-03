@@ -332,13 +332,32 @@
   .lm-rules-index{grid-template-columns:1fr}
 }
 
-/* One composition, independent layers. */
-.lm-lab-board[data-background=color] .lm-lab-photo-layer{display:none!important}
-.lm-lab-board[data-background=photo] .lm-lab-photo-layer{display:block!important}
-.lm-lab-board[data-background=photo] .lm-lab-photo-ambient{
+/* One source of truth for the lower layer: a blurred copy of the SAME
+ * selected photo whenever the M or one of its end markers is active.
+ * Without M/markers, the user's requested Cor or Fotografia remains valid.
+ * data-backdrop is the rendered state; data-background records the same
+ * effective family for existing controls/validation. */
+.lm-lab-board[data-backdrop="color"] .lm-lab-photo-layer{display:none!important}
+.lm-lab-board[data-backdrop="photo"] .lm-lab-photo-layer,
+.lm-lab-board[data-backdrop="blur"] .lm-lab-photo-layer{display:block!important}
+.lm-lab-board[data-backdrop="color"] .lm-lab-photo-ambient{display:none!important}
+.lm-lab-board[data-backdrop="photo"] .lm-lab-photo-ambient{
+  display:block!important;
   inset:0!important;width:100%!important;height:100%!important;
-  filter:none!important;transform:none!important;
+  object-fit:cover!important;
+  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
+  filter:none!important;transform:none!important;opacity:1!important;
 }
+.lm-lab-board[data-backdrop="blur"] .lm-lab-photo-ambient{
+  display:block!important;
+  inset:-7%!important;width:114%!important;height:114%!important;
+  object-fit:cover!important;
+  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
+  filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86)!important;
+  transform:scale(1.045)!important;
+  opacity:1!important;
+}
+/* Foreground M remains a separate layer, photo or solid. */
 .lm-lab-board[data-m-content=off] .lm-lab-m-photo{display:none!important}
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
   display:block!important;background:var(--lab-ink)!important;
@@ -350,22 +369,6 @@
 .lm-lab-board[data-m-content=photo] .lm-lab-m-photo,
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
   left:50%!important;top:50%!important;
-}
-
-/* M marker rule: any active M marker forces the composition photograph
-   into the background, synchronized with the same focal point, with blur. */
-.lm-lab-board[data-marker-blur="true"] .lm-lab-photo-layer{
-  display:block!important;
-}
-.lm-lab-board[data-marker-blur="true"] .lm-lab-photo-ambient{
-  inset:-6%!important;
-  width:112%!important;
-  height:112%!important;
-  object-fit:cover!important;
-  object-position:var(--lab-focus-x) var(--lab-focus-y)!important;
-  filter:blur(34px) brightness(.72) saturate(.86)!important;
-  transform:scale(1.045)!important;
-  opacity:1!important;
 }
 
 /* M / vertical — two appearances, one immutable vector.
@@ -407,13 +410,5 @@
 .lm-m-presentation-icon[data-presentation="completo"] i{height:100%;width:auto}
 .lm-m-scale-field[data-scale-locked="true"]{opacity:.5}
 
-/* Background and M are independent layers. The previous color rule hid the
- * entire photographic layer, including its mask. Keep the mask visible when
- * the canvas is colored, but never leak the ambient photograph into color. */
-.lm-lab-board[data-background="color"][data-m-content="photo"] .lm-lab-photo-layer,
-.lm-lab-board[data-background="color"][data-m-content="solid"] .lm-lab-photo-layer{
-  display:block!important;
-}
-.lm-lab-board[data-background="color"] .lm-lab-photo-ambient{
-  display:none!important;
-}
+/* Only data-backdrop decides whether the lower photograph is visible.
+ * Do not add data-background=color selectors that could hide this image again. */

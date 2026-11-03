@@ -26,6 +26,28 @@ try{
   assert(await page.locator(".lm-composition-module-index").isVisible(),
     "Unified module index must remain visible in focused mode");
 
+  // The inspector is a tool, not a second printed manual. Keep live controls
+  // and explicit help; static declarations must not occupy its workspace.
+  assert(await page.locator(".lm-image-invariant, .lm-composition-submodule-head, .lm-lab-system-statement, .lm-inspector-more-count").count()===0,
+    "Decorative statements and inert legends must not return to the official inspector");
+  assert(await page.locator("#labPanel-texto .lm-inspector-panel-heading small, #labPanel-imagem .lm-inspector-panel-heading small").count()===0,
+    "Panel headings must not duplicate their live control names");
+  for(const group of ["type","bodyMode","color"]){
+    assert(await page.locator('[data-lab-choice="'+group+'"] .lm-ctrl-meta').count()===0,
+      group+" choices must show function labels, not editorial filler");
+  }
+  const presentationHelp=page.locator('[data-lab-help="labMPresentation"]');
+  assert(await presentationHelp.count()===1,
+    "The M mode explanation must be available through a real help button");
+  await presentationHelp.click();
+  assert(await page.locator("#labHelp-labMPresentation").isVisible(),
+    "The M presentation help must open on demand");
+  assert((await page.locator("#labHelp-labMPresentation").textContent()).includes("100% da altura"),
+    "Help must explain the functional difference between Elemento and Completo");
+  await presentationHelp.click();
+  assert(await page.locator("#labHelp-labMPresentation").isHidden(),
+    "Help must close without changing the composition");
+
   for(const id of ["labPanel-pagina","labPanel-texto","labPanel-imagem"]){
     assert(await page.locator("#"+id).isVisible(),id+" must remain visible in the unified editor");
   }

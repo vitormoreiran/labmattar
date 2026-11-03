@@ -25,7 +25,7 @@ body.lm-studio-open #laboratorio>.lm-lab-heading,
 body.lm-studio-open #laboratorio>.lm-lab-legend,
 body.lm-studio-open #laboratorio>.lm-lab-lead{display:none!important}
 body.lm-studio-open #laboratorio .lm-lab-prep{
-  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;min-width:0;min-height:0;
+  display:flex;flex-wrap:nowrap;align-items:center;justify-content:flex-start;min-width:0;
   margin:0;border-top:0;
   width:100%;
 }
@@ -50,13 +50,11 @@ body.lm-studio-open .lm-help-trigger-overview .lm-help-trigger-text{display:none
 body.lm-studio-open #laboratorio .lm-lab-workspace{
   display:grid!important;
   grid-template-areas:"page inspector";min-height:0;height:100%;width:100%;
-  margin:0;align-items:stretch;
+  margin:0;
 }
 body.lm-studio-open #laboratorio .lm-lab-preview{
-  grid-area:page;position:static!important;top:auto!important;
   order:initial;
-  display:grid;grid-template-rows:32px minmax(0,1fr) 33px;
-  height:100%;min-height:0;min-width:0;overflow:hidden;
+  height:100%;
 }
 body.lm-studio-open .lm-lab-preview-head{
   align-items:center;flex-wrap:nowrap;gap:9px;
@@ -97,13 +95,8 @@ body.lm-studio-open .lm-lab-preview-foot{
 body.lm-studio-open .lm-lab-preview-foot>*{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
-  grid-area:inspector;order:initial;
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr);
-  min-width:0;min-height:0;height:100%;width:100%;
-  padding:0 0 0 13px;border:0;
-  overflow:hidden;
+body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{order:initial;
+  grid-template-columns:minmax(0,1fr);height:100%;width:100%;
 }
 body.lm-studio-open .lm-inspector-head{
   min-height:0;
@@ -163,15 +156,8 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
   body.lm-studio-open .lm-studio-launch>button{padding:5px 7px;gap:4px}
   body.lm-studio-open #labStudioToggleText{font-size:0}
   body.lm-studio-open #labStudioToggleText::after{content:"SAIR";}
-  body.lm-studio-open #laboratorio .lm-lab-workspace{
-    display:grid!important;
-    grid-template-rows:minmax(0,1fr) 270px;
-    grid-template-areas:"page" "inspector";min-height:0;
-  }
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
-    display:grid!important;
     grid-template-columns:minmax(0,1fr);
-    border:0;min-height:0;
   }
   body.lm-studio-open .lm-inspector-head,
   body.lm-studio-open .lm-lab-mini-actions{display:none!important}
@@ -193,27 +179,12 @@ body.lm-studio-open .lm-lab-mini-actions .lm-lab-local{
 /* A narrow viewport should not devote half its height to gray letterboxing
    around a horizontal sheet. Each format gets a deliberate page/inspector
    balance while the sheet itself still uses strict contain geometry. */
-@media(max-width:850px){
-  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=horizontal]){
-    grid-template-rows:minmax(0,43dvh) minmax(0,1fr);
-  }
-  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=editorial]){
-    grid-template-rows:minmax(0,48dvh) minmax(0,1fr);
-  }
-  body.lm-studio-open #laboratorio .lm-lab-workspace:has(.lm-lab-board[data-format=quadrado]){
-    grid-template-rows:minmax(0,53dvh) minmax(0,1fr);
-  }
-}
-@media(max-width:850px){
-}
+
+
 @media(max-width:420px){
   body.lm-studio-open .lm-lab-preview-head span:first-child{max-width:53%;}
 }
-@media(prefers-reduced-motion:reduce){
-}
-body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem]{
-  padding-top:8px;
-}
+
 body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem] .lm-inspector-panel-heading{
   margin-bottom:8px;
 }
@@ -222,45 +193,18 @@ body.lm-studio-open #laboratorio .lm-inspector-panel[data-lab-panel=imagem] .lm-
     grid-template-rows:minmax(0,42dvh) minmax(0,1fr);
   }
 }
-@media(max-height:730px) and (min-width:851px){
-}
-@media(max-width:850px){
-}
-@media(max-width:360px){
-}
 
 
 /* Small screens: preserve the illustrative icons without letting their
    intrinsic SVG/mini-sheet size collide with labels below the grid. */
-@media(max-width:850px){
-}
-@media(max-width:850px) and (max-height:740px){
-}
 
 
-/* 2026 / Editorial studio — one quiet inspector, not a dashboard of cards.
-   Keep the established page, native fields and editing behavior intact. */
-body.lm-studio-open #laboratorio.lm-lab{
-  background:#f8f8f7;
-  padding:0 18px 14px;
-  grid-template-rows:52px minmax(0,1fr);
-}
-body.lm-studio-open #laboratorio .lm-lab-prep{
-  background:#f8f8f7;
-  padding:0;
-  border-bottom:1px solid #dadad8;
-  gap:13px;
-}
 body.lm-studio-open #laboratorio .lm-lab-workspace{
-  grid-template-columns:minmax(0,1fr) 290px;
   gap:0;
 }
 body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
-  grid-template-rows:43px 54px minmax(0,1fr) 44px;
   padding-left:18px;
   margin-left:17px;
-  border-left:1px solid #dededb;
-  background:#f8f8f7;
 }
 body.lm-studio-open .lm-inspector-head{
   padding:0;
@@ -314,28 +258,15 @@ body.lm-studio-open .lm-lab-mini-actions button:hover{
   background:transparent;
   color:#151515;
 }
-@media(min-width:851px) and (max-height:800px){
-}
+
 @media(max-width:1200px) and (min-width:851px){
   body.lm-studio-open #laboratorio .lm-lab-workspace{
     grid-template-columns:minmax(0,1fr) 274px;
   }
 }
 @media(max-width:850px){
-  body.lm-studio-open #laboratorio.lm-lab{
-    grid-template-rows:46px minmax(0,1fr);
-    padding:0 9px 7px;
-  }
-  body.lm-studio-open #laboratorio .lm-lab-workspace{
-    grid-template-columns:minmax(0,1fr);
-    gap:5px;
-  }
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
-    grid-template-rows:44px minmax(0,1fr);
     margin:0;
-    padding:0;
-    border-left:0;
-    border-top:1px solid #dededb;
   }
   body.lm-studio-open .lm-inspector-panel{
     padding:9px 0 3px;

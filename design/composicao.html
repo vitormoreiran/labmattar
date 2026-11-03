@@ -5,7 +5,7 @@
     location.replace(previous.pathname+previous.search+previous.hash);
   }
 })();
-</script><link rel="stylesheet" href="/manual-composition-layout.css"><link rel="stylesheet" href="/composicao-regras.css"><style>
+</script><link rel="stylesheet" href="/manual-composition-layout.css"><link rel="stylesheet" href="/composicao-regras.css"><link rel="stylesheet" href="/composicao-lab.css"><style>
 /* Estudo aplicado: interface documental isolada, sem alterar regras existentes. */
 .lm-case{padding-block:clamp(75px,9vw,135px)}
 .lm-case-intro{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.65fr);gap:clamp(24px,4vw,80px);align-items:end}
@@ -31,59 +31,11 @@
 .lm-case-symbol .lm-case-image img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .lm-case-symbol .lm-case-image::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
 .lm-case-frame[data-step="completa"][data-contrast="on"] .lm-case-image::after{opacity:1}
-.lm-case-content{position:absolute;inset:var(--lm-safe);z-index:3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;align-items:start;gap:12px;pointer-events:none}
-.lm-case-reading{min-width:0;max-width:100%;align-self:center}
-.lm-case-reading h3{margin:0 0 clamp(12px,2.2cqw,28px);max-width:94%;text-wrap:balance}
-.lm-case-reading h3 span{display:block}
-.lm-case-reading p{max-width:38ch;margin:0}
-.lm-case-footer{display:flex;justify-content:space-between;gap:14px;align-items:end;}
-/* In a tall surface the reading changes structure, not just aspect ratio.
-   The top line, title, body and credits never share a physical text band. */
-.lm-case-frame.is-mobile{--lm-safe:clamp(18px,7.2cqw,30px)}
-.lm-case-frame.is-mobile .lm-case-symbol .lm-case-image{width:143.9%;max-width:none}
-.lm-case-frame.is-mobile .lm-case-content{
-  grid-template-rows:auto minmax(0,1fr) auto;
-  row-gap:clamp(9px,2.6cqh,18px);
-}
-.lm-case-frame.is-mobile .lm-case-reading{
-  align-self:stretch;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  gap:clamp(18px,5cqh,42px);
-  min-height:0;
-  padding-top:clamp(18px,5.5cqh,42px);
-  padding-bottom:clamp(14px,3cqh,26px);
-}
-.lm-case-frame.is-mobile .lm-case-reading h3{
-  width:100%;
-  max-width:100%;
-  margin:0;
-  text-wrap:initial;
-}
-.lm-case-frame.is-mobile .lm-case-reading h3 span{
-  display:block;
-  white-space:nowrap;
-}
-.lm-case-frame.is-mobile .lm-case-reading p{
-  width:100%;
-  max-width:29ch;
-  margin:0;
-}
-.lm-case-frame.is-mobile .lm-case-footer{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  justify-content:flex-end;
-  gap:4px;
-  min-width:0;
-}
+/* Content is composed with the same reading structure as 05 / Laboratorio. */
 .lm-case-frame[data-step=campo] .lm-case-symbol,.lm-case-frame[data-step=campo] .lm-case-content{opacity:0}
 .lm-case-frame[data-step=mascara] .lm-case-content{opacity:0}
 .lm-case-frame[data-step=campo] .lm-case-veil{opacity:0}
-.lm-case-safe{position:absolute;z-index:6;inset:var(--lm-safe);border:1px solid #d8ffcf;pointer-events:none;display:none}
-.lm-case-safe::before{content:"ÁREA DE LEITURA";position:absolute;left:0;top:auto;bottom:-18px;background:#d8ffcf;color:#121612;padding:2px 6px;}
-.lm-case-frame[data-guides=true] .lm-case-safe{display:block}
+/* Removed single safe-area overlay: functional fields are shown in Estrutura. */
 .lm-case-aside{border-top:1px solid var(--ink);padding-top:17px;min-width:0}
 .lm-case-aside .eyebrow{margin:0 0 25px}
 .lm-case-aside h3{margin:0 0 20px}
@@ -115,7 +67,7 @@
 @media(max-width:700px){.lm-case-intro{grid-template-columns:1fr}.lm-case-stage{padding:8px}.lm-case-layout{gap:18px}.lm-case-aside{display:block}.lm-case-aside .eyebrow{margin-bottom:10px}.lm-case-frame:not(.is-mobile){--lm-safe:clamp(10px,5.2cqw,28px)}.lm-case-facts{margin-top:45px;gap:24px}.lm-case-validation{grid-template-columns:1fr;margin-top:45px}}
 @media(max-width:440px){.lm-case-facts{grid-template-columns:1fr}.lm-case-control{gap:8px}.lm-case-control button+button{margin-left:1px}.lm-case-frame.is-mobile{width:min(100%,305px)}}
 @media(prefers-reduced-motion:reduce){.lm-case-frame{transition:none}}
-</style><link rel="stylesheet" href="/manual-headings.css?v=20261102-normative"/>
+</style><link rel="stylesheet" href="/composicao-demo.css"><link rel="stylesheet" href="/manual-headings.css?v=20261102-normative"/>
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
 </head><body>
@@ -154,30 +106,50 @@
       <button type="button" data-case-contrast="off" aria-pressed="false">0%</button>
       <button type="button" data-case-contrast="on" aria-pressed="true">20%</button>
     </div>
-    <div class="lm-case-control" role="group" aria-label="Guias de leitura">
-      <button type="button" id="caseGuides" aria-pressed="false">Exibir área de leitura</button>
+    <div class="lm-case-control" role="group" aria-label="Como visualizar a leitura">
+      <span>LEITURA</span>
+      <button type="button" data-case-view="resultado" aria-pressed="true">Resultado</button>
+      <button type="button" data-case-view="estrutura" aria-pressed="false">Estrutura</button>
     </div>
   </div>
   <div class="lm-case-layout">
     <div class="lm-case-stage">
-      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-guides="false" data-contrast="on" role="img" aria-label="Estudo de composição com fotografia de Cada Corpo Abre um Mundo, máscara M e título sobrepostos">
+      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-format="horizontal" data-view="resultado" data-contrast="on"
+           role="img" aria-label="Composição horizontal com identificação, título, corpo, créditos e fotografia recortada pelo M">
         <img class="lm-case-ambient" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
         <div class="lm-case-veil" aria-hidden="true"></div>
-        <div class="lm-case-symbol" aria-hidden="true"><div class="lm-case-image"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div></div>
-        <div class="lm-case-content">
-          <div class="lm-case-kicker">LABMATTAR / GASTROPERFORMANCE</div>
-          <div class="lm-case-reading">
-            <h3><span>CADA CORPO</span><span class="perpetua">ABRE UM</span><span>MUNDO</span></h3>
-            <p>Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</p>
-          </div>
-          <div class="lm-case-footer"><span>SIMONE MATTAR E MARTINA MATTAR</span><span>O BOTICÁRIO / 2026</span></div>
+        <div class="lm-case-symbol" aria-hidden="true">
+          <div class="lm-case-image"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
         </div>
-        <div class="lm-case-safe" aria-hidden="true"></div>
+        <div class="lm-case-content lm-lab-reading">
+          <p class="lm-case-kicker lm-lab-kicker">LABMATTAR / GASTROPERFORMANCE</p>
+          <div class="lm-case-reading lm-lab-main-copy">
+            <h3 class="lm-lab-title">
+              <span class="lm-lab-title-line">CADA CORPO</span>
+              <span class="lm-lab-title-line perpetua">ABRE UM</span>
+              <span class="lm-lab-title-line">MUNDO</span>
+            </h3>
+            <p class="lm-lab-body">Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</p>
+          </div>
+          <footer class="lm-case-footer lm-lab-bottom">
+            <span>SIMONE MATTAR E MARTINA MATTAR</span>
+            <span>O BOTICÁRIO / 2026</span>
+          </footer>
+        </div>
       </div>
     </div>
     <aside class="lm-case-aside" aria-live="polite">
-      <p class="eyebrow">RELAÇÃO ENTRE CAMADAS</p>
-      <div><span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span><h3 id="caseStepTitle">Texto, M e fotografia funcionam em conjunto.</h3><p id="caseStepBody">Quando o texto cruza uma fotografia, aplica-se preto 20% sob a área de leitura.</p><p class="lm-case-contrast-status" id="caseContrastNote">PRETO 20% / aplicado sob o texto</p></div>
+      <p class="eyebrow">COMO A PÁGINA É CONSTRUÍDA</p>
+      <span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span>
+      <h3 id="caseStepTitle">Uma estrutura, dois formatos.</h3>
+      <p id="caseStepBody">Identificação no alto, título e Corpo no núcleo de leitura, créditos no rodapé. O M mantém o eixo.</p>
+      <p class="lm-case-contrast-status" id="caseContrastNote">PRETO 20% / tratamento da fotografia no M.</p>
+      <dl class="lm-case-reading-map" id="caseReadingMap" hidden>
+        <div><dt>01 / DETALHE</dt><dd>Identificação no topo</dd></div>
+        <div><dt>02 / TÍTULO</dt><dd>Primeiro campo do núcleo de leitura</dd></div>
+        <div><dt>03 / CORPO</dt><dd>Texto vinculado ao título</dd></div>
+        <div><dt>04 / DETALHE</dt><dd>Créditos no rodapé</dd></div>
+      </dl>
     </aside>
   </div>
 
@@ -241,50 +213,81 @@
 
 <script id="lm-case-demonstration">
 (()=>{
+  "use strict";
   const frame=document.getElementById("caseFrame");
-  const data={
-    campo:["01 / CAMPO","A imagem constrói a atmosfera.","O fundo usa a fotografia ampliada, com desfoque e redução de luminosidade. É uma camada distinta do recorte nítido; não define a posição do título."],
-    mascara:["02 / MÁSCARA","O M enquadra sem ser deformado.","Sem texto sobreposto, o M mostra a fotografia sem o véu adicional de contraste. O recorte acompanha a geometria vetorial oficial e pode ultrapassar a superfície sem distorção."],
-    completa:["03 / PÁGINA","Texto, M e fotografia funcionam em conjunto.","Quando o texto cruza uma fotografia, aplica-se preto 20% sob a área de leitura."]
+  if(!frame)return;
+  const aside={
+    number:document.getElementById("caseStepNumber"),
+    title:document.getElementById("caseStepTitle"),
+    body:document.getElementById("caseStepBody"),
+    note:document.getElementById("caseContrastNote"),
+    fields:document.getElementById("caseReadingMap")
   };
-  // One copy system; the tall format explains the actual recomposition.
-  function updateAside(){
-    const vertical=frame.classList.contains("is-mobile");
-    const d=frame.dataset.step==="completa"&&vertical?
-      ["03 / PÁGINA","O vertical reorganiza a leitura.","Título no campo superior; Corpo acima dos créditos. O M mantém seu eixo, sem sobreposição entre blocos."]:
-      data[frame.dataset.step];
-    document.getElementById("caseStepNumber").textContent=d[0];
-    document.getElementById("caseStepTitle").textContent=d[1];
-    document.getElementById("caseStepBody").textContent=d[2];
+  const state={step:"completa",format:"horizontal",view:"resultado",contrast:"on"};
+  const steps={
+    campo:["01 / CAMPO","O campo cria a atmosfera.","A fotografia desfocada forma a superfície. Texto e M ainda não aparecem."],
+    mascara:["02 / MÁSCARA","O M organiza a imagem.","O recorte usa o vetor publicado, preservando proporção e eixo. Sem texto, não há véu adicional."],
+    completa:["03 / PÁGINA","Uma estrutura, dois formatos.","Identificação no alto, núcleo de leitura no centro e créditos no rodapé."]
+  };
+  function update(){
+    const vertical=state.format==="vertical";
+    const structure=state.view==="estrutura";
+    frame.dataset.step=state.step;
+    frame.dataset.format=state.format;
+    frame.dataset.view=state.view;
+    frame.dataset.contrast=state.contrast;
+    frame.classList.toggle("is-mobile",vertical);
+    for(const key of ["step","format","view","contrast"]){
+      document.querySelectorAll("[data-case-"+key+"]").forEach(button=>{
+        const selected=button.dataset["case"+key.charAt(0).toUpperCase()+key.slice(1)]===state[key];
+        button.setAttribute("aria-pressed",String(selected));
+      });
+    }
+    const full=state.step==="completa";
+    document.querySelectorAll("[data-case-view]").forEach(button=>{button.disabled=!full;});
+    document.querySelectorAll("[data-case-contrast]").forEach(button=>{button.disabled=!full||structure;});
+    const base=steps[state.step];
+    aside.number.textContent=base[0];
+    aside.fields.hidden=!full||!structure;
+    if(full&&structure){
+      aside.title.textContent="Quatro campos, uma régua.";
+      aside.body.textContent="As linhas contornam os textos reais: identificação, título, Corpo e créditos. As posições mudam com o formato.";
+      aside.note.textContent="ESTRUTURA / sem fotografia, para observar a distribuição.";
+    }else if(full&&vertical){
+      aside.title.textContent="A leitura se recompõe no vertical.";
+      aside.body.textContent="Título e Corpo acima dos créditos, em um núcleo central compartilhado. A identificação fica no alto; o M permanece no eixo.";
+      aside.note.textContent=state.contrast==="on"?
+        "CONTRASTE / preto 20% aplicado apenas à fotografia no M.":
+        "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
+    }else{
+      aside.title.textContent=base[1];
+      aside.body.textContent=base[2];
+      aside.note.textContent=!full?
+        "O contraste da imagem com texto é demonstrado na etapa 03 / Página.":
+        state.contrast==="on"?"CONTRASTE / preto 20% apenas na fotografia sob texto.":
+        "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
+    }
+    frame.setAttribute("aria-label",(vertical?"Composição vertical":"Composição horizontal")+
+      (structure?", campos de identificação, título, Corpo e créditos":", imagem, M e leitura editorial"));
   }
-  function step(value){
-    frame.dataset.step=value;
-    document.querySelectorAll("[data-case-step]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.caseStep===value)));
-    updateAside();
-    updateContrastNote();
-  }
-  function format(value){
-    frame.classList.toggle("is-mobile",value==="mobile");
-    document.querySelectorAll("[data-case-format]").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.caseFormat===value)));
-    updateAside();
-  }
-  function updateContrastNote(){
-    document.getElementById("caseContrastNote").textContent=frame.dataset.step!=="completa"?
-      "O véu de contraste só aparece na etapa 03 / Página, junto com a tipografia.":
-      frame.dataset.contrast==="on"?
-      "CONTRASTE ATIVO / Preto 20% sobre a fotografia no M, abaixo do texto.":
-      "COMPARAÇÃO 0% / Véu temporariamente oculto para avaliar o efeito, sem alterar a norma.";
-  }
-  document.querySelectorAll("[data-case-contrast]").forEach(b=>b.addEventListener("click",()=>{
-    frame.dataset.contrast=b.dataset.caseContrast;
-    document.querySelectorAll("[data-case-contrast]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
-    updateContrastNote();
+  document.querySelectorAll("[data-case-step]").forEach(button=>button.addEventListener("click",()=>{
+    state.step=button.dataset.caseStep;
+    if(state.step!=="completa")state.view="resultado";
+    update();
   }));
-  document.querySelectorAll("[data-case-step]").forEach(b=>b.addEventListener("click",()=>step(b.dataset.caseStep)));
-  document.querySelectorAll("[data-case-format]").forEach(b=>b.addEventListener("click",()=>format(b.dataset.caseFormat)));
-  document.getElementById("caseGuides").addEventListener("click",e=>{
-    const enabled=frame.dataset.guides!=="true";frame.dataset.guides=String(enabled);e.currentTarget.setAttribute("aria-pressed",String(enabled));
-  });
+  document.querySelectorAll("[data-case-format]").forEach(button=>button.addEventListener("click",()=>{
+    state.format=button.dataset.caseFormat;
+    update();
+  }));
+  document.querySelectorAll("[data-case-view]").forEach(button=>button.addEventListener("click",()=>{
+    state.view=button.dataset.caseView;
+    update();
+  }));
+  document.querySelectorAll("[data-case-contrast]").forEach(button=>button.addEventListener("click",()=>{
+    state.contrast=button.dataset.caseContrast;
+    update();
+  }));
+  update();
 })();
 </script>
 </body></html>

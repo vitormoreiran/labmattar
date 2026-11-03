@@ -431,7 +431,7 @@ try{
     const copy=await inspectCopy();
     assert(copy.fits,"Saved mobile title and body must stay inside the page: "+format);
     assert(copy.contrast==="difference","White copy must remain visible across the solid M");
-    await page.locator(".lm-lab-workspace").scrollIntoViewIfNeeded();
+    await page.locator(".lm-lab-workspace").evaluate(el=>el.scrollIntoView({block:"start"}));
     await page.screenshot({path:"laboratorio-regressao-mobile-"+format+".png"});
   }
 

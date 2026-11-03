@@ -165,9 +165,17 @@
 }
 /* O tamanho pedido pelo controle é apenas um teto. A rotina de medida
    aplica o maior corpo que cabe, com palavras inteiras sempre que possível. */
-/* Explicit editorial title lines stay intact. The fitting algorithm
-   scales the type down before allowing a word group to break. */
-.lm-lab-title .lm-lab-title-line{display:block;max-width:100%;white-space:nowrap}
+/* Explicit lines remain editorial groups, but phrases can recompose at
+ * actual WORD boundaries when a narrower surface requires it. A long phrase
+ * must never be clipped or solved by silently shrinking the Title treatment. */
+.lm-lab-title .lm-lab-title-line{
+  display:block;
+  max-width:100%;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+  hyphens:none;
+}
 .lm-lab-body{margin:0;max-width:100%;overflow-wrap:normal;word-break:normal;hyphens:none;white-space:pre-line}
 .lm-lab-bottom{display:flex;justify-content:space-between;gap:1.5cqw;align-items:end;}
 .lm-lab-bottom span{max-width:48%;overflow-wrap:normal;word-break:normal;hyphens:none}

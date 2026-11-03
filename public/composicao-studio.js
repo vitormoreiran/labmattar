@@ -167,6 +167,7 @@
     const pagePanel=by("labPanel-pagina");
     const textPanel=by("labPanel-texto");
     const imagePanel=by("labPanel-imagem");
+    const signaturePanel=by("labPanel-assinatura");
     const construction=pagePanel?.querySelector('[data-lab-more="pagina"]');
     const textMore=textPanel?.querySelector('[data-lab-more="texto"]');
     const imageMore=imagePanel?.querySelector('[data-lab-more="imagem"]');
@@ -174,10 +175,11 @@
     if(active){
       pagePanel.hidden=!(name==="superficie"||name==="construcao");
       textPanel.hidden=name!=="texto";
-      imagePanel.hidden=!(name==="fundo"||name==="m"||name==="assinatura");
+      imagePanel.hidden=!(name==="fundo"||name==="m");
+      if(signaturePanel)signaturePanel.hidden=name!=="assinatura";
       if(construction)construction.open=name==="construcao";
       if(name!=="texto"&&textMore)textMore.open=false;
-      if(imageMore)imageMore.open=name==="assinatura";
+      if(imageMore)imageMore.open=false;
       const imageHeading=imagePanel?.querySelector(".lm-inspector-panel-heading span");
       if(imageHeading)imageHeading.textContent=activeLabel;
     }else{

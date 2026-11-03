@@ -46,3 +46,24 @@
     padding:5px 5px!important;
   }
 }
+
+/* Keep the single export action reachable while the mobile inspector scrolls,
+   aligned beside the already fixed Play control (no second toolbar). */
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-lab-export-tools{
+    position:fixed!important;top:8px!important;right:54px!important;
+    z-index:2499!important;display:flex!important;gap:4px!important;
+    margin:0!important;padding:0!important;
+    background:#f7f6f2!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-export-tools :is(button,select){
+    min-height:34px!important;padding:5px 7px!important;
+    background:#f7f6f2!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-export-tools .lm-lab-export-verb{
+    display:none!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-export-tools select{
+    width:46px!important;min-width:46px!important;
+  }
+}

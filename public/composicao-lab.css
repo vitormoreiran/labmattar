@@ -371,14 +371,14 @@
   left:50%!important;top:50%!important;
 }
 
-/* M / vertical — two appearances, one immutable vector.
-   Elemento uses the existing --lab-m-size. Completo fills the 9:16 page's
-   HEIGHT and bleeds symmetrically beyond the sides, as on portfolio covers.
-   Horizontal, square and editorial formats are not affected. */
-.lm-lab-board[data-format="vertical"][data-m-presentation="completo"] .lm-lab-m-photo{
+/* One M vector, two presentations, in EVERY surface.
+ * Elemento retains the user scale. Completo fits 100% of the canvas HEIGHT.
+ * Horizontal, 9:16, square and editorial all use the same height-based math,
+ * with clipping only when the vector naturally exceeds the canvas width. */
+.lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo{
   left:50%!important;
   top:50%!important;
-  width:133.222cqh!important; /* 100cqh × 990.08 / 743.18 */
+  width:133.222cqh!important; /* 1.33222 × 100% of artboard height */
   height:100cqh!important;
   max-width:none!important;
   transform:translate(-50%,-50%);

@@ -96,7 +96,9 @@
 }
 .lm-lab-title{
   margin:0;min-width:0;max-width:100%;
-  text-wrap:balance;
+  /* Explicit editorial lines should only break if they cannot fit.
+     Balancing creates unnecessary extra lines and displaces the footer. */
+  text-wrap:wrap;
   overflow-wrap:normal;word-break:normal;hyphens:none;
 }
 /* Explicit lines remain editorial groups, but phrases can recompose at
@@ -348,3 +350,14 @@
 
 /* Only data-backdrop decides whether the lower photograph is visible.
  * Do not add data-background=color selectors that could hide this image again. */
+
+/* A second, noninteractive ink pass is clipped to the exact solid M.
+   The original white reading layer remains unchanged over the photograph. */
+.lm-lab-solid-contrast{
+  position:absolute;inset:0;z-index:3;pointer-events:none;
+  -webkit-mask-image:url('/ambiente-editorial/media/m-publicado.svg');
+  mask-image:url('/ambiente-editorial/media/m-publicado.svg');
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+.lm-lab-solid-contrast .lm-lab-reading{color:#181818}
+.lm-lab-solid-contrast *{pointer-events:none!important;user-select:none!important}

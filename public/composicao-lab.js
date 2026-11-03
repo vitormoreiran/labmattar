@@ -91,7 +91,10 @@
   // Format-specific reading widths are genuine layout decisions, not zoom.
   // Switching aspect ratios recomposes the text and restores an author's
   // previous column width when they return to that format.
-  const formatReadingWidths={horizontal:61,vertical:100,quadrado:78,editorial:70};
+  // The editorial sheet is wide but shorter than the other formats: its default
+  // reading column needs room for authored title groups and visible body/footer.
+  // The user may still narrow the column; overflow remains a validation error.
+  const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
@@ -363,9 +366,41 @@
     board.style.setProperty("--lab-m-y","50%");
   }
 
+  function syncSolidContrast(){
+    let overlay=board.querySelector(".lm-lab-solid-contrast");
+    if(state.mContent!=="solid"){
+      overlay?.remove();
+      return;
+    }
+    if(!overlay){
+      overlay=document.createElement("div");
+      overlay.className="lm-lab-solid-contrast";
+      overlay.setAttribute("aria-hidden","true");
+      overlay.inert=true;
+      board.append(overlay);
+    }
+    const mask=by("labMask"),reading=by("labReading").cloneNode(true);
+    for(const node of [reading,...reading.querySelectorAll("*")]){
+      node.removeAttribute("id");
+      node.removeAttribute("contenteditable");
+      node.removeAttribute("tabindex");
+      node.removeAttribute("role");
+      node.removeAttribute("aria-label");
+    }
+    overlay.replaceChildren(reading);
+    const w=mask.offsetWidth,h=mask.offsetHeight;
+    const size=w+"px "+h+"px";
+    const position=(mask.offsetLeft-w/2)+"px "+(mask.offsetTop-h/2)+"px";
+    overlay.style.maskSize=size;
+    overlay.style.webkitMaskSize=size;
+    overlay.style.maskPosition=position;
+    overlay.style.webkitMaskPosition=position;
+  }
+
   function measure(){
     const titleFit=fitTitleToReadingArea();
     alignMToCopy();
+    syncSolidContrast();
     const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;

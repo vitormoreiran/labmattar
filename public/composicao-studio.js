@@ -118,14 +118,13 @@
     const maxH=Math.max(1,stage.clientHeight-verticalPadding);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
 
-    // A logical page is zoomed to fit the stage. Compensate ONLY the three
-    // existing normative text roles for the preview zoom. Their fonts, weights,
-    // tracking and leading still come exclusively from manual-headings.css.
-    // No per-title shrinking or fourth typography treatment is introduced.
-    const nominalTitle=104*(Number(by("labTitleScale")?.value||100)/100);
-    const title=Math.max(nominalTitle,32/scale);
-    const body=Math.max(window.innerWidth<=760?16:18,13/scale);
-    const detail=Math.max(window.innerWidth<=760?12:13,10/scale);
+    // Typography belongs to the logical page, never to the screen zoom.
+    // Scale all three canonical roles with page width so resizing the editor
+    // cannot change line breaks, clipping or the relationship with the M.
+    const pageRatio=Math.min(1,logicalW/900);
+    const title=104*pageRatio*(Number(by("labTitleScale")?.value||100)/100);
+    const body=32*pageRatio;
+    const detail=24*pageRatio;
     artboard.style.setProperty("--lm-type-title-size",title.toFixed(3)+"px");
     artboard.style.setProperty("--lm-type-body-size",body.toFixed(3)+"px");
     artboard.style.setProperty("--lm-type-detail-size",detail.toFixed(3)+"px");

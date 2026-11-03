@@ -184,10 +184,10 @@
 
 /* The same two M appearances also apply to the 04 / Composição example.
    This selection changes the vector mask only, never the text ruler. */
-.lm-case-frame.is-mobile[data-m-presentation="completo"] .lm-case-symbol{
+.lm-case-frame[data-m-presentation="completo"] .lm-case-symbol{
   transform:none;
 }
-.lm-case-frame.is-mobile[data-m-presentation="completo"] .lm-case-symbol .lm-case-image{
+.lm-case-frame[data-m-presentation="completo"] .lm-case-symbol .lm-case-image{
   position:absolute;
   left:50%;
   top:50%;

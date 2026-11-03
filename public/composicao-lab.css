@@ -116,7 +116,7 @@
 .lm-lab-photo-contrast{position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
 .lm-lab-board[data-photo-text=true] .lm-lab-photo-contrast{opacity:1}
 .lm-lab-m-photo{
-  position:absolute;left:var(--lab-m-x);top:50%;
+  position:absolute;
   width:min(var(--lab-m-size),140cqh);
   height:auto;aspect-ratio:990.08/743.18;
   transform:translate(-50%,-50%);
@@ -140,8 +140,7 @@
   
   
   
-  --lab-copy-gap:2cqw;
-  position:absolute;z-index:3;inset:var(--lab-pad);
+  --lab-copy-gap:2cqw;z-index:3;inset:var(--lab-pad);
   display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;
   gap:1.4cqw;
   pointer-events:none;
@@ -149,8 +148,7 @@
 .lm-lab-reading>*{pointer-events:none}
 .lm-lab-kicker{max-width:100%;margin:0}
 .lm-lab-main-copy{
-  position:relative;z-index:1;align-self:flex-start;
-  width:min(100%,var(--lab-text-width));
+  position:relative;z-index:1;
   margin:auto 0;
   display:flex;flex-direction:column;gap:var(--lab-copy-gap);
   min-width:0;

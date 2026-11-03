@@ -110,6 +110,30 @@ try{
     assert(await constructionPage.locator('#caseFrame').getAttribute("data-step")===step,
       "Construction layers must remain interactive: "+step);
   }
+  assert(await constructionPage.locator("#caseGuides, .lm-case-safe").count()===0,
+    "Decorative safe-area guide must be removed");
+  assert(await constructionPage.locator("[data-case-view]").count()===2,
+    "The composition must explain both the finished result and the actual reading structure");
+  await constructionPage.locator('[data-case-step="completa"]').click();
+  await constructionPage.locator('[data-case-view="estrutura"]').click();
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-view")==="estrutura",
+    "Structure mode must be a real preview state");
+  assert(await constructionPage.locator("#caseReadingMap").isVisible(),
+    "Structure mode must explain the four semantic reading fields");
+  const structural=await constructionPage.locator("#caseFrame").evaluate(frame=>({
+    surface:getComputedStyle(frame).backgroundColor,
+    titleOutline:getComputedStyle(frame.querySelector("h3")).outlineStyle,
+    footerOutline:getComputedStyle(frame.querySelector(".lm-case-footer")).outlineStyle,
+    label:getComputedStyle(frame.querySelector(".lm-case-reading h3"),"::after").content
+  }));
+  assert(structural.titleOutline!=="none"&&structural.footerOutline!=="none"&&structural.label.includes("TÍTULO"),
+    "Structural guide must follow real text fields rather than one arbitrary safe-area rectangle: "+JSON.stringify(structural));
+  assert(await constructionPage.locator('[data-case-contrast="on"]').isDisabled(),
+    "Contrast is irrelevant in the unphotographed structural diagram");
+  await constructionPage.screenshot({path:"composition-structure-horizontal.png",fullPage:false});
+  await constructionPage.locator('[data-case-view="resultado"]').click();
+  assert(await constructionPage.locator("#caseReadingMap").isHidden(),
+    "Result mode must show the clean composed page");
   await constructionPage.screenshot({path:"composition-manual-desktop.png",fullPage:true});
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
@@ -159,6 +183,11 @@ try{
   const desktopVertical=await checkVertical({width:1440,height:900});
   assert(desktopVertical.title.bottom<desktopVertical.body.top,
     "Desktop preview of vertical format must also be fully legible");
+  await constructionPage.locator('[data-case-view="estrutura"]').click();
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-view")==="estrutura",
+    "Vertical format must preserve actual field-by-field structural visualization");
+  await constructionPage.locator("#caseFrame").screenshot({path:"composition-structure-vertical.png"});
+  await constructionPage.locator('[data-case-view="resultado"]').click();
   await checkVertical({width:390,height:844});
   await checkVertical({width:320,height:640});
   await constructionPage.setViewportSize({width:390,height:844});

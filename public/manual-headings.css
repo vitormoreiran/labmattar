@@ -8,8 +8,11 @@
  --lm-type-univers:UniversMattar,Arial,sans-serif;
  --lm-type-perpetua:PerpetuaMattar,Georgia,serif;
  --lm-type-title-size:clamp(31px,7vw,104px);
- --lm-type-body-size:18px;
- --lm-type-detail-size:13px;
+ /* Official logical-page sizes: the canvas always uses these source values. */
+ --lm-type-page-body-size:18px;
+ --lm-type-page-detail-size:13px;
+ --lm-type-body-size:var(--lm-type-page-body-size);
+ --lm-type-detail-size:var(--lm-type-page-detail-size);
  --lm-type-title-leading:.98;
  --lm-type-body-leading:1.45;
  --lm-type-detail-leading:1.35;
@@ -78,6 +81,13 @@ html body [data-lm-text-role="detail"]:not(#__lm_type_guard__){
  letter-spacing:var(--lm-type-detail-tracking)!important;
  text-transform:uppercase!important;
  font-synthesis:none!important;
+}
+/* A Lab page is a logical export surface, not the editor viewport.
+ * Preserve the exact official desktop Corpo/Detalhe sizes at every zoom and
+ * format; the rest of the manual still adapts to compact reading screens. */
+html body #labArtboard{
+ --lm-type-body-size:var(--lm-type-page-body-size);
+ --lm-type-detail-size:var(--lm-type-page-detail-size);
 }
 /* Perpetua is an alternate letterform INSIDE Título, never a fourth scale. */
 html body [data-lm-text-role="title"]:is(.perpetua,.p,em):not(#__lm_type_guard__),

@@ -118,16 +118,14 @@
     const maxH=Math.max(1,stage.clientHeight-verticalPadding);
     const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
 
-    // Typography belongs to the logical page, never to the screen zoom.
-    // Scale all three canonical roles with page width so resizing the editor
-    // cannot change line breaks, clipping or the relationship with the M.
+    // Only Title has its existing format/scale control. Corpo and Detalhe
+    // come exclusively from manual-headings.css, at logical export-page size.
+    // The preview zoom must never generate a separate hierarchy.
     const pageRatio=Math.min(1,logicalW/900);
     const title=104*pageRatio*(Number(by("labTitleScale")?.value||100)/100);
-    const body=32*pageRatio;
-    const detail=24*pageRatio;
     artboard.style.setProperty("--lm-type-title-size",title.toFixed(3)+"px");
-    artboard.style.setProperty("--lm-type-body-size",body.toFixed(3)+"px");
-    artboard.style.setProperty("--lm-type-detail-size",detail.toFixed(3)+"px");
+    artboard.style.removeProperty("--lm-type-body-size");
+    artboard.style.removeProperty("--lm-type-detail-size");
     artboard.dataset.previewZoom=scale.toFixed(4);
 
     artboard.style.setProperty("transform-origin","top left","important");

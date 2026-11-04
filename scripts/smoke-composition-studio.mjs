@@ -156,28 +156,28 @@ try{
     "Horizontal artboard must keep fixed logical geometry");
 
   await choose("background","photo");
-  await choose("mContent","solid");
+  await choose("mContent","photo");
   const scaleBefore=await page.locator("#labMScale").inputValue();
   await choose("marker","top");
   assert(await page.locator("#labMScale").inputValue()===scaleBefore,
-    "Changing marker state must not change M scale");
-  const markerBackground=await page.locator("#labArtboard").evaluate(el=>{
-    const photo=el.querySelector(".lm-lab-photo-ambient");
-    const cs=getComputedStyle(photo);
-    return {
-      background:el.dataset.background,
-      markerBlur:el.dataset.markerBlur,
-      filter:cs.filter,
-      src:photo.getAttribute("src"),
-      focus:getComputedStyle(el).getPropertyValue("--lab-focus-x").trim()+" "+getComputedStyle(el).getPropertyValue("--lab-focus-y").trim()
-    };
-  });
-  assert(markerBackground.background==="photo"&&markerBackground.markerBlur==="true",
-    "Active M marker must force the composition photograph into the background");
-  assert(markerBackground.filter.includes("blur(")&&markerBackground.src,
-    "Active M marker background must use the same photograph with blur");
+    "Marcadores não alteram a escala do M");
+  const marked=await page.locator("#labArtboard").evaluate(board=>({
+    background:board.dataset.background,focus:board.dataset.markerFocus,
+    marker:board.dataset.markerBlur,backdrop:board.dataset.backdrop,
+    mask:getComputedStyle(board.querySelector("#labMarkerPhotoLayer")).webkitMaskImage,
+    source:board.querySelector("#labAmbientPhoto").getAttribute("src"),
+    overlay:board.querySelector("#labMarkerPhoto").getAttribute("src"),
+    solid:getComputedStyle(board.querySelector("#labMask")).backgroundColor
+  }));
+  assert(marked.marker==="true"&&marked.background==="photo"&&
+    marked.source===marked.overlay&&marked.mask.includes("data:image/svg"),
+    "Marcador em fotografia recorta a mesma imagem, sem bloco de cor: "+JSON.stringify(marked));
+  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),
+    "M sólido deve estar oculto quando o fundo for fotografia");
+  await choose("markerFocus","sharp");
+  assert(await page.locator("#labArtboard").getAttribute("data-backdrop")==="blur",
+    "Marcador nítido deve inverter a nitidez do restante da fotografia");
 
-  await choose("mContent","photo");
   await page.locator("#labMScale").fill("55");
   await page.locator("#labMScale").dispatchEvent("input");
   const geometry=await page.locator("#labArtboard").evaluate(el=>{
@@ -191,36 +191,13 @@ try{
   assert(geometry.m.left>=geometry.board.left-2&&geometry.m.right<=geometry.board.right+2,
     "M must stay within the page at the selected scale");
 
-  await choose("background","color");
-  assert(await page.locator("#labColor").isEnabled(),
-    "Background color must remain a complete independent function");
-  const forcedWhileMarked=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,markerBlur:el.dataset.markerBlur
-  }));
-  assert(forcedWhileMarked.background==="photo"&&forcedWhileMarked.markerBlur==="true",
-    "Choosing a color while an M marker is active must keep the blurred photo background");
   await choose("marker","none");
-  const restoredAfterMarker=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,requested:el.dataset.backgroundRequested,
-    backdrop:el.dataset.backdrop,markerBlur:el.dataset.markerBlur,
-    ambient:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).display,
-    filter:getComputedStyle(el.querySelector(".lm-lab-photo-ambient")).filter
-  }));
-  assert(restoredAfterMarker.background==="photo"&&restoredAfterMarker.requested==="color"&&
-         restoredAfterMarker.backdrop==="blur"&&restoredAfterMarker.markerBlur==="false"&&
-         restoredAfterMarker.ambient!=="none"&&restoredAfterMarker.filter.includes("blur("),
-    "After removing markers, an active M must STILL have the photo blurred underneath");
-  assert((await page.locator("#labBackdropContext").textContent()).includes("fotografia desfocada"),
-    "Background inspector must explain why the selected color is temporarily overridden");
+  await choose("background","color");
   await choose("mContent","off");
-  const restoredAfterM=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,backdrop:el.dataset.backdrop,
-    layer:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display
-  }));
-  assert(restoredAfterM.background==="color"&&restoredAfterM.backdrop==="color"&&restoredAfterM.layer==="none",
-    "Turning the last M off restores the originally selected color, not an empty blurred layer");
-
-
+  await choose("mContent","solid");
+  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
+    "M sólido deve existir em composição de cor");
+  await choose("mContent","off");
   // One published M; Completo fits 100% of every surface's vertical height.
   // Elemento retains the manually adjusted scale in all four formats.
   await choose("mContent","photo");
@@ -499,6 +476,9 @@ try{
       "All six compact module buttons must remain fully visible at "+vp.width+"x"+vp.height);
 
     await page.locator('button[data-mobile-module="m"]').click();
+    // A photographic M must be turned off before the color-only solid option
+    // is available. This is a deliberate product rule, not a visual failure.
+    await choose("mContent","off");
     const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
     await mButton.scrollIntoViewIfNeeded();
     await mButton.click();

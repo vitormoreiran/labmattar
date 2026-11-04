@@ -857,3 +857,59 @@
   outline:2px solid #181818;
   outline-offset:3px;
 }
+
+
+/* Dúvidas tem o mesmo destino no manual e no editor concentrado. */
+.lm-studio-launch>.lm-studio-help{display:none!important}
+body.lm-studio-open #laboratorio .lm-studio-launch>.lm-studio-help{
+  display:inline-flex!important;align-items:center;justify-content:center;gap:6px;
+}
+body.lm-studio-open #laboratorio .lm-studio-help-label{white-space:nowrap}
+@media(max-width:700px){
+ body.lm-studio-open #laboratorio .lm-studio-help-label{display:none}
+}
+/* Ajuda guiada / uma etapa por vez, ancorada no controle real. */
+.lm-help-tour-backdrop{
+  position:fixed;inset:0;z-index:4500;background:transparent;cursor:default;
+}
+.lm-help-tour-spotlight{
+  position:fixed;z-index:4501;box-sizing:border-box;pointer-events:none;
+  border:2px solid #f7f6f2;
+  outline:2px solid #242a24;
+  box-shadow:0 0 0 200vmax rgba(16,20,18,.50);
+}
+.lm-help-tour{
+  position:fixed;z-index:4502;box-sizing:border-box;
+  width:min(360px,calc(100vw - 24px));max-height:calc(100dvh - 24px);
+  overflow:auto;overscroll-behavior:contain;
+  padding:21px 22px 19px;background:#f7f6f2;color:#181818;
+  border:1px solid #77736b;box-shadow:0 16px 55px #1014103d;
+}
+.lm-help-tour[hidden],.lm-help-tour-spotlight[hidden],.lm-help-tour-backdrop[hidden]{display:none!important}
+.lm-help-tour-progress{
+  display:block;margin:0 0 19px;color:#77736b;
+}
+.lm-help-tour-title{margin:0 74px 15px 0}
+.lm-help-tour-copy{margin:0 0 16px}
+.lm-help-tour-rule{
+  display:block;margin:0;padding:14px 0 18px;border-top:1px solid #d1cec7;color:#57534c;
+}
+.lm-help-tour-rule strong{display:block;margin-bottom:6px;color:#181818}
+.lm-help-tour-actions{
+  display:flex;align-items:center;gap:9px;margin-top:4px;
+}
+.lm-help-tour-actions button,.lm-help-tour-close{
+  appearance:none;border:1px solid #181818;border-radius:0;
+  cursor:pointer;min-height:38px;padding:8px 15px;background:transparent;color:#181818;
+}
+.lm-help-tour-actions button:hover,.lm-help-tour-close:hover{background:#e8e5de}
+.lm-help-tour-actions .lm-help-tour-next{background:#181818;color:#f7f6f2;margin-left:auto}
+.lm-help-tour-actions .lm-help-tour-next:hover{background:#363934}
+.lm-help-tour-actions .lm-help-tour-back[hidden]{display:none!important}
+.lm-help-tour-close{position:absolute;top:16px;right:18px;min-height:30px;padding:4px 8px;border-color:#bab5aa}
+.lm-help-tour button:focus-visible{outline:2px solid #181818;outline-offset:3px}
+@media(max-width:700px){
+  .lm-help-tour{padding:18px 18px 16px;max-height:calc(100dvh - 24px)}
+  .lm-help-tour-title{margin-right:66px}
+  .lm-help-tour-close{top:12px;right:12px}
+}

@@ -45,8 +45,44 @@ export function motionBox(motion,asset,width,height){
   const h=w*asset.height/asset.width;
   return {x:Math.min(width*motion.x/100,width-w),y:Math.min(height*motion.y/100,height-h),w,h};
 }
-export function createPage({id,name,state,photoCatalog,maxEdge=3840,motions=[]}){
-  return {id,name,composition:createProductionDocument({state,photoCatalog,maxEdge}),motions:clone(motions)};
+// Private clips remain references to the same-origin authenticated media proxy.
+ // They never contain bearer tokens, Google share URLs or arbitrary remote hosts.
+export function normalizeClip(value){
+  check(value&&identifier(value.id),'identificador do vídeo');
+  check(value.provider==='google'||value.provider==='dropbox','provedor do vídeo');
+  check(typeof value.fileId==='string'&&(
+    value.provider==='google'?/^[A-Za-z0-9_-]{5,200}$/.test(value.fileId):
+      /^id:[A-Za-z0-9_=-]{5,200}$/.test(value.fileId)),'identificador privado do vídeo');
+  check(['video/mp4','video/webm','video/quicktime'].includes(value.mimeType),'formato do vídeo');
+  const normalized={id:value.id,provider:value.provider,fileId:value.fileId,
+    name:title(value.name),mimeType:value.mimeType,
+    x:number(value.x,0,100,'posição horizontal do vídeo'),
+    y:number(value.y,0,100,'posição vertical do vídeo'),
+    width:number(value.width,5,100,'tamanho do vídeo'),
+    aspect:number(value.aspect,0.25,4,'proporção do vídeo'),
+    frameSeconds:number(value.frameSeconds,0,3600,'quadro do vídeo')};
+  check(Object.keys(value).sort().join(',')===Object.keys(normalized).sort().join(','),'campos do vídeo');
+  return normalized;
+}
+export function createClip(media,id){
+  check(media?.kind==='video','somente vídeos podem ser adicionados');
+  return normalizeClip({id,provider:media.provider,fileId:media.id,
+    name:String(media.name||'Vídeo').slice(0,120),mimeType:media.mimeType,
+    x:20,y:15,width:60,aspect:16/9,frameSeconds:0});
+}
+export function clipBox(clip,width,height){
+  const w=Math.min(width*clip.width/100,height*clip.aspect);
+  const h=w/clip.aspect;
+  return {x:Math.max(0,Math.min(width*clip.x/100,width-w)),
+    y:Math.max(0,Math.min(height*clip.y/100,height-h)),w,h};
+}
+export function privateClipUrl(clip){
+  const safe=normalizeClip(clip);
+  return '/api/acervo/media?provider='+safe.provider+'&id='+encodeURIComponent(safe.fileId);
+}
+export function createPage({id,name,state,photoCatalog,maxEdge=3840,motions=[],clips=[]}){
+  return {id,name,composition:createProductionDocument({state,photoCatalog,maxEdge}),
+    motions:clone(motions),clips:clips.map(normalizeClip)};
 }
 export function readSequence(value,photoCatalog,motionCatalog){
   check(value?.kind===SEQUENCE_KIND&&value.schemaVersion===SEQUENCE_VERSION,'versão da sequência');
@@ -56,7 +92,8 @@ export function readSequence(value,photoCatalog,motionCatalog){
   const pageIds=new Set(),catalog={...photoCatalog};
   const pages=value.pages.map(page=>{
     check(page&&identifier(page.id)&&!pageIds.has(page.id),'identificador de página repetido');pageIds.add(page.id);
-    check(Object.keys(page).sort().join(',')==='composition,id,motions,name','campos da página');
+    const keys=Object.keys(page).sort().join(',');
+    check(keys==='composition,id,motions,name'||keys==='clips,composition,id,motions,name','campos da página');
     title(page.name);
     Object.assign(catalog,privatePhotoCatalog(page.composition,catalog));
     const state=verifyRoundTrip(page.composition,catalog);
@@ -66,13 +103,19 @@ export function readSequence(value,photoCatalog,motionCatalog){
       const clean=normalizeMotion(motion,motionCatalog);
       check(!ids.has(clean.id),'identificador de motion repetido');ids.add(clean.id);return clean;
     });
-    return {id:page.id,name:page.name,composition:clone(page.composition),motions,state};
+    check(page.clips===undefined||(Array.isArray(page.clips)&&page.clips.length<=8),'vídeos da página');
+    const clips=(page.clips||[]).map(normalizeClip);
+    check(new Set(clips.map(clip=>clip.id)).size===clips.length,'vídeo repetido na página');
+    return {id:page.id,name:page.name,composition:clone(page.composition),motions,clips,state};
   });
   return {name:value.name,pages,photoCatalog:catalog};
 }
 export function sequenceDocument(name,pages){
   return {kind:SEQUENCE_KIND,schemaVersion:SEQUENCE_VERSION,name,
-    pages:pages.map(({id,name,composition,motions})=>({id,name,composition:clone(composition),motions:clone(motions)}))};
+    pages:pages.map(({id,name,composition,motions,clips=[]})=>({
+      id,name,composition:clone(composition),motions:clone(motions),
+      ...(clips.length?{clips:clips.map(normalizeClip)}:{})
+    }))};
 }
 export function movePage(pages,index,delta){
   const target=index+delta;if(target<0||target>=pages.length)return index;

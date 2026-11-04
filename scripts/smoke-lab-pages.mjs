@@ -11,7 +11,7 @@ const context=await browser.newContext({viewport:{width:1440,height:1000},accept
 const page=await context.newPage(),report={url,steps:[],errors:[]};
 page.on('pageerror',error=>report.errors.push(error.message));page.on('dialog',dialog=>dialog.accept());
 const pause=()=>page.waitForTimeout(170);
-async function surface(){await page.locator('[data-mobile-module="superficie"]').click();}
+async function surface(){await page.locator('button[data-mobile-module="superficie"]').click();}
 async function state(patch){
   await page.evaluate(patch=>{const b=window.LabProductionBridge;b.restore({...b.snapshot().state,...patch});},patch);await pause();
 }
@@ -37,7 +37,7 @@ try{
   await page.locator('#labSequenceName').press('Tab');
   await state({title:'PÁGINA UM',body:'Uma sequência editável.',bodyMode:'visivel',mContent:'off',background:'color',guides:'nenhuma'});
   await page.locator('#labPageName').fill('Abertura');await page.locator('#labPageName').press('Tab');
-  await page.locator('[data-mobile-module="m"]').click();
+  await page.locator('button[data-mobile-module="m"]').click();
   assert.equal(await page.locator('#labMotionOpen').isVisible(),true,'Motion library must be reachable from the element panel');
   await page.locator('#labMotionOpen').click();
   assert.equal(await page.locator('#labMotionLibraryItems [data-motion-asset]').count(),8);

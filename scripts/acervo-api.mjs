@@ -218,9 +218,11 @@ async function dropboxList(token,path,cursor){
   }).filter(Boolean),hasMore:Boolean(result.has_more),cursor:result.has_more?result.cursor:null};
 }
 function externalRedirect(url,message){
-  const destination=new URL("/laboratorio.html",url.origin);
+  // OAuth must return to the active composition editor, not the tools index.
+  const destination=new URL("/compor.html",url.origin);
+  destination.searchParams.set("studio","1");
   destination.searchParams.set("acervo",message);
-  destination.hash="labAcervo";
+  destination.hash="laboratorio";
   return new Response(null,{status:302,headers:{Location:destination.toString()}});
 }
 async function connect(request,url,env,provider){

@@ -24,7 +24,7 @@ for name in ("manual.html","tipografia.html","cores.html","composicao.html","lab
 typography=(Path("public")/"manual-headings.css").read_text(encoding="utf-8")
 for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
  assert typography.count(font)==1,f"Missing or duplicate official font in normative CSS: {font}"
-for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html"):
+for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","compor.html"):
  text=(Path("public")/page).read_text(encoding="utf-8")
  assert text.count('href="/manual-headings.css')==1,f"{page} must use one normative typography stylesheet"
  assert text.count('src="/manual-type-roles.js')==1,f"{page} must use one text role classifier"

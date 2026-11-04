@@ -9,6 +9,23 @@ page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw Error(m)};
 
 async function choose(group,value){
+  const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
+    marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
+  if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
+    await page.locator('button[data-mobile-module="'+module+'"]').click();
+  if(group==="mContent"&&value!=="off"){
+    const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
+    if(mode==="off"){
+      await page.locator('[data-lab-choice="mPresentation"][data-value="elemento"]').click();
+    }
+    // On photographic backgrounds the material is necessarily photography
+    // and is not offered as a redundant second decision.
+    if(value==="photo"&&await page.locator("#labBackground").inputValue()==="photo"){
+      assert(await page.locator("#labArtboard").getAttribute("data-m-content")==="photo",
+        "Photo background must activate a photo M");
+      return;
+    }
+  }
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
 }

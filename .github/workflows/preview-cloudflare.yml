@@ -154,6 +154,10 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
+      - name: Conferir pacote do domínio oficial sem publicar
+        run: |
+          node scripts/build-official.mjs dist/client dist/oficial-checked
+          npx --no-install wrangler deploy --dry-run --config dist/oficial-checked/wrangler.jsonc --outdir dist/oficial-check-bundle
       - name: Guardar Laboratório validado para o site oficial
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4

@@ -906,6 +906,8 @@
   // One guided help sequence for the entire Laboratory. Contextual ? buttons
   // remain independent; reading the tour never edits the composition state.
   const overviewTrigger=by("labOverviewHelp");
+  const studioTourTrigger=by("labTourStudioHelp");
+  const tourTriggers=[overviewTrigger,studioTourTrigger].filter(Boolean);
   const tourSteps=[
     {
       title:"Como funciona",

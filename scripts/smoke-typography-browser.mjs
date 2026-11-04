@@ -30,6 +30,10 @@ try{
   const g=await geometry();report.viewports.push(g);assert.equal(g.document,width,'No horizontal scroll');assert.deepEqual(g.overflow,[],'No clipped words');assert.equal(g.styles.length,1,'Exactly ONE title style everywhere');
   const bodySize=await page.locator('.body-sample').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize));
   const detailSize=await page.locator('.detail-specimen .detail').evaluate(e=>parseFloat(getComputedStyle(e).fontSize));assert.ok(bodySize>detailSize);
+  const expected=width<=760?[16,12]:[18,13];
+  assert.deepEqual([bodySize,detailSize],expected,'Official size on '+width+'px');
+  const labels=await page.locator('[data-lm-type-measure]').allTextContents();
+  assert.deepEqual(labels,expected.map(value=>value+' px'),'Typography index labels must reflect real computed specimens');
   if([1440,390].includes(width)){await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`typography-proof/cover-${width}.png`});await page.locator('#titulo').screenshot({path:`typography-proof/title-${width}.png`});}
   await page.locator('header.top a[href="#titulo"]').click();await page.waitForTimeout(100);
   const nav=await page.evaluate(()=>({global:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,local:document.querySelector('header.top').getBoundingClientRect().top,bottom:document.querySelector('header.top').getBoundingClientRect().bottom,title:document.querySelector('#titulo h2').getBoundingClientRect().top}));assert.ok(nav.local>=nav.global-1,'Menus do not overlap');assert.ok(nav.title>=nav.bottom-1,'Anchor title not covered');

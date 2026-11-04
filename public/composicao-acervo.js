@@ -73,13 +73,13 @@
   }
   function showSetup(provider){
     chooseVisual(provider);
-    setup.hidden=false;
-    browser.hidden=true;
     const name=serviceNames[provider];
     by("labAcervoSetupTitle").textContent=name+" ainda não está habilitado";
     by("labAcervoSetupText").textContent=
       "Para conectar sua conta, o administrador precisa registrar o aplicativo "+name+
       " e configurar suas credenciais OAuth no Cloudflare. Isso é feito uma única vez e não requer sua senha no Laboratório.";
+    browser.hidden=true;
+    setup.hidden=false;
     notify("O seletor de arquivos locais continua disponível.");
   }
   function openDialog(){

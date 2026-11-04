@@ -141,6 +141,103 @@ function renderMotionControls(){
   by('labMotionPreview').textContent=still?'VER MOVIMENTO':'VER QUADRO DO PDF';
   by('labMotionPreview').setAttribute('aria-pressed',String(still));
 }
+
+function placeClips(){
+  if(!pages.length)return;
+  const layer=by('labPageVideos');
+  if(!layer)return;
+  for(const clip of pages[current].clips||[]){
+    const video=[...layer.querySelectorAll('video')].find(node=>node.dataset.clipId===clip.id);
+    if(!video)continue;
+    const box=clipBox(clip,board.offsetWidth,board.offsetHeight);
+    Object.assign(video.style,{left:box.x+'px',top:box.y+'px',width:box.w+'px',height:box.h+'px'});
+  }
+}
+function renderClips(){
+  const layer=by('labPageVideos');
+  if(!layer||!pages.length)return;
+  for(const video of layer.querySelectorAll('video')){
+    video.pause();video.removeAttribute('src');video.load();
+  }
+  layer.replaceChildren();
+  for(const clip of pages[current].clips||[]){
+    const video=document.createElement('video');
+    video.dataset.clipId=clip.id;video.setAttribute('aria-label',clip.name);
+    video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
+    video.preload='auto';video.autoplay=clipsPlaying;
+    video.src=privateClipUrl(clip);
+    video.addEventListener('loadedmetadata',()=>{
+      if(pages[current]?.clips?.includes(clip)&&video.videoWidth&&video.videoHeight){
+        const aspect=video.videoWidth/video.videoHeight;
+        if(aspect>=.25&&aspect<=4&&Math.abs(aspect-clip.aspect)>.005){
+          clip.aspect=aspect;placeClips();commit();
+        }
+      }
+      if(clipsPlaying)video.play().catch(()=>{});
+    });
+    video.addEventListener('error',()=>{
+      if(layer.contains(video)){
+        by('labClipStatus').textContent='Vídeo indisponível. Verifique o acesso à conta ou o formato original.';
+      }
+    });
+    layer.append(video);
+    if(clipsPlaying)video.play().catch(()=>{});
+  }
+  placeClips();requestAnimationFrame(placeClips);renderClipControls();
+}
+function renderClipControls(){
+  const clips=pages[current]?.clips||[],select=by('labClipInstance');
+  select.replaceChildren();
+  for(const clip of clips)select.add(new Option(clip.name,clip.id));
+  if(!clips.some(clip=>clip.id===selectedClip))selectedClip=clips[0]?.id||'';
+  by('labClipSettings').hidden=!selectedClip;
+  by('labClipEmpty').hidden=Boolean(clips.length);
+  const clip=clips.find(item=>item.id===selectedClip);
+  if(!clip)return;
+  select.value=selectedClip;
+  for(const [input,field] of [['labClipX','x'],['labClipY','y'],['labClipWidth','width'],['labClipFrame','frameSeconds']]){
+    by(input).value=String(clip[field]);
+  }
+  by('labClipPlay').textContent=clipsPlaying?'PAUSAR VÍDEO':'REPRODUZIR VÍDEO';
+  by('labClipPlay').setAttribute('aria-pressed',String(clipsPlaying));
+}
+async function capturePrivateClips(width,height){
+  const items=[],layer=by('labPageVideos');
+  for(const clip of pages[current].clips||[]){
+    const video=[...layer.querySelectorAll('video')].find(node=>node.dataset.clipId===clip.id);
+    if(!video)throw Error('Vídeo do projeto não encontrado: '+clip.name);
+    if(video.readyState<2)await new Promise((resolve,reject)=>{
+      const timeout=setTimeout(()=>{cleanup();reject(Error('Vídeo não carregou: '+clip.name));},15000);
+      const done=()=>{cleanup();resolve();};
+      const fail=()=>{cleanup();reject(Error('Vídeo indisponível: '+clip.name));};
+      const cleanup=()=>{clearTimeout(timeout);video.removeEventListener('loadeddata',done);video.removeEventListener('error',fail);};
+      video.addEventListener('loadeddata',done,{once:true});
+      video.addEventListener('error',fail,{once:true});
+    });
+    video.pause();
+    const target=Math.max(0,Math.min(clip.frameSeconds,Number.isFinite(video.duration)?
+      Math.max(0,video.duration-.05):clip.frameSeconds));
+    if(target>0&&Math.abs(video.currentTime-target)>.08)await new Promise((resolve,reject)=>{
+      const timeout=setTimeout(()=>{cleanup();reject(Error('Quadro de vídeo não carregou: '+clip.name));},15000);
+      const done=()=>{cleanup();resolve();};
+      const fail=()=>{cleanup();reject(Error('Vídeo indisponível: '+clip.name));};
+      const cleanup=()=>{clearTimeout(timeout);video.removeEventListener('seeked',done);video.removeEventListener('error',fail);};
+      video.addEventListener('seeked',done,{once:true});
+      video.addEventListener('error',fail,{once:true});
+      video.currentTime=target;
+    });
+    const canvas=document.createElement('canvas');
+    canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+    if(!canvas.width||!canvas.height)throw Error('Dimensões do vídeo indisponíveis: '+clip.name);
+    canvas.getContext('2d').drawImage(video,0,0);
+    const box=clipBox(clip,width,height);
+    items.push({kind:'image',privateClipId:clip.id,source:canvas.toDataURL('image/png'),
+      sourceWidth:canvas.width,assetName:clip.name,...box});
+    if(clipsPlaying)video.play().catch(()=>{});
+  }
+  return items;
+}
+
 function closeLibrary(){
   by('labMotionLibrary').close();
   for(const video of by('labMotionLibrary').querySelectorAll('video')){video.pause();video.removeAttribute('src');video.load();}

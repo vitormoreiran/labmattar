@@ -121,6 +121,7 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash

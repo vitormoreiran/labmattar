@@ -857,3 +857,21 @@
   outline:2px solid #181818;
   outline-offset:3px;
 }
+
+/* A aplicacao e a decisao principal. Conteudo, marcador e escala aparecem
+   somente quando fazem sentido para o modo ativo. */
+#laboratorio .lm-lab-m-application-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#laboratorio .lm-lab-m-application-grid .lm-ctrl-choice{
+  min-height:51px;justify-content:center;align-items:center;padding:9px 4px;
+}
+#laboratorio #labMContentField[hidden],
+#laboratorio #labOpenPhotoFromM[hidden],
+#laboratorio .lm-marker-field[hidden],
+#laboratorio .lm-m-scale-field[hidden]{display:none!important}
+#laboratorio #labMContentField{border-top:1px solid var(--ctrl-border);margin-top:12px;padding-top:12px}
+#laboratorio #labMContentField .lm-ctrl-choice{min-height:48px;justify-content:center}
+#laboratorio #labOpenPhotoFromM{
+  border:0;background:transparent;color:var(--ctrl-sub);padding:10px 0 3px;
+  text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:3px
+}
+#laboratorio #labOpenPhotoFromM:hover{color:var(--ctrl-ink)}

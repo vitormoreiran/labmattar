@@ -354,7 +354,7 @@ async function init(){
     const saved=JSON.parse(localStorage.getItem(key)||'null');
     if(saved){const result=readSequence(saved.document,bridge().snapshot().photoCatalog,catalog);
       switching=true;sections=result.sections||null;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
-      bridge().restore(result.pages[current].state);switching=false;await settled();}
+      bridge().restore(result.pages[current].state);by('labExportSize').value=String(pages[current].composition.output.maxEdge);switching=false;await settled();}
   }catch{switching=false;let recovered=false;try{localStorage.setItem(key+'-recovery',localStorage.getItem(key)||'');recovered=true;}catch{}notify('O rascunho anterior não pôde ser reaberto.'+(recovered?' Uma cópia de recuperação foi preservada neste navegador.':' Abra seu projeto JSON para recuperar a sequência.'),true);}
   initSections();
   initDelivery();

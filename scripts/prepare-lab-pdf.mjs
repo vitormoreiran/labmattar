@@ -4,3 +4,7 @@ await mkdir('public/vendor',{recursive:true});
 await build({entryPoints:['tools/laboratorio-export/pdf.mjs'],outfile:'public/vendor/lab-pdf.js',bundle:true,
   format:'esm',platform:'browser',target:'es2022',minify:true,legalComments:'linked'});
 console.log('Laboratório: exportador PDF preparado.');
+
+await build({entryPoints:['tools/laboratorio-export/video.mjs'],outfile:'public/vendor/lab-video.js',bundle:true,
+  format:'esm',platform:'browser',target:'es2022',minify:true,legalComments:'linked'});
+console.log('Laboratório: exportador MP4 preparado.');

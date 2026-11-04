@@ -43,6 +43,7 @@
         <div class="lab-delivery-formats" role="group" aria-label="Formato de saída">
           <button type="button" data-delivery-format="pdf" aria-pressed="true"><span class="body">PDF</span><span class="detail">Apresentação completa · quadros estáticos</span></button>
           <button type="button" data-delivery-format="html" aria-pressed="false"><span class="body">Site HTML</span><span class="detail">Prévia navegável · arquivo para o site</span></button>
+          <button type="button" data-delivery-format="mp4" aria-pressed="false"><span class="body">Vídeo MP4</span><span class="detail">Motions, vídeos e entrada dos textos</span></button>
           <button type="button" data-delivery-format="png" aria-pressed="false"><span class="body">Imagem PNG</span><span class="detail">Somente a página em edição</span></button>
         </div>
         <div id="labWebPublishing" class="lab-publication-note" hidden>
@@ -53,10 +54,18 @@
           <p class="lab-publication-state">A publicação no domínio oficial passa por revisão no GitHub. Baixe o HTML e prepare o pacote da apresentação; após a aprovação no repositório, o deploy atualiza o capítulo 4. Baixar o arquivo, sozinho, não publica.</p>
           <p class="detail">No site, os quatro cantos são reservados à navegação. As assinaturas de cada página permanecem no PDF.</p>
         </div>
+        <div id="labVideoOptions" class="lab-video-options" hidden>
+          <label for="labVideoScope">PÁGINAS NO VÍDEO<select id="labVideoScope"><option value="current">Página em edição</option><option value="all">Sequência completa</option></select></label>
+          <label for="labVideoSeconds">SEGUNDOS POR PÁGINA<input id="labVideoSeconds" type="number" min="2" max="30" step="0.5" value="8"></label>
+          <label for="labVideoQuality">DEFINIÇÃO<select id="labVideoQuality"><option value="fullhd">Full HD / maior definição</option><option value="hd">HD / arquivo mais leve</option></select></label>
+          <label class="lab-video-entrance"><input id="labVideoText" type="checkbox" checked> Animar a entrada dos textos</label>
+          <p class="detail">30 quadros por segundo, sem áudio. O vídeo mantém o formato da página. Na sequência, todas as páginas precisam ter o mesmo formato; a passagem acontece por corte. Até 3 minutos no total.</p>
+          <progress id="labVideoProgress" max="100" value="0" aria-label="Progresso da exportação de vídeo" hidden></progress>
+        </div>
         <div class="lab-delivery-quality"><label class="detail" for="labExportSize">QUALIDADE DAS IMAGENS</label><select id="labExportSize" aria-label="Qualidade das imagens exportadas"><option value="3840">4K / maior definição</option><option value="1920">2K / arquivo mais leve</option></select><p class="detail">O formato de cada página é o escolhido na montagem. No PDF, textos e vetores permanecem nítidos.</p></div>
       </section>
     </div>
-    <footer><div class="lab-delivery-result"><p id="labDeliveryScope" class="detail"></p><output id="labDeliveryStatus" class="detail" role="status" aria-live="polite"></output></div><div class="lab-delivery-actions"><button type="button" id="labDeliveryBack">VOLTAR À MONTAGEM</button><button type="button" id="labExportPdf">BAIXAR PDF</button><button type="button" id="labExportHtml" hidden>BAIXAR SITE HTML</button><button type="button" id="labExportPng" hidden aria-describedby="labDeliveryScope labDeliveryStatus">BAIXAR PNG</button></div></footer>
+    <footer><div class="lab-delivery-result"><p id="labDeliveryScope" class="detail"></p><output id="labDeliveryStatus" class="detail" role="status" aria-live="polite"></output></div><div class="lab-delivery-actions"><button type="button" id="labDeliveryBack">VOLTAR À MONTAGEM</button><button type="button" id="labVideoCancel" hidden>CANCELAR VÍDEO</button><button type="button" id="labExportMp4" hidden>BAIXAR MP4</button><button type="button" id="labExportPdf">BAIXAR PDF</button><button type="button" id="labExportHtml" hidden>BAIXAR SITE HTML</button><button type="button" id="labExportPng" hidden aria-describedby="labDeliveryScope labDeliveryStatus">BAIXAR PNG</button></div></footer>
   </dialog>
   <div class="lm-lab-workspace">
     <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">

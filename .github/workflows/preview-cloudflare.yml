@@ -22,6 +22,7 @@ on:
       - 'scripts/test-lab-sequence.mjs'
       - 'scripts/test-private-video-html.mjs'
       - 'scripts/smoke-lab-pages.mjs'
+      - 'scripts/smoke-lab-video.mjs'
       - 'scripts/verify-lab-pdf.py'
       - 'package.json'
       - 'package-lock.json'
@@ -137,7 +138,7 @@ jobs:
         run: |
           python3 -m pip install --quiet pypdf==6.10.0
           sudo apt-get update -qq
-          sudo apt-get install --no-install-recommends -y poppler-utils
+          sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
@@ -148,6 +149,7 @@ jobs:
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-sections.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-video.mjs
           REDES_URL=http://127.0.0.1:8765/redes.html node scripts/smoke-redes-browser.mjs
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
           COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs

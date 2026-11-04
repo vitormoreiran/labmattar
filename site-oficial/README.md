@@ -31,3 +31,13 @@ Sesc, Bradesco e Simpósio mantêm suas rotas. A home e o acesso atual ao capít
 Não edite os arquivos recuperados diretamente para corrigir o Laboratório. Edite `design/`, `public/`, `tools/` e os scripts de montagem. Se o domínio receber outra publicação por fora do GitHub, a verificação interrompe o deploy até que essa versão seja recuperada e conferida. Isso impede que um build antigo desfaça alterações publicadas por outro chat.
 
 As versões do GitHub recebem a etiqueta `github-official-<commit>`. O Cloudflare mantém o histórico; uma reversão deve escolher explicitamente a versão desejada. O workflow confere a revisão servida e a disponibilidade da home, dos três projetos e do Laboratório depois do deploy.
+
+## Vídeo MP4 no Laboratório
+
+Em **Revisar e exportar → Vídeo MP4**, escolha a página em edição ou a sequência completa, a duração de cada página (2 a 30 segundos) e HD ou Full HD. O arquivo usa H.264, 30 fps e não contém áudio. A entrada dos textos pode ser ligada ou desligada; motions e vídeos selecionados continuam animados. A sequência usa cortes entre páginas e requer o mesmo formato em todas elas. Limite total: 3 minutos.
+
+O renderizador usa as mesmas camadas, fontes, máscaras e enquadramentos do PNG/PDF. Vídeos de fundo de uma mesma seção continuam no tempo entre páginas. Cada motion começa do início em cada página. O quadro escolhido para o PDF não limita o vídeo. O formato quadrado sai em 1080×1080 (Full HD) ou 720×720 (HD); os demais mantêm o formato com maior lado de 1920 ou 1280 px, arredondado a dimensões pares.
+
+Use Chrome ou Edge atualizado com WebCodecs/H.264 disponível. Mantenha a aba aberta durante a renderização. **Cancelar vídeo** interrompe a codificação e preserva o projeto; falhas de mídia ou codec não geram arquivo parcial. A exportação é processada no navegador e não publica a apresentação. PDF, PNG e HTML seguem disponíveis.
+
+Validação: smoke-lab-video.mjs baixa MP4 reais em quatro formatos, verifica H.264/30 fps/ausência de áudio/duração com ffprobe, compara o quadro final com a cena nativa e testa sequência com motion e vídeo de fundo, cancelamento e formatos incompatíveis.

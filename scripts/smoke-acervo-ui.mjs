@@ -47,6 +47,7 @@ try{
     "Dropbox icon displayed in modal");
   await page.locator("#labAcervoConnect-google").click();
   await page.locator("#labAcervoSetup").waitFor({state:"visible"});
+  await page.waitForFunction(()=>document.getElementById("labAcervoSetupTitle")?.textContent?.includes("Google Drive"));
   assert((await page.locator("#labAcervoSetupTitle").innerText()).includes("Google Drive"),
     "Missing OAuth setup shows an actionable inline explanation");
   assert((await page.locator("#labAcervoSetupText").innerText()).includes("Cloudflare"),

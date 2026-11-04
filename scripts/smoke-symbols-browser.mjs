@@ -235,10 +235,12 @@ try {
     assert.equal(socialResponse.status(),200,'Redes Sociais HTTP 200');
     await socialPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await socialPage.locator('main > section.lm-manual-cover').count(),1,'Social page has canonical cover');
-    assert.equal(await socialPage.locator('#lmSocialFeedGrid > .lm-social-tile').count(),9,'Social feed presents nine posts');
+    assert.equal(await socialPage.locator('#ssFeedGrid > .ss-feed-post').count(),9,'Social feed presents nine real posts');
     assert.equal(await socialPage.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1,'Social nav active');
-    await socialPage.locator('[data-feed-mode="agrupado"]').click();
-    assert.equal(await socialPage.locator('#lmSocialFeedGrid').getAttribute('data-mode'),'agrupado','Feed comparison changes sequence');
+    const before=await socialPage.locator('#ssFeedGrid > .ss-feed-post').evaluateAll(nodes=>nodes.map(node=>node.dataset.id));
+    await socialPage.locator('[data-feed-preset="projetos"]').click();
+    const grouped=await socialPage.locator('#ssFeedGrid > .ss-feed-post').evaluateAll(nodes=>nodes.map(node=>node.dataset.id));
+    assert.notDeepEqual(grouped,before,'Editorial feed comparison changes sequence');
   } finally { await socialPage.close(); }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {
     await page.setViewportSize({width,height});await page.waitForTimeout(120);

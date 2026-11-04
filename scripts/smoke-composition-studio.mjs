@@ -531,6 +531,7 @@ try{
     // A photographic M must be turned off before the color-only solid option
     // is available. This is a deliberate product rule, not a visual failure.
     await choose("mContent","off");
+    await choose("mPresentation","elemento");
     const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
     await mButton.scrollIntoViewIfNeeded();
     await mButton.click();

@@ -215,7 +215,7 @@ function readSectionSequence(value,photoCatalog,motionCatalog){
     check(extra[b.photo]===b.uri,'fotografia do fundo não cadastrada');Object.assign(base.photoCatalog,extra);
     // O contrato de composição valida cores, limites de foco e referências.
     createProductionDocument({state:sectionState(base.pages[0].state,section),photoCatalog:base.photoCatalog});
-    return clone(section);
+    const normalized=clone(section);if(b.video)normalized.background.video=normalizeBackgroundVideo(b.video);return normalized;
   });
   let previous=-1;
   const pages=base.pages.map((page,index)=>{

@@ -241,7 +241,7 @@
     setup.hidden=true;
     notify("Verificando conexão com "+serviceNames[provider]+"…");
     try{
-      if(!statusData)await refresh();
+      await refresh();
       const state=statusData.providers[provider];
       if(!state.configured){showSetup(provider);return}
       if(!state.connected){
@@ -265,8 +265,9 @@
   });
   by("labAcervoClose").addEventListener("click",closeDialog);
   by("labAcervoProvidersBack").addEventListener("click",()=>{
+    const previous=activeProvider;
     displayProviders();notify("Selecione a origem das fotografias.");
-    by("labAcervoConnect-"+(activeProvider||"google")).focus({preventScroll:true});
+    by("labAcervoConnect-"+(previous||"google")).focus({preventScroll:true});
   });
   by("labAcervoBack").addEventListener("click",()=>{
     const parent=folder.split("/").filter(Boolean).slice(0,-1);

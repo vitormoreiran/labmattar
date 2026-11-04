@@ -2723,3 +2723,58 @@ html body.lm-studio-open main #laboratorio .lm-lab-inspector .lm-composition-mod
   body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{margin:0!important}
   body.lm-studio-open #laboratorio .lm-composition-module-index{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
+
+
+/* M / interface sequencial. Uma escolha principal, apenas os ajustes ativos.
+   Mantem os estados e valores da matriz editorial sem criar outros perfis. */
+body.lm-studio-open #laboratorio .lm-lab-m-application-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:4px!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-m-application-grid .lm-ctrl-choice{
+  min-width:0!important;
+  min-height:49px!important;
+  height:49px!important;
+  padding:9px 3px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:0!important;
+  font-size:inherit!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-m-application-grid .lm-ctrl-choice::before,
+body.lm-studio-open #laboratorio #labMContentField .lm-ctrl-choice::before{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio #labMContentField[hidden],
+body.lm-studio-open #laboratorio #labOpenPhotoFromM[hidden],
+body.lm-studio-open #laboratorio .lm-marker-field[hidden],
+body.lm-studio-open #laboratorio .lm-m-scale-field[hidden],
+body.lm-studio-open #laboratorio .lm-photo-library-field[hidden],
+body.lm-studio-open #laboratorio .lm-ctrl-focus-field[hidden]{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio #labMContentField{
+  margin-top:15px!important;
+  padding-top:13px!important;
+  border-top:1px solid #d8d6d0!important;
+}
+body.lm-studio-open #laboratorio #labMContentField .lm-ctrl-choice{
+  min-height:43px!important;height:43px!important;
+  justify-content:center!important;padding:7px 9px!important;
+}
+body.lm-studio-open #laboratorio #labOpenPhotoFromM{
+  display:block;
+  margin-top:9px;
+  padding:9px 0;
+  border:0;
+  background:transparent;
+  color:#66625d;
+  text-align:left;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+body.lm-studio-open #laboratorio #labOpenPhotoFromM:hover{color:#181818}
+body.lm-studio-open #laboratorio .lm-lab-m-flow{gap:0!important}
+body.lm-studio-open #laboratorio #labMContentField .lm-ctrl-choice-grid{gap:5px!important}

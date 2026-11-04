@@ -11,6 +11,8 @@
 html{scroll-behavior:smooth}
 html body{background:var(--social-paper);color:var(--social-ink)}
 html [hidden]{display:none!important}
+/* O quadro inclui seus respiros na largura nominal do formato. */
+.lm-social-section *, .lm-social-section *::before, .lm-social-section *::after{box-sizing:border-box}
 html button,html select{color:inherit}
 a{color:inherit;text-underline-offset:4px}
 button{cursor:pointer}

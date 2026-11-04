@@ -55,7 +55,7 @@ for(const provider of ["google","dropbox"]){
   assert.match(cookie,/Secure/);
   assert.match(cookie,/SameSite=Lax/);
   const location=new URL(oauth.headers.get("location"));
-  assert.match(location.hostname,provider==="google"?/accounts\\.google\\.com/:/dropbox\\.com/);
+  assert.equal(location.hostname,provider==="google"?"accounts.google.com":"www.dropbox.com");
   assert.equal(location.searchParams.get("code_challenge_method"),"S256");
   assert.ok(location.searchParams.get("state"),"CSRF state required");
   assert.equal(location.searchParams.get("redirect_uri"),

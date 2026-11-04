@@ -10,6 +10,8 @@ on:
       - 'design/motion.html'
       - 'design/laboratorio.html'
       - 'design/redes.html'
+      - 'scripts/smoke-redes-browser.mjs'
+      - 'public/redes-acervo/**'
       - 'design/compor.html'
       - 'public/composicao-pages*'
       - 'public/composicao-lab-export.js'
@@ -142,6 +144,7 @@ jobs:
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
+          REDES_URL=http://127.0.0.1:8765/redes.html node scripts/smoke-redes-browser.mjs
           COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
@@ -232,6 +235,7 @@ jobs:
           CHECK_EDITOR: '1'
         run: |
           node scripts/wait-symbols-preview.mjs
+          curl --fail --silent --show-error --location https://labmattar-identidade-previa.vitormoreiran.workers.dev/redes.html >/dev/null
           node scripts/smoke-symbols-browser.mjs
           COLORS_URL=https://labmattar-identidade-previa.vitormoreiran.workers.dev/cores.html node scripts/smoke-colors-browser.mjs
       - name: Salvar evidencias visuais e relatorio
@@ -242,6 +246,7 @@ jobs:
           path: |
             symbols-proof/
             colors-proof/
+            redes-proof/
             production-proof/
             laboratorio-export-4k.png
             composition-studio-*.png

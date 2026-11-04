@@ -7,7 +7,8 @@ export const SCHEMA_VERSION=1;
 export const OFFICIAL_M_MASK="/ambiente-editorial/media/m-publicado.svg";
 const FORMATS={horizontal:[16,9],vertical:[9,16],quadrado:[1,1],editorial:[Math.SQRT2,1]};
 const CHOICES={
-  color:["neutral","beige","green","red","blue","brown"],
+  color:["neutral","white","black","beige","green","red","blue","brown"],
+  inkColor:["auto","neutral","white","black","beige","green","red","blue","brown"],
   guides:["nenhuma","margens","grid"],
   type:["alternada","univers","perpetua"],
   background:["color","photo"],
@@ -86,6 +87,7 @@ function captureState(state,photoCatalog){
   const clean={
     format:enumValue(state.format,Object.keys(FORMATS),"formato"),
     color:enumValue(state.color,CHOICES.color,"cor"),
+    inkColor:enumValue(state.inkColor??"auto",CHOICES.inkColor,"cor do texto"),
     margin:bounded(state.margin,4,16,"margem"),
     guides:enumValue(state.guides,CHOICES.guides,"guias"),
     marker:text(state.marker,40,"marcadores"),
@@ -142,6 +144,7 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
       surface:{format:s.format,color:s.color,background:s.background,guides:s.guides,marginPercent:s.margin},
       reading:{widthPercent:s.textWidth},
       text:{
+        inkColor:s.inkColor,
         title:{role:"title",value:s.title,treatment:s.type,scalePercent:s.titleScale},
         body:{role:"body",value:s.body,visible:s.bodyMode==="visivel"},
         detail:{role:"detail",metadata:{kicker:s.kicker,footerLeft:s.footerLeft,footerRight:s.footerRight},signature:s.signature}
@@ -171,7 +174,7 @@ export function readProductionDocument(doc,photoCatalog){
   const expected=dimensionsFor(page.surface?.format,doc.output.maxEdge);
   check(doc.output.width===expected.width&&doc.output.height===expected.height,"dimensões da página");
   const state={
-    format:page.surface.format,color:page.surface.color,margin:page.surface.marginPercent,
+    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",margin:page.surface.marginPercent,
     guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,
     titleScale:t.title?.scalePercent,type:t.title?.treatment,background:page.surface.background,
     mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,
@@ -189,6 +192,8 @@ export function verifyRoundTrip(doc,photoCatalog){
   // Earlier v1 documents have no markerFocus. Keep them readable without
   // inventing a new schema version; a missing value means blur in markers.
   if(doc.pages[0].m.markerFocus===undefined)delete normalized.pages[0].m.markerFocus;
+  // Legacy v1 documents remain readable without a color field.
+  if(doc.pages[0].text.inkColor===undefined)delete normalized.pages[0].text.inkColor;
   check(JSON.stringify(doc)===JSON.stringify(normalized),"documento alterado ou campos não reconhecidos");
   return state;
 }

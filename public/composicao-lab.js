@@ -48,7 +48,7 @@
   };
   const presets={
     tipografia:{
-      format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
+      format:"horizontal",color:"neutral",inkColor:"auto",margin:7,guides:"nenhuma",
       textWidth:61,titleScale:100,type:"alternada",
       background:"color",mContent:"off",mPresentation:"elemento",photo:"64",marker:"none",markerFocus:"blur",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS E\nPROCESSOS",
@@ -56,7 +56,7 @@
       ...defaultMetadata
     },
     mascara:{
-      format:"horizontal",color:"neutral",margin:7,guides:"margens",
+      format:"horizontal",color:"neutral",inkColor:"auto",margin:7,guides:"margens",
       textWidth:40,titleScale:95,type:"alternada",
       background:"color",mContent:"photo",mPresentation:"elemento",photo:"64",marker:"none",markerFocus:"blur",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
@@ -64,7 +64,7 @@
       ...defaultMetadata
     },
     imagem:{
-      format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
+      format:"horizontal",color:"neutral",inkColor:"auto",margin:7,guides:"nenhuma",
       textWidth:80,titleScale:95,type:"alternada",
       background:"photo",mContent:"off",mPresentation:"elemento",photo:"179",marker:"none",markerFocus:"blur",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
@@ -73,7 +73,7 @@
     }
   };
   const fields={
-    format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
+    format:"labFormat",color:"labColor",inkColor:"labInkColor",margin:"labMargin",guides:"labGuides",
     marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
     mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
@@ -81,14 +81,40 @@
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
   const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
-  const palette={
-    neutral:["#f7f6f2","#181818"],
-    beige:["#e6dbcf","#181818"],
-    green:["#8fd81b","#181818"],
-    red:["#e22e24","#181818"],
-    blue:["#1f3554","#f7f6f2"],
-    brown:["#5b463e","#f7f6f2"]
-  };
+  // Approved digital colors from design/identity-system.json (no free-picker).
+  const palette=Object.freeze({
+    neutral:"#F7F6F2",white:"#FFFFFF",black:"#181818",
+    beige:"#E6DBCF",green:"#8FD81B",red:"#E22E24",
+    blue:"#1F3554",brown:"#5B463E"
+  });
+  // The existing automatic contrast remains the initial recommendation.
+  const automaticInk=Object.freeze({
+    neutral:"black",white:"black",black:"white",beige:"black",
+    green:"black",red:"black",blue:"white",brown:"white"
+  });
+  function contrastRatio(foreground,background){
+    const light=hex=>{
+      const parts=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255);
+      const [r,g,b]=parts.map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);
+      return .2126*r+.7152*g+.0722*b;
+    };
+    const a=light(foreground),b=light(background);
+    return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);
+  }
+  function updateInkContrast(effectiveBackground,ink){
+    const note=by("labInkContrast");
+    if(!note)return;
+    if(effectiveBackground==="photo"){
+      note.dataset.contrast="image";
+      note.textContent="Sobre fotografia ou vídeo, confira o contraste no enquadramento.";
+      return;
+    }
+    const ratio=contrastRatio(ink,palette[state.color]);
+    note.dataset.contrast=ratio>=4.5?"ok":"warning";
+    note.textContent=ratio>=4.5?
+      "Contraste adequado para leitura.":
+      "Contraste baixo: escolha outra cor de texto ou fundo.";
+  }
   const photos={
     "64":"/ambiente-editorial/media/BOXDOSENTIR-64.jpg",
     "179":"/ambiente-editorial/media/BOXDOSENTIR-179.jpg",
@@ -216,6 +242,7 @@
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=state.background==="photo";
+    by("labInkColor").disabled=false;
     by("labMarker").disabled=fullM;
     by("labMContentField").hidden=!mActive||state.background==="photo";
     by("labOpenPhotoFromM").hidden=!(mActive&&backgroundPhoto);
@@ -361,9 +388,16 @@
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
     by("labMMarkers").dataset.marker=markerActive?state.marker:"none";
-    const [bg,ink]=effectiveBackground==="color"?palette[state.color]:["#111713","#f7f6f2"];
+    const bg=palette[state.color];
+    const automatic=effectiveBackground==="color"?
+      palette[automaticInk[state.color]]:palette.neutral;
+    const ink=state.inkColor==="auto"?automatic:palette[state.inkColor];
+    board.dataset.textColor=state.inkColor;
     board.style.setProperty("--lab-bg",bg);
     board.style.setProperty("--lab-ink",ink);
+    // Text color must not also repaint the solid M.
+    board.style.setProperty("--lab-m-ink",automatic);
+    updateInkContrast(effectiveBackground,ink);
     const src=photos[state.photo];
     previewImg.src=src;
     maskImg.src=src;
@@ -864,6 +898,12 @@
     labBodyInput:["Editar texto de leitura",
       "Edite o parágrafo no painel ou clique nele diretamente na página.",
       "A largura de leitura e os limites da superfície continuam aplicados durante a edição."],
+    labColor:["Cor do fundo",
+      "Escolhe um campo cromático entre as cores oficiais do manual, preto e branco.",
+      "Este controle fica disponível quando Fundo está configurado como Cor."],
+    labInkColor:["Cor do texto",
+      "Aplica a mesma cor a Título, Corpo e Detalhe, sem criar novos tratamentos tipográficos.",
+      "Padrão mantém o contraste recomendado. A interface avisa se outra combinação prejudicar a leitura."],
     labBackground:["Fundo",
       "Define se a superfície usa cor ou mídia visual (fotografia ou vídeo).",
       "O fundo é independente do M."],

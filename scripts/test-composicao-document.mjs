@@ -12,7 +12,7 @@ const photoCatalog={
   "151":"/ambiente-editorial/media/BOXDOSENTIR-151.jpg"
 };
 const state={
-  format:"horizontal",color:"neutral",margin:7,guides:"margens",
+  format:"horizontal",color:"neutral",inkColor:"auto",margin:7,guides:"margens",
   marker:"both",textWidth:61,titleScale:100,type:"alternada",
   background:"photo",mContent:"photo",mPresentation:"elemento",photo:"64",markerFocus:"blur",
   mScale:60,focusX:45,focusY:55,symbol:"M.svg",
@@ -114,4 +114,34 @@ test("foco dos marcadores preserva a inversão da fotografia na montagem",()=>{
   const legacy=generate();
   delete legacy.pages[0].m.markerFocus;
   assert.equal(verifyRoundTrip(legacy,photoCatalog).markerFocus,"blur");
+});
+
+test("fundo e texto independentes usam apenas as oito opções do manual",()=>{
+  const manual=JSON.parse(readFileSync("design/identity-system.json","utf8"));
+  const lab=readFileSync("public/composicao-lab.js","utf8");
+  const colors={neutral:manual.colors.base.paper,black:manual.colors.base.ink,
+    white:"#FFFFFF",...manual.colors.palette};
+  for(const [key,hex] of Object.entries(colors)){
+    assert.ok(lab.includes(key+':"'+hex+'"'),"A cor "+key+" deve vir do manifesto oficial");
+    const colored=generate({background:"color",color:key,inkColor:key});
+    assert.equal(colored.pages[0].surface.color,key);
+    assert.equal(colored.pages[0].text.inkColor,key);
+    assert.equal(verifyRoundTrip(colored,photoCatalog).inkColor,key);
+  }
+  const independent=generate({background:"color",color:"black",inkColor:"white"});
+  assert.equal(independent.pages[0].surface.color,"black");
+  assert.equal(independent.pages[0].text.inkColor,"white");
+  assert.throws(()=>generate({inkColor:"lilac"}),/cor do texto/);
+  assert.throws(()=>generate({color:"lilac"}),/cor/);
+});
+test("projetos v1 sem a cor do texto preservam o contraste automático",()=>{
+  const previous=generate();
+  delete previous.pages[0].text.inkColor;
+  const restored=verifyRoundTrip(previous,photoCatalog);
+  assert.equal(restored.inkColor,"auto");
+  assert.equal(restored.color,"neutral");
+  const withInk=generate({inkColor:"blue"});
+  const rogue=JSON.parse(JSON.stringify(withInk));
+  rogue.pages[0].text.inkColor="custom";
+  assert.throws(()=>verifyRoundTrip(rogue,photoCatalog),/cor do texto/);
 });

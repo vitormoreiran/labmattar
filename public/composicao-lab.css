@@ -322,7 +322,7 @@
 /* Foreground M remains a separate layer, photo or solid. */
 .lm-lab-board[data-m-content=off] .lm-lab-m-photo{display:none!important}
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
-  display:block!important;background:var(--lab-ink)!important;
+  display:block!important;background:var(--lab-m-ink,var(--lab-ink))!important;
 }
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo img{display:none!important}
 .lm-lab-board[data-m-content=photo] .lm-lab-m-photo{
@@ -387,7 +387,7 @@
   mask-image:url('/ambiente-editorial/media/m-publicado.svg');
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
 }
-.lm-lab-solid-contrast .lm-lab-reading{color:#181818}
+.lm-lab-solid-contrast .lm-lab-reading{color:var(--lab-ink)}
 .lm-lab-solid-contrast *{pointer-events:none!important;user-select:none!important}
 
 

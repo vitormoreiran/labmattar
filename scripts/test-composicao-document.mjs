@@ -14,7 +14,7 @@ const photoCatalog={
 const state={
   format:"horizontal",color:"neutral",margin:7,guides:"margens",
   marker:"both",textWidth:61,titleScale:100,type:"alternada",
-  background:"photo",mContent:"solid",mPresentation:"elemento",photo:"64",
+  background:"photo",mContent:"photo",mPresentation:"elemento",photo:"64",markerFocus:"blur",
   mScale:60,focusX:45,focusY:55,symbol:"M.svg",
   title:"CADA CORPO\nABRE UM MUNDO",body:"Uma experiência de encontro.",
   bodyMode:"visivel",kicker:"LABMATTAR / 2026",
@@ -46,6 +46,7 @@ test("o projeto preserva a composição e os três tratamentos de texto",()=>{
   assert.equal(doc.motion.engine,"matriz-vetorial");
   assert.equal(doc.motion.projectRef,null);
   assert.equal(doc.output.masterVerified,false);
+  assert.equal(doc.pages[0].m.markerFocus,"blur");
 });
 test("2K e 4K independem da janela e respeitam as proporções",()=>{
   const profiles={
@@ -103,4 +104,14 @@ test("o contrato consulta a fonte real de IDs da Matriz sem copiar o motor",()=>
   assert.equal(doc.motion.status,"não-vinculado");
   assert.equal(doc.pages[0].m.maskAssetId,"identity:m-mask");
   assert.notEqual(doc.pages[0].m.maskAssetId,"M");
+});
+
+test("foco dos marcadores preserva a inversão da fotografia na montagem",()=>{
+  const doc=generate({markerFocus:"sharp"});
+  assert.equal(doc.pages[0].m.markerFocus,"sharp");
+  assert.deepEqual(verifyRoundTrip(doc,photoCatalog),{...state,markerFocus:"sharp"});
+  assert.throws(()=>generate({background:"photo",mContent:"solid"}),/M sólido/);
+  const legacy=generate();
+  delete legacy.pages[0].m.markerFocus;
+  assert.equal(verifyRoundTrip(legacy,photoCatalog).markerFocus,"blur");
 });

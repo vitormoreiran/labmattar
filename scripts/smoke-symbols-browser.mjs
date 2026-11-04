@@ -10,11 +10,10 @@ const page = await browser.newPage({viewport:{width:1440,height:900},reducedMoti
 page.on('pageerror', error => report.errors.push(error.message));
 page.on('requestfailed', request => report.failedRequests.push({url:request.url(),error:request.failure()?.errorText}));
 const check = (ok,message) => assert.ok(ok,message);
-const scrub = value => page.locator('#state-progress').evaluate((el,value)=>{el.value=String(value);el.dispatchEvent(new Event('input',{bubbles:true}));},value);
 try {
   const response = await page.goto(url,{waitUntil:'networkidle',timeout:60000});
   assert.equal(response.status(),200,'Manual HTTP 200');
-  await page.waitForSelector('.state-explorer[data-ready="true"][data-symbols-version="20261029-verified"]',{timeout:30000});
+  await page.waitForSelector('.motion-symbol-preview[data-motion-version="20261104-groups"] video');
   await page.evaluate(()=>document.fonts.ready);
   report.fonts = await page.evaluate(()=>[...document.fonts].map(f=>({family:f.family,status:f.status})));
   for (const family of ['UniversMattar','PerpetuaMattar']) check(report.fonts.some(f=>f.family===family&&f.status==='loaded'),`Official font loaded: ${family}`);
@@ -23,7 +22,7 @@ try {
   // Regression: all five area-opening H1 headings must have identical typography.
   // Each page owns distinct local CSS; a shared title rule must win across them.
   report.manualHeadings=[];
-  const areas=['manual.html','tipografia.html','cores.html','composicao.html','laboratorio.html'];
+  const areas=['manual.html','motion.html','tipografia.html','cores.html','composicao.html','laboratorio.html'];
   report.manualGeometry=[];
   for (const [viewportWidth,viewportHeight] of [[1440,900],[1024,768],[768,1024],[390,844],[320,640]]) {
     const group=[];
@@ -35,8 +34,8 @@ try {
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
         const navLinks=await areaPage.locator('.lm-site-nav a').allTextContents();
         assert.deepEqual(navLinks.map(x=>x.trim()),[
-          '01 / SÍMBOLOS','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO'
-        ],'Only five chapters, ending with the Laboratory: '+area);
+          '01 / SÍMBOLOS','MOTION','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO DE COMPOSIÇÃO'
+        ],'Motion follows Symbols with a separate composition laboratory: '+area);
         assert.equal(await areaPage.locator('.lm-site-nav a[href="/imagem.html"]').count(),0,
           'Imagem must not reappear as a separate chapter');
         if(area==='composicao.html'){
@@ -104,6 +103,7 @@ try {
         geometry.push({area,...placement});
         const internalSelectors={
           'manual.html':'#estrutura .lm-reading-intro h2',
+          'motion.html':'#roteiros h2',
           'tipografia.html':'#titulo h2',
           'cores.html':'#paleta .section-head > p:first-child',
           'composicao.html':'#construcao .lm-case-intro h2',
@@ -186,7 +186,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':3,'laboratorio.html':1};
+        const expected={'manual.html':6,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':3,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();
@@ -228,34 +228,35 @@ try {
     }
   }
   await page.setViewportSize({width:1440,height:900});
-  const master = await page.locator('#estrutura .art-zone.m path').evaluateAll(els=>els.map(e=>e.getAttribute('d')).join(' '));
-  for (let n=1;n<=9;n++) {
-    await page.locator(`[data-state="${n}"]`).click();
-    const original=await page.locator('#vasos .vase').nth(n-1).locator('path').evaluateAll(els=>els.map(e=>e.getAttribute('d')).join(' '));
-    assert.equal(await page.locator('#state-morph-paths path').getAttribute('d'),original,`Exact endpoint ${n}`);
-    const matrix=await page.locator('#state-morph-paths').evaluate(el=>{const m=el.transform.baseVal.consolidate().matrix;return {x:m.a,y:m.d};});
-    assert.equal(matrix.x,matrix.y,`Uniform scale ${n}`);
-    for (const value of [0,25,50,75,100]) {
-      await scrub(value);
-      const d=await page.locator('#state-morph-paths path').getAttribute('d');check(!/NaN|Infinity/.test(d),`Valid frame ${n}/${value}`);
-      if(value===0)assert.equal(d,master,`Exact master ${n}`);
-      else if(value===100)assert.equal(d,original,`Exact final ${n}`);
-      else check(d.includes('C'),`Bezier curves retained ${n}/${value}`);
-    }
-    report.states.push({state:n,frames:5,exactEndpoints:true,uniformScale:true});
+  assert.equal(await page.locator('.state-explorer, #state-morph-svg').count(),0,'Contour demo has been replaced');
+  const symbolVideo=page.locator('.motion-symbol-preview video');
+  assert.equal(await symbolVideo.locator('source').getAttribute('src'),'/motion/videos/m-form.mp4');
+  await symbolVideo.evaluate(async video=>{await video.play();});
+  await page.waitForFunction(()=>document.querySelector('.motion-symbol-preview video').currentTime>0.1);
+  await symbolVideo.evaluate(video=>video.pause());
+  for(const width of [1440,390]){
+    await page.setViewportSize({width,height:900});
+    await page.locator('#transformacao').screenshot({path:`symbols-proof/${phase}-motion-${width}.png`});
   }
-  await page.locator('[data-state="1"]').click();
-  await page.locator('.state-explorer').screenshot({path:`symbols-proof/${phase}-morph-endpoint.png`});
-  await scrub(50);await page.locator('.state-explorer').screenshot({path:`symbols-proof/${phase}-morph-midpoint.png`});
-  await scrub(0);await page.locator('#state-play').click();await page.waitForTimeout(450);await page.locator('#state-play').click();
-  const paused=await page.locator('#state-progress').inputValue();check(+paused>0&&+paused<100,'Playback advances');await page.waitForTimeout(200);assert.equal(await page.locator('#state-progress').inputValue(),paused,'Pause holds frame');
-  await page.locator('#state-play').click();await page.waitForTimeout(2800);assert.equal(await page.locator('#state-progress').inputValue(),'100','Resume reaches endpoint');
-  await page.locator('#state-reset').click();assert.equal(await page.locator('#state-progress').inputValue(),'0','Reset returns to M');
-  await page.locator('#state-progress').focus();await page.keyboard.press('End');assert.equal(await page.locator('#state-progress').inputValue(),'100','Keyboard End');await page.keyboard.press('Home');assert.equal(await page.locator('#state-progress').inputValue(),'0','Keyboard Home');
-  for(const n of [2,9,4,8]) await page.locator(`[data-state="${n}"]`).click();
-  assert.equal(await page.locator('.state-explorer').getAttribute('data-target'),'8','Latest selection wins');
+  const motionPage=await browser.newPage({viewport:{width:390,height:844}});
+  try{
+    await motionPage.goto(new URL('/motion.html',url).href,{waitUntil:'networkidle'});
+    assert.equal(await motionPage.locator('.lm-site-nav [data-area="motion"][aria-current="page"]').count(),1);
+    assert.equal(await motionPage.locator('.lm-site-nav [data-area="laboratorio"][aria-current]').count(),0);
+    assert.deepEqual(await motionPage.locator('[data-motion-group]').evaluateAll(sections=>sections.map(s=>({id:s.id,cards:s.querySelectorAll('.motion-card').length}))),[
+      {id:'roteiros',cards:1},{id:'assinaturas',cards:4},{id:'transicoes',cards:3}
+    ]);
+    assert.equal(await motionPage.locator('.motion-card video').count(),8);
+    assert.equal(await motionPage.locator('.motion-status,[data-status],video[autoplay]').count(),0);
+    assert.doesNotMatch(await motionPage.locator('main').innerText(),/aprovad|avaliação/i);
+    for(const width of [1440,390]){
+      await motionPage.setViewportSize({width,height:900});
+      assert.equal(await motionPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No Motion document overflow');
+      await motionPage.screenshot({path:`symbols-proof/${phase}-motion-gallery-${width}.png`,fullPage:true});
+    }
+    report.motion={groups:[1,4,3],players:8,statusLabels:false,symbolVideoPlayback:true};
+  }finally{await motionPage.close();}
   await page.setViewportSize({width:390,height:844});
-  await page.locator('.state-explorer').screenshot({path:`symbols-proof/${phase}-controls-mobile.png`});
   await page.locator('header.top a[href="#estrutura"]').click();await page.waitForTimeout(100);
   const menus=await page.evaluate(()=>({nav:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,header:document.querySelector('header.top').getBoundingClientRect().top,headerBottom:document.querySelector('header.top').getBoundingClientRect().bottom,title:document.querySelector('#estrutura h2').getBoundingClientRect().top}));
   check(menus.header>=menus.nav-1,'Sticky menus do not overlap');check(menus.title>=menus.headerBottom-1,'Anchor title is visible');

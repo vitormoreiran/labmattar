@@ -4,13 +4,14 @@ import sys
 
 NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/manual.html" data-area="simbolos">01 / SÍMBOLOS</a>
+<a href="/motion.html" data-area="motion">MOTION</a>
 <a href="/tipografia.html" data-area="tipografia">02 / TIPOGRAFIA</a>
 <a href="/cores.html" data-area="cores">03 / CORES</a>
 <a href="/composicao.html" data-area="composicao">04 / COMPOSIÇÃO</a>
-<a href="/laboratorio.html" data-area="laboratorio">05 / LABORATÓRIO</a>
+<a href="/laboratorio.html" data-area="laboratorio">05 / LABORATÓRIO DE COMPOSIÇÃO</a>
 </nav>'''
 STYLE='''<style>
-.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(16px,3vw,48px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
+.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:safe flex-end;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(16px,2vw,32px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
 .lm-site-nav a{color:inherit;text-decoration:none;flex-shrink:0;padding:4px 0;border-bottom:1px solid transparent;white-space:nowrap}
 .lm-site-nav::-webkit-scrollbar{display:none}
 .lm-site-nav a[aria-current=page]{border-color:currentColor}
@@ -20,7 +21,7 @@ STYLE='''<style>
 </style>'''
 areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","laboratorio.html":"laboratorio"}
 if Path("public/motion.html").exists():
- areas["motion.html"]="laboratorio"
+ areas["motion.html"]="motion"
 if len(sys.argv)>1:
  requested=set(sys.argv[1:])
  assert requested <= set(areas), "Unknown page for shared navigation"

@@ -2,6 +2,16 @@ name: Publicar previa LABMATTAR
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/preview-cloudflare.yml'
+      - 'design/integrate-areas.py'
+      - 'design/revise-symbols-hierarchy.py'
+      - 'design/motion.html'
+      - 'public/manual.html'
+      - 'public/motion.css'
+      - 'scripts/prepare-motion.mjs'
+      - 'scripts/smoke-symbols-browser.mjs'
   push:
     branches: [main, fix/manual-symbols-verified]
     paths:

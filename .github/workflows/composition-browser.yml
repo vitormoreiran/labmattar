@@ -3,6 +3,12 @@ name: Validar Laboratorio de Composicao
 on:
   pull_request:
     paths:
+      - 'design/integrate-areas.py'
+      - 'design/revise-symbols-hierarchy.py'
+      - 'design/motion.html'
+      - 'public/motion.css'
+      - 'scripts/prepare-motion.mjs'
+      - 'scripts/smoke-symbols-browser.mjs'
       - 'design/composicao.html'
       - 'design/laboratorio.html'
       - 'public/manual-composition-layout.css'
@@ -51,6 +57,9 @@ jobs:
           npx playwright install --with-deps chromium webkit
       - name: Preparar pagina e fontes para teste local
         run: |
+          npm ci --prefix tools/matriz-vetorial
+          npm run build --prefix tools/matriz-vetorial
+          node scripts/prepare-motion.mjs
           for page in tipografia cores composicao laboratorio identidade inicio; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py

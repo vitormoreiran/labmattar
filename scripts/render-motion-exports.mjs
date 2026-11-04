@@ -76,7 +76,8 @@ try{
       const errors=[];page.on('pageerror',e=>errors.push(e.message));
       await page.goto(base+'/motion.html',{waitUntil:'networkidle'});
       assert.equal(await page.locator('.motion-card').count(),8);
-      assert.equal(await page.locator('.motion-card[data-status="approved"]').count(),3);
+      assert.equal(await page.locator('.motion-status, .motion-card[data-status]').count(),0);
+      assert.equal(await page.locator('[data-motion-group]').count(),3);
       assert.equal(await page.locator('.motion-card video').count(),8);
       assert.equal(await page.locator('video[autoplay]').count(),0);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
@@ -87,7 +88,7 @@ try{
       await video.evaluate(element=>element.pause());
       assert.deepEqual(errors,[],'Erro na galeria');
       await page.screenshot({path:path.join(output,`gallery-${viewport.width}.png`),fullPage:true});
-      report.gallery.push({width:viewport.width,players:8,approved:3,playback:true});
+      report.gallery.push({width:viewport.width,players:8,groups:3,playback:true});
     }finally{await page.close();}
   }
   console.log('MOTION_EXPORTS_VERIFIED',report.exports.length);

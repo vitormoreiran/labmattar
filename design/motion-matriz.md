@@ -1,13 +1,13 @@
 # Motion e Matriz Vetorial
 
-A área `/motion.html` reúne a Matriz atual e os roteiros exportados. Ela pertence ao Laboratório e usa a mesma navegação dos cinco capítulos, a mesma grade editorial e os três tratamentos de texto do manual.
+A área `/motion.html` reúne a Matriz atual e os roteiros exportados. Motion tem acesso próprio logo após Símbolos e compartilha a grade editorial e os três tratamentos de texto do manual. O Laboratório de composição mantém seu próprio acesso e sua ferramenta. Em Símbolos, uma prévia Motion substitui a antiga demonstração de contornos.
 
 ## Fontes de verdade
 
 - `tools/matriz-vetorial/`: versão atual da ferramenta, com dependências e CSS isolados. O site publica seu build em `/motion/matriz/index.html`.
 - `tools/matriz-vetorial/src/motion-catalog.mjs`: catálogo dos oito percursos e seus estados editoriais.
 - `tools/matriz-vetorial/src/timeline.mjs`: pares preparados, presets, tempos e orientação acumulada.
-- `tools/matriz-vetorial/src/roteiros/`: cinco projetos em avaliação. Os três aprovados vêm dos presets existentes.
+- `tools/matriz-vetorial/src/roteiros/`: cinco projetos complementares. Os três primeiros percursos vêm dos presets existentes.
 - `design/motion.html`, `public/motion.css` e `public/motion.js`: estrutura, apresentação e reprodução da galeria.
 - `public/motion/exports.json`: vínculo verificável entre cada MP4 e o projeto que o gerou.
 - `scripts/prepare-motion.mjs`: valida os exports, gera a página e os downloads JSON, e copia o build da Matriz para o manual.
@@ -20,9 +20,13 @@ Na galeria, use Reproduzir para assistir, Baixar MP4 para obter o vídeo e Edita
 
 Na Matriz, escolha o roteiro à esquerda. Esta letra controla destino, duração e giro; Roteiro inteiro controla velocidade, cores e formato. A velocidade global mantém as relações entre as pistas. Os pontos de corte dos testes de transição estão descritos em 1× e devem ser recalculados proporcionalmente quando a velocidade mudar.
 
-## Estados editoriais
+## Organização da galeria
 
-M + Forma, Onda e resposta e Composição MATTAR foram aprovados pelo autor. Acervo vira MATTAR, Abertura e fecho, Perfil · corte, Passagem de bastão e Forma · intervalo permanecem em avaliação. Publicar um vídeo na galeria não aprova seu uso final.
+A sequência pública segue a função: Símbolo em movimento (M + Forma); Assinaturas e aberturas (Onda e resposta, Composição MATTAR, Acervo vira MATTAR e Abertura e fecho); Transições (Perfil · corte, Passagem de bastão e Forma · intervalo). A galeria não exibe status, cores de aprovação nem subdivisões por avaliação. Os controles e estados internos da Matriz são preservados.
+
+## Estados editoriais internos
+
+Em 4 de novembro de 2026, o autor aprovou os oito roteiros: M + Forma, Onda e resposta, Composição MATTAR, Acervo vira MATTAR, Abertura e fecho, Perfil · corte, Passagem de bastão e Forma · intervalo. O catálogo e os cartões da Matriz registram a aprovação; a galeria pública apresenta somente os grupos por função.
 
 Assinaturas devem encerrar com uma leitura reconhecível e uma pausa adequada. Transições precisam ser testadas entre conteúdos reais: o vídeo da Matriz fornece o gesto; o corte A→B acontece na edição.
 

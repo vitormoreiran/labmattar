@@ -27,21 +27,21 @@ export function motionProjects() {
     {
       id: "acervo-mattar",
       title: "Acervo vira MATTAR",
-      status: "review",
+      status: "approved",
       group: "assinaturas",
       project: reviewProjects["acervo-mattar"],
     },
     {
       id: "abertura-fecho",
       title: "Abertura e fecho",
-      status: "review",
+      status: "approved",
       group: "assinaturas",
       project: reviewProjects["abertura-fecho"],
     },
     {
       id: "perfil-corte",
       title: "Perfil · corte",
-      status: "review",
+      status: "approved",
       group: "transicoes",
       cut: 0.56,
       project: reviewProjects["perfil-corte"],
@@ -49,7 +49,7 @@ export function motionProjects() {
     {
       id: "passagem-bastao",
       title: "Passagem de bastão",
-      status: "review",
+      status: "approved",
       group: "transicoes",
       cut: 0.53,
       project: reviewProjects["passagem-bastao"],
@@ -57,7 +57,7 @@ export function motionProjects() {
     {
       id: "forma-intervalo",
       title: "Forma · intervalo",
-      status: "review",
+      status: "approved",
       group: "transicoes",
       cut: 1.45,
       project: reviewProjects["forma-intervalo"],

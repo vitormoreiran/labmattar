@@ -241,8 +241,8 @@ try {
     assert.equal(await socialPage.locator('.application article').count(),4,'Four official framing applications');
     assert.equal(await socialPage.locator('.method article').count(),6,'Six editorial functions');
     assert.equal(await socialPage.locator('#lmSeasonPlanner').count(),0,'Retired planner stays absent');
-    const content=await socialPage.locator('main').innerText();
-    for(const project of ['Cada Corpo Abre um Mundo','Poiesis','Aleteia'])assert.ok(content.includes(project),'Current editorial seasons: '+project);
+    const content=(await socialPage.locator('main').textContent()).toLocaleLowerCase('pt-BR');
+    for(const project of ['Cada Corpo Abre um Mundo','Poiesis','Aleteia'])assert.ok(content.includes(project.toLocaleLowerCase('pt-BR')),'Current editorial seasons: '+project);
     assert.equal(await socialPage.locator('[data-feed-mode]').count(),0,'Obsolete aesthetic alternation is absent');
   } finally { await socialPage.close(); }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {

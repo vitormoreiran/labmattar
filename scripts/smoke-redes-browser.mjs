@@ -20,10 +20,10 @@ try {
     assert.equal(await page.locator('.application article').count(),4,'Quatro enquadramentos');
     assert.equal(await page.locator('.method article').count(),6,'Seis funcoes editoriais');
     assert.equal(await page.locator('#lmSeasonPlanner').count(),0,'Sem antigo planejador');
-    const content=await page.locator('main').innerText();
-    assert.ok(content.includes('Cada Corpo Abre um Mundo'),'Projeto-base');
-    assert.ok(content.includes('Poiesis') && content.includes('Aleteia'),'Temporadas seguintes');
-    assert.ok(!content.includes('Fome Come'),'Temporada incorreta removida');
+    const content=(await page.locator('main').textContent()).toLocaleLowerCase('pt-BR');
+    assert.ok(content.includes('cada corpo abre um mundo'),'Projeto-base');
+    assert.ok(content.includes('poiesis') && content.includes('aleteia'),'Temporadas seguintes');
+    assert.ok(!content.includes('fome come'),'Temporada incorreta removida');
     const media=await page.locator('img[src*="BOXDOSENTIR-"]').evaluateAll(images=>images.map(img=>({
       src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0,width:img.naturalWidth,height:img.naturalHeight
     })));

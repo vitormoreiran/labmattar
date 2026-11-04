@@ -140,18 +140,40 @@
   }
   function drawMarkers(ctx,frame){
     const markers=board.querySelector("#labMMarkers");
-    if(!isVisible(markers))return;
+    if(!markers||markers.dataset.marker==="none")return;
+    const photo=board.dataset.background==="photo";
+    const image=board.querySelector("#labMarkerPhoto");
+    if(photo&&(!image||board.dataset.markerBlur!=="true"))return;
     for(const svg of markers.querySelectorAll("svg")){
-      if(!isVisible(svg))continue;
-      const path=svg.querySelector("path");
-      if(!path)return;
-      const v=svg.viewBox.baseVal;
-      if(!v?.width||!v?.height)continue;
-      const box=rectangle(svg,frame),s=getComputedStyle(svg);
+      // The preview hides the colored marker layer in photo mode, but the
+      // exact same SVG path must still clip the photographic export.
+      if(getComputedStyle(svg).display==="none")continue;
+      const path=svg.querySelector("path"),v=svg.viewBox.baseVal;
+      if(!path||!v?.width||!v?.height)continue;
+      const box=rectangle(svg,frame);
+      const geometry=new Path2D(path.getAttribute("d"));
       ctx.save();
-      ctx.translate(box.x,box.y);ctx.scale(box.w/v.width,box.h/v.height);
-      ctx.fillStyle=s.color;
-      ctx.fill(new Path2D(path.getAttribute("d")));
+      ctx.translate(box.x,box.y);
+      ctx.scale(box.w/v.width,box.h/v.height);
+      if(!photo){
+        ctx.fillStyle=getComputedStyle(svg).color;
+        ctx.fill(geometry);
+      }else{
+        ctx.clip(geometry);
+        ctx.setTransform(frame.outputScale,0,0,frame.outputScale,0,0);
+        const imgStyle=getComputedStyle(image),r=rectangle(image,frame);
+        const cx=r.x+r.w/2,cy=r.y+r.h/2;
+        ctx.filter=imgStyle.filter==="none"?"none":imgStyle.filter;
+        if(imgStyle.transform!=="none"){
+          const transform=new DOMMatrixReadOnly(imgStyle.transform);
+          ctx.translate(cx,cy);
+          ctx.transform(transform.a,transform.b,transform.c,transform.d,0,0);
+          ctx.translate(-cx,-cy);
+        }
+        // Draw across the entire page then clip with the official marker.
+        // Drawing into each marker's own rectangle would shift the crop.
+        drawCover(ctx,image,r.x,r.y,r.w,r.h,focal(image));
+      }
       ctx.restore();
     }
   }

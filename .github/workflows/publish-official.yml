@@ -64,15 +64,29 @@ jobs:
           node scripts/build-official.mjs
           node --check dist/oficial/worker/index.js
           node --check dist/oficial/worker/entry.mjs
-      - name: Publicar no mesmo serviço do domínio oficial
+      - name: Preparar versão no mesmo serviço sem alterar tráfego
         if: steps.source.outputs.eligible == 'true'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           GITHUB_SHA: ${{ steps.source.outputs.sha }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/official-version.ndjson
         run: |
           node scripts/guard-official-deploy.mjs
-          npx --no-install wrangler deploy --config dist/oficial/wrangler.jsonc --keep-vars --tag github-official-${GITHUB_SHA}
+          npx --no-install wrangler versions upload --config dist/oficial/wrangler.jsonc --keep-vars --tag github-official-${GITHUB_SHA}
+          node scripts/read-official-version.mjs
+      - name: Conferir versão preparada e ativar no domínio existente
+        if: steps.source.outputs.eligible == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITHUB_SHA: ${{ steps.source.outputs.sha }}
+          EXPECTED_SHA: ${{ steps.source.outputs.sha }}
+          VERIFY_PREVIEW: '1'
+        run: |
+          node scripts/verify-official.mjs
+          node scripts/guard-official-deploy.mjs
+          npx --no-install wrangler versions deploy "${OFFICIAL_VERSION_ID}@100%" --yes --config dist/oficial/wrangler.jsonc
       - name: Conferir publicação servida pelo domínio
         if: steps.source.outputs.eligible == 'true'
         env:

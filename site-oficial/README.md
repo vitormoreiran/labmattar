@@ -10,7 +10,7 @@ O workflow **Publicar labmattar.com oficial** recebe o artefato do workflow **Pu
 - Motion: `https://labmattar.com/motion.html`.
 - Nova apresentação: `https://labmattar.com/capitulo-4/<endereco>/`.
 
-O destino é o Worker existente `mattar-portfolio`, com o mesmo banco `mattar-editor`. Não há migração de banco. O deploy conserva variáveis e segredos existentes com `--keep-vars`. As conexões do acervo dependem das credenciais e origens autorizadas configuradas no serviço oficial; elas não são copiadas da prévia.
+O destino é o Worker existente `mattar-portfolio`, com o mesmo banco `mattar-editor`. Não há migração de banco. O fluxo envia uma versão com `--keep-vars`, testa seu endereço de prévia e só então muda o tráfego para ela. O domínio e as rotas existentes não são reconfigurados. As conexões do acervo dependem das credenciais e origens autorizadas configuradas no serviço oficial; elas não são copiadas da prévia.
 
 ## Publicar uma apresentação criada no Laboratório
 

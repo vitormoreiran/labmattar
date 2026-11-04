@@ -85,7 +85,6 @@ figure,dl,dd{margin:0}
 .lm-social-application-text{padding:17px 0 0}
 .lm-social-application-text>p{margin:0 0 12px}
 .lm-social-application-text>p:not(.detail){max-width:36ch}
-.lm-social-application-text strong{font-weight:inherit}
 .lm-social-example-note{margin-top:30px!important;padding-top:12px;border-top:1px solid var(--lm-social-line)}
 .lm-social-feed-layout{
   display:grid;grid-template-columns:minmax(0,1.6fr) minmax(245px,.65fr);

@@ -65,3 +65,20 @@
 /* Private Drive portfolio fallback; visible whenever native Picker is unavailable. */
 .lm-acervo-portfolio-link{display:inline-flex;width:fit-content;align-items:center;gap:5px;color:inherit;text-decoration:underline;text-underline-offset:3px;font-size:11px;line-height:1.45;opacity:.75}
 .lm-acervo-portfolio-link:hover{opacity:1}
+
+/* Biblioteca 01_Portfolio por projeto. Interface neutra, sem nova linguagem de marca. */
+.lm-acervo-local{display:block;width:100%;padding:10px 12px;border:1px solid #b8b5ae;
+  border-radius:7px;background:transparent;color:inherit;text-align:left;cursor:pointer;
+  font:inherit;font-size:11px;letter-spacing:.025em}
+.lm-acervo-local:hover,.lm-acervo-local:focus-visible{background:#eeece5;border-color:#64635f}
+.lm-acervo-dialog{width:min(700px,100%)}
+.lm-acervo-search-label{font-size:10px;line-height:1.2;letter-spacing:.06em;opacity:.7}
+.lm-acervo-search{box-sizing:border-box;width:100%;min-height:38px;padding:8px 12px;
+  background:#fbfaf7;color:inherit;border:1px solid #d8d6cf;border-radius:7px;font:inherit;font-size:13px}
+.lm-acervo-search:focus-visible{outline:2px solid #1f3554;outline-offset:2px}
+.lm-acervo-items{max-height:min(46vh,430px)}
+.lm-acervo-item.lm-acervo-folder{min-height:65px;align-content:center;grid-template-columns:auto 1fr;
+  align-items:center;gap:10px;font-size:12px}
+.lm-acervo-item.lm-acervo-folder>span:first-child{font-size:21px;opacity:.65}
+@media(max-width:550px){.lm-acervo-items{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lm-acervo-dialog{padding:17px}.lm-acervo-dialog h3{font-size:20px}}

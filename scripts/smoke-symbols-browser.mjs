@@ -227,18 +227,22 @@ try {
     }
     report.manualHeadings.push({viewportWidth,areas:group});
   }
-  // Chapter 06 is intentionally editorial: verify availability, official symbols,
-  // and the nine-post comparison without replacing the original manual tests.
+  // Chapter 06: the feed is a temporal archive of project seasons.
+  // Keep this as a lightweight integration check; the dedicated test covers editor exports.
   const socialPage=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
   try {
     const socialResponse=await socialPage.goto(new URL('/redes.html',url).href,{waitUntil:'networkidle',timeout:60000});
     assert.equal(socialResponse.status(),200,'Redes Sociais HTTP 200');
     await socialPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await socialPage.locator('main > section.lm-manual-cover').count(),1,'Social page has canonical cover');
-    assert.equal(await socialPage.locator('#lmSocialFeedGrid > .lm-social-tile').count(),9,'Social feed presents nine posts');
     assert.equal(await socialPage.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1,'Social nav active');
-    await socialPage.locator('[data-feed-mode="agrupado"]').click();
-    assert.equal(await socialPage.locator('#lmSocialFeedGrid').getAttribute('data-mode'),'agrupado','Feed comparison changes sequence');
+    assert.equal(await socialPage.locator('#lmSeasonTimeline>button').count(),3,'Sample has three project seasons');
+    assert.equal(await socialPage.locator('.lm-season-frame-demo').count(),4,'Four official framing applications');
+    assert.equal(await socialPage.locator('#lmSeasonFeed>.lm-season-post').count(),7,'No artificial fixed 9-post mosaic');
+    const grouping=await socialPage.locator('#lmSeasonFeed>.lm-season-post').evaluateAll(posts=>posts.map(p=>p.dataset.seasonId));
+    assert.deepEqual(grouping,['season-7','season-7','season-7','season-4','season-4','season-1','season-1'],
+      'Projects remain contiguous in the reverse-chronological profile');
+    assert.equal(await socialPage.locator('[data-feed-mode]').count(),0,'Obsolete aesthetic alternation is absent');
   } finally { await socialPage.close(); }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {
     await page.setViewportSize({width,height});await page.waitForTimeout(120);

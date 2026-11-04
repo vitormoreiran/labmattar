@@ -285,6 +285,9 @@ async function captureMotions(width,height){
 }
 async function exportSequence(type){
   if(deliveryBusy())return;
+  if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length)){
+    if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos selecionados e quem receber o arquivo poderá assisti-los, mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
+  }
   let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
   commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);

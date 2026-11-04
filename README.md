@@ -49,7 +49,7 @@ Os exports web de Motion são uma exceção aos originais grandes: somente MP4 o
 
 ## Motion e Matriz atual
 
-O manual aponta para `/motion.html` e para `/motion/matriz/index.html`. `/editor/` permanece disponível como versão anterior. Motion é uma área do Laboratório; os cinco capítulos e suas regras visuais são preservados.
+O manual aponta para `/motion.html` e para `/motion/matriz/index.html`. `/editor/` permanece disponível como versão anterior. Motion tem acesso próprio após Símbolos; o Laboratório de composição mantém seu próprio acesso. A galeria organiza os oito roteiros aprovados por função, sem rótulos de status, preservando as regras visuais do manual.
 
 ```sh
 npm ci --prefix tools/matriz-vetorial

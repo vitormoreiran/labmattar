@@ -1,6 +1,6 @@
-/* LABMATTAR / 06 — REDES SOCIAIS
-   Regra: o capítulo aplica a mesma grade e os três tratamentos normativos.
-   Este arquivo define apenas superfícies, proporções, espaçamento e interação. */
+/* LABMATTAR / 06 — REDES SOCIAIS / TEMPORADAS
+   Enquadramentos são aplicações do sistema existente.
+   Texto: apenas Título, Corpo e Detalhe (manual-headings.css). */
 :root{
   --social-paper:#f7f6f2;
   --social-ink:#181818;
@@ -181,84 +181,179 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 #lmSocialStoryFeedback{margin-top:14px}
 .lm-social-story-foot{border-top:1px solid var(--social-line);padding-top:18px;margin-top:45px!important}
 
-/* Feed planner: ferramenta útil, com a galeria como área dominante. */
-.lm-social-editor{
-  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(240px,.7fr);
-  align-items:start;gap:clamp(30px,5vw,95px);
-  margin-top:clamp(54px,7vw,110px);
+/* Temporadas: o modelo temporal precede a grade. A grade não é mosaico. */
+.lm-season-intro{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(18px,3vw,52px);margin:clamp(48px,7vw,100px) 0;
 }
-.lm-social-editor-left{min-width:0}
-.lm-social-editor-toolbar{
+.lm-season-intro>div{border-top:1px solid var(--social-ink);padding-top:16px}
+.lm-season-intro p{max-width:33ch;margin:0 0 12px}
+.lm-season-head,.lm-season-timeline-head,.lm-season-feed-caption,.lm-season-inspector-bar{
   display:flex;align-items:center;justify-content:space-between;
-  gap:14px;flex-wrap:wrap;padding:11px 0 17px;
+  gap:14px 24px;flex-wrap:wrap;
+}
+.lm-season-head{border-top:1px solid var(--social-line);padding:17px 0 23px}
+.lm-season-head p,.lm-season-timeline-head p,.lm-season-feed-caption p,.lm-season-inspector-bar p{margin:0}
+.lm-season-layout{
+  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(262px,.72fr);
+  align-items:start;gap:clamp(25px,5vw,82px);
+}
+.lm-season-main,.lm-season-inspector{min-width:0}
+.lm-season-timeline-head{padding-bottom:12px}
+.lm-season-timeline{
+  display:flex;flex-wrap:wrap;gap:1px;
+  padding:0;margin:0 0 clamp(34px,4.3vw,65px);
+  border:1px solid var(--social-line);
+}
+.lm-season-timeline button{
+  display:flex;flex:1 1 136px;min-width:0;
+  flex-direction:column;align-items:flex-start;justify-content:space-between;
+  text-align:left;gap:15px;padding:17px 13px 14px;
+  border:0;border-right:1px solid var(--social-line);
+  background:transparent;
+}
+.lm-season-timeline button:last-child{border-right:0}
+.lm-season-timeline button[aria-pressed=true]{background:var(--social-ink);color:var(--social-paper)}
+.lm-season-timeline button span{max-width:100%;overflow-wrap:anywhere}
+.lm-season-feed-caption{border-bottom:1px solid var(--social-line);padding:0 0 14px;margin-bottom:5px}
+.lm-season-feed{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;
+  background:var(--social-paper);align-items:start;
+}
+.lm-season-post{
+  display:block;padding:0;border:0;
+  position:relative;min-width:0;width:100%;aspect-ratio:3/4;
+  background:var(--social-block);overflow:hidden;
+}
+.lm-season-post[aria-pressed=true]::before{
+  content:"";position:absolute;z-index:4;inset:0;
+  border:3px solid var(--social-ink);pointer-events:none;
+}
+.lm-season-post[data-boundary=true]::after{
+  content:"";position:absolute;z-index:3;inset:0 auto 0 0;width:3px;
+  background:var(--social-ink);pointer-events:none;
+}
+.lm-season-art{
+  position:relative;width:100%;aspect-ratio:3/4;
+  container-type:inline-size;overflow:hidden;background:var(--social-block);
+  --lm-type-title-size:clamp(15px,8.3cqw,70px);
+  --lm-type-body-size:clamp(10px,2.8cqw,19px);
+  --lm-type-detail-size:clamp(8px,1.9cqw,13px);
+}
+.lm-season-art>img{
+  display:block;position:absolute;inset:0;
+  width:100%;height:100%;object-fit:cover;
+  object-position:var(--social-focus,center center);
+  transform:scale(var(--social-scale,1));
+}
+.lm-season-art[data-frame=recorte]>img{transform:scale(calc(var(--social-scale,1) * 1.3))}
+.lm-season-art[data-frame=titulo]::after{
+  content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);
+}
+.lm-season-art[data-frame=respiro]{background:var(--social-paper)}
+.lm-season-art[data-frame=respiro]>img{height:76%}
+.lm-season-art-title.title{
+  display:block;position:absolute;z-index:2;
+  left:7%;right:7%;bottom:7%;margin:0;
+  max-width:86%;overflow-wrap:anywhere;pointer-events:none;
+}
+.lm-season-art[data-frame=titulo] .lm-season-art-title.title{color:#fff}
+.lm-season-art[data-frame=respiro] .lm-season-art-title.title{color:var(--social-ink);bottom:2.5%}
+.lm-season-art[data-frame=integral] .lm-season-art-title,
+.lm-season-art[data-frame=recorte] .lm-season-art-title{display:none}
+.lm-season-feed-explainer{margin:18px 0 0}
+.lm-season-main-actions{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:12px 25px;padding-top:22px;border-bottom:1px solid var(--social-line);
+  padding-bottom:18px;
+}
+.lm-season-inspector{
+  position:sticky;top:80px;padding-top:16px;
   border-top:1px solid var(--social-ink);
 }
-.lm-social-editor-toolbar>p{margin:0}
-.lm-social-feed-actions{display:flex;flex-wrap:wrap;gap:7px}
-.lm-social-feed-actions button,.lm-social-editor-step button{
-  background:transparent;border:1px solid var(--social-line);padding:10px 14px;
+.lm-season-inspector>p:first-child{margin:0 0 24px}
+.lm-season-inspector label{
+  display:block;margin:19px 0 8px;max-width:100%;
 }
-.lm-social-feed-actions button[aria-pressed=true]{
-  background:var(--social-ink);color:var(--social-paper);
-  border-color:var(--social-ink);
-}
-.lm-social-feed-grid{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:4px;min-width:0;
-}
-.lm-social-tile{
-  aspect-ratio:3/4;display:block;width:100%;min-width:0;
-  position:relative;overflow:hidden;padding:0;
-  border:0;background:var(--social-block);cursor:grab;
-}
-.lm-social-tile:active{cursor:grabbing}
-.lm-social-tile img{display:block;width:100%;height:100%;object-fit:cover}
-.lm-social-tile[aria-pressed=true]::after{
-  content:"";position:absolute;inset:0;border:3px solid var(--social-red);
-  pointer-events:none;
-}
-.lm-social-tile.lm-social-drop-target::after{
-  content:"";position:absolute;inset:0;border:4px solid var(--social-ink);
-  pointer-events:none;
-}
-.lm-social-editor-bottom{
-  display:flex;justify-content:space-between;gap:14px;
-  align-items:center;padding:15px 0;border-bottom:1px solid var(--social-line);
-}
-.lm-social-editor-bottom>p{margin:0}
-.lm-social-editor-aside{
-  border-top:1px solid var(--social-ink);padding-top:17px;
-  position:sticky;top:80px;min-width:0;
-}
-.lm-social-editor-aside>p:first-child{margin:0 0 20px}
-.lm-social-selected-preview{
-  max-width:300px;aspect-ratio:3/4;overflow:hidden;background:var(--social-block);
-}
-.lm-social-selected-preview img{display:block;width:100%;height:100%;object-fit:cover}
-#lmFeedActiveTitle{margin:18px 0 9px}
-#lmFeedActiveInfo{max-width:37ch;margin:0 0 21px}
-.lm-social-editor-step{
-  display:grid;grid-template-columns:1fr 1fr;gap:7px;
-  margin:0 0 33px;
-}
-.lm-social-editor-step button:disabled{opacity:.34;cursor:not-allowed}
-.lm-social-replace-label{display:block;margin-bottom:10px}
-#lmFeedReplace{
-  width:100%;background:var(--social-paper);
+.lm-season-inspector input,.lm-season-inspector select,.lm-season-collection select{
+  display:block;width:100%;min-width:0;padding:12px 10px;
   border:1px solid var(--social-line);border-radius:0;
-  padding:13px 10px;appearance:auto;max-width:100%;
+  background:var(--social-paper);color:var(--social-ink);
 }
-.lm-social-editor-export{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:22px 0}
-#lmSocialFeedStatus{
-  margin:0;padding:14px 0 0;border-top:1px solid var(--social-line);
+.lm-season-inspector input::placeholder{opacity:.75}
+.lm-season-order{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px;
 }
-.lm-social-feed-principles{
-  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:clamp(20px,3.5vw,55px);
-  border-top:1px solid var(--social-ink);
-  padding:18px 0;margin-top:clamp(48px,7vw,100px);
+.lm-season-order button{
+  padding:11px 10px;background:transparent;border:1px solid var(--social-line);
 }
-.lm-social-feed-principles p{max-width:35ch;margin:0 0 12px}
+.lm-season-order button:disabled,.lm-season-edit-actions button:disabled{
+  opacity:.35;cursor:not-allowed;
+}
+.lm-season-inspector-rule{border-top:1px solid var(--social-line);margin:30px 0 19px}
+.lm-season-selected-preview{
+  width:100%;max-width:320px;aspect-ratio:3/4;
+  overflow:hidden;background:var(--social-block);margin:16px 0 24px;
+}
+.lm-season-selected-preview .lm-season-art{width:100%;height:100%}
+.lm-season-edit-actions{
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:start;gap:5px 15px;margin-top:23px;
+}
+.lm-season-edit-actions .lm-social-link{text-align:left;justify-content:flex-start}
+#lmSeasonStatus{border-top:1px solid var(--social-line);margin:23px 0 0;padding:16px 0}
+.lm-season-collection{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);
+  column-gap:clamp(26px,5vw,86px);row-gap:22px;
+  margin-top:clamp(40px,6vw,92px);border-top:1px solid var(--social-ink);
+  border-bottom:1px solid var(--social-line);padding:20px 0 28px;
+}
+.lm-season-collection>div:first-of-type{
+  display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;min-width:0;
+}
+.lm-season-collection select{max-width:300px}
+.lm-season-collection-options{
+  grid-column:2;display:flex;flex-wrap:wrap;gap:15px 26px;
+}
+.lm-season-collection>label{padding-top:14px}
+.lm-season-collection button{white-space:normal}
+.lm-season-collection button:disabled{opacity:.35;cursor:not-allowed}
+
+/* Quatro enquadramentos demonstrados com a MESMA foto. */
+.lm-season-frames{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(13px,2vw,28px);align-items:start;
+  margin-top:clamp(52px,7vw,108px);
+}
+.lm-season-frames>article{min-width:0;border-top:1px solid var(--social-line);padding-top:15px}
+.lm-season-frame-demo{
+  aspect-ratio:3/4;position:relative;overflow:hidden;
+  width:100%;container-type:inline-size;
+  background:var(--social-block);
+  --lm-type-title-size:clamp(15px,8.3cqw,70px);
+  --lm-type-body-size:clamp(10px,2.8cqw,19px);
+  --lm-type-detail-size:clamp(8px,1.9cqw,13px);
+}
+.lm-season-frame-demo img{
+  width:100%;height:100%;display:block;object-fit:cover;
+}
+.lm-season-frame-demo-title::after{
+  content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);
+}
+.lm-season-frame-demo .title{position:absolute;z-index:1;left:6%;right:6%;bottom:8%;margin:0;overflow-wrap:anywhere}
+.lm-season-frame-demo-title .title{color:#fff}
+.lm-season-frame-demo-breath{background:var(--social-paper)}
+.lm-season-frame-demo-breath img{height:76%}
+.lm-season-frame-demo-breath .title{bottom:3%;color:var(--social-ink)}
+.lm-season-frame-demo-detail img{transform:scale(1.3)}
+.lm-season-frame-desc{min-height:158px;border-top:1px solid var(--social-line);padding-top:15px;margin-top:16px}
+.lm-season-frame-desc p{margin:0 0 13px;max-width:34ch}
+.lm-season-frame-note{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);
+  gap:20px 45px;border-top:1px solid var(--social-ink);
+  padding-top:20px;margin-top:clamp(45px,5vw,76px);
+}
+.lm-season-frame-note>p{margin:0;max-width:60ch}
 
 /* Production guidance: a sparse editorial index, not a dashboard. */
 .lm-social-specs,.lm-social-guidelines{
@@ -291,45 +386,46 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .lm-social-footer a{text-decoration:none;border-bottom:1px solid currentColor}
 
 /* Mobile: preserve the reading order and the 3:4 work surfaces. */
-@media(max-width:1023px){
-  .lm-social-storyboard{grid-template-columns:minmax(0,1fr) minmax(230px,.8fr);gap:26px}
-  .lm-social-editor{grid-template-columns:minmax(0,1.35fr) minmax(220px,.8fr);gap:25px}
+@media(max-width:1100px){
+ .lm-season-layout{grid-template-columns:minmax(0,1.35fr) minmax(245px,.8fr);gap:28px}
+ .lm-season-frames{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 22px}
+ .lm-season-frame-desc{min-height:105px}
+ .lm-social-storyboard{grid-template-columns:minmax(0,1fr) minmax(230px,.8fr);gap:26px}
 }
 @media(max-width:760px){
-  .lm-social-cases{grid-template-columns:1fr;gap:36px;max-width:540px}
-  .lm-social-case-stage{max-width:480px}
-  .lm-social-identity{grid-template-columns:1fr;gap:55px}
-  .lm-social-avatar-stage{min-height:300px}
-  .lm-social-storyboard,.lm-social-editor{grid-template-columns:1fr;gap:32px}
-  .lm-social-story-main{max-width:500px}
-  .lm-social-editor-aside{position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:20px}
-  .lm-social-editor-aside>p:first-child,.lm-social-editor-aside .lm-social-editor-step,
-  .lm-social-editor-aside .lm-social-replace-label,
-  .lm-social-editor-aside #lmFeedReplace,
-  .lm-social-editor-aside .lm-social-editor-export,
-  .lm-social-editor-aside #lmSocialFeedStatus{grid-column:1/-1}
-  .lm-social-selected-preview{grid-column:1;grid-row:2;max-width:none}
-  #lmFeedActiveTitle{grid-column:2;grid-row:2;align-self:start;margin-top:0}
-  #lmFeedActiveInfo{grid-column:2;grid-row:2;align-self:center}
-  .lm-social-editor-step{margin-top:20px}
-  .lm-social-feed-principles{gap:16px}
-  .lm-social-specs{grid-template-columns:1fr;gap:22px}
-  .lm-social-guidelines{grid-template-columns:1fr;gap:22px;margin-top:34px}
-  .lm-social-review{grid-template-columns:1fr;gap:20px}
-  .lm-social-review>p:last-child{grid-column:1;margin:0}
+ .lm-social-cases{grid-template-columns:1fr;gap:36px;max-width:540px}
+ .lm-social-case-stage{max-width:480px}
+ .lm-social-identity{grid-template-columns:1fr;gap:55px}
+ .lm-social-avatar-stage{min-height:300px}
+ .lm-social-storyboard,.lm-season-layout{grid-template-columns:1fr;gap:32px}
+ .lm-social-story-main{max-width:500px}
+ .lm-season-inspector{position:static}
+ .lm-season-intro{grid-template-columns:1fr;gap:14px;margin:42px 0}
+ .lm-season-head{align-items:flex-start;flex-direction:column}
+ .lm-season-collection{grid-template-columns:1fr;gap:15px}
+ .lm-season-collection>label{padding:0}
+ .lm-season-collection-options{grid-column:1}
+ .lm-season-feed{gap:3px}
+ .lm-season-frames{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .lm-season-frame-note{grid-template-columns:1fr}
+ .lm-social-specs{grid-template-columns:1fr;gap:22px}
+ .lm-social-guidelines{grid-template-columns:1fr;gap:22px;margin-top:34px}
+ .lm-social-review{grid-template-columns:1fr;gap:20px}
+ .lm-social-review>p:last-child{grid-column:1;margin:0}
 }
 @media(max-width:520px){
-  .lm-social-editor-toolbar{align-items:flex-start;flex-direction:column}
-  .lm-social-editor-aside{display:block}
-  .lm-social-selected-preview{max-width:240px}
-  #lmFeedActiveTitle{margin-top:15px}
-  #lmFeedActiveInfo{margin-bottom:21px}
-  .lm-social-feed-grid{gap:3px}
-  .lm-social-feed-principles{grid-template-columns:1fr;gap:0}
-  .lm-social-feed-principles>div{border-bottom:1px solid var(--social-line);padding:12px 0}
-  .lm-social-avatar-stage{min-height:260px}
-  .lm-social-avatar-large{width:46%}
-  .lm-social-avatar-small{width:18%}
-  .lm-social-storyboard{gap:24px}
+ .lm-season-timeline-head,.lm-season-feed-caption{align-items:flex-start;flex-direction:column}
+ .lm-season-timeline button{flex-basis:130px;padding:13px 10px}
+ .lm-season-main-actions{align-items:flex-start;flex-direction:column}
+ .lm-season-frames{grid-template-columns:1fr;max-width:390px;gap:30px}
+ .lm-season-frame-demo{max-width:390px}
+ .lm-season-frame-desc{min-height:0}
+ .lm-season-edit-actions{grid-template-columns:1fr 1fr;gap:8px}
+ .lm-season-collection>div:first-of-type{align-items:stretch;flex-direction:column}
+ .lm-season-order{gap:5px}
+ .lm-season-order button{padding:10px 5px}
+ .lm-social-avatar-stage{min-height:260px}
+ .lm-social-avatar-large{width:46%}
+ .lm-social-avatar-small{width:18%}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

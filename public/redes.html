@@ -8,9 +8,9 @@
 <title>LABMATTAR — Redes Sociais</title>
 <link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19">
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
-<link rel="stylesheet" href="/redes.css?v=20261104-editorial2">
+<link rel="stylesheet" href="/redes.css?v=20261104-temporadas1">
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
-<script defer src="/redes.js?v=20261104-editorial2"></script>
+<script defer src="/redes.js?v=20261104-temporadas1"></script>
 </head>
 <body>
 <main id="conteudo">
@@ -19,17 +19,168 @@
       <p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 06 — REDES SOCIAIS</p>
       <h1 class="big"><span class="lm-cover-title-content">REDES<br><span class="perpetua">SOCIAIS</span></span></h1>
       <div class="intro">
-        <p>A presença da Mattar se reconhece pela maneira de editar, enquadrar e relacionar conteúdos — não pela repetição da marca. A imagem tem autonomia. A identidade participa quando acrescenta clareza.</p>
-        <p class="detail"><a href="#criterio">COMO PUBLICAR ↓</a><br><a href="#feed">ESTUDAR O FEED ↓</a></p>
+        <p>O feed da Mattar funciona como arquivo temporal. Cada projeto abre uma temporada de publicações; as temporadas se acumulam, preservando suas imagens, seus ritmos e suas histórias. A identidade orienta a edição sem uniformizar as obras.</p>
+        <p class="detail"><a href="#criterio">COMO PUBLICAR ↓</a><br><a href="#temporadas">ESTUDAR O FEED ↓</a></p>
       </div>
+    </div>
+  </section>
+
+<section class="chapter lm-manual-section lm-social-section" id="temporadas" aria-labelledby="temporadas-title">
+    <div class="inner">
+      <p class="eyebrow">01 / TEMPORADAS</p>
+      <h2 class="lm-manual-section-title" id="temporadas-title">O FEED<br><span class="perpetua">É TEMPO</span></h2>
+      <p class="copy">Cada projeto constitui uma temporada de publicações. As temporadas entram em sequência e se acumulam no perfil: a mais recente aparece primeiro, sem intercalar artificialmente imagens de projetos diferentes.</p>
+
+      <div class="lm-season-intro">
+        <div><p class="detail">01 / PROJETO</p><p>Definir o assunto e selecionar seu acervo.</p></div>
+        <div><p class="detail">02 / PUBLICAÇÕES</p><p>Organizar capa, registros, detalhes e contexto conforme o conteúdo existente.</p></div>
+        <div><p class="detail">03 / ARQUIVO</p><p>Ao iniciar outra temporada, a anterior permanece íntegra no histórico.</p></div>
+      </div>
+
+      <div class="lm-season-head">
+        <p class="detail">ESTUDO INTERATIVO / TEMPORADAS</p>
+        <p class="detail">ORDEM DE EXEMPLO. NÃO É O HISTÓRICO REAL DO PERFIL.</p>
+      </div>
+      <div class="lm-season-layout" id="lmSeasonPlanner">
+        <div class="lm-season-main">
+          <div class="lm-season-timeline-head">
+            <p class="detail">LINHA DO TEMPO / ANTIGO → RECENTE</p>
+            <p class="detail">SELECIONE UM PROJETO PARA EDITAR</p>
+          </div>
+          <nav class="lm-season-timeline" id="lmSeasonTimeline" aria-label="Temporadas, da mais antiga à mais recente"></nav>
+          <div class="lm-season-feed-caption">
+            <p class="detail">VISUALIZAÇÃO DO PERFIL / MAIS RECENTES PRIMEIRO ↓</p>
+            <p class="detail" id="lmSeasonCount">0 PUBLICAÇÕES</p>
+          </div>
+          <div class="lm-season-feed" id="lmSeasonFeed" aria-label="Grade editorial organizada por temporadas em ordem inversa à publicação"></div>
+          <p class="detail lm-season-feed-explainer">A grade mostra o recorte do perfil. As linhas de separação e a seleção são guias de edição, não aparecem nas imagens publicadas.</p>
+          <div class="lm-season-main-actions">
+            <button class="lm-social-link" type="button" id="lmSeasonExportFeed">BAIXAR VISÃO DO FEED PNG ↓</button>
+            <button class="lm-social-link" type="button" id="lmSeasonCopyPlan">COPIAR PLANO EDITORIAL ↗</button>
+          </div>
+        </div>
+
+        <aside class="lm-season-inspector" aria-label="Editor da temporada selecionada">
+          <p class="detail">TEMPORADA EM EDIÇÃO</p>
+          <label class="detail" for="lmSeasonSelect">PROJETO</label>
+          <select id="lmSeasonSelect" aria-label="Selecionar temporada"></select>
+          <label class="detail" for="lmSeasonPeriod">PERÍODO REAL (OPCIONAL)</label>
+          <input id="lmSeasonPeriod" type="text" maxlength="32" placeholder="Informe somente se souber" autocomplete="off">
+          <div class="lm-season-order">
+            <button type="button" id="lmSeasonMoveOlder">← MAIS ANTIGA</button>
+            <button type="button" id="lmSeasonMoveNewer">MAIS RECENTE →</button>
+          </div>
+          <div class="lm-season-inspector-rule"></div>
+          <div class="lm-season-inspector-bar">
+            <p class="detail">PUBLICAÇÃO / TEMPORADA</p>
+            <p class="detail" id="lmSeasonSelectedCounter">01 / 01</p>
+          </div>
+          <label class="detail" for="lmSeasonPostSelect">SELECIONAR PUBLICAÇÃO</label>
+          <select id="lmSeasonPostSelect" aria-label="Publicação dentro da temporada"></select>
+          <div class="lm-season-selected-preview" id="lmSeasonSelectedPreview" aria-label="Prévia da publicação selecionada"></div>
+          <label class="detail" for="lmSeasonRole">FUNÇÃO EDITORIAL</label>
+          <select id="lmSeasonRole">
+            <option value="capa">Capa / abertura da temporada</option>
+            <option value="abertura">Abertura</option>
+            <option value="conteudo">Registro / conteúdo</option>
+            <option value="detalhe">Detalhe</option>
+            <option value="contexto">Contexto</option>
+            <option value="encerramento">Encerramento</option>
+          </select>
+          <label class="detail" for="lmSeasonFrame">ENQUADRAMENTO</label>
+          <select id="lmSeasonFrame">
+            <option value="integral">Imagem integral</option>
+            <option value="titulo">Título sobre imagem</option>
+            <option value="respiro">Imagem + respiro</option>
+            <option value="recorte">Detalhe ampliado</option>
+          </select>
+          <label class="detail" for="lmSeasonAsset">IMAGEM DO PROJETO</label>
+          <select id="lmSeasonAsset"></select>
+          <div class="lm-season-framing">
+            <label class="detail" for="lmSeasonFocus">FOCO DO RECORTE</label>
+            <select id="lmSeasonFocus">
+              <option value="center">Centro</option>
+              <option value="top">Superior</option>
+              <option value="bottom">Inferior</option>
+              <option value="left">Esquerda</option>
+              <option value="right">Direita</option>
+            </select>
+          </div>
+          <div class="lm-season-edit-actions">
+            <button class="lm-social-link" type="button" id="lmSeasonAddPost">+ ADICIONAR PUBLICAÇÃO</button>
+            <button class="lm-social-link" type="button" id="lmSeasonRemovePost">RETIRAR PUBLICAÇÃO</button>
+            <button class="lm-social-link" type="button" id="lmSeasonPostOlder">← ANTERIOR NA TEMPORADA</button>
+            <button class="lm-social-link" type="button" id="lmSeasonPostNewer">PRÓXIMA NA TEMPORADA →</button>
+            <button class="lm-social-link" type="button" id="lmSeasonExportPost">BAIXAR PUBLICAÇÃO PNG ↓</button>
+          </div>
+          <p class="detail" id="lmSeasonStatus" role="status" aria-live="polite">ALTERAÇÕES SALVAS NESTE NAVEGADOR.</p>
+        </aside>
+      </div>
+      <div class="lm-season-collection">
+        <label class="detail" for="lmSeasonNewProject">INICIAR OUTRA TEMPORADA / PROJETO</label>
+        <div>
+          <select id="lmSeasonNewProject" aria-label="Projeto para uma nova temporada"></select>
+          <button type="button" class="lm-social-link" id="lmSeasonAddSeason">+ NOVA TEMPORADA</button>
+        </div>
+        <div class="lm-season-collection-options">
+          <button type="button" class="lm-social-link" id="lmSeasonRemoveSeason">REMOVER TEMPORADA SELECIONADA</button>
+          <button type="button" class="lm-social-link" id="lmSeasonReset">RESTAURAR ESTUDO</button>
+        </div>
+      </div>
+      <p class="detail lm-social-endnote">SIMULAÇÃO EDITORIAL COM ARQUIVOS DO ACERVO. PROJETOS E IMAGENS SÃO REAIS; A ORDEM PROPOSTA NÃO PRETENDE RECONSTITUIR DATAS DE PUBLICAÇÃO.</p>
+    </div>
+  </section>
+
+<section class="chapter lm-manual-section lm-social-section" id="enquadramentos" aria-labelledby="enquadramentos-title">
+    <div class="inner">
+      <p class="eyebrow">02 / ENQUADRAMENTOS</p>
+      <h2 class="lm-manual-section-title" id="enquadramentos-title">ABRIR UM<br><span class="perpetua">PROJETO</span></h2>
+      <p class="copy">A capa apresenta a temporada, não uma campanha. Quatro enquadramentos atendem à maioria dos materiais. Escolha pela imagem e pela necessidade de informação; nenhum tratamento é obrigatório em todas as temporadas.</p>
+      <div class="lm-season-frames">
+        <article>
+          <div class="lm-season-frame-demo" data-frame-demo="integral">
+            <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia em imagem integral, sem interferência gráfica" loading="lazy">
+          </div>
+          <div class="lm-season-frame-desc"><p class="detail">01 / IMAGEM PLENA</p><p>A fotografia apresenta o projeto sem título sobreposto. A identificação permanece na legenda.</p></div>
+          <button class="lm-social-link" data-apply-frame="integral" type="button">APLICAR À CAPA ↗</button>
+        </article>
+        <article>
+          <div class="lm-season-frame-demo lm-season-frame-demo-title" data-frame-demo="titulo">
+            <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia com título em área de imagem" loading="lazy">
+            <span class="title" data-lm-text-role="title">ALETEIA</span>
+          </div>
+          <div class="lm-season-frame-desc"><p class="detail">02 / TÍTULO NA IMAGEM</p><p>Usar apenas quando houver área de leitura e contraste suficientes. O texto não deve cobrir a obra.</p></div>
+          <button class="lm-social-link" data-apply-frame="titulo" type="button">APLICAR À CAPA ↗</button>
+        </article>
+        <article>
+          <div class="lm-season-frame-demo lm-season-frame-demo-breath" data-frame-demo="respiro">
+            <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia com imagem acima e faixa editorial de leitura abaixo" loading="lazy">
+            <span class="title" data-lm-text-role="title">ALETEIA</span>
+          </div>
+          <div class="lm-season-frame-desc"><p class="detail">03 / CAMPO DE RESPIRO</p><p>Separar imagem e título quando o nome ou a fotografia exigirem uma área própria de leitura.</p></div>
+          <button class="lm-social-link" data-apply-frame="respiro" type="button">APLICAR À CAPA ↗</button>
+        </article>
+        <article>
+          <div class="lm-season-frame-demo lm-season-frame-demo-detail" data-frame-demo="recorte">
+            <img src="/redes-acervo/aleteia-08.jpg" alt="Detalhe ampliado do registro Aleteia" loading="lazy">
+          </div>
+          <div class="lm-season-frame-desc"><p class="detail">04 / RECORTE DE DETALHE</p><p>Isolar uma textura, um gesto ou um elemento da imagem quando ele sustentar a apresentação.</p></div>
+          <button class="lm-social-link" data-apply-frame="recorte" type="button">APLICAR À CAPA ↗</button>
+        </article>
+      </div>
+      <div class="lm-season-frame-note">
+        <p class="detail">PARA OS DEMAIS CONTEÚDOS</p>
+        <p>Registros, processos e detalhes geralmente dispensam títulos. Se uma informação for necessária, utilize o tratamento tipográfico oficial ou a legenda. A mesma temporada pode alternar enquadramentos sem repetir uma fórmula gráfica.</p>
+      </div>
+      <p class="detail lm-social-endnote">EXEMPLOS COM A MESMA FOTOGRAFIA DE ALETEIA. OS BOTÕES APLICAM O ENQUADRAMENTO À CAPA DA TEMPORADA SELECIONADA NO ESTUDO ACIMA.</p>
     </div>
   </section>
 
   <section class="chapter lm-manual-section lm-social-section" id="criterio">
     <div class="inner">
-      <p class="eyebrow">01 / CRITÉRIO DE APLICAÇÃO</p>
+      <p class="eyebrow">03 / CRITÉRIO DE APLICAÇÃO</p>
       <h2 class="lm-manual-section-title">O CONTEÚDO<br><span class="perpetua">VEM PRIMEIRO</span></h2>
-      <p class="copy">Uma mesma imagem admite tratamentos diferentes. Use o mínimo necessário para que a publicação seja compreendida. Os três exemplos abaixo partem de registros do projeto Aleteia.</p>
+      <p class="copy">Dentro de uma temporada, cada publicação pode ter uma intensidade gráfica diferente. Preserve a imagem quando ela falar por si; identifique ou componha apenas quando a informação pedir. Os três exemplos utilizam Aleteia.</p>
       <div class="lm-social-cases">
         <article class="lm-social-case">
           <figure class="lm-social-case-stage">
@@ -67,55 +218,11 @@
     </div>
   </section>
 
-  <section class="chapter lm-manual-section lm-social-section" id="derivacoes">
-    <div class="inner">
-      <p class="eyebrow">02 / DERIVAÇÕES DA IDENTIDADE</p>
-      <h2 class="lm-manual-section-title">A MESMA<br><span class="perpetua">IDENTIDADE</span></h2>
-      <p class="copy">Os vetores, a tipografia e o movimento permanecem os mesmos do manual. Muda o suporte; não surge uma linguagem paralela para redes.</p>
-
-      <div class="lm-social-identity">
-        <div class="lm-social-symbol-area">
-          <div class="lm-social-identity-heading"><p class="detail">01 / AVATAR E DESTAQUES</p><p class="detail">VETORES ORIGINAIS</p></div>
-          <div class="lm-social-avatar-stage">
-            <div class="lm-social-avatar-large"><img id="lmSocialAvatarArt" src="/identidade/M.svg" alt="Prévia do M mestre em recorte circular"></div>
-            <div class="lm-social-avatar-small"><img id="lmSocialAvatarSmall" src="/identidade/M.svg" alt="" aria-hidden="true"></div>
-            <p class="detail">LEITURA EM DUAS ESCALAS</p>
-          </div>
-          <div class="lm-social-symbol-picker" role="group" aria-label="Selecionar vetor para simulação">
-            <button type="button" data-avatar-source="M.svg" aria-pressed="true" aria-label="M mestre"><img src="/identidade/M.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_01.svg" aria-pressed="false" aria-label="Vaso 01"><img src="/identidade/vaso_01.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_03.svg" aria-pressed="false" aria-label="Vaso 03"><img src="/identidade/vaso_03.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_06.svg" aria-pressed="false" aria-label="Vaso 06"><img src="/identidade/vaso_06.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_09.svg" aria-pressed="false" aria-label="Vaso 09"><img src="/identidade/vaso_09.svg" alt=""></button>
-          </div>
-          <div class="lm-social-tools-line"><p class="detail" id="lmSocialAvatarLabel" aria-live="polite">M MESTRE / RECORTE CIRCULAR</p><button type="button" class="lm-social-link" id="lmSocialAvatarExport">BAIXAR PNG 1080 × 1080 ↓</button></div>
-          <p>Para o avatar, priorizar o M mestre. Os vasos podem distinguir destaques quando isso fizer sentido editorial. Preservar a geometria original, inclusive no tamanho reduzido.</p>
-        </div>
-        <div class="lm-social-motion-area">
-          <div class="lm-social-identity-heading"><p class="detail">02 / ASSINATURA E MOVIMENTO</p><p class="detail">USO PONTUAL</p></div>
-          <video controls playsinline preload="metadata" poster="/motion/posters/perfil-corte.png" aria-label="Exemplo de movimento da Matriz Vetorial">
-            <source src="/motion/videos/perfil-corte.mp4" type="video/mp4">
-            <a href="/motion.html">Ver o sistema de movimento</a>
-          </video>
-          <div class="lm-social-motion-copy">
-            <p class="detail">MOTION / MATRIZ VETORIAL</p>
-            <p>Movimento serve para marcar passagens ou encerramentos. Não é necessária uma vinheta para abrir cada vídeo.</p>
-            <a class="lm-social-link" href="/motion.html">CONSULTAR MOTION ↗</a>
-          </div>
-          <div class="lm-social-signature-copy">
-            <p class="detail">ASSINATURAS</p>
-            <p>O perfil e a legenda já identificam a autoria. Utilizar a assinatura gráfica apenas quando houver uma função clara.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="chapter lm-manual-section lm-social-section" id="sequencia">
     <div class="inner">
-      <p class="eyebrow">03 / CONTEÚDO EM SEQUÊNCIA</p>
+      <p class="eyebrow">04 / CARROSSÉIS</p>
       <h2 class="lm-manual-section-title">NARRATIVA<br><span class="perpetua">EM CAMADAS</span></h2>
-      <p class="copy">No carrossel, cada imagem acrescenta uma informação. Comece pelo registro que situa o projeto, avance para os detalhes e finalize quando a sequência estiver completa.</p>
+      <p class="copy">Uma publicação da temporada também pode ser um carrossel. Dentro dele, cada imagem acrescenta uma informação: situação, desenvolvimento e detalhe. Este exemplo tem quatro quadros, mas não existe quantidade fixa.</p>
       <div class="lm-social-storyboard" id="lmSocialStoryboard">
         <div class="lm-social-story-main">
           <div class="lm-social-story-frame">
@@ -158,76 +265,57 @@
     </div>
   </section>
 
-  <section class="chapter lm-manual-section lm-social-section" id="feed">
+  <section class="chapter lm-manual-section lm-social-section" id="derivacoes">
     <div class="inner">
-      <p class="eyebrow">04 / EDIÇÃO DO FEED</p>
-      <h2 class="lm-manual-section-title">UNIDADE PELA<br><span class="perpetua">RELAÇÃO</span></h2>
-      <p class="copy">O feed não é um mosaico de marca. É a relação entre assuntos, enquadramentos e ritmos. Reordene fotografias reais do acervo para testar as relações entre publicações.</p>
-      <div class="lm-social-editor">
-        <div class="lm-social-editor-left">
-          <div class="lm-social-editor-toolbar">
-            <p class="detail">ESTUDO / 09 PUBLICAÇÕES</p>
-            <div class="lm-social-feed-actions" role="group" aria-label="Organizações iniciais">
-              <button type="button" data-feed-mode="alternado" aria-pressed="true">ALTERNADO</button>
-              <button type="button" data-feed-mode="agrupado" aria-pressed="false">POR PROJETO</button>
-            </div>
+      <p class="eyebrow">05 / DERIVAÇÕES DA IDENTIDADE</p>
+      <h2 class="lm-manual-section-title">A MESMA<br><span class="perpetua">IDENTIDADE</span></h2>
+      <p class="copy">Os vetores, a tipografia e o movimento permanecem os mesmos do manual. Muda o suporte; não surge uma linguagem paralela para redes.</p>
+
+      <div class="lm-social-identity">
+        <div class="lm-social-symbol-area">
+          <div class="lm-social-identity-heading"><p class="detail">01 / AVATAR E DESTAQUES</p><p class="detail">VETORES ORIGINAIS</p></div>
+          <div class="lm-social-avatar-stage">
+            <div class="lm-social-avatar-large"><img id="lmSocialAvatarArt" src="/identidade/M.svg" alt="Prévia do M mestre em recorte circular"></div>
+            <div class="lm-social-avatar-small"><img id="lmSocialAvatarSmall" src="/identidade/M.svg" alt="" aria-hidden="true"></div>
+            <p class="detail">LEITURA EM DUAS ESCALAS</p>
           </div>
-          <div id="lmSocialFeedGrid" class="lm-social-feed-grid" data-mode="alternado" aria-label="Planejador visual com nove publicações. Selecione, arraste ou use as ações para reorganizar.">
-            <button class="lm-social-tile" type="button" draggable="true" data-media="aleteia-08" aria-label="01 / Aleteia" aria-pressed="true"><img src="/redes-acervo/aleteia-08.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="fome-come-01" aria-label="02 / Fome Come" aria-pressed="false"><img src="/redes-acervo/fome-come-01.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="poiesis-34" aria-label="03 / Poiesis" aria-pressed="false"><img src="/redes-acervo/poiesis-34.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="concreto-efemero-04" aria-label="04 / Concreto Efêmero" aria-pressed="false"><img src="/redes-acervo/concreto-efemero-04.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="geluminas-03" aria-label="05 / Gelúminas" aria-pressed="false"><img src="/redes-acervo/geluminas-03.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="morangos-carnivoros-02" aria-label="06 / Morangos Carnívoros" aria-pressed="false"><img src="/redes-acervo/morangos-carnivoros-02.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="pe-de-verso-01" aria-label="07 / Pé de Verso" aria-pressed="false"><img src="/redes-acervo/pe-de-verso-01.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="dadiva-01" aria-label="08 / Dádiva" aria-pressed="false"><img src="/redes-acervo/dadiva-01.jpg" alt=""></button>
-            <button class="lm-social-tile" type="button" draggable="true" data-media="aleteia-14" aria-label="09 / Aleteia" aria-pressed="false"><img src="/redes-acervo/aleteia-14.jpg" alt=""></button>
+          <div class="lm-social-symbol-picker" role="group" aria-label="Selecionar vetor para simulação">
+            <button type="button" data-avatar-source="M.svg" aria-pressed="true" aria-label="M mestre"><img src="/identidade/M.svg" alt=""></button>
+            <button type="button" data-avatar-source="vaso_01.svg" aria-pressed="false" aria-label="Vaso 01"><img src="/identidade/vaso_01.svg" alt=""></button>
+            <button type="button" data-avatar-source="vaso_03.svg" aria-pressed="false" aria-label="Vaso 03"><img src="/identidade/vaso_03.svg" alt=""></button>
+            <button type="button" data-avatar-source="vaso_06.svg" aria-pressed="false" aria-label="Vaso 06"><img src="/identidade/vaso_06.svg" alt=""></button>
+            <button type="button" data-avatar-source="vaso_09.svg" aria-pressed="false" aria-label="Vaso 09"><img src="/identidade/vaso_09.svg" alt=""></button>
           </div>
-          <div class="lm-social-editor-bottom"><p class="detail">SELECIONE OU ARRASTE UMA IMAGEM PARA REORDENAR.</p><button type="button" class="lm-social-link" id="lmFeedReset">RESTAURAR ↺</button></div>
+          <div class="lm-social-tools-line"><p class="detail" id="lmSocialAvatarLabel" aria-live="polite">M MESTRE / RECORTE CIRCULAR</p><button type="button" class="lm-social-link" id="lmSocialAvatarExport">BAIXAR PNG 1080 × 1080 ↓</button></div>
+          <p>Para o avatar, priorizar o M mestre. Os vasos podem distinguir destaques quando isso fizer sentido editorial. Preservar a geometria original, inclusive no tamanho reduzido.</p>
         </div>
-        <div class="lm-social-editor-aside">
-          <p class="detail">PUBLICAÇÃO SELECIONADA / <span id="lmFeedActivePosition">01</span> DE 09</p>
-          <div class="lm-social-selected-preview"><img id="lmFeedActiveImage" src="/redes-acervo/aleteia-08.jpg" alt="Prévia da publicação selecionada"></div>
-          <p class="detail" id="lmFeedActiveTitle">ALETEIA</p>
-          <p id="lmFeedActiveInfo">Registro fotográfico do projeto. O conteúdo não requer tratamento gráfico.</p>
-          <div class="lm-social-editor-step">
-            <button type="button" id="lmFeedMoveLeft" aria-label="Mover publicação para posição anterior">← MOVER</button>
-            <button type="button" id="lmFeedMoveRight" aria-label="Mover publicação para posição seguinte">MOVER →</button>
+        <div class="lm-social-motion-area">
+          <div class="lm-social-identity-heading"><p class="detail">02 / ASSINATURA E MOVIMENTO</p><p class="detail">USO PONTUAL</p></div>
+          <video controls playsinline preload="metadata" poster="/motion/posters/perfil-corte.png" aria-label="Exemplo de movimento da Matriz Vetorial">
+            <source src="/motion/videos/perfil-corte.mp4" type="video/mp4">
+            <a href="/motion.html">Ver o sistema de movimento</a>
+          </video>
+          <div class="lm-social-motion-copy">
+            <p class="detail">MOTION / MATRIZ VETORIAL</p>
+            <p>Movimento serve para marcar passagens ou encerramentos. Não é necessária uma vinheta para abrir cada vídeo.</p>
+            <a class="lm-social-link" href="/motion.html">CONSULTAR MOTION ↗</a>
           </div>
-          <label class="detail lm-social-replace-label" for="lmFeedReplace">SUBSTITUIR PELO ACERVO</label>
-          <select id="lmFeedReplace">
-            <option value="aleteia-08">Aleteia / 08</option>
-            <option value="aleteia-14">Aleteia / 14</option>
-            <option value="aleteia-18">Aleteia / 18</option>
-            <option value="poiesis-34">Poiesis / 34</option>
-            <option value="poiesis-37">Poiesis / 37</option>
-            <option value="fome-come-01">Fome Come / 01</option>
-            <option value="fome-come-03">Fome Come / 03</option>
-            <option value="concreto-efemero-04">Concreto Efêmero / 04</option>
-            <option value="geluminas-03">Gelúminas / 03</option>
-            <option value="morangos-carnivoros-02">Morangos Carnívoros / 02</option>
-            <option value="pe-de-verso-01">Pé de Verso / 01</option>
-            <option value="dadiva-01">Dádiva / 01</option>
-          </select>
-          <div class="lm-social-editor-export">
-            <button type="button" class="lm-social-link" id="lmFeedExport">BAIXAR PRÉVIA PNG ↓</button>
-            <button type="button" class="lm-social-link" id="lmFeedCopy">COPIAR SEQUÊNCIA ↗</button>
+          <div class="lm-social-signature-copy">
+            <p class="detail">ASSINATURAS</p>
+            <p>O perfil e a legenda já identificam a autoria. Utilizar a assinatura gráfica apenas quando houver uma função clara.</p>
           </div>
-          <p class="detail" id="lmSocialFeedStatus" role="status" aria-live="polite">ESTUDO SALVO NESTE NAVEGADOR.</p>
         </div>
       </div>
-      <div class="lm-social-feed-principles">
-        <div><p class="detail">ESCALA</p><p>Alternar planos abertos, gestos e detalhes.</p></div>
-        <div><p class="detail">INTERVALO</p><p>Intercalar imagens densas com momentos de leitura.</p></div>
-        <div><p class="detail">CONTINUIDADE</p><p>Rever cada postagem ao lado das anteriores.</p></div>
-      </div>
-      <p class="detail lm-social-endnote">A SEQUÊNCIA É UM ESTUDO LOCAL E EDITÁVEL, NÃO UM CALENDÁRIO DE PUBLICAÇÕES. AS FOTOGRAFIAS SÃO DO ACERVO DE PROJETOS DA MATTAR.</p>
     </div>
   </section>
 
+
+
+
+
   <section class="chapter lm-manual-section lm-social-section" id="boas-praticas">
     <div class="inner">
-      <p class="eyebrow">05 / PRODUÇÃO E PUBLICAÇÃO</p>
+      <p class="eyebrow">06 / BOAS PRÁTICAS</p>
       <h2 class="lm-manual-section-title">PUBLICAR<br><span class="perpetua">COM CRITÉRIO</span></h2>
       <p class="copy">O formato é uma condição técnica, não uma receita visual. Escolha a proporção pela natureza do material e confira o resultado no celular antes de publicar.</p>
       <div class="lm-social-specs">
@@ -244,11 +332,11 @@
       <div class="lm-social-review" id="revisao">
         <p class="detail">ANTES DE PUBLICAR</p>
         <ol>
-          <li>A publicação comunica com clareza?</li>
-          <li>A intervenção gráfica acrescenta algo?</li>
-          <li>A nova imagem funciona ao lado das demais?</li>
+          <li>O enquadramento escolhido preserva a imagem e permite a leitura?</li>
+          <li>Há necessidade real de título, símbolo ou intervenção?</li>
+          <li>Ela pertence à temporada certa e respeita a sequência temporal?</li>
         </ol>
-        <p>Uma publicação pode ser apenas uma imagem. O conjunto é reconhecível pela edição, não pela uniformização.</p>
+        <p>A temporada é o conjunto. Não misture projetos para criar um desenho de feed e não obrigue cada projeto a ter o mesmo número de publicações.</p>
       </div>
       <p class="detail lm-social-technical-note">CRITÉRIOS DE IDENTIDADE: SISTEMA MATTAR / CAPÍTULOS 01–05. REFERÊNCIA DE ACESSIBILIDADE: <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" target="_blank" rel="noopener noreferrer">WCAG 2.2 — CONTRASTE MÍNIMO ↗</a>. FORMATOS: CONFERIR A INTERFACE DO INSTAGRAM NO MOMENTO DA PUBLICAÇÃO.</p>
     </div>

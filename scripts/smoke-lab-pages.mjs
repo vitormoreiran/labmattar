@@ -17,7 +17,11 @@ async function state(patch){
 }
 async function downloadButton(id,file){
   const result=page.waitForEvent('download',{timeout:180000});
-  await page.locator('.lab-export-menu>summary').click();await page.locator('#'+id).click();
+  if(!await page.locator('#labDeliveryDialog').isVisible())await page.locator('#labOpenDelivery').click();
+  await page.locator('[data-delivery-format="'+(id==='labExportPdf'?'pdf':'html')+'"]').click();
+  assert.equal(await page.locator('#labDeliveryPages li').count(),4);
+  await page.screenshot({path:path.join(output,'delivery-'+(id==='labExportPdf'?'pdf':'html')+'-desktop.png')});
+  await page.locator('#'+id).click();
   const download=await result;await download.saveAs(path.join(output,file));assert.equal(await download.failure(),null);
 }
 async function reference(index){
@@ -89,7 +93,8 @@ try{
   for(let index=0;index<4;index++){
     await page.locator('[data-page-index="'+index+'"]').click();await pause();
     assert.equal(await page.locator('#labArtboard').getAttribute('data-state'),'ok',`Page ${index+1} must pass layout preflight`);
-    await page.locator('#labExportSize').selectOption('1920');
+    await page.locator('#labOpenDelivery').click();
+    await page.locator('#labExportSize').selectOption('1920');await page.locator('#labDeliveryBack').click();
     if(index===2){
       assert.ok(await page.locator('#labMask').isVisible(),'Solid M must remain visible over a color background');
       const vector=await page.evaluate(async()=>{const scene=await window.LabRenderer.capture({ask:false});return scene.items.some(item=>item.kind==='vector'&&item.paths.length&&item.box.w>0);});
@@ -104,6 +109,10 @@ try{
   assert.deepEqual(await page.evaluate(()=>window.LabProductionBridge.snapshot().state),before,'PDF export restores the editable page');
   await downloadButton('labExportHtml','labmattar-site.html');
   assert.deepEqual(await page.evaluate(()=>window.LabProductionBridge.snapshot().state),before,'HTML export restores the editable page');
+  await page.locator('[data-delivery-format=png]').click();
+  assert.equal(await page.locator('#labDeliveryPages li').count(),1,'PNG scope must be the selected page');
+  assert.ok((await page.locator('#labDeliveryScope').textContent()).includes('página 4'));
+  await page.locator('#labDeliveryBack').click();
   report.steps.push('Four formats, duplicate, delete, order, reversible JSON and exports');
 
   const htmlPage=await context.newPage();
@@ -125,7 +134,11 @@ try{
   assert.equal(await page.locator('#labPageList button').count(),4);
   assert.equal(await page.locator('#labPageList').isVisible(),true);
   assert.equal(await page.locator('#labPageAdd').isVisible(),true);
-  assert.equal(await page.locator('.lab-export-menu>summary').isVisible(),true);
+  assert.equal(await page.locator('#labOpenDelivery').isVisible(),true);
+  await page.locator('#labReviewDelivery').click();await page.locator('[data-delivery-format=pdf]').click();
+  assert.equal(await page.locator('#labDeliveryDialog').isVisible(),true);
+  assert.ok(await page.locator('#labExportPdf').isVisible());
+  await page.screenshot({path:path.join(output,'delivery-mobile.png')});await page.locator('#labDeliveryBack').click();
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
   await page.screenshot({path:path.join(output,'editor-mobile.png')});
   await page.setViewportSize({width:1440,height:1000});

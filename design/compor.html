@@ -28,27 +28,39 @@
       <button type="button" id="labTourStudioHelp" class="lm-studio-help" aria-label="Abrir ajuda guiada e dúvidas do Laboratório" aria-controls="labHelp-overview" aria-expanded="false"><span aria-hidden="true">?</span><span class="lm-studio-help-label">DÚVIDAS</span></button>
       <button type="button" class="lm-lab-motion-play" id="labMotionPlay" aria-controls="labArtboard" aria-label="Reproduzir entrada dos textos" title="Reproduzir a entrada de Título, Corpo e Detalhe"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1 0.5 9 5 1 9.5Z"/></svg><span id="labMotionPlayText">ENTRADA</span></button>
       <span id="labMotionStatus" class="lm-lab-motion-status" role="status" aria-live="polite"></span>
-      <div class="lm-lab-export-tools" role="group" aria-label="Exportar imagem da composição">
-        <label class="lm-lab-export-label" for="labExportSize">QUALIDADE</label>
-        <select id="labExportSize" aria-label="Qualidade das imagens exportadas"><option value="3840">4K</option><option value="1920">2K</option></select>
-        <button type="button" id="labExportPng" aria-describedby="labExportStatus" title="Baixar PNG somente da página atual" aria-label="Baixar PNG da página atual"><span class="lm-lab-export-verb">EXPORTAR</span> PNG</button>
-        <details class="lab-export-menu"><summary aria-label="Exportar a apresentação">EXPORTAR <span aria-hidden="true">▾</span></summary><div><p class="lab-export-heading">APRESENTAÇÃO COMPLETA</p><button type="button" id="labPresentation"><span>APRESENTAR ↗</span><small>Ver a sequência no navegador</small></button><button type="button" id="labExportPdf"><span>BAIXAR PDF</span><small>Todas as páginas nos formatos escolhidos</small></button><button type="button" id="labExportHtml"><span>BAIXAR SITE HTML</span><small>Páginas e motions em um arquivo independente</small></button><p class="lab-workflow-helper">O botão PNG exporta somente a página em edição.</p></div></details>
-      </div>
+      <div class="lm-lab-export-tools lab-delivery-launch" role="group" aria-label="Finalizar apresentação"><button type="button" id="labOpenDelivery" aria-haspopup="dialog" aria-controls="labDeliveryDialog"><span class="lab-delivery-step" aria-hidden="true">02</span><span>REVISAR E EXPORTAR</span><span aria-hidden="true">→</span></button></div>
       <button type="button" id="labStudioToggle" aria-pressed="false" aria-controls="labArtboard">
         <span id="labStudioToggleText">ABRIR EDITOR</span><span class="lm-studio-launch-symbol" aria-hidden="true">↗</span>
       </button>
     </div>
   </div>
+
+  <dialog id="labDeliveryDialog" class="lab-delivery-dialog" aria-labelledby="labDeliveryTitle">
+    <header><div><p class="detail">02 / FINALIZAR APRESENTAÇÃO</p><p id="labDeliveryTitle" class="body">Revisar e exportar</p></div><button type="button" id="labDeliveryClose" aria-label="Voltar à montagem">×</button></header>
+    <div class="lab-delivery-content">
+      <section class="lab-delivery-review" aria-label="Páginas incluídas no arquivo"><div class="lab-delivery-section-heading"><span class="detail">SUA APRESENTAÇÃO</span><output id="labDeliveryCount" class="detail"></output></div><p id="labDeliveryName" class="body"></p><ol id="labDeliveryPages"></ol><button type="button" id="labPresentation">VER APRESENTAÇÃO ↗</button></section>
+      <section class="lab-delivery-options" aria-label="Configurar o arquivo final"><p class="detail lab-delivery-section-heading">ESCOLHA O ARQUIVO</p>
+        <div class="lab-delivery-formats" role="group" aria-label="Formato de saída">
+          <button type="button" data-delivery-format="pdf" aria-pressed="true"><span class="body">PDF</span><span class="detail">Apresentação completa · quadros estáticos</span></button>
+          <button type="button" data-delivery-format="html" aria-pressed="false"><span class="body">Site HTML</span><span class="detail">Apresentação completa · com animações</span></button>
+          <button type="button" data-delivery-format="png" aria-pressed="false"><span class="body">Imagem PNG</span><span class="detail">Somente a página em edição</span></button>
+        </div>
+        <div class="lab-delivery-quality"><label class="detail" for="labExportSize">QUALIDADE DAS IMAGENS</label><select id="labExportSize" aria-label="Qualidade das imagens exportadas"><option value="3840">4K / maior definição</option><option value="1920">2K / arquivo mais leve</option></select><p class="detail">O formato de cada página é o escolhido na montagem. No PDF, textos e vetores permanecem nítidos.</p></div>
+      </section>
+    </div>
+    <footer><div class="lab-delivery-result"><p id="labDeliveryScope" class="detail"></p><output id="labDeliveryStatus" class="detail" role="status" aria-live="polite"></output></div><div class="lab-delivery-actions"><button type="button" id="labDeliveryBack">VOLTAR À MONTAGEM</button><button type="button" id="labExportPdf">BAIXAR PDF</button><button type="button" id="labExportHtml" hidden>BAIXAR SITE HTML</button><button type="button" id="labExportPng" hidden aria-describedby="labDeliveryScope labDeliveryStatus">BAIXAR PNG</button></div></footer>
+  </dialog>
   <div class="lm-lab-workspace">
     <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">
       <nav class="lab-workflow-switch" aria-label="Organizar e editar a apresentação"><button type="button" data-workspace-view="pages" aria-pressed="false" aria-controls="labPages">PÁGINAS</button><button type="button" data-workspace-view="edit" aria-pressed="true">EDITAR PÁGINA</button><button type="button" data-workspace-view="motion" aria-pressed="false" aria-controls="labWorkflowMotion">MOTION</button></nav>
         <section id="labPages" class="lab-pages lab-workflow-panel" hidden aria-label="Páginas da apresentação" data-ready="false">
-          <div class="lab-pages-heading"><span>PÁGINAS DA APRESENTAÇÃO</span><output id="labPageCount">1 / 1</output></div>
+          <div class="lab-pages-heading"><span>01 / MONTAR AS PÁGINAS</span><output id="labPageCount">1 / 1</output></div>
           
-          <p class="lab-workflow-helper">Escolha uma página para editar. A ordem abaixo será a ordem da apresentação.</p><select id="labPageSelect" hidden aria-hidden="true" tabindex="-1"><option value="0">01 / Página 1</option></select><div id="labPageList" class="lab-page-list" aria-label="Ordem das páginas"></div>
+          <p class="lab-workflow-helper">Adicione as páginas, edite cada composição e organize a ordem da apresentação.</p><select id="labPageSelect" hidden aria-hidden="true" tabindex="-1"><option value="0">01 / Página 1</option></select><div id="labPageList" class="lab-page-list" aria-label="Ordem das páginas"></div>
           <label for="labPageName">Nome da página selecionada</label><input id="labPageName" maxlength="120" value="Página 1">
-          <div class="lab-page-actions"><button type="button" id="labPageAdd">+ NOVA PÁGINA</button><button type="button" id="labPageDuplicate">DUPLICAR</button><button type="button" id="labPageEarlier" aria-label="Mover página para antes" title="Mover para antes">←</button><button type="button" id="labPageLater" aria-label="Mover página para depois" title="Mover para depois">→</button><button type="button" id="labPageDelete">EXCLUIR</button></div>
+          <div class="lab-page-actions"><button type="button" id="labPageAdd">+ NOVA PÁGINA</button><button type="button" id="labPageDuplicate">DUPLICAR</button><button type="button" id="labPageEarlier" aria-label="Mover página para antes" title="Subir na sequência">↑</button><button type="button" id="labPageLater" aria-label="Mover página para depois" title="Descer na sequência">↓</button><button type="button" id="labPageDelete">EXCLUIR</button></div>
           <button id="labEditCurrentPage" class="lab-edit-current" type="button">EDITAR ESTA PÁGINA →</button>
+          <button type="button" id="labReviewDelivery" class="lab-review-delivery">02 / REVISAR E EXPORTAR →</button>
           <details class="lab-project-settings"><summary>PROJETO / SALVAR E ABRIR</summary><div><label for="labSequenceName">Nome do projeto</label><input id="labSequenceName" maxlength="120" value="Apresentação LABMATTAR">          <div class="lm-lab-field lm-lab-document-field">
             <div class="lm-lab-field-title">ARQUIVO EDITÁVEL</div>
             <div class="lm-lab-document-actions">

@@ -7,7 +7,8 @@ const assert=(condition,message)=>{if(!condition)throw new Error(message)};
 const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const errors=[];
 page.on("pageerror",error=>errors.push(error.message));
-page.on("dialog",dialog=>dialog.accept());
+const acceptDialog=dialog=>dialog.accept();
+page.on("dialog",acceptDialog);
 async function choose(group,value){
   const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
@@ -65,7 +66,8 @@ async function audit(){
 try{
   await page.goto(base+"?studio=1#laboratorio",{waitUntil:"load",timeout:60000});
   await page.evaluate(()=>document.fonts.ready);
-  assert(await page.locator("#labExportPng").isVisible(),"Export control must be visible inside the laboratory");
+  await page.waitForFunction(()=>Boolean(window.LabPages));
+  assert(await page.locator("#labOpenDelivery").isVisible(),"Review and export must be reachable from the editor");
   assert(await page.locator("#labExportSize").inputValue()==="3840","4K must be the default export profile");
   assert(await page.locator("#labExportStatus").count()===1,"Accessible status is required");
   await choose("format","horizontal");
@@ -84,6 +86,9 @@ try{
   assert(first.meanAbsDiff<26,"Export cannot diverge visibly from the approved page: "+JSON.stringify(first));
 
   const promise=page.waitForEvent("download",{timeout:60000});
+  await page.locator("#labOpenDelivery").click();
+  await page.locator("[data-delivery-format=png]").click();
+  assert(await page.locator("#labDeliveryPages li").count()===1,"PNG must describe its single-page scope");
   await page.locator("#labExportPng").click();
   const download=await promise;
   assert(/labmattar-horizontal-3840x2160\.png$/.test(download.suggestedFilename()),"Filename must include format and dimensions");
@@ -93,6 +98,13 @@ try{
   assert(data.readUInt32BE(16)===3840&&data.readUInt32BE(20)===2160,
     "PNG file header dimensions must match requested output");
 
+  assert(first.warnings>0,"Reference image must exercise the quality confirmation");
+  page.off("dialog",acceptDialog);page.once("dialog",dialog=>dialog.dismiss());
+  await page.locator("#labExportPng").click();
+  await page.waitForFunction(()=>!window.LabExportPNG.isExporting()&&document.getElementById('labExportStatus').textContent.includes('CANCELADA'));
+  assert(await page.locator("#labDeliveryBack").isEnabled(),"Cancelling must restore the review controls");
+  page.on("dialog",acceptDialog);
+  await page.locator("#labDeliveryBack").click();
   // Same authoring state must also be reversible as a versioned document.
   // This does not assert the Matriz motion renderer is already connected.
   await page.locator('[data-workspace-view=pages]').click();
@@ -148,7 +160,9 @@ try{
   await choose("format","vertical");
   await choose("mContent","off");
   await choose("background","color");
+  await page.locator("#labOpenDelivery").click();
   await page.locator("#labExportSize").selectOption("1920");
+  await page.locator("#labDeliveryBack").click();
   await page.waitForTimeout(250);
   const second=await audit();
   console.log("PORTRAIT PNG",JSON.stringify(second));
@@ -156,8 +170,8 @@ try{
   assert(second.uniqueColors>8&&second.meanAbsDiff<26,"Simple portrait page must match the preview: "+JSON.stringify(second));
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(160);
-  assert(await page.locator("#labExportPng").isVisible(),
-    "PNG export must remain accessible on mobile");
+  assert(await page.locator("#labOpenDelivery").isVisible(),
+    "Review and export must remain accessible on mobile");
   const mobile=await page.evaluate(()=>{
     const exportBar=document.querySelector("#laboratorio .lm-lab-export-tools").getBoundingClientRect();
     const play=document.getElementById("labMotionPlay").getBoundingClientRect();

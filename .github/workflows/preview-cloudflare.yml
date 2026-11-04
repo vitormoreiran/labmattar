@@ -17,6 +17,7 @@ on:
       - 'tools/laboratorio-export/**'
       - 'scripts/prepare-lab-pdf.mjs'
       - 'scripts/test-lab-sequence.mjs'
+      - 'scripts/test-private-video-html.mjs'
       - 'scripts/smoke-lab-pages.mjs'
       - 'scripts/verify-lab-pdf.py'
       - 'package.json'
@@ -123,7 +124,7 @@ jobs:
       - name: Validar seguranca do acervo
         run: node scripts/test-acervo.mjs
       - name: Validar contratos de páginas e elementos
-        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs
+        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs
       - name: Preparar inspeção do PDF
         run: |
           python3 -m pip install --quiet pypdf==6.10.0

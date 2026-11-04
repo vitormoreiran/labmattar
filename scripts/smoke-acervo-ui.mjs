@@ -23,15 +23,30 @@ await page.route("**/api/acervo/dropbox/list?*",route=>route.fulfill({
     entries:[{kind:"image",provider:"dropbox",id:"id:abcdefghij",
       name:"Fotografia de teste.jpg",mimeType:"image/jpeg",
       original:"/api/acervo/media?provider=dropbox&id=id%3Aabcdefghij",
-      preview:"/api/acervo/thumb?provider=dropbox&id=id%3Aabcdefghij"}],
+      preview:"/api/acervo/thumb?provider=dropbox&id=id%3Aabcdefghij"},
+      {kind:"video",provider:"dropbox",id:"id:video12345",
+        name:"Vídeo do projeto.mp4",mimeType:"video/mp4",
+        original:"/api/acervo/media?provider=dropbox&id=id%3Avideo12345",
+        preview:"/api/acervo/thumb?provider=dropbox&id=id%3Avideo12345"}],
     hasMore:false,cursor:null
   })
 }));
-for(const part of ["media","thumb"]){
-  await page.route("**/api/acervo/"+part+"?*",route=>route.fulfill({
-    status:200,contentType:"image/png",body:Buffer.from(dot,"base64")
-  }));
-}
+const manifestResponse=await page.request.get(new URL('/motion/catalog.json',base).href);
+assert(manifestResponse.ok(),"Motion media fixture must exist");
+const motionCatalog=await manifestResponse.json();
+const movieFixture=new URL(motionCatalog.items[0].video,base).href;
+await page.route("**/api/acervo/media?*",async route=>{
+  if(route.request().url().includes("id%3Avideo12345")){
+    const media=await page.request.get(movieFixture);
+    assert(media.ok(),"Video fixture must load");
+    await route.fulfill({status:200,contentType:"video/mp4",body:await media.body()});
+  }else{
+    await route.fulfill({status:200,contentType:"image/png",body:Buffer.from(dot,"base64")});
+  }
+});
+await page.route("**/api/acervo/thumb?*",route=>route.fulfill({
+  status:200,contentType:"image/png",body:Buffer.from(dot,"base64")
+}));
 try{
   await page.goto(base,{waitUntil:"load",timeout:60000});
   await page.locator('button[data-mobile-module="fundo"]').click();
@@ -71,6 +86,20 @@ try{
   assert((await page.locator("#labAcervoCurrent").textContent()).includes("Fotografia de teste"),
     "Selected asset shown in the library");
   assert(await page.locator("#labArtboard").isVisible(),"The same composition preview remains active");
+  await page.locator("#labAcervoLaunch").click();
+  await page.locator("#labAcervoConnect-dropbox").click();
+  await page.locator(".lm-acervo-item").nth(1).click();
+  await page.locator("#labClipSettings").waitFor({state:"visible"});
+  assert(await page.locator("#labPageVideos video").count()===1,
+    "Selecting a private video must create a video overlay on the active page");
+  const project=await page.evaluate(()=>window.LabPages.create());
+  assert(project.kind==="labmattar.presentation","Video pages must save as presentation JSON");
+  assert(project.pages[0].clips.length===1,"Video belongs to the active project page");
+  assert(project.pages[0].clips[0].fileId==="id:video12345","Project retains the private video reference");
+  assert(!JSON.stringify(project).includes("access_token"),"Video project must not contain OAuth tokens");
+  await page.evaluate(async document=>window.LabPages.load(document),project);
+  assert(await page.locator("#labPageVideos video").count()===1,
+    "Reopening a saved project must restore the video on the page");
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
   // Simulate the browser returning from an authorized Google OAuth callback.
   // The picker must open by itself, without a second click on Google Drive.
@@ -134,5 +163,5 @@ try{
     "Native Google Picker should not be obscured by the custom modal");
   assert(oauthErrors.length===0,"OAuth return errors: "+oauthErrors.join(" / "));
   await returning.close();
-  console.log("LABMATTAR acervo UI: icons, missing OAuth, connected source, photo selection, auto-open Google Picker OK");
+  console.log("LABMATTAR acervo UI: icons, missing OAuth, connected source, photo and video selection, JSON roundtrip, auto-open Google Picker OK");
 }finally{await browser.close()}

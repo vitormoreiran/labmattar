@@ -68,7 +68,7 @@
               <button type="button" id="labImportDocument" title="Abrir documento JSON compatível com o Laboratório">ABRIR PROJETO</button>
               <input type="file" id="labDocumentFile" accept=".json,application/json" hidden>
             </div>
-            <small class="lm-ctrl-helper">Salva as páginas, a ordem, os elementos Motion e as referências oficiais. Os originais fotográficos permanecem no acervo de origem.</small>
+            <small class="lm-ctrl-helper">Salva páginas, fotografias, vídeos e motions com referências privadas. Os arquivos originais permanecem no Drive ou Dropbox; reabrir mídias exige acesso à mesma conta.</small>
             <output id="labDocumentStatus" role="status" aria-live="polite"></output>
           </div></div></details>
           <output id="labPagesStatus" role="status" aria-live="polite"></output>
@@ -84,6 +84,21 @@
             <p class="lab-workflow-helper">No site, a animação roda em loop. Para PDF e PNG, escolha o quadro que deve aparecer.</p><label for="labMotionFrame">Quadro estático / tempo em segundos</label><input id="labMotionFrame" type="number" min="0" max="20" step="0.01" value="0">
             <div class="lab-motion-actions"><button type="button" id="labMotionPreview" aria-pressed="false">VER QUADRO DO PDF</button><button type="button" id="labMotionRemove">REMOVER</button></div>
             <a id="labMotionEdit" target="_blank" rel="noopener">EDITAR ROTEIRO NA MATRIZ ↗</a>
+          </div>
+        </div>
+        <div class="lab-motion-assets lab-private-video-panel">
+          <div class="lm-lab-field-title">VÍDEOS DO ACERVO</div>
+          <button type="button" id="labClipOpen">+ ADICIONAR VÍDEO DO DRIVE</button>
+          <p id="labClipEmpty" class="lab-workflow-helper">Selecione um vídeo de 01_Portfolio para esta página. O original permanece na conta autorizada.</p>
+          <div id="labClipSettings" hidden>
+            <label for="labClipInstance">Vídeo da página</label><select id="labClipInstance"></select>
+            <label for="labClipX">Posição horizontal</label><input id="labClipX" type="range" min="0" max="100" step="1">
+            <label for="labClipY">Posição vertical</label><input id="labClipY" type="range" min="0" max="100" step="1">
+            <label for="labClipWidth">Largura do vídeo</label><input id="labClipWidth" type="range" min="5" max="100" step="1">
+            <p class="lab-workflow-helper">Reproduz em loop, sem som, preservando a proporção. O PDF e o PNG usam um quadro estático.</p>
+            <label for="labClipFrame">Quadro para PDF/PNG · segundos</label><input id="labClipFrame" type="number" min="0" max="3600" step="0.1" value="0">
+            <div class="lab-motion-actions"><button type="button" id="labClipPlay" aria-pressed="true">PAUSAR VÍDEO</button><button type="button" id="labClipRemove">REMOVER VÍDEO</button></div>
+            <p id="labClipStatus" class="lab-workflow-helper" role="status" aria-live="polite"></p>
           </div>
         </div>
         <dialog id="labMotionLibrary" aria-label="Acervo de motions da Matriz Vetorial"><header><span>ACERVO / MOTIONS DA MATRIZ</span><button id="labMotionClose" type="button" aria-label="Fechar acervo de motions">×</button></header><div id="labMotionLibraryItems"></div></dialog></section>
@@ -346,7 +361,8 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           </div>
           <img id="labSignature" class="lm-lab-mark" src="/identidade/M.svg" alt="" aria-hidden="true" hidden>
           <div id="labSignatureLayer" class="lm-lab-signature-layer" aria-hidden="true"></div>
-          <div id="labPageMotions" class="lab-page-motions" aria-hidden="true"></div>
+          <div id="labPageVideos" class="lab-page-videos" aria-label="Vídeos do acervo nesta página"></div>
+           <div id="labPageMotions" class="lab-page-motions" aria-hidden="true"></div>
           <div class="lm-lab-reading" id="labReading">
             <p id="labKicker" class="lm-lab-kicker lm-lab-inline-edit" contenteditable="plaintext-only" tabindex="0" role="textbox" aria-multiline="false" aria-label="Editar cabeçalho da composição" data-lab-inline="kicker" spellcheck="false">LABMATTAR / 2026</p>
             <div id="labCopy" class="lm-lab-main-copy">

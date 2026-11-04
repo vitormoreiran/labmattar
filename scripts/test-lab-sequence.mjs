@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createPage,createMotion,motionBox,readSequence,sequenceDocument,movePage} from '../public/lab-sequence.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,readSequence,sequenceDocument,movePage} from '../public/lab-sequence.mjs';
 const photos={'64':'/ambiente-editorial/media/BOXDOSENTIR-64.jpg'};
 const state={format:'horizontal',color:'neutral',margin:7,guides:'nenhuma',marker:'none',markerFocus:'blur',
   textWidth:61,titleScale:100,type:'alternada',background:'color',mContent:'off',mPresentation:'elemento',photo:'64',
@@ -54,4 +54,25 @@ test('fotografia privada usa apenas referência estável, sem token ou host exte
   assert.throws(()=>readSequence(bad,photos,[asset]),/origem da fotografia/);
   const host=clone(document);host.pages[0].composition.assets[1].uri='https://outro.example/image.jpg';
   assert.throws(()=>readSequence(host,photos,[asset]),/origem da fotografia/);
+});
+
+test('vídeos de projetos são serializados, validados e não expõem credenciais',()=>{
+  const clip=createClip({kind:'video',provider:'google',id:'1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn',
+    name:'Aleteia Evento horizontal.mp4',mimeType:'video/mp4'},'clip-1');
+  const pageA=page('page-1');
+  pageA.clips.push(clip);
+  const document=sequenceDocument('Projeto com vídeos',[pageA,page('page-2')]);
+  assert.equal(document.pages[0].clips.length,1);
+  assert.equal(document.pages[1].clips,undefined,'projetos anteriores continuam compatíveis');
+  assert.ok(!JSON.stringify(document).includes('access_token'));
+  const parsed=readSequence(clone(document),photos,[asset]);
+  assert.deepEqual(sequenceDocument(parsed.name,parsed.pages),document);
+  assert.equal(privateClipUrl(parsed.pages[0].clips[0]),
+    '/api/acervo/media?provider=google&id=1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn');
+  const box=clipBox({...clip,x:100,y:100},1280,720);
+  assert.ok(box.x>=0&&box.y>=0&&box.x+box.w<=1280&&box.y+box.h<=720);
+  const bad=clone(document);bad.pages[0].clips[0].access_token='not-a-token';
+  assert.throws(()=>readSequence(bad,photos,[asset]),/campos do vídeo/);
+  const rogue=clone(document);rogue.pages[0].clips[0].fileId='https://evil.example/video';
+  assert.throws(()=>readSequence(rogue,photos,[asset]),/identificador privado do vídeo/);
 });

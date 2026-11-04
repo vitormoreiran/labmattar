@@ -30,7 +30,14 @@ try {
   for(const [width,height] of [[1440,900],[768,1024],[390,844],[320,640]]){
     await page.setViewportSize({width,height});
     const doc=await page.evaluate(()=>({width:document.documentElement.scrollWidth,window:innerWidth}));
-    assert.ok(doc.width<=width+1,'Sem rolagem horizontal em '+width+': '+doc.width);
+    if(doc.width>width+1){
+      const offenders=await page.evaluate(()=>[...document.querySelectorAll('body *')].map(el=>{
+        const rect=el.getBoundingClientRect(),style=getComputedStyle(el);
+        return {tag:el.tagName,id:el.id,className:typeof el.className==='string'?el.className.slice(0,85):'',left:Math.round(rect.left),right:Math.round(rect.right),width:Math.round(rect.width),scroll:el.scrollWidth,client:el.clientWidth,display:style.display};
+      }).filter(x=>x.width>0&&x.display!=='none'&&(x.left < -1 || x.right > innerWidth + 1)).sort((a,b)=>b.right-a.right).slice(0,25));
+      await page.screenshot({path:'redes-proof/overflow-'+width+'.png',fullPage:true});
+      throw new Error('Sem rolagem horizontal em '+width+': '+doc.width+' / ofensores '+JSON.stringify(offenders));
+    }
     report.viewports.push({width,height,...doc});
     if(width===1440||width===390){
       for(const [id,name] of [['abertura','capa'],['criterio','criterio'],['derivacoes','derivacoes'],

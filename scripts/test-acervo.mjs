@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
 import {handleAcervoRequest} from "./acervo-api.mjs";
 function request(path,options={}){
   return new Request("https://preview.example.test/api/acervo/"+path,options);
@@ -90,4 +91,14 @@ for(const provider of ["google","dropbox"]){
   }finally{globalThis.fetch=originalFetch}
 }
 
-console.log("Acervo: controles de origem, tipos, conexões e isolamento de sessão conferidos.");
+// Regression test: a CI deploy must not remove Dashboard OAuth variables.
+const previewWorkflow=readFileSync(new URL("../.github/workflows/preview-cloudflare.yml",import.meta.url),"utf8");
+assert.match(previewWorkflow,/"keep_vars": true/,"Wrangler must preserve dashboard variables");
+assert.match(previewWorkflow,/wrangler deploy --config wrangler\.preview\.jsonc --keep-vars/,
+  "Preview deploy must explicitly preserve dashboard variables");
+for(const key of ["LM_ACERVO_ORIGIN","LM_GOOGLE_CLIENT_ID","LM_GOOGLE_APP_ID"])
+  assert.ok(previewWorkflow.includes('"'+key+'"'),"Public OAuth binding missing from Worker preview config: "+key);
+assert.ok(!previewWorkflow.includes('"LM_GOOGLE_CLIENT_SECRET"') &&
+  !previewWorkflow.includes('"LM_GOOGLE_PICKER_API_KEY"'),
+  "Sensitive/credential-bearing keys cannot be committed as Wrangler vars");
+console.log("Acervo: OAuth, rotas privadas e preservação de vars no deploy conferidos.");

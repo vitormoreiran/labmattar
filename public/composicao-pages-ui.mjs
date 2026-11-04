@@ -20,11 +20,32 @@ function commit(){
   catch{notify('Salve o projeto JSON para guardar esta sequência.');}
   renderPages();
 }
+let pageListKey='';
+function setWorkspaceView(view){
+  const inspector=by('laboratorio').querySelector('.lm-lab-inspector');
+  inspector.dataset.workspaceView=view;
+  by('labPages').hidden=view!=='pages';by('labWorkflowMotion').hidden=view!=='motion';
+  for(const button of document.querySelectorAll('[data-workspace-view]'))button.setAttribute('aria-pressed',String(button.dataset.workspaceView===view));
+}
 function renderPages(){
   const select=by('labPageSelect');select.replaceChildren();
   pages.forEach((page,index)=>select.add(new Option(String(index+1).padStart(2,'0')+' / '+page.name,String(index))));
   select.value=String(current);by('labPageName').value=pages[current].name;by('labSequenceName').value=name;
   by('labPageCount').textContent=`${current+1} / ${pages.length}`;
+  by('labWorkflowContext').textContent=`PÁGINA ${current+1} / ${pages[current].name}`;
+  const listKey=JSON.stringify(pages.map((page,index)=>[page.id,page.name,page.composition.pages[0].surface.format,index===current]));
+  if(listKey!==pageListKey){
+    const list=by('labPageList');list.replaceChildren();
+    pages.forEach((page,index)=>{
+      const button=document.createElement('button');button.type='button';button.dataset.pageId=page.id;button.dataset.pageIndex=String(index);
+      button.setAttribute('aria-pressed',String(index===current));
+      const number=document.createElement('span');number.className='lab-page-number';number.textContent=String(index+1).padStart(2,'0');
+      const caption=document.createElement('span'),name=document.createElement('span'),format=document.createElement('small');
+      name.textContent=page.name;format.textContent=({horizontal:'16:9 / Horizontal',vertical:'9:16 / Vertical',quadrado:'1:1 / Quadrado',editorial:'Editorial'})[page.composition.pages[0].surface.format];
+      caption.append(name,format);button.append(number,caption);
+      button.addEventListener('click',async()=>{try{await switchPage(index);by('labPageList').querySelector('[data-page-index="'+index+'"]')?.focus({preventScroll:true});}catch(error){notify(error.message,true);}});list.append(button);
+    });pageListKey=listKey;
+  }
   by('labPageEarlier').disabled=current===0;by('labPageLater').disabled=current===pages.length-1;
   by('labPageDelete').disabled=pages.length===1;
 }
@@ -81,7 +102,7 @@ function renderMotionControls(){
   const list=by('labMotionInstance');list.replaceChildren();
   for(const motion of pages[current].motions){const asset=catalog.find(asset=>asset.id===motion.assetId);list.add(new Option(asset.title,motion.id));}
   if(!pages[current].motions.some(motion=>motion.id===selectedMotion))selectedMotion=pages[current].motions[0]?.id||'';
-  by('labMotionSettings').hidden=!selectedMotion;list.value=selectedMotion;
+  by('labMotionSettings').hidden=!selectedMotion;by('labMotionEmpty').hidden=Boolean(selectedMotion);list.value=selectedMotion;
   const motion=pages[current].motions.find(motion=>motion.id===selectedMotion);if(!motion)return;
   const asset=catalog.find(asset=>asset.id===motion.assetId);
   for(const [input,field] of [['labMotionX','x'],['labMotionY','y'],['labMotionWidth','width'],['labMotionFrame','frameSeconds']])by(input).value=String(motion[field]);
@@ -190,6 +211,9 @@ async function init(){
       switching=true;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
       bridge().restore(result.pages[current].state);switching=false;await settled();}
   }catch{switching=false;let recovered=false;try{localStorage.setItem(key+'-recovery',localStorage.getItem(key)||'');recovered=true;}catch{}notify('O rascunho anterior não pôde ser reaberto.'+(recovered?' Uma cópia de recuperação foi preservada neste navegador.':' Abra seu projeto JSON para recuperar a sequência.'),true);}
+  setWorkspaceView('edit');
+  for(const button of document.querySelectorAll('[data-workspace-view]'))button.addEventListener('click',()=>setWorkspaceView(button.dataset.workspaceView));
+  by('labEditCurrentPage').addEventListener('click',()=>{setWorkspaceView('edit');by('laboratorio').querySelector('button[data-mobile-module=superficie]').click();});
   renderPages();renderMotions();
   window.addEventListener('labmattar:composition-change',()=>{if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}});
   by('labPageSelect').addEventListener('change',event=>switchPage(Number(event.target.value)).catch(error=>notify(error.message,true)));

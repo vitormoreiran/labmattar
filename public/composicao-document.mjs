@@ -15,6 +15,7 @@ const CHOICES={
   mPresentation:["elemento","completo"],
   bodyMode:["oculto","visivel"],
   marker:["none","top","bottom","both"],
+  markerFocus:["blur","sharp"],
   symbol:["none","M.svg",...Array.from({length:9},(_,i)=>"vaso_"+String(i+1).padStart(2,"0")+".svg")]
 };
 const CORNERS=["tl","tr","bl","br"];
@@ -60,6 +61,7 @@ function captureState(state,photoCatalog){
     margin:bounded(state.margin,4,16,"margem"),
     guides:enumValue(state.guides,CHOICES.guides,"guias"),
     marker:text(state.marker,40,"marcadores"),
+    markerFocus:enumValue(state.markerFocus??"blur",CHOICES.markerFocus,"nitidez dos marcadores"),
     textWidth:bounded(state.textWidth,40,100,"largura de leitura"),
     titleScale:bounded(state.titleScale,70,140,"escala do título"),
     type:enumValue(state.type,CHOICES.type,"tratamento do título"),
@@ -79,7 +81,8 @@ function captureState(state,photoCatalog){
     footerRight:text(state.footerRight,100,"identificação inferior direita"),
     signature:signatureOf(state.signature)
   };
-  check(CHOICES.marker.includes(clean.marker)||clean.marker==="none","marcadores do M");
+  check(CHOICES.marker.includes(clean.marker),"marcadores do M");
+  check(!(clean.background==="photo"&&clean.mContent==="solid"),"M sólido não existe sobre fotografia");
   check(Object.hasOwn(photoCatalog,clean.photo)&&safeImagePath(photoCatalog[clean.photo]),"fotografia do catálogo local");
   return clean;
 }
@@ -117,7 +120,7 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
       },
       media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,focalPoint:{x:s.focusX,y:s.focusY}},
       m:{maskAssetId:"identity:m-mask",content:s.mContent,presentation:s.mPresentation,
-        scalePercent:s.mScale,marker:s.marker,legacySymbol:s.symbol}
+        scalePercent:s.mScale,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
     }],
     assets:assetList(s,photoCatalog),
     output:{format:"image/png",maxEdge,...dimensions,reference:"laboratorio-canvas-2d",masterVerified:false},
@@ -141,7 +144,7 @@ export function readProductionDocument(doc,photoCatalog){
   check(doc.output.width===expected.width&&doc.output.height===expected.height,"dimensões da página");
   const state={
     format:page.surface.format,color:page.surface.color,margin:page.surface.marginPercent,
-    guides:page.surface.guides,marker:m.marker,textWidth:page.reading?.widthPercent,
+    guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,
     titleScale:t.title?.scalePercent,type:t.title?.treatment,background:page.surface.background,
     mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,
     focusX:media.focalPoint?.x,focusY:media.focalPoint?.y,symbol:m.legacySymbol,
@@ -155,6 +158,9 @@ export function readProductionDocument(doc,photoCatalog){
 export function verifyRoundTrip(doc,photoCatalog){
   const state=readProductionDocument(doc,photoCatalog);
   const normalized=createProductionDocument({state,photoCatalog,maxEdge:doc.output.maxEdge});
+  // Earlier v1 documents have no markerFocus. Keep them readable without
+  // inventing a new schema version; a missing value means blur in markers.
+  if(doc.pages[0].m.markerFocus===undefined)delete normalized.pages[0].m.markerFocus;
   check(JSON.stringify(doc)===JSON.stringify(normalized),"documento alterado ou campos não reconhecidos");
   return state;
 }

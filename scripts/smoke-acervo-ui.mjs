@@ -22,7 +22,10 @@ await page.route("**/acervo/projects/*.json",route=>route.fulfill({status:200,co
   body:JSON.stringify({schemaVersion:1,projectId,entries:[
     {id:folderId,parent:projectId,kind:"folder",name:"Ato 1"},
     {id:imageId,parent:folderId,kind:"image",name:"Fotografia de Aleteia.jpg",mime:"image/jpeg"},
-    {id:videoId,parent:folderId,kind:"video",name:"Aleteia Evento horizontal.mp4",mime:"video/mp4"}
+    {id:videoId,parent:folderId,kind:"video",name:"Aleteia Evento horizontal.mp4",mime:"video/mp4"},
+    ...Array.from({length:39},(_,i)=>({id:"1testeFoto"+String(i).padStart(3,"0")+"Abcd12",
+      parent:folderId,kind:"image",name:"Fotografia adicional "+String(i+1).padStart(2,"0")+".jpg",
+      mime:"image/jpeg"}))
   ]})}));
 await page.route("**/api/acervo/public-thumb?*",route=>route.fulfill({
   status:200,contentType:"image/png",body:dot}));
@@ -46,6 +49,35 @@ try{
   await choose();
   assert((await page.locator("#labAcervoPath").textContent()).includes("Ato 1"),
     "Nested project navigation failed");
+  assert(await page.locator('[data-acervo-group="media"] .lm-acervo-group-grid .lm-acervo-item').count()===41,
+    "Photographs and videos must remain visible in the media section");
+  await page.setViewportSize({width:751,height:892});
+  const layout=await page.evaluate(()=>{
+    const dialog=document.querySelector(".lm-acervo-dialog"),
+      items=document.querySelector("#labAcervoItems"),
+      thumb=document.querySelector(".lm-acervo-file .lm-acervo-thumb"),
+      title=document.querySelector("#labAcervoTitle"),
+      header=document.querySelector(".lm-acervo-browser-tools"),
+      footer=document.querySelector(".lm-acervo-dialog-bottom"),
+      grid=document.querySelector(".lm-acervo-media-grid");
+    const box=el=>{const b=el.getBoundingClientRect();return {top:b.top,bottom:b.bottom,width:b.width,height:b.height};};
+    return {dialogHeight:dialog.clientHeight,dialogScrollHeight:dialog.scrollHeight,
+      itemsHeight:items.clientHeight,itemsScrollHeight:items.scrollHeight,
+      thumb:box(thumb),title:box(title),header:box(header),footer:box(footer),
+      cols:getComputedStyle(grid).gridTemplateColumns.split(" ").length,
+      totalButtons:grid.querySelectorAll("button").length,
+      scrollbar:getComputedStyle(items).overflowY};
+  });
+  assert(layout.dialogScrollHeight<=layout.dialogHeight+3,
+    "Modal must not create a second vertical scrollbar: "+JSON.stringify(layout));
+  assert(layout.itemsScrollHeight>layout.itemsHeight*1.6,
+    "Long photo galleries must scroll inside the asset area: "+JSON.stringify(layout));
+  assert(layout.thumb.width>140&&layout.thumb.height>100,
+    "Thumbnails must remain large enough to identify photos: "+JSON.stringify(layout));
+  assert(layout.header.bottom<layout.footer.top&&layout.title.height>15,
+    "Location, search and footer must remain visible: "+JSON.stringify(layout));
+  assert(layout.cols>=2,"Media gallery should remain multi-column at 751px: "+JSON.stringify(layout));
+  await page.setViewportSize({width:1440,height:900});
   await page.locator(".lm-acervo-item").filter({hasText:"Fotografia de Aleteia.jpg"}).click();
   assert(await page.locator("#labAcervoDialog").isHidden(),"Picking photo closes library");
   assert((await page.locator("#labPhoto").inputValue()).startsWith("ext-"),

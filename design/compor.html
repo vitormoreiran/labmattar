@@ -159,8 +159,8 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         <div id="labAcervo" class="lm-acervo">
           <div class="lm-acervo-heading"><span>BIBLIOTECA DE MÍDIA</span></div>
           <button type="button" id="labAcervoLaunch" class="lm-acervo-launch" data-acervo-open aria-haspopup="dialog" aria-controls="labAcervoDialog">
-            <span class="lm-acervo-launch-logos"><svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#00875A" d="M10.5 3h8.2L7.1 23.1H.2z"/><path fill="#4285F4" d="M7.1 23.1h24.6l-4.1 6.9H3z"/><path fill="#FFBA00" d="M18.7 3 31.7 23h-8.2L10.5 3z"/></svg><svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><g fill="#0061FF"><path d="M8 2 1 7l7 5.1L15 7zM24 2l-7 5 7 5.1L31 7zM8 13.6l-7 5 7 5.1 7-5.1zM24 13.6l-7 5 7 5.1 7-5.1zM16 20.9l-8 5.2 8 4.9 8-4.9z"/></g></svg></span>
-            <span class="lm-acervo-launch-text"><strong>Adicionar da nuvem</strong><small>Google Drive ou Dropbox</small></span>
+            <span class="lm-acervo-launch-logos"><svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#00875A" d="M10.5 3h8.2L7.1 23.1H.2z"/><path fill="#4285F4" d="M7.1 23.1h24.6l-4.1 6.9H3z"/><path fill="#FFBA00" d="M18.7 3 31.7 23h-8.2L10.5 3z"/></svg></span>
+            <span class="lm-acervo-launch-text"><strong>Acervo 01_Portfolio</strong><small>Fotografias por projeto · Google Drive</small></span>
             <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
           </button>
           <small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
@@ -168,14 +168,14 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         <div id="labAcervoDialog" class="lm-acervo-overlay" hidden>
           <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">
             <header class="lm-acervo-dialog-heading">
-              <div><span class="lm-acervo-kicker">BIBLIOTECA DE MÍDIA</span><h3 id="labAcervoTitle">Adicionar arquivos</h3><p id="labAcervoDescription">Escolha onde estão suas fotografias.</p></div>
+              <div><span class="lm-acervo-kicker">BIBLIOTECA DE MÍDIA / LABMATTAR</span><h3 id="labAcervoTitle">01_Portfolio</h3><p id="labAcervoDescription">Fotografias organizadas nas pastas de projetos.</p></div>
               <button id="labAcervoClose" class="lm-acervo-close" type="button" aria-label="Fechar seletor de arquivos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg></button>
             </header>
             <div id="labAcervoProviders" class="lm-acervo-sources" aria-label="Escolha o serviço de armazenamento">
               <div class="lm-acervo-source-row">
                 <button id="labAcervoConnect-google" class="lm-acervo-source" data-acervo-provider="google" type="button">
                   <svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#00875A" d="M10.5 3h8.2L7.1 23.1H.2z"/><path fill="#4285F4" d="M7.1 23.1h24.6l-4.1 6.9H3z"/><path fill="#FFBA00" d="M18.7 3 31.7 23h-8.2L10.5 3z"/></svg>
-                  <span class="lm-acervo-source-text"><strong>Google Drive</strong><small id="labAcervoConnection-google">Selecionar arquivos da conta</small></span>
+                  <span class="lm-acervo-source-text"><strong>Google Drive · 01_Portfolio</strong><small id="labAcervoConnection-google">Abrir pasta de projetos</small></span>
                   <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
                 </button>
                 <button id="labAcervoDisconnect-google" class="lm-acervo-disconnect" type="button" hidden title="Desconectar Google Drive" aria-label="Desconectar Google Drive">Desconectar</button>
@@ -208,6 +208,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
               <div id="labAcervoItems" class="lm-acervo-items"></div>
             </section>
             <p id="labAcervoStatus" class="lm-acervo-status" role="status" aria-live="polite"></p>
+            <a id="labAcervoPortfolioLink" class="lm-acervo-portfolio-link" href="https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW" target="_blank" rel="noopener noreferrer">Conferir 01_Portfolio diretamente no Google Drive ↗</a>
             <footer class="lm-acervo-footer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>O acesso é privado e você pode desconectar sua conta.</span></footer>
           </section>
         </div>

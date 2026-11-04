@@ -10,6 +10,10 @@
   const list=by("labAcervoItems"),notice=by("labAcervoStatus");
   if(!root||!overlay||!dialog||!list||!notice)return;
   const BASE="/api/acervo/";
+  // Fixed, user-selected LABMATTAR library. Never request broad Drive access
+  // or display unrelated account folders in our default selection view.
+  const PORTFOLIO_FOLDER_ID="13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW";
+  const PORTFOLIO_URL="https://drive.google.com/drive/folders/"+PORTFOLIO_FOLDER_ID;
   const providers=["google","dropbox"];
   const serviceNames={google:"Google Drive",dropbox:"Dropbox"};
   const setup=by("labAcervoSetup"),browser=by("labAcervoBrowser");
@@ -82,7 +86,7 @@
     setup.hidden=false;
     notify("O seletor de arquivos locais continua disponível.");
   }
-  function openDialog({autoProvider=null}={}){
+  function openDialog({autoProvider=null,returnedFromOAuth=false}={}){
     if(!overlay.hidden)return;
     previousFocus=document.activeElement;
     overlay.hidden=false;
@@ -93,10 +97,12 @@
       // The OAuth callback returned to Compor. Complete the same action the
       // user originally requested; do not require a second click to open Drive.
       if(autoProvider && providers.includes(autoProvider)){
-        if(state.providers?.[autoProvider]?.connected){
-          await openProvider(autoProvider);
+        if(!state.providers?.[autoProvider]?.configured){
+          showSetup(autoProvider);
+        }else if(returnedFromOAuth && !state.providers?.[autoProvider]?.connected){
+          notify("O Google não confirmou a sessão neste navegador. Clique em Google Drive para tentar novamente ou abra a pasta diretamente pelo link abaixo.");
         }else{
-          notify("O login não foi concluído neste navegador. Clique em "+serviceNames[autoProvider]+" para tentar novamente.");
+          await openProvider(autoProvider);
         }
       }else{
         notify("Selecione a origem das fotografias.");
@@ -112,7 +118,7 @@
   }
   function heading(){
     by("labAcervoPath").textContent=activeProvider==="dropbox"?
-      (folder||"Dropbox / Seus arquivos"):"Google Drive / Arquivos selecionados";
+      (folder||"Dropbox / Seus arquivos"):"Google Drive / 01_Portfolio";
     by("labAcervoBack").hidden=activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
   }
@@ -199,13 +205,19 @@
       if(!window.google?.picker)throw Error("Google Picker indisponível.");
       const picker=window.google.picker;
       const view=new picker.DocsView(picker.ViewId.DOCS);
-      // drive.file does not grant thumbnail enumeration. LIST is the
-      // documented safe UI until the user explicitly selects an asset.
+      // Start in the one authorized portfolio folder, not in My Drive.
+      // Keep subfolders visible because 01_Portfolio groups media by project.
+      view.setParent(PORTFOLIO_FOLDER_ID);
+      view.setIncludeFolders(true);
+      view.setSelectFolderEnabled(false);
+      // With drive.file, Google recommends LIST until individual items are picked.
       if(picker.DocsViewMode?.LIST)view.setMode(picker.DocsViewMode.LIST);
       view.setMimeTypes("image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime");
       const instance=new picker.PickerBuilder()
         .addView(view).setOAuthToken(token.accessToken).setDeveloperKey(config.apiKey)
-        .setAppId(config.appId).enableFeature(picker.Feature.MULTISELECT_ENABLED)
+        .setAppId(config.appId).setOrigin(location.origin).setLocale("pt-BR")
+        .setTitle("LABMATTAR · 01_Portfolio")
+        .enableFeature(picker.Feature.MULTISELECT_ENABLED)
         .setCallback(async data=>{
           if(data.action===picker.Action.CANCEL){
             overlay.hidden=false;displayProviders();notify("Seleção cancelada.");
@@ -228,11 +240,16 @@
           finally{setBusy(false)}
           dialog.focus({preventScroll:true});
         }).build();
-      // Avoid stacking our own modal over the native Google Picker.
-      overlay.hidden=true;
+      // If opening fails, keep our own dialog visible with a direct Drive link.
+      // Hiding it *before* setVisible caused a blank screen on Picker failures.
       instance.setVisible(true);
+      overlay.hidden=true;
     }catch(error){
-      overlay.hidden=false;displayProviders();notify(error.message);
+      overlay.hidden=false;
+      displayProviders();
+      notify("Não foi possível abrir o seletor Google: "+error.message+
+        ". Você pode conferir a pasta 01_Portfolio no link abaixo.");
+      dialog.focus({preventScroll:true});
     }finally{setBusy(false)}
   }
   function select(item){
@@ -270,7 +287,8 @@
     }catch(error){displayProviders();notify(error.message)}
   }
   root.addEventListener("click",event=>{
-    if(event.target.closest("[data-acervo-open]"))openDialog();
+    if(event.target.closest("[data-acervo-open]"))
+      openDialog({autoProvider:"google"});
   });
   overlay.addEventListener("click",event=>{
     if(event.target===overlay){closeDialog();return}
@@ -332,7 +350,7 @@
     const url=new URL(location.href);url.searchParams.delete("acervo");
     history.replaceState(null,"",url.pathname+url.search+url.hash);
     if(providers.includes(result)){
-      openDialog({autoProvider:result});
+      openDialog({autoProvider:result,returnedFromOAuth:true});
     }else{
       openDialog();
       const message=result==="erro"

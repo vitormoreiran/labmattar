@@ -8,6 +8,30 @@ O painel **Fundo + M** em `/compor.html?studio=1#laboratorio` oferece **Adiciona
 
 A imagem é servida pelo backend em `/api/acervo/media` com autenticação. URLs nos JSONs contêm identificadores, não credenciais. Os JSONs salvos exigem acesso à conta original para reabertura. Miniaturas não são masters.
 
+## Fonte fixa do LABMATTAR — 01_Portfolio
+
+O acervo padrão deste Laboratório é somente a pasta privada
+[01_Portfolio](https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW),
+organizada por projetos. O seletor Google Picker abre já dentro dela
+(`DocsView.setParent`), mostra as subpastas dos projetos e não
+permite escolher uma pasta no lugar de uma fotografia.
+
+**Importante:** `setParent` define a **pasta inicial**, não é uma barreira
+de autorização que impeça navegar para fora. O escopo do OAuth segue
+`drive.file` (sem acesso geral ao Drive): somente os arquivos
+explicitamente escolhidos no Picker são acessíveis ao Laboratório.
+Acesso à pasta depende das permissões individuais do Google Drive.
+
+Sem a autorização de abrir, copiar ou publicar os originais para fora
+do Drive, o Laboratório não cria uma galeria pública nem uma cópia da
+pasta. Para exibir automaticamente *todas* as fotos da pasta a usuários
+sem login seria preciso configurar uma biblioteca administrada com
+controle de acesso ou obter autorização explícita para publicar cópias.
+
+Se o Picker não abrir, o modal deixa uma mensagem de erro contextual
+e um link para conferência da pasta original no Google Drive, sem
+retornar uma falsa mensagem de sucesso.
+
 ## Segurança
 
 - OAuth 2.0 com PKCE e `state` criptografado, validade de 10 minutos.

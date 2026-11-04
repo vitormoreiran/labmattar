@@ -36,7 +36,7 @@ for(const entry of entries){
 function cards(ids){return ids.map(id=>catalog.find(entry=>entry.id===id)).map(entry=>{
   const duration=entry.duration.toLocaleString('pt-BR',{maximumFractionDigits:2});
   const ratio=entry.aspect.replace(':',' / ');
-  const content=entry.video?`<video controls playsinline preload="none" poster="${entry.poster}" aria-label="${esc(entry.title)}"><source src="${entry.video}" type="video/mp4"><a href="${entry.video}">Baixar vídeo</a></video>`:'<p class="detail">Prévia local: exportação pendente.</p>';
+  const content=entry.video?`<video autoplay muted loop playsinline preload="auto" poster="${entry.poster}" aria-label="${esc(entry.title)}"><source src="${entry.video}" type="video/mp4"><a href="${entry.video}">Baixar vídeo</a></video>`:'<p class="detail">Prévia local: exportação pendente.</p>';
   return `<article class="motion-card" data-motion-id="${entry.id}"><h3>${esc(entry.title)}</h3><div class="motion-meta detail"><span>${duration} s · ${entry.aspect}</span>${entry.cut!==null?`<span>Corte sugerido: ${entry.cut.toLocaleString('pt-BR')} s em 1×</span>`:''}</div><div class="motion-frame" style="aspect-ratio:${ratio}">${content}</div><div class="motion-links detail">${entry.video?`<a href="${entry.video}" download>BAIXAR MP4</a>`:''}<a href="${entry.project}" download>BAIXAR ROTEIRO JSON</a><a href="${entry.editor}">EDITAR NA MATRIZ ↗</a></div></article>`;
 }).join('\n');}
 const groups=[

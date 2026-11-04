@@ -231,9 +231,10 @@ try {
   assert.equal(await page.locator('.state-explorer, #state-morph-svg').count(),0,'Contour demo has been replaced');
   const symbolVideo=page.locator('.motion-symbol-preview video');
   assert.equal(await symbolVideo.locator('source').getAttribute('src'),'/motion/videos/m-form.mp4');
-  await symbolVideo.evaluate(async video=>{await video.play();});
+  assert.deepEqual(await symbolVideo.evaluate(video=>({autoplay:video.autoplay,muted:video.muted,loop:video.loop,controls:video.controls,inline:video.playsInline})),{autoplay:true,muted:true,loop:true,controls:false,inline:true});
   await page.waitForFunction(()=>document.querySelector('.motion-symbol-preview video').currentTime>0.1);
-  await symbolVideo.evaluate(video=>video.pause());
+  await symbolVideo.evaluate(video=>{video.currentTime=video.duration-0.15;});
+  await page.waitForFunction(()=>{const v=document.querySelector('.motion-symbol-preview video');return !v.paused&&v.currentTime<1.5;});
   for(const width of [1440,390]){
     await page.setViewportSize({width,height:900});
     await page.locator('#transformacao').screenshot({path:`symbols-proof/${phase}-motion-${width}.png`});
@@ -247,7 +248,9 @@ try {
       {id:'roteiros',cards:1},{id:'assinaturas',cards:4},{id:'transicoes',cards:3}
     ]);
     assert.equal(await motionPage.locator('.motion-card video').count(),8);
-    assert.equal(await motionPage.locator('.motion-status,[data-status],video[autoplay]').count(),0);
+    assert.equal(await motionPage.locator('.motion-status,[data-status]').count(),0);
+    assert.equal(await motionPage.locator('video[autoplay][muted][loop][playsinline]:not([controls])').count(),8);
+    await motionPage.waitForFunction(()=>[...document.querySelectorAll('.motion-card video')].slice(0,2).every(v=>!v.paused&&v.muted&&v.currentTime>0.1));
     assert.doesNotMatch(await motionPage.locator('main').innerText(),/aprovad|avaliação/i);
     for(const width of [1440,390]){
       await motionPage.setViewportSize({width,height:900});

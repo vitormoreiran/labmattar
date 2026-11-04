@@ -10,7 +10,7 @@ page.on("pageerror",error=>errors.push(error.message));
 const acceptDialog=dialog=>dialog.accept();
 page.on("dialog",acceptDialog);
 async function choose(group,value){
-  const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
+  const module={format:"superficie",background:"fundo",color:"fundo",inkColor:"texto",mContent:"m",
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
     await page.locator('button[data-mobile-module="'+module+'"]').click();
@@ -168,6 +168,19 @@ try{
   console.log("PORTRAIT PNG",JSON.stringify(second));
   assert(second.width===1080&&second.height===1920,"2K portrait dimensions must be correct: "+JSON.stringify(second));
   assert(second.uniqueColors>8&&second.meanAbsDiff<26,"Simple portrait page must match the preview: "+JSON.stringify(second));
+  // The canonical renderer must capture the selected background and typography
+  // colors, so PDF/PNG/HTML share the same scene without CSS-only exceptions.
+  await choose("color","black");
+  await choose("inkColor","white");
+  const coloredScene=await page.evaluate(()=>window.LabRenderer.capture({edge:1920,ask:false}));
+  assert(coloredScene.items.some(op=>op.kind==="rect"&&op.color==="rgb(24, 24, 24)"),
+    "Export scene must preserve black background");
+  assert(coloredScene.items.some(op=>op.kind==="text"&&op.color==="rgb(255, 255, 255)"),
+    "Export scene must preserve user-selected white typography");
+  await choose("inkColor","blue");
+  const blueTextScene=await page.evaluate(()=>window.LabRenderer.capture({edge:1920,ask:false}));
+  assert(blueTextScene.items.some(op=>op.kind==="text"&&op.color==="rgb(31, 53, 84)"),
+    "Text color change must be exported, not only previewed");
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(160);
   assert(await page.locator("#labOpenDelivery").isVisible(),

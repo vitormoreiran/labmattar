@@ -49,6 +49,7 @@ try{
       await page.locator('.color-motion-replay').first().click();
       await page.waitForTimeout(100);
       await page.emulateMedia({reducedMotion:'reduce'});
+      await page.waitForFunction(()=>document.querySelectorAll('.color-motion-ghost').length===0,undefined,{timeout:1000});
       assert.equal(await page.locator('.color-motion-ghost').count(),0,'Reduced motion stops and restores active text');
       await page.locator('.color-motion-replay').first().click();
       assert.equal(await page.locator('.color-motion-ghost').count(),0,'Reduced motion keeps text static');

@@ -137,7 +137,7 @@ jobs:
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
-          npx playwright install --with-deps chromium
+          npx playwright install chromium
       - name: Validar manual e matriz compilados antes de publicar
         shell: bash
         run: |

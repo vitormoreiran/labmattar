@@ -111,9 +111,8 @@
     }catch{}
   }
   loadExternalMedia();
-  // The catalog entry must exist before restoring a saved external photo key.
-  try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
-  const cachedExternal=externalMedia.get(state.photo);
+  // Register the saved external option before the editor restores its state.
+  const cachedExternal=[...externalMedia.values()][0];
   if(cachedExternal){
     const button=document.createElement("button");
     button.type="button";button.className="lm-ctrl-choice";

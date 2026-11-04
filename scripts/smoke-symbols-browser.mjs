@@ -55,7 +55,7 @@ try {
             // The Worker may canonicalize /compor.html as /compor; both
             // routes address the same separated editor. Verify its actual
             // functional canvas rather than insisting on a file extension.
-            const isCompor=next=>/^\\/compor(?:\\.html)?\\/?$/.test(new URL(next).pathname);
+            const isCompor=next=>/^[/]compor(?:[.]html)?[/]?$/.test(new URL(next).pathname);
             await oldImagePage.waitForURL(isCompor,{timeout:15000});
             assert.ok(isCompor(oldImagePage.url()),
               'Legacy image URL must redirect into Compor: '+oldImagePage.url());

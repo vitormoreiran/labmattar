@@ -27,3 +27,10 @@ public/motion/projects/
 public/motion.html
 content/motion.json
 .sites-runtime/
+
+# Exportador PDF compilado a partir das dependências fixadas.
+/public/vendor/lab-pdf.js*
+
+/public/motion/catalog.json
+
+production-proof/

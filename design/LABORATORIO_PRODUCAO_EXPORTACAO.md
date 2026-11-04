@@ -4,6 +4,22 @@
 
 **Prioridade máxima:** fidelidade visual e qualidade do arquivo final. A composição aprovada deve corresponder ao resultado exportado, sem depender da resolução da tela, sem rasterizar desnecessariamente a identidade e sem perder editabilidade quando o destino a suporta.
 
+## Marco 1B — Páginas, Motion e publicação em arquivo
+
+O Laboratório passa a manter uma sequência ordenada no editor existente: criar, duplicar, nomear, reordenar, excluir, salvar e reabrir páginas nos quatro formatos atuais. O contrato `labmattar.presentation` v1 contém composições v1, preservando a leitura dos JSON anteriores. O rascunho multipágina usa armazenamento local; o JSON continua sendo a cópia portátil de autoria.
+
+A cena lógica compartilhada alimenta PNG, PDF e HTML. PDF conserva texto selecionável, Univers/Perpetua incorporadas e paths oficiais; fotografias, filtros, sombras e quadros de motion são camadas raster nas dimensões de entrega. A qualidade 2K/4K determina essas camadas, não uma captura da tela. O PDF usa o formato de cada página; ele não declara PDF/X, CMYK ou qualidade de master fotográfico sem verificação.
+
+O acervo recebe os motions registrados da Matriz por `/motion/catalog.json`, com hashes do projeto e do MP4. Cada instância guarda posição, largura e o tempo do quadro estático. A prévia pode mostrar movimento ou o quadro do PDF. O HTML toca os MP4 silenciosos em loop; o PDF e o PNG usam o quadro selecionado. O motor e a interface da Matriz permanecem responsáveis por editar e renderizar os roteiros.
+
+A saída web é um arquivo HTML independente: navegação por páginas, texto/SVG reais, fontes e mídias incorporadas, projeto JSON recuperável e impressão com formatos definidos. Exportar HTML não publica automaticamente uma composição no servidor. Fotografias privadas só entram no arquivo quando o navegador possui acesso ao recurso; credenciais OAuth não fazem parte do projeto ou da saída.
+
+**Uso:** em Superfície / Sequência, organize páginas e seus nomes; os controles existentes editam a página selecionada. Em Elementos / Motion, abra o acervo da Matriz, adicione os percursos e ajuste o quadro do PDF. No menu ao lado de PNG, escolha PDF, site HTML ou apresentação. Baixar/Abrir JSON guarda ou restaura a sequência inteira quando ela usa páginas ou motions; as composições v1 continuam compatíveis.
+
+**Verificação:** contratos em `scripts/test-lab-sequence.mjs`; fluxo real em `scripts/smoke-lab-pages.mjs` e inspeção do PDF em `scripts/verify-lab-pdf.py`. A prova usa quatro páginas, um formato por página, motion, fotografia, vetor e marcadores. Confere ordem, fontes incorporadas, texto extraível, paths, correspondência visual PNG/PDF, HTML independente e restauração do editor após exportar.
+
+O marco 1A abaixo descreve a etapa anterior e seus limites à época. PPTX, intercâmbio After Effects e perfis de gráfica permanecem no roteiro futuro.
+
 ## Marco 1A — Documento reversível (escopo de implementação)
 
 **Implementado no Laboratório:** botão para baixar e abrir um documento JSON `labmattar.composition` (schema v1), com um único quadro editável, Título/Corpo/Detalhe, assinatura, ajustes da página, M e marcadores, fotografia selecionada, foco e referências explícitas aos SVG oficiais. O documento declara a resolução do perfil 2K/4K e faz round-trip para o estado do editor com validação antes de substituir o rascunho. O PNG 2K/4K permanece no renderizador Canvas 2D já testado.

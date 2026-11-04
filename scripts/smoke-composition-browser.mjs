@@ -125,9 +125,10 @@ try{
   await choose("mContent","solid");
   const color=await page.locator("#labArtboard").evaluate(board=>({
     effective:board.dataset.background,content:board.dataset.mContent,
-    photo:getComputedStyle(board.querySelector(".lm-lab-photo-layer")).display
+    photo:getComputedStyle(board.querySelector(".lm-lab-photo-ambient")).display,
+    mVisible:getComputedStyle(board.querySelector("#labMask")).display!=="none"&&board.querySelector("#labMask").getBoundingClientRect().width>0
   }));
-  assert(color.effective==="color"&&color.content==="solid"&&color.photo==="none",
+  assert(color.effective==="color"&&color.content==="solid"&&color.photo==="none"&&color.mVisible,
     "Composição de cor permite M sólido sem introduzir fotografia");
 
   // A project saved under the obsolete photo + solid combination is normalized.

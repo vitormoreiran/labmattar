@@ -1,0 +1,40 @@
+/* Páginas e elementos usam os três tratamentos do manual. */
+#laboratorio .lab-pages{display:grid;gap:8px;padding:16px 14px;border-bottom:1px solid #c9c8c2;min-width:0}
+#laboratorio .lab-pages-heading{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:5px}
+#laboratorio .lab-pages :is(input,select){min-width:0;width:100%;padding:7px 9px;background:transparent;color:inherit;border:1px solid #b8b5ae;border-radius:0}
+#laboratorio .lab-page-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px}
+#laboratorio .lab-page-actions button,#laboratorio .lab-motion-assets button{background:none;color:inherit;border:1px solid #b8b5ae;padding:8px;min-height:32px;cursor:pointer}
+#laboratorio .lab-page-actions button:disabled{opacity:.35;cursor:default}
+#laboratorio #labPagesStatus:empty{display:none}
+#laboratorio #labPagesStatus[data-state=error]{color:#a54427}
+#laboratorio .lab-motion-assets{display:grid;gap:12px;border-top:1px solid #c9c8c2;padding-top:16px;margin-block:18px;min-width:0}
+#laboratorio #labMotionSettings{display:grid;gap:8px;min-width:0}
+#laboratorio #labMotionSettings[hidden]{display:none}
+#laboratorio .lab-motion-actions{display:flex;gap:8px;flex-wrap:wrap;margin-block:6px}
+#laboratorio #labMotionEdit{color:inherit;text-underline-offset:4px}
+#laboratorio #labMotionLibrary{width:min(920px,94vw);max-height:88dvh;padding:20px;border:1px solid #b8b5ae;background:#f7f6f2;color:#181818;overflow:auto}
+#laboratorio #labMotionLibrary::backdrop{background:#18181866}
+#laboratorio #labMotionLibrary>header{display:flex;position:static;justify-content:space-between;gap:20px;align-items:center;padding:0 0 16px;border:0}
+#laboratorio #labMotionClose{border:0;background:none;color:inherit;cursor:pointer;padding:8px;min-width:34px}
+#laboratorio #labMotionLibraryItems{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+#laboratorio #labMotionLibraryItems button{display:grid;gap:8px;min-width:0;text-align:left;background:none;border:1px solid #c9c8c2;padding:12px;color:inherit;cursor:pointer}
+#laboratorio #labMotionLibraryItems video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#f2efe7}
+#laboratorio .lab-page-motions{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+#laboratorio .lab-page-motions video{position:absolute;object-fit:contain;pointer-events:none;max-width:none;max-height:none}
+#laboratorio .lab-export-menu{position:relative;flex:none}
+#laboratorio .lab-export-menu>summary{list-style:none;border:1px solid #181818;padding:6px;min-height:34px;cursor:pointer}
+#laboratorio .lab-export-menu>summary::-webkit-details-marker{display:none}
+#laboratorio .lab-export-menu>div{position:absolute;right:0;top:calc(100% + 6px);min-width:245px;padding:8px;background:#f7f6f2;box-shadow:0 8px 30px #0003;border:1px solid #aaa8a1;z-index:2600;display:grid;gap:5px}
+#laboratorio .lab-export-menu>div button{justify-content:flex-start;text-align:left;min-height:38px;border:0}
+#laboratorio :is(.lab-pages,.lab-motion-assets,#labMotionLibrary) :is(button,input,select,a):focus-visible{outline:2px solid currentColor;outline-offset:3px}
+@media(max-width:650px){
+  #laboratorio #labMotionLibraryItems{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #laboratorio .lab-export-menu>summary{padding:5px;min-height:34px}
+  #laboratorio .lab-export-menu>div{position:fixed;right:10px;top:49px;max-width:calc(100vw - 20px)}
+}
+
+body.lm-studio-open #laboratorio .lm-lab-inspector:not([data-mobile-module=m]) .lab-motion-assets{display:none}
+
+/* O M sólido continua visível quando o fundo não usa fotografia. */
+.lm-lab-board[data-backdrop=color][data-m-content=solid] .lm-lab-photo-layer{display:block!important}
+.lm-lab-board[data-backdrop=color] :is(.lm-lab-photo-ambient,.lm-lab-photo-contrast,.lm-lab-marker-photo){display:none!important}

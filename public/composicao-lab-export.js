@@ -12,7 +12,7 @@
   const status=document.getElementById("labExportStatus");
   if(!board||!button||!sizeSelect||!status)return;
   const maskUrl="/ambiente-editorial/media/m-publicado.svg";
-  let exporting=false,maskImage=null;
+  let exporting=false;
 
   function report(message,state="idle"){
     status.textContent=message;
@@ -38,14 +38,6 @@
       current=current.parentElement;
     }
     return true;
-  }
-  async function svgMask(){
-    if(maskImage)return maskImage;
-    const img=new Image();
-    img.src=maskUrl;
-    await img.decode();
-    if(!img.naturalWidth||!img.naturalHeight)fail("O vetor oficial do M não carregou.");
-    maskImage=img;return img;
   }
   function dimensions(edge,frame){
     const factor=edge/Math.max(frame.width,frame.height);
@@ -76,6 +68,11 @@
     }
     return [...new Set(warnings)];
   }
+  function photoRectangle(img,frame){
+    const box=rectangle(img,frame),transform=getComputedStyle(img).transform;
+    if(transform!=="none"){const m=new DOMMatrixReadOnly(transform);const w=box.w/m.a,h=box.h/m.d;box.x+=(box.w-w)/2;box.y+=(box.h-h)/2;box.w=w;box.h=h;}
+    return box;
+  }
   function drawBackground(ctx,frame){
     const css=getComputedStyle(board);
     ctx.fillStyle=css.backgroundColor==="rgba(0, 0, 0, 0)"?
@@ -84,10 +81,10 @@
     if(board.dataset.backdrop==="color")return;
     const img=board.querySelector("#labAmbientPhoto");
     if(!isVisible(img))return;
-    const style=getComputedStyle(img),box=rectangle(img,frame);
+    const style=getComputedStyle(img),box=photoRectangle(img,frame);
     const centerX=box.x+box.w/2,centerY=box.y+box.h/2;
     ctx.save();
-    ctx.filter=style.filter==="none"?"none":style.filter;
+    ctx.filter=style.filter==="none"?"none":style.filter.replace(/blur\(([\d.]+)px\)/g,(_,n)=>"blur("+(Number(n)*frame.outputScale)+"px)");
     if(style.transform!=="none"){
       // Approved backdrop transform is scale(1.045), centered on the image.
       const m=new DOMMatrixReadOnly(style.transform);
@@ -102,79 +99,6 @@
       const s=getComputedStyle(scrim);
       ctx.save();ctx.globalAlpha=Number(s.opacity)||0;ctx.fillStyle=s.backgroundColor;
       ctx.fillRect(0,0,frame.width,frame.height);ctx.restore();
-    }
-  }
-  function maskedCanvas(maskBox,frame,render,mask){
-    const scale=frame.outputScale;
-    const layer=document.createElement("canvas");
-    layer.width=Math.max(1,Math.ceil(maskBox.w*scale));
-    layer.height=Math.max(1,Math.ceil(maskBox.h*scale));
-    const layerCtx=layer.getContext("2d",{alpha:true});
-    if(!layerCtx)fail("Memória insuficiente para rasterizar o M em alta resolução.");
-    layerCtx.setTransform(scale,0,0,scale,0,0);
-    render(layerCtx);
-    layerCtx.globalCompositeOperation="destination-in";
-    layerCtx.drawImage(mask,0,0,maskBox.w,maskBox.h);
-    layerCtx.globalCompositeOperation="source-over";
-    return layer;
-  }
-  function drawM(ctx,frame,mask){
-    const node=board.querySelector("#labMask");
-    if(!isVisible(node))return null;
-    const r=rectangle(node,frame);
-    // A mask is ALWAYS the original official SVG, regardless of source image.
-    const layer=maskedCanvas(r,frame,layerCtx=>{
-      if(board.dataset.mContent==="solid"){
-        layerCtx.fillStyle=getComputedStyle(node).backgroundColor;
-        layerCtx.fillRect(0,0,r.w,r.h);
-      }else{
-        const image=node.querySelector("img");
-        drawCover(layerCtx,image,0,0,r.w,r.h,focal(image));
-        if(board.dataset.mText==="true"){
-          layerCtx.fillStyle="rgba(0,0,0,.2)";layerCtx.fillRect(0,0,r.w,r.h);
-        }
-      }
-    },mask);
-    ctx.drawImage(layer,r.x,r.y,r.w,r.h);
-    return r;
-  }
-  function drawMarkers(ctx,frame){
-    const markers=board.querySelector("#labMMarkers");
-    if(!markers||markers.dataset.marker==="none")return;
-    const photo=board.dataset.background==="photo";
-    const image=board.querySelector("#labMarkerPhoto");
-    if(photo&&(!image||board.dataset.markerBlur!=="true"))return;
-    for(const svg of markers.querySelectorAll("svg")){
-      // The preview hides the colored marker layer in photo mode, but the
-      // exact same SVG path must still clip the photographic export.
-      if(getComputedStyle(svg).display==="none")continue;
-      const path=svg.querySelector("path"),v=svg.viewBox.baseVal;
-      if(!path||!v?.width||!v?.height)continue;
-      const box=rectangle(svg,frame);
-      const geometry=new Path2D(path.getAttribute("d"));
-      ctx.save();
-      ctx.translate(box.x,box.y);
-      ctx.scale(box.w/v.width,box.h/v.height);
-      if(!photo){
-        ctx.fillStyle=getComputedStyle(svg).color;
-        ctx.fill(geometry);
-      }else{
-        ctx.clip(geometry);
-        ctx.setTransform(frame.outputScale,0,0,frame.outputScale,0,0);
-        const imgStyle=getComputedStyle(image),r=rectangle(image,frame);
-        const cx=r.x+r.w/2,cy=r.y+r.h/2;
-        ctx.filter=imgStyle.filter==="none"?"none":imgStyle.filter;
-        if(imgStyle.transform!=="none"){
-          const transform=new DOMMatrixReadOnly(imgStyle.transform);
-          ctx.translate(cx,cy);
-          ctx.transform(transform.a,transform.b,transform.c,transform.d,0,0);
-          ctx.translate(-cx,-cy);
-        }
-        // Draw across the entire page then clip with the official marker.
-        // Drawing into each marker's own rectangle would shift the crop.
-        drawCover(ctx,image,r.x,r.y,r.w,r.h,focal(image));
-      }
-      ctx.restore();
     }
   }
   function styleFont(ctx,element){
@@ -221,82 +145,140 @@
       }
     }
   }
-  async function drawSolidContrast(ctx,frame,mask){
-    const solid=board.querySelector(".lm-lab-solid-contrast");
-    if(board.dataset.mContent!=="solid"||!isVisible(solid))return;
-    const m=board.querySelector("#labMask");
-    const r=rectangle(m,frame);
-    // Ink is rasterized at full page resolution and then intersected with the
-    // SAME alpha mask used to fill the solid M. No duplicate vector geometry.
-    const layer=document.createElement("canvas");
-    layer.width=frame.outputWidth;layer.height=frame.outputHeight;
-    const ink=layer.getContext("2d",{alpha:true});
-    if(!ink)fail("Memória insuficiente para o contraste de texto do M.");
-    ink.setTransform(frame.outputScale,0,0,frame.outputScale,0,0);
-    drawWords(ink,solid.querySelector(".lm-lab-reading"),frame);
-    ink.globalCompositeOperation="destination-in";
-    ink.drawImage(mask,r.x,r.y,r.w,r.h);
-    ink.globalCompositeOperation="source-over";
-    ctx.drawImage(layer,0,0,frame.width,frame.height);
+  const vectorCache=new Map();
+  async function vector(source,box,tone=null){
+    const uri=new URL(source,location.href);
+    if(uri.origin!==location.origin||!(/^\/identidade\//.test(uri.pathname)||uri.pathname===maskUrl))
+      throw Error("Referência vetorial fora do acervo oficial.");
+    if(!vectorCache.has(uri.pathname))vectorCache.set(uri.pathname,(async()=>{
+      const response=await fetch(uri.pathname);if(!response.ok)throw Error("Vetor indisponível.");
+      const xml=new DOMParser().parseFromString(await response.text(),"image/svg+xml"),root=xml.documentElement;
+      if(xml.querySelector("parsererror")||xml.querySelector("[transform]"))throw Error("Vetor oficial incompatível.");
+      const viewBox=root.getAttribute("viewBox")?.trim().split(/[ ,]+/).map(Number);
+      if(viewBox?.length!==4||!viewBox.every(Number.isFinite))throw Error("Vetor sem dimensões válidas.");
+      const paths=[...xml.querySelectorAll("path")].map(path=>{
+        let node=path,fill=null;
+        while(node&&!fill){fill=node.getAttribute?.("fill");node=node.parentElement;}
+        return {d:path.getAttribute("d"),fill:fill||"#000000",rule:path.getAttribute("fill-rule")||"nonzero"};
+      }).filter(path=>path.d&&path.fill!=="none");
+      return {viewBox,paths};
+    })());
+    const data=await vectorCache.get(uri.pathname);
+    return data.paths.map(path=>({kind:"vector",viewBox:data.viewBox,paths:[{d:path.d}],box,color:tone||path.fill,rule:path.rule}));
   }
-  function drawSignature(ctx,frame){
-    const layer=board.querySelector("#labSignatureLayer");
-    if(layer&&isVisible(layer)){
-      for(const image of layer.querySelectorAll("img")){
-        if(!isVisible(image))continue;
-        if(!image.complete||!image.naturalWidth)fail("Símbolo de assinatura indisponível.");
-        const b=rectangle(image,frame);
-        ctx.save();
-        const filter=getComputedStyle(image).filter;
-        ctx.filter=filter==="none"?"none":filter;
-        ctx.drawImage(image,b.x,b.y,b.w,b.h);
-        ctx.restore();
+  function words(root,frame){
+    const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d"),items=[];
+    const recorder=new Proxy(ctx,{
+      get(target,key){
+        if(key==="fillText")return (text,x,y)=>items.push({kind:"text",text,x,y,
+          family:target.font.includes("PerpetuaMattar")?"PerpetuaMattar":"UniversMattar",
+          size:parseFloat(target.font.match(/([\d.]+)px/)[1]),spacing:parseFloat(target.letterSpacing)||0,color:target.fillStyle});
+        const value=Reflect.get(target,key,target);return typeof value==="function"?value.bind(target):value;
+      },
+      set(target,key,value){Reflect.set(target,key,value,target);return true;}
+    });
+    drawWords(recorder,root,frame);return items;
+  }
+  function pixels(width,height,frame,paint){
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.max(1,Math.ceil(width*frame.outputScale));canvas.height=Math.max(1,Math.ceil(height*frame.outputScale));
+    const ctx=canvas.getContext("2d");if(!ctx)throw Error("Memória insuficiente para a camada de imagem.");
+    ctx.setTransform(frame.outputScale,0,0,frame.outputScale,0,0);ctx.imageSmoothingQuality="high";paint(ctx);
+    return canvas.toDataURL("image/png");
+  }
+  function imageLayer(ctx,img,frame){
+    const box=photoRectangle(img,frame),style=getComputedStyle(img),cx=box.x+box.w/2,cy=box.y+box.h/2;
+    ctx.save();
+    ctx.filter=style.filter==="none"?"none":style.filter.replace(/blur\(([\d.]+)px\)/g,(_,n)=>"blur("+(Number(n)*frame.outputScale)+"px)");
+    if(style.transform!=="none"){
+      const m=new DOMMatrixReadOnly(style.transform);ctx.translate(cx,cy);ctx.transform(m.a,m.b,m.c,m.d,0,0);ctx.translate(-cx,-cy);
+    }
+    drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));ctx.restore();
+  }
+  async function captureScene({edge=Number(sizeSelect.value),ask=true}={}){
+    await document.fonts.ready;
+    if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
+    await Promise.all([...board.querySelectorAll("img")].filter(isVisible).map(img=>img.decode().catch(()=>{throw Error("Imagem indisponível. Conecte o acervo ou aguarde o carregamento.");})));
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    if(board.dataset.state!=="ok"||board.getAttribute("aria-invalid")==="true")
+      throw Error("A composição apresenta conflitos de leitura. Corrija antes de exportar.");
+    if(![1920,3840].includes(edge))throw Error("Resolução não reconhecida.");
+    const frame=logical(),[width,height]=dimensions(edge,frame);
+    frame.outputScale=width/frame.width;frame.outputWidth=width;frame.outputHeight=height;
+    const warnings=imagePreflight(width,frame),items=[],rasterized=[];
+    if(ask&&warnings.length&&!confirm("LABMATTAR / Qualidade dos originais\n\n"+warnings.join("\n")+"\n\nExportar mesmo assim?"))return null;
+    const css=getComputedStyle(board),background=css.backgroundColor==="rgba(0, 0, 0, 0)"?css.getPropertyValue("--lab-bg"):css.backgroundColor;
+    items.push({kind:"rect",x:0,y:0,w:frame.width,h:frame.height,color:background});
+    if(board.dataset.backdrop!=="color"){
+      const image=pixels(frame.width,frame.height,frame,ctx=>drawBackground(ctx,frame));
+      items.push({kind:"image",source:image,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("fotografia e tratamento do fundo");
+    }
+    const maskNode=board.querySelector("#labMask");
+    let maskVector=null;
+    if(isVisible(maskNode)){
+      const box=rectangle(maskNode,frame),shapes=await vector(maskUrl,box);
+      maskVector={...shapes[0],paths:shapes.flatMap(shape=>shape.paths)};
+      if(board.dataset.mContent==="solid")items.push({...maskVector,color:getComputedStyle(maskNode).backgroundColor});
+      else{
+        const filter=getComputedStyle(maskNode).filter;
+        if(filter!=="none"){
+          const shadow=pixels(frame.width,frame.height,frame,ctx=>{
+            const shape=new Path2D();const [vx,vy,vw,vh]=maskVector.viewBox;
+            for(const path of maskVector.paths)shape.addPath(new Path2D(path.d),new DOMMatrix([box.w/vw,0,0,box.h/vh,box.x-vx*box.w/vw,box.y-vy*box.h/vh]));
+            ctx.filter=filter.replace(/(-?[\d.]+)px/g,(_,n)=>(Number(n)*frame.outputScale)+"px");ctx.fillStyle="#000000";ctx.fill(shape);
+            ctx.filter="none";ctx.globalCompositeOperation="destination-out";ctx.fill(shape);ctx.globalCompositeOperation="source-over";
+          });items.push({kind:"image",source:shadow,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("sombra fotográfica do M");
+        }
+        const source=pixels(box.w,box.h,frame,ctx=>{
+          drawCover(ctx,maskNode.querySelector("img"),0,0,box.w,box.h,focal(maskNode.querySelector("img")));
+          if(board.dataset.mText==="true"){ctx.fillStyle="rgba(0,0,0,.2)";ctx.fillRect(0,0,box.w,box.h);}
+        });
+        items.push({kind:"group",clip:maskVector,items:[{kind:"image",source,x:box.x,y:box.y,w:box.w,h:box.h}]});rasterized.push("fotografia do M");
       }
-      drawWords(ctx,layer,frame);
     }
-    const legacy=board.querySelector("#labSignature");
-    if(isVisible(legacy)&&legacy.complete&&legacy.naturalWidth){
-      const b=rectangle(legacy,frame);
-      ctx.drawImage(legacy,b.x,b.y,b.w,b.h);
+    const markerPhoto=board.querySelector("#labMarkerPhotoLayer");
+    if(isVisible(markerPhoto)){
+      const source=pixels(frame.width,frame.height,frame,ctx=>imageLayer(ctx,markerPhoto.querySelector("img"),frame));
+      for(const svg of board.querySelectorAll("#labMMarkers svg")){
+        if(getComputedStyle(svg).display==="none")continue;
+        const v=svg.viewBox.baseVal,box=rectangle(svg,frame),d=svg.querySelector("path")?.getAttribute("d");
+        if(d)items.push({kind:"group",clip:{viewBox:[v.x,v.y,v.width,v.height],box,paths:[{d}]},
+          items:[{kind:"image",source,x:0,y:0,w:frame.width,h:frame.height}]});
+      }
+      rasterized.push("tratamento fotográfico dos marcadores");
     }
+    for(const svg of board.querySelectorAll("#labMMarkers svg")){
+      if(!isVisible(svg))continue;
+      const v=svg.viewBox.baseVal,d=svg.querySelector("path")?.getAttribute("d");
+      if(d)items.push({kind:"vector",viewBox:[v.x,v.y,v.width,v.height],paths:[{d}],box:rectangle(svg,frame),color:getComputedStyle(svg).color});
+    }
+    const motions=await window.LabPages?.captureMotions?.(frame.width,frame.height)||[];
+    for(const motion of motions){
+      items.push(motion);
+      if(motion.w*frame.outputScale>motion.sourceWidth*1.01)warnings.push("Motion "+motion.assetName+" ampliado além da resolução original.");
+    }
+    if(motions.length)rasterized.push("quadros estáticos dos motions");
+    items.push(...words(board.querySelector("#labReading"),frame));
+    const solid=board.querySelector(".lm-lab-solid-contrast");
+    if(maskVector&&board.dataset.mContent==="solid"&&isVisible(solid))
+      items.push({kind:"group",clip:maskVector,items:words(solid.querySelector(".lm-lab-reading"),frame)});
+    const signature=board.querySelector("#labSignatureLayer");
+    for(const img of [...signature.querySelectorAll("img"),board.querySelector("#labSignature")].filter(Boolean)){
+      if(!isVisible(img))continue;
+      const filter=getComputedStyle(img).filter,tone=filter.includes("invert(1)")?"#ffffff":filter.includes("brightness(0)")?"#000000":null;
+      items.push(...await vector(img.currentSrc||img.src,rectangle(img,frame),tone));
+    }
+    items.push(...words(signature,frame));
+    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,warnings:[...new Set(warnings)],rasterized};
   }
   async function rasterize(){
-    await document.fonts.ready;
-    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
-    if(board.dataset.motionPlaying==="true")fail("Conclua a animação de entrada antes de exportar.");
-    if(board.dataset.state!=="ok"||board.getAttribute("aria-invalid")==="true")
-      fail("A composição apresenta conflitos de leitura. Corrija antes de exportar.");
-    const frame=logical();
-    const edge=Number(sizeSelect.value);
-    if(![1920,3840].includes(edge))fail("Resolução de exportação não reconhecida.");
-    const [width,height]=dimensions(edge,frame);
-    const warnings=imagePreflight(width,frame);
-    if(warnings.length){
-      const accepted=confirm("LABMATTAR / Qualidade dos originais\n\n"+warnings.join("\n")+
-        "\n\nA exportação terá a dimensão solicitada, mas não recuperará detalhes ausentes. Exportar mesmo assim?");
-      if(!accepted){report("Exportação cancelada. Substitua as imagens por originais maiores.","warning");return null}
-    }
-    report("RENDERIZANDO "+width+" × "+height+" PX…","busy");
-    const canvas=document.createElement("canvas");
-    canvas.width=width;canvas.height=height;
-    const ctx=canvas.getContext("2d",{alpha:false,colorSpace:"srgb"});
-    if(!ctx)fail("O navegador não conseguiu reservar a memória de exportação.");
-    frame.outputScale=width/frame.width;frame.outputWidth=width;frame.outputHeight=height;
-    ctx.setTransform(frame.outputScale,0,0,frame.outputScale,0,0);
-    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
-    drawBackground(ctx,frame);
-    const mask=await svgMask();
-    drawM(ctx,frame,mask);
-    drawMarkers(ctx,frame);
-    drawWords(ctx,board.querySelector("#labReading"),frame);
-    await drawSolidContrast(ctx,frame,mask);
-    drawSignature(ctx,frame);
-    const blob=await new Promise((resolve,reject)=>{
-      try{canvas.toBlob(output=>output?resolve(output):reject(new Error("Falha na codificação PNG.")),"image/png")}
-      catch(error){reject(error)}
-    });
-    if(blob.size<2048)fail("O PNG gerado está incompleto.");
-    return {blob,width,height,warnings};
+    const scene=await captureScene();if(!scene)return null;
+    report("RENDERIZANDO "+scene.outputWidth+" × "+scene.outputHeight+" PX…","busy");
+    const {sceneCanvas}=await import("./lab-scene.mjs");
+    const canvas=await sceneCanvas(scene,Number(sizeSelect.value));
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(Error("Falha na codificação PNG.")),"image/png"));
+    if(blob.size<2048)throw Error("PNG incompleto.");
+    return {blob,width:canvas.width,height:canvas.height,warnings:scene.warnings};
   }
   function download(blob,name){
     const link=document.createElement("a"),url=URL.createObjectURL(blob);
@@ -319,4 +301,5 @@
   }
   button.addEventListener("click",exportPng);
   window.LabExportPNG={capture:rasterize,dimensions};
+  window.LabRenderer={capture:captureScene};
 })();

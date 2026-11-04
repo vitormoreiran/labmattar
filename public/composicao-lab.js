@@ -295,6 +295,7 @@
     state=sanitize(next);
   }
   function save(){
+    window.dispatchEvent(new Event("labmattar:composition-change"));
     try{
       localStorage.setItem(storageKey,JSON.stringify(state));
       by("labSaveState").textContent="Configuração salva neste navegador / não publicada.";

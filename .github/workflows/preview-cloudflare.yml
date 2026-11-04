@@ -8,6 +8,19 @@ on:
       - 'design/integrate-areas.py'
       - 'design/revise-symbols-hierarchy.py'
       - 'design/motion.html'
+      - 'design/laboratorio.html'
+      - 'design/compor.html'
+      - 'public/composicao-pages*'
+      - 'public/composicao-lab-export.js'
+      - 'public/composicao-document-ui.mjs'
+      - 'public/lab-*.mjs'
+      - 'tools/laboratorio-export/**'
+      - 'scripts/prepare-lab-pdf.mjs'
+      - 'scripts/test-lab-sequence.mjs'
+      - 'scripts/smoke-lab-pages.mjs'
+      - 'scripts/verify-lab-pdf.py'
+      - 'package.json'
+      - 'package-lock.json'
       - 'design/cores.html'
       - 'public/cores-motion.js'
       - 'scripts/smoke-colors-browser.mjs'
@@ -106,6 +119,13 @@ jobs:
           cp -R dist/matrix/matrix-assets dist/client/matrix-assets
       - name: Validar seguranca do acervo
         run: node scripts/test-acervo.mjs
+      - name: Validar contratos de páginas e elementos
+        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs
+      - name: Preparar inspeção do PDF
+        run: |
+          python3 -m pip install --quiet pypdf==6.10.0
+          sudo apt-get update -qq
+          sudo apt-get install --no-install-recommends -y poppler-utils
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
@@ -114,6 +134,7 @@ jobs:
         shell: bash
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
           COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
@@ -184,5 +205,7 @@ jobs:
           path: |
             symbols-proof/
             colors-proof/
+            production-proof/
+            laboratorio-export-4k.png
             composition-studio-*.png
           if-no-files-found: warn

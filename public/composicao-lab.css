@@ -438,3 +438,7 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
     border:1px solid #b6b4af!important;
   }
 }
+
+/* HTML hidden must outrank the visual choice-card display rule. */
+#laboratorio [data-lab-choice="mContent"][data-value="solid"][hidden]{display:none!important}
+.lm-lab-marker-focus-field{display:grid;gap:11px;margin-top:10px}

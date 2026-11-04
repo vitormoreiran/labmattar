@@ -48,9 +48,9 @@ try{
   await page.locator("#labAcervoConnect-google").click();
   await page.locator("#labAcervoSetup").waitFor({state:"visible"});
   await page.waitForFunction(()=>document.getElementById("labAcervoSetupTitle")?.textContent?.includes("Google Drive"));
-  assert((await page.locator("#labAcervoSetupTitle").innerText()).includes("Google Drive"),
+  assert((await page.locator("#labAcervoSetupTitle").textContent()).includes("Google Drive"),
     "Missing OAuth setup shows an actionable inline explanation");
-  assert((await page.locator("#labAcervoSetupText").innerText()).includes("Cloudflare"),
+  assert((await page.locator("#labAcervoSetupText").textContent()).includes("Cloudflare"),
     "Missing OAuth must clearly identify what configuration is needed");
   assert(await page.locator("#labAcervoSetupDocs").isVisible(),"Help link available");
   await page.screenshot({path:"laboratorio-acervo-ativacao.png"});
@@ -68,7 +68,7 @@ try{
   assert(await page.locator("#labAcervoDialog").isHidden(),"Selecting a photo closes the modal");
   const selection=await page.locator("#labPhoto").inputValue();
   assert(selection.startsWith("ext-"),"Existing photo input receives the authorized media key");
-  assert((await page.locator("#labAcervoCurrent").innerText()).includes("Fotografia de teste"),
+  assert((await page.locator("#labAcervoCurrent").textContent()).includes("Fotografia de teste"),
     "Selected asset shown in the library");
   assert(await page.locator("#labArtboard").isVisible(),"The same composition preview remains active");
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));

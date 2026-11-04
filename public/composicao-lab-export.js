@@ -290,7 +290,7 @@
     exporting=true;button.disabled=true;report("VALIDANDO COMPOSIÇÃO…","busy");
     try{
       const result=await rasterize();
-      if(!result)return;
+      if(!result){report("EXPORTAÇÃO CANCELADA.");return;}
       download(result.blob,"labmattar-"+(board.dataset.format||"horizontal")+"-"+
         result.width+"x"+result.height+".png");
       report("PNG "+result.width+" × "+result.height+" PX / "+

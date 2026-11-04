@@ -7,7 +7,8 @@ const assert=(condition,message)=>{if(!condition)throw new Error(message)};
 const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const errors=[];
 page.on("pageerror",error=>errors.push(error.message));
-page.on("dialog",dialog=>dialog.accept());
+const acceptDialog=dialog=>dialog.accept();
+page.on("dialog",acceptDialog);
 async function choose(group,value){
   const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
@@ -97,6 +98,12 @@ try{
   assert(data.readUInt32BE(16)===3840&&data.readUInt32BE(20)===2160,
     "PNG file header dimensions must match requested output");
 
+  assert(first.warnings>0,"Reference image must exercise the quality confirmation");
+  page.off("dialog",acceptDialog);page.once("dialog",dialog=>dialog.dismiss());
+  await page.locator("#labExportPng").click();
+  await page.waitForFunction(()=>!window.LabExportPNG.isExporting()&&document.getElementById('labExportStatus').textContent.includes('CANCELADA'));
+  assert(await page.locator("#labDeliveryBack").isEnabled(),"Cancelling must restore the review controls");
+  page.on("dialog",acceptDialog);
   await page.locator("#labDeliveryBack").click();
   // Same authoring state must also be reversible as a versioned document.
   // This does not assert the Matriz motion renderer is already connected.

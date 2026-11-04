@@ -8,6 +8,9 @@ on:
       - 'design/integrate-areas.py'
       - 'design/revise-symbols-hierarchy.py'
       - 'design/motion.html'
+      - 'design/cores.html'
+      - 'public/cores-motion.js'
+      - 'scripts/smoke-colors-browser.mjs'
       - 'public/manual.html'
       - 'public/motion.css'
       - 'scripts/prepare-motion.mjs'
@@ -110,6 +113,7 @@ jobs:
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
+          COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
@@ -164,6 +168,7 @@ jobs:
         run: |
           node scripts/wait-symbols-preview.mjs
           node scripts/smoke-symbols-browser.mjs
+          COLORS_URL=https://labmattar-identidade-previa.vitormoreiran.workers.dev/cores.html node scripts/smoke-colors-browser.mjs
       - name: Salvar evidencias visuais e relatorio
         if: always()
         uses: actions/upload-artifact@v4
@@ -171,5 +176,6 @@ jobs:
           name: manual-symbols-proof-${{ github.sha }}
           path: |
             symbols-proof/
+            colors-proof/
             composition-studio-*.png
           if-no-files-found: warn

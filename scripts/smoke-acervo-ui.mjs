@@ -79,16 +79,25 @@ try{
   returning.on("pageerror",error=>oauthErrors.push(error.message));
   await returning.addInitScript(()=>{
     window.__pickerOpened=false;
+    window.__portfolioFolder=null;
+    window.__includeSubfolders=false;
+    window.__folderSelectable=true;
     window.gapi={load:(_module,options)=>options.callback()};
     class DocsView{
       setMode(){return this}
       setMimeTypes(){return this}
+      setParent(id){window.__portfolioFolder=id;return this}
+      setIncludeFolders(value){window.__includeSubfolders=value;return this}
+      setSelectFolderEnabled(value){window.__folderSelectable=value;return this}
     }
     class PickerBuilder{
       addView(){return this}
       setOAuthToken(){return this}
       setDeveloperKey(){return this}
       setAppId(){return this}
+      setOrigin(){return this}
+      setLocale(){return this}
+      setTitle(){return this}
       enableFeature(){return this}
       setCallback(fn){window.__pickerCallback=fn;return this}
       build(){return {setVisible(value){window.__pickerOpened=value}}}
@@ -112,6 +121,15 @@ try{
   }));
   await returning.goto(base+"?studio=1&acervo=google#laboratorio",{waitUntil:"load",timeout:60000});
   await returning.waitForFunction(()=>window.__pickerOpened===true,null,{timeout:12000});
+  assert(await returning.evaluate(()=>window.__portfolioFolder)==="13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW",
+    "Picker must open in the user-specified 01_Portfolio folder, not the general Drive");
+  assert(await returning.evaluate(()=>window.__includeSubfolders)===true,
+    "Portfolio project subfolders must be visible in the picker");
+  assert(await returning.evaluate(()=>window.__folderSelectable)===false,
+    "Folder selection must not replace choosing an image");
+  assert(await returning.locator("#labAcervoPortfolioLink").getAttribute("href")===
+    "https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW",
+    "A direct, private portfolio fallback must exist");
   assert(await returning.locator("#labAcervoDialog").isHidden(),
     "Native Google Picker should not be obscured by the custom modal");
   assert(oauthErrors.length===0,"OAuth return errors: "+oauthErrors.join(" / "));

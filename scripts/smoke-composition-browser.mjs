@@ -88,6 +88,7 @@ try{
     "Desativar marcadores restaura M fotográfico nítido sobre fundo desfocado");
 
   await choose("background","color");
+  await choose("mContent","off");
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
     "M sólido deve retornar nas composições de cor");
   await choose("mContent","solid");

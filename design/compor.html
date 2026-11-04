@@ -202,7 +202,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">
             <header class="lm-acervo-dialog-heading">
               <div><span class="lm-acervo-kicker">BIBLIOTECA DE MÍDIA / LABMATTAR</span><h3 id="labAcervoTitle">01_Portfolio</h3><p id="labAcervoDescription">Fotografias e vídeos das pastas de projetos, sem login.</p></div>
-              <button id="labAcervoClose" class="lm-acervo-close" type="button" aria-label="Fechar seletor de arquivos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg></button>
+              <div class="lm-acervo-heading-actions"><button id="labAcervoLocalDialog" class="lm-acervo-import" type="button" aria-label="Adicionar fotografia ou vídeo do computador"><span aria-hidden="true">+</span> Do computador</button><button id="labAcervoClose" class="lm-acervo-close" type="button" aria-label="Fechar seletor de arquivos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg></button></div>
             </header>
             <div id="labAcervoProviders" class="lm-acervo-sources" aria-label="Escolha o serviço de armazenamento">
               <div class="lm-acervo-source-row">
@@ -237,10 +237,17 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
                   <div class="lm-acervo-location"><span class="lm-acervo-location-label">LOCALIZAÇÃO</span><strong id="labAcervoPath" title="Pasta atual">Arquivos disponíveis</strong></div>
                   <button id="labAcervoMore" class="lm-acervo-nav-more" type="button" hidden>Carregar mais</button>
                 </div>
-                <div class="lm-acervo-search-field">
+                <div class="lm-acervo-browser-search-row">
+                  <div class="lm-acervo-search-field">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
                   <label class="lm-acervo-search-label" for="labAcervoSearch">Buscar nesta pasta</label>
                   <input id="labAcervoSearch" class="lm-acervo-search" type="search" placeholder="Buscar nesta pasta" autocomplete="off">
+                  </div>
+                  <div id="labAcervoFilters" class="lm-acervo-filters" role="group" aria-label="Filtrar tipos de mídia" hidden>
+                    <button type="button" data-acervo-filter="all" aria-pressed="true">Todos <span class="lm-acervo-filter-count">0</span></button>
+                    <button type="button" data-acervo-filter="image" aria-pressed="false">Fotos <span class="lm-acervo-filter-count">0</span></button>
+                    <button type="button" data-acervo-filter="video" aria-pressed="false">Vídeos <span class="lm-acervo-filter-count">0</span></button>
+                  </div>
                 </div>
               </div>
               <div id="labAcervoItems" class="lm-acervo-items" role="region" aria-label="Pastas, fotografias e vídeos"></div>
@@ -414,5 +421,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<link rel="stylesheet" href="/composicao-acervo.css"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs"></script>
+<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-biblioteca-2"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs"></script>
 </body></html>

@@ -348,6 +348,84 @@ async function mediaStream(request,url,env,thumb){
     return auth.finish(new Response(upstream.body,{status:upstream.status,headers:responseHeaders}));
   }catch{return auth.finish(deny("Mídia indisponível ou permissão revogada",404))}
 }
+
+// Public-link catalogue: *only* IDs listed beneath 01_Portfolio are served.
+// No personal OAuth cookie, Drive write scope, or arbitrary user-provided path.
+const publicIndexCache=new Map();
+async function publicProject(request,env,projectId){
+  if(!safeId("google",projectId)||!env.ASSETS?.fetch)return null;
+  const now=Date.now(),cached=publicIndexCache.get(projectId);
+  if(cached&&now-cached.at<10*60*1000)return cached.value;
+  const origin=new URL(request.url).origin;
+  const indexResponse=await env.ASSETS.fetch(new Request(origin+"/acervo/index.json"));
+  if(!indexResponse.ok)return null;
+  const index=await indexResponse.json();
+  if(index.rootId!=="13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW"||
+    !index.projects?.some(p=>p.id===projectId))return null;
+  const projectResponse=await env.ASSETS.fetch(new Request(origin+"/acervo/projects/"+projectId+".json"));
+  if(!projectResponse.ok)return null;
+  const project=await projectResponse.json();
+  if(project.projectId!==projectId||!Array.isArray(project.entries))return null;
+  const value=new Map(project.entries.filter(item=>item.kind==="image"||item.kind==="video")
+    .map(item=>[item.id,item]));
+  if(publicIndexCache.size>=25)publicIndexCache.clear();
+  publicIndexCache.set(projectId,{at:now,value});
+  return value;
+}
+async function publicMediaStream(request,url,env,thumb){
+  const projectId=url.searchParams.get("project"),id=url.searchParams.get("id");
+  if(!safeId("google",projectId)||!safeId("google",id))return deny("Arquivo inválido",400);
+  const catalogue=await publicProject(request,env,projectId);
+  const item=catalogue?.get(id);
+  if(!item||!FILE_TYPES.has(item.mime))return deny("Arquivo fora da biblioteca 01_Portfolio",404);
+  const isVideo=item.kind==="video";
+  if(!thumb&&!env.LM_GOOGLE_PICKER_API_KEY)
+    return deny("A chave pública de leitura do acervo não está disponível",503);
+  const range=request.headers.get("Range");
+  if(range&&!/^bytes=\d+-\d*$/.test(range))return deny("Intervalo de vídeo inválido",416);
+  const origin=env.LM_ACERVO_ORIGIN||new URL(request.url).origin;
+  let upstream=null;
+  if(thumb){
+    const target="https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w480";
+    try{
+      const res=await fetch(target,{redirect:"follow"});
+      if(res.ok&&res.headers.get("Content-Type")?.startsWith("image/"))upstream=res;
+      else await res.body?.cancel();
+    }catch{/* Try direct public Drive API below. */}
+  }
+  if(!upstream){
+    const key=env.LM_GOOGLE_PICKER_API_KEY;
+    if(!key)return deny("Miniatura indisponível",404);
+    const remote="https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(id)+
+      "?alt=media&supportsAllDrives=true&key="+encodeURIComponent(key);
+    const headers={Referer:origin.replace(/\/$/,"")+"/"};
+    if(range&&!thumb&&isVideo)headers.Range=range;
+    const res=await fetch(remote,{headers,redirect:"follow"});
+    if(res.ok&&(res.status===200||res.status===206)&&
+      !res.headers.get("Content-Type")?.includes("text/html"))upstream=res;
+    else{
+      await res.body?.cancel();
+      // Shared-by-link assets can also be streamed through Drive's public
+      // download endpoint. Never forward HTML consent/confirmation pages.
+      const direct="https://drive.google.com/uc?export=download&id="+encodeURIComponent(id);
+      const fallback=await fetch(direct,{headers:range&&isVideo?{Range:range}:{},redirect:"follow"});
+      if(!fallback.ok||fallback.headers.get("Content-Type")?.includes("text/html")){
+        await fallback.body?.cancel();
+        return deny("Google não liberou a mídia para leitura pública; confira o compartilhamento do arquivo",502);
+      }
+      upstream=fallback;
+    }
+  }
+  const responseHeaders={
+    "Content-Type":thumb?"image/jpeg":item.mime,
+    "Content-Disposition":"inline",
+    "Cache-Control":"public, max-age=300"
+  };
+  for(const h of ["content-length","content-range","accept-ranges"])
+    if(upstream.headers.has(h))responseHeaders[h]=upstream.headers.get(h);
+  return new Response(upstream.body,{status:upstream.status,headers:responseHeaders});
+}
+
 export async function handleAcervoRequest(request,env={}){
   const url=new URL(request.url);
   const path=url.pathname.startsWith(BASE)?url.pathname.slice(BASE.length):"";
@@ -396,6 +474,8 @@ export async function handleAcervoRequest(request,env={}){
       const data=await dropboxList(auth.session.access_token,folder,cursor);
       return auth.finish(json(data));
     }
+    if(method==="GET"&&(path==="public-media"||path==="public-thumb"))
+      return publicMediaStream(request,url,env,path==="public-thumb");
     if(method==="GET"&&(path==="thumb"||path==="media"))
       return mediaStream(request,url,env,path==="thumb");
     return deny("Rota ou método não disponível",405);

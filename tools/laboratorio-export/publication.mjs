@@ -3,7 +3,7 @@ import {textMotionProfile,installTextEntrances} from '../../public/lab-text-moti
 import {publishedNavigationCSS} from '../../public/lab-presentation-chrome.mjs';
 import {createHash} from 'node:crypto';
 const reserved=new Set(['sesc','bradesco','simposio']);
-const extensions={'image/svg+xml':'svg','image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif','font/otf':'otf','font/ttf':'ttf','video/mp4':'mp4'};
+const extensions={'image/svg+xml':'svg','image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif','font/otf':'otf','font/ttf':'ttf','video/mp4':'mp4','video/webm':'webm','video/quicktime':'mov'};
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 const safeJSON=value=>JSON.stringify(value).replace(/</g,'\\u003c');
 // A build artifact, never a public upload endpoint or an automatic deployment.
@@ -23,7 +23,7 @@ export function prepareChapter4Publication(html,slug){
  if(!navigationReplaced)throw Error('Reexporte o HTML com a navegação atual do Laboratório.');
  output=output.replace(publishedNavigationCSS,'').replace('</head>','<style>html{--type-perpetua:PerpetuaMattar}</style><link rel="stylesheet" href="/assets/navigation-shared.css"></head>');
  output=output.replace(/<script type="application\/json" id="clips">([\s\S]*?)<\/script>/,(_,payload)=>{
-  const clips=JSON.parse(payload);for(const [id,value]of Object.entries(clips)){if(typeof value!=='string'||!/^([A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value))throw Error('Motion não incorporado no HTML de origem.');clips[id]=asset('video/mp4',value);}
+  const clips=JSON.parse(payload);for(const [id,value]of Object.entries(clips)){if(typeof value!=='string'||!/^([A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value))throw Error('Motion não incorporado no HTML de origem.');const types=JSON.parse(output.match(/<script type="application\/json" id="video-types">([\s\S]*?)<\/script>/)?.[1]||"{}");clips[id]=asset(types[id]||"video/mp4",value);}
   return '<script type="application/json" id="clips">'+safeJSON(clips)+'</script>';
  });
  output=output.replace(/data:([a-z0-9+./-]+);base64,([a-z0-9+/=]+)/gi,(_,type,encoded)=>asset(type.toLowerCase(),encoded));

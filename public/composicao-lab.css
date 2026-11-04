@@ -322,7 +322,7 @@
 /* Foreground M remains a separate layer, photo or solid. */
 .lm-lab-board[data-m-content=off] .lm-lab-m-photo{display:none!important}
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo{
-  display:block!important;background:var(--lab-ink)!important;
+  display:block!important;background:var(--lab-m-ink,var(--lab-ink))!important;
 }
 .lm-lab-board[data-m-content=solid] .lm-lab-m-photo img{display:none!important}
 .lm-lab-board[data-m-content=photo] .lm-lab-m-photo{
@@ -387,7 +387,7 @@
   mask-image:url('/ambiente-editorial/media/m-publicado.svg');
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
 }
-.lm-lab-solid-contrast .lm-lab-reading{color:#181818}
+.lm-lab-solid-contrast .lm-lab-reading{color:var(--lab-ink)}
 .lm-lab-solid-contrast *{pointer-events:none!important;user-select:none!important}
 
 
@@ -442,3 +442,28 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 /* HTML hidden must outrank the visual choice-card display rule. */
 #laboratorio [data-lab-choice="mContent"][data-value="solid"][hidden]{display:none!important}
 .lm-lab-marker-focus-field{display:grid;gap:11px;margin-top:10px}
+
+/* Video is a surface material, never an independent clip. Keep photo,
+ * M and marker media geometry exactly aligned with the static source. */
+.lm-lab-board[data-video-background="true"] .lm-lab-photo-ambient,
+.lm-lab-board[data-video-background="true"] #labMaskPhoto,
+.lm-lab-board[data-video-background="true"] #labMarkerPhoto{visibility:hidden!important}
+.lm-lab-board .lm-lab-background-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y);display:block;pointer-events:none}
+.lm-lab-board[data-backdrop="photo"] #labAmbientVideo{
+  inset:0;width:100%;height:100%;object-fit:cover;filter:none;transform:none
+}
+.lm-lab-board[data-backdrop="blur"] #labAmbientVideo{
+  inset:-7%;width:114%;height:114%;
+  filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);
+  transform:scale(1.045)
+}
+.lm-lab-board #labMaskVideo{inset:0;width:100%;height:100%;object-fit:cover}
+.lm-lab-board #labMarkerVideo{inset:0;width:100%;height:100%;filter:none;transform:none}
+.lm-lab-board[data-marker-focus="blur"] #labMarkerVideo{
+  inset:-7%;width:114%;height:114%;
+  filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);
+  transform:scale(1.045)
+}
+.lm-lab-board[data-marker-focus="sharp"] #labMarkerVideo{
+  inset:0;width:100%;height:100%;filter:none;transform:none
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,readSequence,sequenceDocument,movePage,createSection,sectionState,hasSectionText} from '../public/lab-sequence.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,createSection,sectionState,hasSectionText} from '../public/lab-sequence.mjs';
 const photos={'64':'/ambiente-editorial/media/BOXDOSENTIR-64.jpg'};
 const state={format:'horizontal',color:'neutral',margin:7,guides:'nenhuma',marker:'none',markerFocus:'blur',
   textWidth:61,titleScale:100,type:'alternada',background:'color',mContent:'off',mPresentation:'elemento',photo:'64',
@@ -117,3 +117,26 @@ test('vídeos públicos e locais guardam referência sem credenciais',()=>{
 });
 
 test('seções conservam os vídeos ao salvar e reabrir',()=>{const section=createSection('s1','Introdução',state,photos),p=page('p1');p.sectionId=section.id;p.clips=[createClip({kind:'video',provider:'google',id:'videoFile1234',name:'Registro.mp4',mimeType:'video/mp4'},'clip-1')];const doc=sequenceDocument('Seções com vídeo',[p],[section]),parsed=readSequence(doc,photos,[asset]);assert.deepEqual(sequenceDocument(parsed.name,parsed.pages,parsed.sections),doc);});
+test('vídeo selecionado é fundo da página, não elemento livre',()=>{
+  const media={kind:'video',provider:'public',projectId:'11OYn_dAihamP4E0PqmuIUcmo0Uk41rpZ',
+    id:'1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn',name:'Fundo da cena.mp4',mimeType:'video/mp4'};
+  const backgroundVideo=createBackgroundVideo(media,'background-1');
+  const first=createPage({id:'page-1',name:'Vídeo ao fundo',state:{...state,background:'photo'},
+    photoCatalog:photos,backgroundVideo});
+  const second=page('page-2');
+  const document=sequenceDocument('Fundo em vídeo',[first,second]);
+  assert.deepEqual(document.pages[0].backgroundVideo,backgroundVideo);
+  assert.equal(document.pages[0].clips,undefined);
+  assert.equal(document.pages[1].backgroundVideo,undefined);
+  assert.equal(backgroundVideoUrl(backgroundVideo),
+    '/api/acervo/public-media?project=11OYn_dAihamP4E0PqmuIUcmo0Uk41rpZ&id=1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn');
+  const restored=readSequence(clone(document),photos,[asset]);
+  assert.deepEqual(sequenceDocument(restored.name,restored.pages),document);
+  const contaminated=clone(document);
+  contaminated.pages[0].backgroundVideo.access_token='segredo';
+  assert.throws(()=>readSequence(contaminated,photos,[asset]),/campos do vídeo de fundo/);
+  const broken=clone(document);broken.pages[0].composition.pages[0].surface.background='color';
+  assert.throws(()=>readSequence(broken,photos,[asset]),/vídeo de fundo exige superfície de imagem/);
+});
+
+test('o vídeo é único na seção e sobrevive ao JSON v2',()=>{const section=createSection('s-video','Vídeo', {...state,background:'photo'},photos),video=createBackgroundVideo({kind:'video',provider:'google',id:'videoFile1234',name:'Fundo.mp4',mimeType:'video/mp4'},'bg-1');section.background.video=video;const pages=['p1','p2'].map(id=>({...createPage({id,name:id,state:sectionState(state,section),photoCatalog:photos,backgroundVideo:video}),sectionId:section.id}));const doc=sequenceDocument('Vídeo compartilhado',pages,[section]),parsed=readSequence(doc,photos,[asset]);assert.deepEqual(sequenceDocument(parsed.name,parsed.pages,parsed.sections),doc);const bad=clone(doc);delete bad.pages[1].backgroundVideo;assert.throws(()=>readSequence(bad,photos,[asset]),/diverge do fundo compartilhado/);});

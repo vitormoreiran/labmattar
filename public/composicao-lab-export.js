@@ -48,9 +48,10 @@
     return [parseFloat(p[0])/100,parseFloat(p[1]||p[0])/100];
   }
   function drawCover(ctx,img,x,y,w,h,position){
-    if(!img.complete||!img.naturalWidth||!img.naturalHeight)
-      fail("Fotografia indisponível. Aguarde o carregamento e tente novamente.");
-    const iw=img.naturalWidth,ih=img.naturalHeight;
+    const isVideo=img instanceof HTMLVideoElement;
+    const iw=isVideo?img.videoWidth:img.naturalWidth,ih=isVideo?img.videoHeight:img.naturalHeight;
+    if(!iw||!ih||(isVideo?img.readyState<2:!img.complete))
+      fail("Mídia de fundo indisponível. Aguarde o carregamento e tente novamente.");
     const fit=Math.max(w/iw,h/ih),sw=w/fit,sh=h/fit;
     const [px,py]=position;
     ctx.drawImage(img,(iw-sw)*px,(ih-sh)*py,sw,sh,x,y,w,h);
@@ -58,13 +59,15 @@
   function imagePreflight(outW,frame){
     const zoom=outW/frame.width;
     const warnings=[];
-    for(const img of board.querySelectorAll(".lm-lab-photo-ambient,.lm-lab-m-photo img")){
+    for(const img of board.querySelectorAll(".lm-lab-photo-ambient,.lm-lab-m-photo img,.lm-lab-photo-layer video.lm-lab-background-video")){
       if(!isVisible(img))continue;
-      if(!img.complete||!img.naturalWidth){warnings.push("Uma fotografia ainda não carregou.");continue}
+      const isVideo=img instanceof HTMLVideoElement;
+      const iw=isVideo?img.videoWidth:img.naturalWidth,ih=isVideo?img.videoHeight:img.naturalHeight;
+      if(!iw||!ih||(!isVideo&&!img.complete)){warnings.push("Uma mídia de fundo ainda não carregou.");continue}
       const rect=rectangle(img,frame);
-      const factor=Math.max(rect.w*zoom/img.naturalWidth,rect.h*zoom/img.naturalHeight);
-      if(factor>1.01)warnings.push("Imagem "+img.naturalWidth+"×"+img.naturalHeight+
-        " px será ampliada aproximadamente "+factor.toFixed(1)+"×.");
+      const factor=Math.max(rect.w*zoom/iw,rect.h*zoom/ih);
+      if(factor>1.01)warnings.push((isVideo?"Vídeo ":"Imagem ")+iw+"×"+ih+
+        " px será ampliado aproximadamente "+factor.toFixed(1)+"×.");
     }
     return [...new Set(warnings)];
   }
@@ -79,7 +82,7 @@
       css.getPropertyValue("--lab-bg"):css.backgroundColor;
     ctx.fillRect(0,0,frame.width,frame.height);
     if(board.dataset.backdrop==="color")return;
-    const img=board.querySelector("#labAmbientPhoto");
+    const img=board.querySelector(board.dataset.videoBackground==="true"?"#labAmbientVideo":"#labAmbientPhoto");
     if(!isVisible(img))return;
     const style=getComputedStyle(img),box=photoRectangle(img,frame);
     const centerX=box.x+box.w/2,centerY=box.y+box.h/2;
@@ -200,6 +203,20 @@
     await document.fonts.ready;
     if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
     await Promise.all([...board.querySelectorAll("img")].filter(isVisible).map(img=>img.decode().catch(()=>{throw Error("Imagem indisponível. Conecte o acervo ou aguarde o carregamento.");})));
+    if(board.dataset.videoBackground==="true"){
+      const videos=[...board.querySelectorAll(".lm-lab-photo-layer video.lm-lab-background-video")]
+        .filter(isVisible);
+      if(!videos.length)throw Error("Vídeo de fundo não encontrado.");
+      await Promise.all(videos.map(async video=>{
+        if(video.readyState<2)await new Promise((resolve,reject)=>{
+          const timeout=setTimeout(()=>{cleanup();reject(Error("Vídeo de fundo não carregou."));},20000);
+          const ready=()=>{cleanup();resolve();},error=()=>{cleanup();reject(Error("Vídeo de fundo indisponível."));};
+          const cleanup=()=>{clearTimeout(timeout);video.removeEventListener("loadeddata",ready);video.removeEventListener("error",error);};
+          video.addEventListener("loadeddata",ready,{once:true});video.addEventListener("error",error,{once:true});
+        });
+        if(video.error||!video.videoWidth)throw Error("Vídeo de fundo indisponível.");
+      }));
+    }
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
     if(board.dataset.state!=="ok"||board.getAttribute("aria-invalid")==="true")
       throw Error("A composição apresenta conflitos de leitura. Corrija antes de exportar.");
@@ -209,10 +226,16 @@
     const warnings=imagePreflight(width,frame),items=[],rasterized=[];
     if(ask&&warnings.length&&!confirm("LABMATTAR / Qualidade dos originais\n\n"+warnings.join("\n")+"\n\nExportar mesmo assim?"))return null;
     const css=getComputedStyle(board),background=css.backgroundColor==="rgba(0, 0, 0, 0)"?css.getPropertyValue("--lab-bg"):css.backgroundColor;
-    items.push({kind:"rect",layer:"background",x:0,y:0,w:frame.width,h:frame.height,color:background});
+    const hasVideo=board.dataset.videoBackground==="true";
+    const videoVisual=hasVideo?{backdrop:board.dataset.backdrop,markerFocus:board.dataset.markerFocus,
+      focusX:parseFloat(board.style.getPropertyValue("--lab-focus-x"))||50,
+      focusY:parseFloat(board.style.getPropertyValue("--lab-focus-y"))||50,
+      contrast:board.dataset.photoText==="true",mContrast:board.dataset.mText==="true"}:null;
+    items.push({kind:"rect",...(hasVideo?{layer:"video-bg-base"}:{layer:"background"}),
+      x:0,y:0,w:frame.width,h:frame.height,color:background});
     if(board.dataset.backdrop!=="color"){
       const image=pixels(frame.width,frame.height,frame,ctx=>drawBackground(ctx,frame));
-      items.push({kind:"image",layer:"background",source:image,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("fotografia e tratamento do fundo");
+      items.push({kind:"image",...(hasVideo?{layer:"video-bg-base"}:{layer:"background"}),source:image,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("imagem e tratamento do fundo");
     }
     const maskNode=board.querySelector("#labMask");
     let maskVector=null;
@@ -231,19 +254,22 @@
           });items.push({kind:"image",source:shadow,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("sombra fotográfica do M");
         }
         const source=pixels(box.w,box.h,frame,ctx=>{
-          drawCover(ctx,maskNode.querySelector("img"),0,0,box.w,box.h,focal(maskNode.querySelector("img")));
+          const img=maskNode.querySelector(hasVideo?"video":"img");
+          drawCover(ctx,img,0,0,box.w,box.h,focal(img));
           if(board.dataset.mText==="true"){ctx.fillStyle="rgba(0,0,0,.2)";ctx.fillRect(0,0,box.w,box.h);}
         });
-        items.push({kind:"group",clip:maskVector,items:[{kind:"image",source,x:box.x,y:box.y,w:box.w,h:box.h}]});rasterized.push("fotografia do M");
+        items.push({kind:"group",...(hasVideo?{layer:"video-bg-m"}:{}),
+          clip:maskVector,items:[{kind:"image",source,x:box.x,y:box.y,w:box.w,h:box.h}]});rasterized.push("imagem do M");
       }
     }
     const markerPhoto=board.querySelector("#labMarkerPhotoLayer");
     if(isVisible(markerPhoto)){
-      const source=pixels(frame.width,frame.height,frame,ctx=>imageLayer(ctx,markerPhoto.querySelector("img"),frame));
+      const source=pixels(frame.width,frame.height,frame,ctx=>imageLayer(ctx,markerPhoto.querySelector(hasVideo?"video":"img"),frame));
       for(const svg of board.querySelectorAll("#labMMarkers svg")){
         if(getComputedStyle(svg).display==="none")continue;
         const v=svg.viewBox.baseVal,box=rectangle(svg,frame),d=svg.querySelector("path")?.getAttribute("d");
-        if(d)items.push({kind:"group",clip:{viewBox:[v.x,v.y,v.width,v.height],box,paths:[{d}]},
+        if(d)items.push({kind:"group",...(hasVideo?{layer:"video-bg-marker"}:{}),
+          clip:{viewBox:[v.x,v.y,v.width,v.height],box,paths:[{d}]},
           items:[{kind:"image",source,x:0,y:0,w:frame.width,h:frame.height}]});
       }
       rasterized.push("tratamento fotográfico dos marcadores");
@@ -270,7 +296,7 @@
       items.push(...(await vector(img.currentSrc||img.src,rectangle(img,frame),tone)).map(op=>({...op,layer:"signature"})));
     }
     items.push(...words(signature,frame).map(op=>({...op,layer:"detail"})));
-    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
+    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(videoVisual?{videoVisual}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
   }
   async function rasterize(){
     const scene=await captureScene();if(!scene)return null;

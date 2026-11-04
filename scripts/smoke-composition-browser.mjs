@@ -9,7 +9,7 @@ page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw Error(m)};
 
 async function choose(group,value){
-  const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
+  const module={format:"superficie",background:"fundo",color:"fundo",inkColor:"texto",mContent:"m",
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
     await page.locator('button[data-mobile-module="'+module+'"]').click();
@@ -65,7 +65,41 @@ try{
          await page.locator("#labMContent").count()===1,
     "Background and M must have independent controls");
 
+  const officialTones=["neutral","white","black","beige","green","red","blue","brown"];
+  const groundOptions=await page.locator("#labColor option").evaluateAll(options=>options.map(option=>option.value));
+  const inkOptions=await page.locator("#labInkColor option").evaluateAll(options=>options.map(option=>option.value));
+  assert(JSON.stringify(groundOptions)===JSON.stringify(officialTones),
+    "Background palette must use only approved manual colors, white and black");
+  assert(JSON.stringify(inkOptions)===JSON.stringify(["auto",...officialTones]),
+    "Text palette must match the background palette plus automatic contrast");
+  await choose("color","black");await choose("inkColor","white");
+  let colors=await page.locator("#labArtboard").evaluate(board=>({
+    bg:getComputedStyle(board).backgroundColor,
+    ink:getComputedStyle(board.querySelector("#labRenderedTitle")).color,
+    detail:getComputedStyle(board.querySelector("#labSignatureLayer")).color
+  }));
+  assert(colors.bg==="rgb(24, 24, 24)"&&colors.ink==="rgb(255, 255, 255)"&&
+    colors.detail==="rgb(255, 255, 255)","White text must appear over black across text roles: "+JSON.stringify(colors));
+  const inkDocument=await page.evaluate(()=>window.LabPages.create());
+  assert(inkDocument.pages[0].composition.pages[0].text.inkColor==="white"&&
+    inkDocument.pages[0].composition.pages[0].surface.color==="black",
+    "Text and background colors must persist independently");
+  await choose("inkColor","black");
+  assert(await page.locator("#labInkContrast").getAttribute("data-contrast")==="warning",
+    "Low contrast combinations must be explained, not silently recolored");
+  await choose("inkColor","auto");await choose("color","neutral");
+  colors=await page.locator("#labArtboard").evaluate(board=>({
+    bg:getComputedStyle(board).backgroundColor,
+    ink:getComputedStyle(board.querySelector("#labRenderedTitle")).color
+  }));
+  assert(colors.bg==="rgb(247, 246, 242)"&&colors.ink==="rgb(24, 24, 24)",
+    "Automatic text contrast must preserve the official paper/ink baseline");
+
   await choose("background","photo");
+  await choose("inkColor","red");
+  assert(await page.locator("#labRenderedTitle").evaluate(el=>getComputedStyle(el).color)==="rgb(226, 46, 36)",
+    "Explicit text color must remain available over photographs and videos");
+  await choose("inkColor","auto");
   await choose("mContent","photo");
   await choose("marker","both");
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),

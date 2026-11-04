@@ -127,7 +127,7 @@
     if(!append&&!items.length){
       const empty=document.createElement("p");
       empty.className="lm-acervo-empty";
-      empty.textContent="Nenhuma imagem encontrada nesta pasta.";
+      empty.textContent="Nenhuma fotografia ou vídeo encontrado nesta pasta.";
       list.append(empty);
     }
     for(const item of items){
@@ -153,12 +153,9 @@
         const meta=document.createElement("span");meta.className="lm-acervo-item-meta";
         const name=document.createElement("strong");name.textContent=escapeName(item.name);
         const kind=document.createElement("small");
-        kind.textContent=item.kind==="video"?"Vídeo · inserção em preparação":"Fotografia";
+        kind.textContent=item.kind==="video"?"Vídeo · adicionar à página":"Fotografia · usar como fundo";
         meta.append(name,kind);button.append(thumb,meta);
-        if(item.kind==="video"){
-          button.disabled=true;
-          button.title="A inserção de vídeo no compositor está prevista para outra etapa.";
-        }else button.addEventListener("click",()=>select(item));
+        button.addEventListener("click",()=>select(item));
       }else continue;
       list.append(button);
     }
@@ -174,7 +171,7 @@
       entries.push(...(data.entries||[]));
       cursor=data.cursor||"";
       heading();show(data.entries||[],append);
-      notify(entries.length+" itens encontrados. Selecione uma fotografia.");
+      notify(entries.length+" itens encontrados. Selecione uma fotografia ou vídeo.");
     }catch(error){notify(error.message)}
     finally{setBusy(false)}
   }
@@ -235,7 +232,7 @@
               body:JSON.stringify({ids})
             });
             entries=result.entries||[];show(entries);
-            notify(entries.length+" arquivos autorizados. Selecione uma fotografia.");
+            notify(entries.length+" arquivos autorizados. Selecione uma fotografia ou vídeo.");
           }catch(error){displayProviders();notify(error.message)}
           finally{setBusy(false)}
           dialog.focus({preventScroll:true});
@@ -253,7 +250,15 @@
     }finally{setBusy(false)}
   }
   function select(item){
-    if(!valid(item)||item.kind!=="image")return;
+    if(!valid(item))return;
+    if(item.kind==="video"){
+      const descriptor={kind:"video",provider:item.provider,id:item.id,name:item.name,
+        mimeType:item.mimeType,original:item.original,preview:item.preview};
+      window.dispatchEvent(new CustomEvent("labmattar:acervo-video-select",{detail:descriptor}));
+      by("labAcervoCurrent").textContent="Vídeo · "+item.name;
+      closeDialog();
+      return;
+    }
     const key=item.provider+":"+item.id;
     const photoKey="ext-"+Array.from(new TextEncoder().encode(key))
       .reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
@@ -341,7 +346,8 @@
   window.LabAcervo={
     has:key=>pool.has(key),
     get:key=>pool.get(key)||null,
-    reopen:()=>selected?select({...selected}):null
+    reopen:()=>selected?select({...selected}):null,
+    open:options=>openDialog(options||{})
   };
   // No API requests on editor load. The library is opt-in and never blocks
   // local compositions or static build smoke tests.

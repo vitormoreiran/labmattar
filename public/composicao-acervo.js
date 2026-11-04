@@ -126,6 +126,7 @@
     by("labAcervoBack").hidden=activeProvider==="public"?!publicTrail.length:activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
     if(search)search.hidden=activeProvider!=="public";
+    by("labAcervoProvidersBack").hidden=activeProvider==="public";
   }
   function show(items,append=false){
     if(!append)list.replaceChildren();

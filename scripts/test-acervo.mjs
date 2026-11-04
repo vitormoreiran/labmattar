@@ -35,4 +35,36 @@ assert.match(disconnected.headers.get("set-cookie"),/HttpOnly/);
 assert.match(disconnected.headers.get("set-cookie"),/Secure/);
 assert.match(disconnected.headers.get("set-cookie"),/SameSite=Lax/);
 assert.match(disconnected.headers.get("set-cookie"),/Max-Age=0/);
+
+const configured={
+  LM_ACERVO_ORIGIN:"https://preview.example.test",
+  LM_ACERVO_ENCRYPTION_KEY:Buffer.alloc(32,7).toString("base64url"),
+  LM_GOOGLE_CLIENT_ID:"test-google-client",
+  LM_GOOGLE_CLIENT_SECRET:"test-google-secret",
+  LM_GOOGLE_PICKER_API_KEY:"test-picker-key",
+  LM_GOOGLE_APP_ID:"123456",
+  LM_DROPBOX_CLIENT_ID:"test-dropbox-client",
+  LM_DROPBOX_CLIENT_SECRET:"test-dropbox-secret"
+};
+for(const provider of ["google","dropbox"]){
+  const oauth=await handleAcervoRequest(request("connect/"+provider),configured);
+  assert.equal(oauth.status,302,"OAuth should redirect to provider");
+  const cookie=oauth.headers.get("set-cookie");
+  assert.ok(cookie,"OAuth state cookie required");
+  assert.match(cookie,/HttpOnly/);
+  assert.match(cookie,/Secure/);
+  assert.match(cookie,/SameSite=Lax/);
+  const location=new URL(oauth.headers.get("location"));
+  assert.match(location.hostname,provider==="google"?/accounts\\.google\\.com/:/dropbox\\.com/);
+  assert.equal(location.searchParams.get("code_challenge_method"),"S256");
+  assert.ok(location.searchParams.get("state"),"CSRF state required");
+  assert.equal(location.searchParams.get("redirect_uri"),
+    "https://preview.example.test/api/acervo/callback/"+provider);
+  const unmatched=await handleAcervoRequest(
+    request("callback/"+provider+"?code=bogus&state=bad",{
+      headers:{Cookie:cookie.split(";")[0]}
+    }),configured);
+  assert.equal(unmatched.status,403,"Callback must reject invalid state");
+}
+
 console.log("Acervo: controles de origem, tipos, conexões e isolamento de sessão conferidos.");

@@ -878,7 +878,7 @@
 }
 .lm-help-tour[hidden],.lm-help-tour-spotlight[hidden],.lm-help-tour-backdrop[hidden]{display:none!important}
 .lm-help-tour-progress{
-  margin:0 0 19px;color:#77736b;letter-spacing:.08em;
+  margin:0 0 19px;color:#77736b;
 }
 .lm-help-tour-title{margin:0 74px 15px 0}
 .lm-help-tour-copy{margin:0 0 16px}

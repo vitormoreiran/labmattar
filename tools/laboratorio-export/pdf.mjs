@@ -4,7 +4,7 @@ function color(value){
   if(value.startsWith('#'))return value;
   const numbers=value.match(/[\d.]+/g);
   if(!numbers||numbers.length<3)throw Error('Cor inválida no documento.');
-  return numbers.slice(0,3).map(Number).map(value=>value/255);
+  return numbers.slice(0,3).map(Number);
 }
 function path(doc,vector){
   const [x,y,w,h]=vector.viewBox,b=vector.box;

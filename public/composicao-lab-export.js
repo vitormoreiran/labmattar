@@ -198,7 +198,7 @@
     }
     drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));ctx.restore();
   }
-  async function captureScene({edge=Number(sizeSelect.value),ask=true}={}){
+  async function captureScene({edge=Number(sizeSelect.value),ask=true,live=false}={}){
     window.LabPages?.applySectionVisual?.();
     await document.fonts.ready;
     if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
@@ -296,7 +296,31 @@
       items.push(...(await vector(img.currentSrc||img.src,rectangle(img,frame),tone)).map(op=>({...op,layer:"signature"})));
     }
     items.push(...words(signature,frame).map(op=>({...op,layer:"detail"})));
-    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(videoVisual?{videoVisual}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
+    // Runtime painters reuse the native masks, crops and filters for each video frame.
+    // They are never serialized into PDF, HTML or saved project documents.
+    const media=live?[...board.querySelectorAll('video')].filter(isVisible):[];
+    if(live){
+      const painter=(paint,x=0,y=0)=>ctx=>{
+        const previous=frame.outputScale;frame.outputScale=ctx.getTransform().a;
+        ctx.save();ctx.translate(x,y);
+        try{paint(ctx);}finally{ctx.restore();frame.outputScale=previous;}
+      };
+      for(const op of items){
+        if(op.kind==='image'&&op.layer==='video-bg-base')op.paint=painter(ctx=>drawBackground(ctx,frame));
+        if(op.kind==='group'&&op.layer==='video-bg-m'){
+          const image=op.items[0],video=maskNode.querySelector('video');
+          image.paint=painter(ctx=>{drawCover(ctx,video,0,0,image.w,image.h,focal(video));
+            if(board.dataset.mText==='true'){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(0,0,image.w,image.h);}},image.x,image.y);
+        }
+        if(op.kind==='group'&&op.layer==='video-bg-marker')op.items[0].paint=painter(ctx=>imageLayer(ctx,markerPhoto.querySelector('video'),frame));
+        if(op.motionId||op.privateClipId){
+          const video=media.find(video=>op.motionId?video.dataset.motionId===op.motionId:video.dataset.clipId===op.privateClipId);
+          if(!video)throw Error('Vídeo da composição não encontrado: '+op.assetName);
+          op.paint=ctx=>ctx.drawImage(video,op.x,op.y,op.w,op.h);
+        }
+      }
+    }
+    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
   }
   async function rasterize(){
     const scene=await captureScene();if(!scene)return null;

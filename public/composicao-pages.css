@@ -150,3 +150,18 @@ body.lm-studio-open #laboratorio .lm-lab-inspector:is([data-workspace-context=pa
 .lab-publication-note{padding:18px;border:1px solid #c9c8c2;background:#eeece5;line-height:1.5}.lab-publication-note[hidden]{display:none}.lab-publication-note p{margin:0 0 12px}.lab-publication-note ol{padding-left:20px;margin:0 0 18px}.lab-publication-note li{margin-block:8px}.lab-publication-note output{display:block;overflow-wrap:anywhere;font-size:14px;margin:4px 0 16px}.lab-publication-state{border-left:2px solid #181818;padding-left:12px}
 
 #labPublicationAddress{text-transform:none;letter-spacing:0}
+
+/* Video delivery stays inside the existing review step. */
+.lab-video-options{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px;padding-top:24px;border-top:1px solid var(--line,#ccc)}
+.lab-video-options[hidden]{display:none}
+.lab-video-options label{display:grid;gap:8px;font-size:12px;letter-spacing:.04em}
+.lab-video-options select,.lab-video-options input[type=number]{width:100%;min-width:0;padding:12px;border:1px solid var(--line,#ccc);background:transparent;color:inherit;font:inherit}
+.lab-video-options .lab-video-entrance{display:flex;align-items:center;gap:10px;letter-spacing:0;font-size:14px}
+.lab-video-options p,.lab-video-options progress{grid-column:1/-1;margin:0;width:100%}
+.lab-video-options progress{height:10px;accent-color:currentColor}
+@media(max-width:640px){.lab-video-options{grid-template-columns:1fr}}
+
+.lab-delivery-quality[hidden]{display:none}
+
+#laboratorio .lab-delivery-quality[hidden],#laboratorio #labVideoOptions[hidden],#laboratorio #labVideoProgress[hidden]{display:none!important}
+#laboratorio .lab-video-entrance input[type=checkbox]{appearance:auto;width:18px;min-width:18px;height:18px;padding:0;margin:0;flex:0 0 18px;accent-color:#181818}

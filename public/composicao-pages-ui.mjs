@@ -21,35 +21,41 @@ function commit(){
   catch{notify('Salve o projeto JSON para guardar esta sequência.');}
   renderPages();applySectionVisual();
 }
-let pageListKey='',deliveryFormat='pdf';
+let pageListKey='',deliveryFormat='pdf',videoAbort=null;
 function deliveryBusy(){return busy||switching||Boolean(window.LabExportPNG?.isExporting?.());}
 function closeDelivery(){if(deliveryBusy())return;by('labDeliveryDialog').close();commit();}
 function renderDelivery(){
   by('labWebPublishing').hidden=deliveryFormat!=='html';
+  by('labVideoOptions').hidden=deliveryFormat!=='mp4';
+  document.querySelector('.lab-delivery-quality').hidden=deliveryFormat==='mp4';
   const slug=name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,72)||'nova-apresentacao';
   by('labPublicationAddress').textContent='labmattar.com/capitulo-4/'+slug+'/';
   const names={horizontal:'Horizontal / 16:9',vertical:'Vertical / 9:16',quadrado:'Quadrado / 1:1',editorial:'Editorial / √2:1'};
-  const included=deliveryFormat==='png'?[{page:pages[current],index:current}]:pages.map((page,index)=>({page,index}));
+  const included=deliveryFormat==='png'||(deliveryFormat==='mp4'&&by('labVideoScope').value==='current')?[{page:pages[current],index:current}]:pages.map((page,index)=>({page,index}));
   by('labDeliveryName').textContent=name;by('labDeliveryCount').textContent=included.length+' PÁGINA'+(included.length>1?'S':'');
   const list=by('labDeliveryPages');list.replaceChildren();
   for(const {page,index} of included){const item=document.createElement('li'),number=document.createElement('span'),caption=document.createElement('div'),title=document.createElement('span'),detail=document.createElement('small');
     number.textContent=String(index+1).padStart(2,'0');number.className='lab-delivery-page-number';title.textContent=page.name;detail.textContent=names[page.composition.pages[0].surface.format];caption.append(title,detail);item.append(number,caption);list.append(item);}
   for(const button of document.querySelectorAll('button[data-delivery-format]'))button.setAttribute('aria-pressed',String(button.dataset.deliveryFormat===deliveryFormat));
-  for(const [id,format] of [['labExportPdf','pdf'],['labExportHtml','html'],['labExportPng','png']])by(id).hidden=format!==deliveryFormat;
-  by('labDeliveryScope').textContent=deliveryFormat==='png'?`PNG / página ${current+1}: ${pages[current].name}`:deliveryFormat==='pdf'?`PDF / ${pages.length} página${pages.length>1?'s':''} / motions como quadros estáticos`:`SITE HTML / ${pages.length} página${pages.length>1?'s':''} / motions animados e recursos incorporados`;
+  for(const [id,format] of [['labExportPdf','pdf'],['labExportHtml','html'],['labExportPng','png'],['labExportMp4','mp4']])by(id).hidden=format!==deliveryFormat;
+  by('labDeliveryScope').textContent=deliveryFormat==='mp4'?`MP4 / ${included.length} página${included.length>1?'s':''} / ${Number(by('labVideoSeconds').value)*included.length} s / 30 fps / sem áudio`:deliveryFormat==='png'?`PNG / página ${current+1}: ${pages[current].name}`:deliveryFormat==='pdf'?`PDF / ${pages.length} página${pages.length>1?'s':''} / motions como quadros estáticos`:`SITE HTML / ${pages.length} página${pages.length>1?'s':''} / motions animados e recursos incorporados`;
 }
 function openDelivery(){
-  if(deliveryBusy())return;commit();renderDelivery();by('labExportStatus').textContent='';by('labExportStatus').dataset.state='idle';by('labDeliveryDialog').showModal();
+  if(deliveryBusy())return;commit();renderDelivery();by('labVideoProgress').hidden=true;by('labVideoProgress').value=0;by('labExportStatus').textContent='';by('labExportStatus').dataset.state='idle';by('labDeliveryDialog').showModal();
 }
 function initDelivery(){
   by('labOpenDelivery').addEventListener('click',openDelivery);by('labReviewDelivery').addEventListener('click',openDelivery);
   by('labDeliveryClose').addEventListener('click',closeDelivery);by('labDeliveryBack').addEventListener('click',closeDelivery);
   by('labDeliveryDialog').addEventListener('cancel',event=>{event.preventDefault();closeDelivery();});
   for(const button of document.querySelectorAll('button[data-delivery-format]'))button.addEventListener('click',()=>{if(deliveryBusy())return;deliveryFormat=button.dataset.deliveryFormat;renderDelivery();});
+  for(const id of ['labVideoScope','labVideoSeconds','labVideoQuality'])by(id).addEventListener('change',renderDelivery);
+  by('labVideoCancel').addEventListener('click',()=>videoAbort?.abort());
   const status=by('labExportStatus');const sync=()=>{
     by('labDeliveryStatus').textContent=status.textContent;by('labDeliveryStatus').dataset.state=status.dataset.state;
     const locked=deliveryBusy();by('labDeliveryDialog').setAttribute('aria-busy',String(locked));
-    for(const button of by('labDeliveryDialog').querySelectorAll('button'))button.disabled=locked;by('labExportSize').disabled=locked;
+    for(const button of by('labDeliveryDialog').querySelectorAll('button'))button.disabled=locked&&button.id!=='labVideoCancel';
+    for(const input of by('labVideoOptions').querySelectorAll('input,select'))input.disabled=locked;
+    by('labVideoCancel').hidden=!videoAbort;by('labExportSize').disabled=locked;
     by('labOpenDelivery').disabled=locked;by('labReviewDelivery').disabled=locked;
   };new MutationObserver(sync).observe(status,{childList:true,subtree:true,attributes:true,attributeFilter:['data-state']});sync();
 }
@@ -457,8 +463,81 @@ async function captureMotions(width,height){
   items.push(...await capturePrivateClips(width,height));
   return items;
 }
+async function exportVideo(){
+  if(deliveryBusy())return;
+  commit();
+  const seconds=Number(by('labVideoSeconds').value),all=by('labVideoScope').value==='all';
+  const indices=all?pages.map((_,index)=>index):[current];
+  const format=pages[indices[0]].composition.pages[0].surface.format;
+  if(indices.some(index=>pages[index].composition.pages[0].surface.format!==format)){
+    notify('Para reunir a sequência em um MP4, use o mesmo formato em todas as páginas. Você também pode exportar apenas a página em edição.',true);return;
+  }
+  if(!Number.isFinite(seconds)||seconds<2||seconds>30||seconds*indices.length>180){
+    notify('Escolha de 2 a 30 segundos por página, com até 3 minutos no total.',true);return;
+  }
+  const original=current,originalState=bridge().snapshot().state;
+  const selected={motion:selectedMotion,clip:selectedClip};
+  const lab=by('laboratorio'),previousInert=lab.inert;
+  const progress=by('labVideoProgress');progress.value=0;progress.hidden=false;
+  videoAbort=new AbortController();const signal=videoAbort.signal;
+  busy=true;switching=true;lab.inert=true;panel.setAttribute('aria-busy','true');
+  notify('Preparando vídeo MP4…');
+  try{
+    const [{encodeMP4,videoSize,videoConfig},{readyMedia,seekMedia,frameRenderer}]=await Promise.all([
+      import('./vendor/lab-video.js'),import('./lab-video-export.mjs')]);
+    let scene,renderFrame,size;
+    const receipts=[];
+    const preparePage=async position=>{
+      signal.throwIfAborted();current=indices[position];
+      notify(`Preparando página ${position+1} de ${indices.length}…`);
+      const photos=privatePhotoCatalog(pages[current].composition,bridge().snapshot().photoCatalog);
+      registerPhotos(photos);bridge().restore(verifyRoundTrip(pages[current].composition,photos));
+      await settled();applySectionVisual();renderMotions();renderBackgroundVideo();await settled();
+      scene=await window.LabRenderer.capture({edge:1920,ask:false,live:true});
+      await readyMedia(scene.media,signal);
+      const ratio={horizontal:[16,9],vertical:[9,16],quadrado:[1,1],editorial:[Math.SQRT2,1]}[pages[current].composition.pages[0].surface.format];
+      const dimensions=videoSize(...ratio,by('labVideoQuality').value);
+      if(size&&(size.width!==dimensions.width||size.height!==dimensions.height))throw Error('As páginas da sequência precisam ter as mesmas dimensões.');
+      size=dimensions;renderFrame=frameRenderer(size.width,size.height,by('labVideoText').checked);
+      receipts.push({id:pages[current].id,name:pages[current].name,...size});
+    };
+    await preparePage(0);await videoConfig(size.width,size.height);
+    const blob=await encodeMP4({...size,seconds,pageCount:indices.length,signal,
+      preparePage:position=>position===0?undefined:preparePage(position),
+      renderFrame:async(position,time)=>{
+        // A shared section backdrop continues across its pages; page motions restart.
+        let preceding=0;
+        if(sections)for(let p=position-1;p>=0&&pages[indices[p]].sectionId===pages[current].sectionId;p--)preceding+=seconds;
+        await seekMedia(scene.media,time,preceding+time,signal);
+        return renderFrame(scene,time);
+      },
+      onProgress:(done,total,position,stage)=>{
+        progress.value=Math.round(done/total*100);
+        notify(stage==='done'?'Finalizando MP4…':`MP4 / página ${position+1} de ${indices.length} / ${progress.value}%`);
+      }});
+    signal.throwIfAborted();
+    const slug=name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').toLowerCase().slice(0,64)||'apresentacao';
+    download(blob,`labmattar-${slug}-${size.width}x${size.height}.mp4`);
+    window.LabPages.lastExport={schemaVersion:1,renderer:'labmattar-scene-v1',type:'mp4',...size,
+      fps:30,seconds:seconds*indices.length,audio:false,pages:receipts,bytes:blob.size};
+    notify(`MP4 concluído / ${size.width} × ${size.height} / ${seconds*indices.length} s / sem áudio.`);
+  }catch(error){notify(error.name==='AbortError'?'Vídeo cancelado. O projeto foi preservado.':'MP4 não concluído: '+error.message,error.name!=='AbortError');}
+  finally{
+    try{
+      current=original;bridge().restore(originalState);await settled();
+      selectedMotion=selected.motion;selectedClip=selected.clip;
+      renderMotions();renderBackgroundVideo();renderPages();
+    }finally{
+      lab.inert=previousInert;switching=false;busy=false;videoAbort=null;
+      panel.removeAttribute('aria-busy');by('labVideoCancel').hidden=true;
+      by('labExportStatus').dataset.state=by('labExportStatus').dataset.state==='error'?'error':'idle';
+      commit();
+    }
+  }
+}
 async function exportSequence(type){
   if(deliveryBusy())return;
+  if(type==='mp4')return exportVideo();
   if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length||page.backgroundVideo)){
     if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
   }
@@ -619,6 +698,7 @@ async function init(){
   });
   by('labMotionRemove').addEventListener('click',()=>{pages[current].motions=pages[current].motions.filter(motion=>motion.id!==selectedMotion);renderMotions();commit();});
   by('labMotionPreview').addEventListener('click',()=>{still=!still;renderMotions();});
+  by('labExportMp4').addEventListener('click',()=>exportSequence('mp4'));
   by('labExportPdf').addEventListener('click',()=>exportSequence('pdf'));
   by('labExportHtml').addEventListener('click',()=>exportSequence('html'));
   by('labPresentation').addEventListener('click',()=>exportSequence('preview'));

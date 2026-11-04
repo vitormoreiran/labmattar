@@ -9,22 +9,28 @@ function pathFor(vector){
     vector.box.w/w,0,0,vector.box.h/h,vector.box.x-x*vector.box.w/w,vector.box.y-y*vector.box.h/h]));
   return path;
 }
-export async function sceneCanvas(scene,edge=3840){
-  const imageCache=new Map();
-  const canvas=document.createElement('canvas'),scale=edge/Math.max(scene.width,scene.height);
-  canvas.width=Math.round(scene.width*scale);canvas.height=Math.round(scene.height*scale);
+export async function sceneCanvas(scene,edge=3840,options={}){
+  const imageCache=options.imageCache||new Map();
+  const canvas=options.canvas||document.createElement('canvas');
+  const scale=(options.width||scene.width*edge/Math.max(scene.width,scene.height))/scene.width;
+  canvas.width=options.width||Math.round(scene.width*scale);canvas.height=options.height||Math.round(scene.height*scale);
   const ctx=canvas.getContext('2d',{alpha:false,colorSpace:'srgb'});
   if(!ctx)throw Error('Memória insuficiente para renderizar a página.');
-  ctx.setTransform(scale,0,0,scale,0,0);ctx.imageSmoothingQuality='high';
+  ctx.setTransform(scale,0,0,options.height?options.height/scene.height:scale,0,0);ctx.imageSmoothingQuality='high';
   async function draw(ops){for(const op of ops){
     ctx.save();
     if(op.kind==='rect'){ctx.fillStyle=op.color;ctx.fillRect(op.x,op.y,op.w,op.h);}
-    else if(op.kind==='image')ctx.drawImage(await image(op.source,imageCache),op.x,op.y,op.w,op.h);
+    else if(op.kind==='image'){
+      if(op.paint)await op.paint(ctx);
+      else ctx.drawImage(await image(op.source,imageCache),op.x,op.y,op.w,op.h);
+    }
     else if(op.kind==='vector'){ctx.fillStyle=op.color;ctx.fill(pathFor(op),op.rule||'nonzero');}
     else if(op.kind==='group'){ctx.clip(pathFor(op.clip),op.clip.rule||'nonzero');await draw(op.items);}
     else if(op.kind==='text'){
       ctx.font=`300 ${op.size}px ${op.family}`;ctx.textBaseline='alphabetic';ctx.fillStyle=op.color;
-      if('letterSpacing' in ctx)ctx.letterSpacing=op.spacing+'px';ctx.fillText(op.text,op.x,op.y);
+      if('letterSpacing' in ctx)ctx.letterSpacing=op.spacing+'px';
+      const text=options.textEffect?.(ctx,op)??op.text;
+      ctx.fillText(text,op.x,op.y);
     }
     ctx.restore();
   }}

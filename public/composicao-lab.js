@@ -964,29 +964,214 @@
       }
     }
   }
-  // The three illustrated examples are alternatives, not numbered steps.
-  // The original Construct / Compare / Validate guidance lives here.
+  // One guided help sequence for the entire Laboratory. Contextual ? buttons
+  // remain independent; reading the tour never edits the composition state.
   const overviewTrigger=by("labOverviewHelp");
-  if(overviewTrigger){
-    const wrapper=overviewTrigger.parentElement;
-    const panel=helpNode("section","lm-help-popover lm-help-popover-overview");
-    panel.id="labHelp-overview";
-    panel.hidden=true;
-    panel.setAttribute("role","region");
-    panel.setAttribute("aria-label","Como funciona o laboratório");
-    panel.append(helpNode("h4","lm-help-popover-title","Como usar este laboratório"));
-    panel.append(helpNode("p","lm-help-popover-effect",
-      "Escolha um exemplo, ajuste Página, Texto e Imagem / M e compare a prova ao lado. Os exemplos não são etapas obrigatórias."));
-    const guide=document.querySelector(".lm-lab-legend");
-    const limits=document.querySelector(".lm-lab-lead");
-    if(guide)panel.append(guide);
-    if(limits)panel.append(limits);
-    wrapper.append(panel);
-    overviewTrigger.addEventListener("click",e=>{
-      e.stopPropagation();
-      showHelp(overviewTrigger,panel);
+  const studioTourTrigger=by("labTourStudioHelp");
+  const tourTriggers=[overviewTrigger,studioTourTrigger].filter(Boolean);
+  const tourSteps=[
+    {
+      title:"Como funciona",
+      text:"Construa uma página com Superfície, M, Texto e Imagem. As ferramentas mudam o conteúdo e a apresentação, não as regras da identidade.",
+      rule:"Uma composição, uma régua e a mesma saída para prévia e exportação.",
+      target:".lm-composition-module-index"
+    },
+    {
+      title:"Superfície e margem",
+      text:"Escolha Horizontal, Vertical, Quadrado ou Editorial. A margem define a área útil e as guias ajudam a conferir os alinhamentos.",
+      rule:"Título, Corpo e Detalhe partem da mesma régua. O formato recompõe, não deforma.",
+      module:"superficie",
+      target:"#labFormat"
+    },
+    {
+      title:"M e geometria",
+      text:"Elemento mostra o M inteiro com escala própria. Completo ocupa toda a altura da página; os marcadores usam as pontas do mesmo vetor.",
+      rule:"Eixo central, proporções e matriz vetorial permanecem constantes.",
+      module:"m",
+      target:"#labMPresentation"
+    },
+    {
+      title:"Área de leitura",
+      text:"A coluna organiza o título e, quando ativado, o texto de leitura. A largura pode variar dentro das margens.",
+      rule:"Quebre linhas por palavras; não reduza a tipografia para esconder excessos.",
+      module:"texto",
+      target:"#labTextWidth"
+    },
+    {
+      title:"Título, Corpo e Detalhe",
+      text:"Título estabelece a hierarquia. Corpo apresenta a leitura contínua. Detalhe identifica, orienta e credita; suas informações são editadas em Assinatura.",
+      rule:"Apenas três tratamentos. Corpo e Detalhe seguem as escalas oficiais do índice de Tipografia.",
+      module:"texto",
+      target:"#labEditDetail"
+    },
+    {
+      title:"Imagem e contraste",
+      text:"Escolha fotografia ou cor e ajuste o enquadramento. Fundo e M podem usar a mesma fotografia, com regiões nítidas ou desfocadas.",
+      rule:"Preto 20% somente sobre fotografia com texto. Nenhum fundo sólido é criado atrás dos marcadores fotográficos.",
+      module:"fundo",
+      target:"#labBackground"
+    },
+    {
+      title:"Verificar e exportar",
+      text:"Confira a composição e o aviso abaixo da prévia. Margens, legibilidade e elementos da página precisam estar resolvidos antes da exportação.",
+      rule:"A saída preserva as proporções, os tratamentos tipográficos e o vetor da composição.",
+      target:"#labExportPng"
+    }
+  ];
+  let tourIndex=-1;
+  let originalModule=null;
+  let tourReturnFocus=null;
+  let tourResizeFrame=0;
+  const tourSpotlight=helpNode("div","lm-help-tour-spotlight");
+  const tourBackdrop=helpNode("div","lm-help-tour-backdrop");
+  const tour=helpNode("section","lm-help-tour");
+  tour.id="labHelp-overview";
+  tour.setAttribute("role","dialog");
+  tour.setAttribute("aria-modal","true");
+  tour.setAttribute("aria-label","Ajuda guiada do Laboratório");
+  tour.setAttribute("aria-labelledby","labTourTitle");
+  tour.tabIndex=-1;
+  const tourProgress=helpNode("small","lm-help-tour-progress");
+  tourProgress.id="labTourProgress";
+  tourProgress.setAttribute("aria-live","polite");
+  const tourTitle=helpNode("h3","lm-help-tour-title");
+  tourTitle.id="labTourTitle";
+  const tourText=helpNode("p","lm-help-tour-copy");
+  const tourRule=helpNode("small","lm-help-tour-rule");
+  const tourActions=helpNode("div","lm-help-tour-actions");
+  const tourBack=helpNode("button","lm-help-tour-back","Voltar");
+  const tourNext=helpNode("button","lm-help-tour-next","Entendi");
+  const tourClose=helpNode("button","lm-help-tour-close","Fechar");
+  tourBack.id="labTourBack";
+  tourNext.id="labTourNext";
+  tourClose.id="labTourClose";
+  for(const button of [tourBack,tourNext,tourClose])button.type="button";
+  tourActions.append(tourBack,tourNext);
+  tour.append(tourProgress,tourTitle,tourText,tourRule,tourActions,tourClose);
+  tourSpotlight.hidden=true;
+  tourBackdrop.hidden=true;
+  tour.hidden=true;
+  document.body.append(tourBackdrop,tourSpotlight,tour);
+
+  const guidedTarget=step=>{
+    const node=document.querySelector(step.target);
+    if(!node)return null;
+    const field=node.closest(".lm-lab-field,.lm-ctrl-focus-field");
+    return field&&step.target!=="#labEditDetail"?field:node;
+  };
+  const showTourPosition=()=>{
+    if(tourIndex<0)return;
+    const step=tourSteps[tourIndex],target=guidedTarget(step);
+    if(!target)return;
+    const rect=target.getBoundingClientRect();
+    const margin=10;
+    const x=Math.max(margin,Math.min(window.innerWidth-margin,rect.left));
+    const y=Math.max(margin,Math.min(window.innerHeight-margin,rect.top));
+    tourSpotlight.style.left=x+"px";
+    tourSpotlight.style.top=y+"px";
+    tourSpotlight.style.width=Math.max(1,Math.min(window.innerWidth-margin-x,rect.width))+"px";
+    tourSpotlight.style.height=Math.max(1,Math.min(window.innerHeight-margin-y,rect.height))+"px";
+    const width=Math.min(360,window.innerWidth-24);
+    tour.style.width=width+"px";
+    const height=tour.getBoundingClientRect().height;
+    const spaceRight=window.innerWidth-rect.right;
+    const spaceLeft=rect.left;
+    let left=Math.max(12,(window.innerWidth-width)/2);
+    let top;
+    if(window.innerWidth>700&&spaceRight>=width+26){
+      left=rect.right+18;
+      top=Math.max(12,Math.min(window.innerHeight-height-12,rect.top));
+    }else if(window.innerWidth>700&&spaceLeft>=width+26){
+      left=rect.left-width-18;
+      top=Math.max(12,Math.min(window.innerHeight-height-12,rect.top));
+    }else{
+      top=rect.top>=height+24?rect.top-height-12:
+        Math.min(window.innerHeight-height-12,rect.bottom+12);
+      top=Math.max(12,top);
+    }
+    tour.style.left=left+"px";
+    tour.style.top=top+"px";
+  };
+  const queueTourPosition=()=>{
+    if(tourIndex<0)return;
+    cancelAnimationFrame(tourResizeFrame);
+    tourResizeFrame=requestAnimationFrame(showTourPosition);
+  };
+  const closeTour=()=>{
+    if(tourIndex<0)return;
+    tourIndex=-1;
+    cancelAnimationFrame(tourResizeFrame);
+    tour.hidden=true;
+    tourBackdrop.hidden=true;
+    tourSpotlight.hidden=true;
+    for(const trigger of tourTriggers)trigger.setAttribute("aria-expanded","false");
+    if(originalModule&&document.body.classList.contains("lm-studio-open")){
+      const restore=document.querySelector('[data-mobile-module="'+originalModule+'"]');
+      if(restore&&restore.getAttribute("aria-pressed")!=="true")restore.click();
+    }
+    originalModule=null;
+    (tourReturnFocus||overviewTrigger)?.focus({preventScroll:true});
+    tourReturnFocus=null;
+  };
+  const renderTourStep=index=>{
+    if(index<0||index>=tourSteps.length)return;
+    tourIndex=index;
+    const step=tourSteps[index];
+    if(step.module&&document.body.classList.contains("lm-studio-open")){
+      const module=document.querySelector('[data-mobile-module="'+step.module+'"]');
+      if(module&&module.getAttribute("aria-pressed")!=="true")module.click();
+    }
+    tourProgress.textContent=String(index+1).padStart(2,"0")+" / "+String(tourSteps.length).padStart(2,"0");
+    tourTitle.textContent=step.title;
+    tourText.textContent=step.text;
+    tourRule.replaceChildren(helpNode("strong","", "REGRA / "),document.createTextNode(step.rule));
+    tourBack.hidden=index===0;
+    tourNext.textContent=index===tourSteps.length-1?"Concluir":"Entendi";
+    tour.hidden=false;
+    tourBackdrop.hidden=false;
+    tourSpotlight.hidden=false;
+    const target=guidedTarget(step);
+    if(target)target.scrollIntoView({block:"center",inline:"nearest",behavior:"instant"});
+    requestAnimationFrame(()=>{
+      queueTourPosition();
+      tourNext.focus({preventScroll:true});
     });
-  }
+  };
+  const startTour=()=>{
+    dismissHelp();
+    tourReturnFocus=document.activeElement;
+    const current=document.querySelector('.lm-composition-module-index [data-mobile-module][aria-pressed="true"]');
+    originalModule=current?.dataset.mobileModule||null;
+    for(const trigger of tourTriggers)trigger.setAttribute("aria-expanded","true");
+    renderTourStep(0);
+  };
+  for(const trigger of tourTriggers)trigger.addEventListener("click",e=>{
+    e.stopPropagation();
+    if(tourIndex>=0)closeTour();
+    else startTour();
+  });
+  tourBack.addEventListener("click",()=>renderTourStep(tourIndex-1));
+  tourNext.addEventListener("click",()=>{
+    if(tourIndex===tourSteps.length-1)closeTour();
+    else renderTourStep(tourIndex+1);
+  });
+  tourClose.addEventListener("click",closeTour);
+  tourBackdrop.addEventListener("click",closeTour);
+  document.addEventListener("keydown",e=>{
+    if(tourIndex<0)return;
+    if(e.key==="Escape"){e.preventDefault();closeTour();return;}
+    if(e.key==="ArrowLeft"){e.preventDefault();if(tourIndex>0)renderTourStep(tourIndex-1);return;}
+    if(e.key==="ArrowRight"){e.preventDefault();if(tourIndex<tourSteps.length-1)renderTourStep(tourIndex+1);else closeTour();return;}
+    if(e.key==="Tab"){
+      const buttons=[tourClose,...(!tourBack.hidden?[tourBack]:[]),tourNext];
+      const index=buttons.indexOf(document.activeElement);
+      if(e.shiftKey&&index<=0){e.preventDefault();buttons[buttons.length-1].focus();}
+      else if(!e.shiftKey&&index===buttons.length-1){e.preventDefault();buttons[0].focus();}
+    }
+  });
+  window.addEventListener("resize",queueTourPosition,{passive:true});
+  window.addEventListener("scroll",queueTourPosition,{passive:true});
+
   document.addEventListener("pointerdown",e=>{
     if(openHelp&&!openHelp.trigger.contains(e.target)&&!openHelp.panel.contains(e.target))dismissHelp();
   });

@@ -20,7 +20,7 @@
    rationale:'O nome organiza a leitura sem cobrir a obra. Prefira legenda ou uma área editorial separada da fotografia.'
   },
   compor:{
-   markup:'<span class="detail">LABMATTAR / ACERVO</span><span class="ss-case-editorial-title" data-lm-text-role="title">ÓPERA<br><span class="perpetua">DOS PORCOS</span></span><div class="ss-case-editorial-bottom"><span class="detail">PROJETO / DOCUMENTAÇÃO</span><img src="/identidade/vaso_03.svg" alt="" aria-hidden="true"></div>',
+   markup:'<span class="detail">LABMATTAR / ACERVO</span><span class="title ss-case-editorial-title" data-lm-text-role="title">ÓPERA<br><span class="perpetua">DOS PORCOS</span></span><div class="ss-case-editorial-bottom"><span class="detail">PROJETO / DOCUMENTAÇÃO</span><img src="/identidade/vaso_03.svg" alt="" aria-hidden="true"></div>',
    className:'is-editorial',
    source:'ESTUDO 03 / ÓPERA DOS PORCOS / ABERTURA EDITORIAL',
    rationale:'Quando o texto é a informação principal, a tipografia e os elementos existentes podem construir a imagem. Não é necessário criar um novo template.'

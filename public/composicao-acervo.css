@@ -1,0 +1,35 @@
+/* LABMATTAR — acervo. Usa as mesmas fontes e cores de interface do Laboratório. */
+.lm-acervo{margin:12px 0 14px;padding:13px 0;border-top:1px solid rgba(100,100,100,.25);border-bottom:1px solid rgba(100,100,100,.25);display:grid;gap:9px}
+.lm-acervo-heading{display:flex;justify-content:space-between;gap:12px;align-items:baseline;font-size:10px;letter-spacing:.09em}
+.lm-acervo-heading small{font-size:10px;letter-spacing:0;opacity:.66;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+.lm-acervo-connections{display:grid;gap:6px}
+.lm-acervo-account{display:flex;gap:8px;align-items:center;min-height:42px}
+.lm-acervo-account>div{display:grid;gap:2px;flex:1;min-width:0}
+.lm-acervo-account strong{font-size:12px;font-weight:500}
+.lm-acervo-account small{font-size:10px;opacity:.6}
+.lm-acervo button{border:1px solid currentColor;border-radius:5px;padding:7px 10px;background:transparent;color:inherit;font:inherit;font-size:11px;cursor:pointer}
+.lm-acervo button:hover:not(:disabled){background:rgba(115,115,115,.12)}
+.lm-acervo button:disabled{opacity:.4;cursor:not-allowed}
+.lm-acervo button[hidden],.lm-acervo-overlay[hidden],.lm-acervo-toolbar button[hidden]{display:none!important}
+.lm-acervo-overlay{position:fixed;inset:0;background:rgba(12,12,12,.45);z-index:9999;display:grid;place-items:center;padding:16px}
+.lm-acervo-dialog{width:min(760px,100%);max-height:90vh;overflow:auto;background:#f7f6f2;color:#181818;border:1px solid #cac8c1;border-radius:12px;box-shadow:0 20px 70px #0003;padding:24px;display:grid;gap:14px}
+.lm-acervo-dialog header{display:flex;align-items:start;justify-content:space-between}
+.lm-acervo-dialog header small{font-size:10px;letter-spacing:.12em}
+.lm-acervo-dialog h3{font-size:20px;font-weight:450;margin:7px 0 0}
+.lm-acervo-dialog button{border:1px solid #d0cec8;border-radius:6px;padding:8px 11px;background:transparent;color:inherit;cursor:pointer;font:inherit}
+.lm-acervo-dialog button:hover:not(:disabled){background:#e9e7e0}
+.lm-acervo-dialog button:disabled{cursor:not-allowed;opacity:.6}
+#labAcervoClose{font-size:23px;line-height:1;min-width:38px}
+#labAcervoStatus{font-size:12px;opacity:.7;min-height:1.2em;margin:0}
+.lm-acervo-toolbar{display:flex;gap:8px}
+.lm-acervo-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px;min-height:95px}
+.lm-acervo-item{display:grid;align-content:start;text-align:left;gap:7px;min-width:0;overflow:hidden}
+.lm-acervo-item strong{font-size:12px;font-weight:500;overflow-wrap:anywhere}
+.lm-acervo-item small{font-size:10px;opacity:.65;overflow-wrap:anywhere}
+.lm-acervo-item-meta{display:grid;gap:3px}
+.lm-acervo-thumb{background:#e9e7e0;aspect-ratio:4/3;border-radius:4px;display:grid;place-items:center;font-size:11px;letter-spacing:.08em;overflow:hidden}
+.lm-acervo-thumb img{width:100%;height:100%;object-fit:cover}
+.lm-acervo-folder{display:flex;gap:12px;align-items:center;min-height:80px}
+.lm-acervo-folder span:first-child{font-size:23px}
+.lm-acervo-empty{grid-column:1/-1;font-size:12px;opacity:.6}
+@media(max-width:600px){.lm-acervo-dialog{padding:16px}.lm-acervo-items{grid-template-columns:repeat(2,minmax(0,1fr))}}

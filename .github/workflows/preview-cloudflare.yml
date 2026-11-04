@@ -104,6 +104,8 @@ jobs:
           mkdir -p dist/client/editor
           cp dist/matrix/design/matrix/index.html dist/client/editor/index.html
           cp -R dist/matrix/matrix-assets dist/client/matrix-assets
+      - name: Validar seguranca do acervo
+        run: node scripts/test-acervo.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
@@ -125,11 +127,16 @@ jobs:
         run: |
           test -f dist/server/index.js
           test -f dist/client/editor/index.html
+          cp scripts/acervo-api.mjs dist/server/acervo-api.mjs
           cat > dist/server/worker-entry.js <<'JS'
           import handleRequest from './index.js';
+          import { handleAcervoRequest } from './acervo-api.mjs';
           export default {
             fetch(request, env, ctx) {
               const url = new URL(request.url);
+              if (url.pathname.startsWith('/api/acervo/')) {
+                return handleAcervoRequest(request, env);
+              }
               // Keep old Imagem links functional without republishing a sixth chapter.
               if (url.pathname === '/imagem.html' || url.pathname === '/imagem') {
                 url.pathname = '/laboratorio.html';

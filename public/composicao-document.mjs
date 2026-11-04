@@ -27,7 +27,22 @@ function check(condition,message){if(!condition)throw new Error("Documento incom
 function enumValue(v,options,name){check(typeof v==="string"&&options.includes(v),name);return v}
 function bounded(v,min,max,name){check(typeof v==="number"&&Number.isFinite(v)&&v>=min&&v<=max,name);return v}
 function text(v,max,name){check(typeof v==="string"&&v.length<=max,name);return v}
-function safeImagePath(v){return typeof v==="string"&&v.startsWith("/")&&!v.startsWith("//")&&!v.includes("..")&&!/[?#]/.test(v)}
+function safeImagePath(v){
+  if(typeof v!=="string"||!v.startsWith("/")||v.startsWith("//")||v.includes(".."))return false;
+  if(!/[?#]/.test(v))return true;
+  // External images must pass through our same-origin auth proxy. Never allow
+  // public share links, arbitrary hosts, token parameters or path traversal.
+  if(!v.startsWith("/api/acervo/media?"))return false;
+  try{
+    const u=new URL(v,"https://acervo.local");
+    const p=u.searchParams;
+    if(u.origin!=="https://acervo.local"||u.pathname!=="/api/acervo/media"||
+      [...p.keys()].sort().join(",")!=="id,provider")return false;
+    const provider=p.get("provider"),id=p.get("id");
+    return provider==="google"?/^[A-Za-z0-9_-]{5,200}$/.test(id||""):
+      provider==="dropbox"&&/^id:[A-Za-z0-9_=-]{5,200}$/.test(id||"");
+  }catch{return false}
+}
 function signatureOf(value){
   check(isObject(value)&&isObject(value.slots),"assinatura");
   const slots={};
@@ -89,7 +104,7 @@ function captureState(state,photoCatalog){
 function assetList(state,photoCatalog){
   const result=[
     {id:"identity:m-mask",type:"vector",uri:OFFICIAL_M_MASK,source:"identidade-oficial"},
-    {id:"photo:"+state.photo,type:"image",uri:photoCatalog[state.photo],source:"prévia-local",masterVerified:false}
+    {id:"photo:"+state.photo,type:"image",uri:photoCatalog[state.photo],source:state.photo.startsWith("ext-")?"acervo-privado":"prévia-local",masterVerified:false}
   ];
   const refs=new Set();
   if(state.symbol!=="none")refs.add(state.symbol);

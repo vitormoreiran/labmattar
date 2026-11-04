@@ -44,9 +44,10 @@
       "matrixEditor": "/editor/"
     },
     {
-      "id": "applications",
-      "label": "Aplicações",
-      "stage": "pending"
+      "id": "social",
+      "label": "Redes Sociais",
+      "path": "/redes.html",
+      "stage": "experimental"
     }
   ],
   "typography": {
@@ -134,7 +135,8 @@
       "typography",
       "color",
       "composition",
-      "laboratory"
+      "laboratory",
+      "social"
     ],
     "typography": "/manual-headings.css",
     "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides."

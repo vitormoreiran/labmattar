@@ -970,13 +970,13 @@
   tour.setAttribute("aria-label","Ajuda guiada do Laboratório");
   tour.setAttribute("aria-labelledby","labTourTitle");
   tour.tabIndex=-1;
-  const tourProgress=helpNode("p","lm-help-tour-progress");
+  const tourProgress=helpNode("small","lm-help-tour-progress");
   tourProgress.id="labTourProgress";
   tourProgress.setAttribute("aria-live","polite");
   const tourTitle=helpNode("h3","lm-help-tour-title");
   tourTitle.id="labTourTitle";
   const tourText=helpNode("p","lm-help-tour-copy");
-  const tourRule=helpNode("p","lm-help-tour-rule");
+  const tourRule=helpNode("small","lm-help-tour-rule");
   const tourActions=helpNode("div","lm-help-tour-actions");
   const tourBack=helpNode("button","lm-help-tour-back","Voltar");
   const tourNext=helpNode("button","lm-help-tour-next","Entendi");

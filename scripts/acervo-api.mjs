@@ -221,7 +221,7 @@ function externalRedirect(url,message){
   const destination=new URL("/laboratorio.html",url.origin);
   destination.searchParams.set("acervo",message);
   destination.hash="labAcervo";
-  return Response.redirect(destination.toString(),302);
+  return new Response(null,{status:302,headers:{Location:destination.toString()}});
 }
 async function connect(request,url,env,provider){
   if(!connectedConfigured(env,provider))return deny("Integração não configurada",503);
@@ -247,7 +247,7 @@ async function connect(request,url,env,provider){
   }
   for(const [k,v] of Object.entries(params))auth.searchParams.set(k,v);
   const pending=await seal({provider,state,verifier,created:Date.now()},STATE_COOKIE,env);
-  const response=Response.redirect(auth.toString(),302);
+  const response=new Response(null,{status:302,headers:{Location:auth.toString()}});
   return withCookie(response,cookieHeader(STATE_COOKIE,pending,request,STATE_AGE/1000));
 }
 async function callback(request,url,env,provider){

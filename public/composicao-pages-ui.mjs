@@ -22,7 +22,7 @@ function commit(){
   renderPages();applySectionVisual();
 }
 let pageListKey='',deliveryFormat='pdf';
-function deliveryBusy(){return busy||Boolean(window.LabExportPNG?.isExporting?.());}
+function deliveryBusy(){return busy||switching||Boolean(window.LabExportPNG?.isExporting?.());}
 function closeDelivery(){if(deliveryBusy())return;by('labDeliveryDialog').close();commit();}
 function renderDelivery(){
   by('labWebPublishing').hidden=deliveryFormat!=='html';

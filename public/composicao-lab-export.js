@@ -255,9 +255,9 @@
     const motions=await window.LabPages?.captureMotions?.(frame.width,frame.height)||[];
     for(const motion of motions){
       items.push(motion);
-      if(motion.w*frame.outputScale>motion.sourceWidth*1.01)warnings.push("Motion "+motion.assetName+" ampliado além da resolução original.");
+      if(motion.w*frame.outputScale>motion.sourceWidth*1.01)warnings.push((motion.privateClipId?"Vídeo ":"Motion ")+motion.assetName+" ampliado além da resolução original.");
     }
-    if(motions.length)rasterized.push("quadros estáticos dos motions");
+    if(motions.length)rasterized.push("quadros estáticos dos motions e vídeos privados");
     items.push(...words(board.querySelector("#labReading"),frame));
     const solid=board.querySelector(".lm-lab-solid-contrast");
     if(maskVector&&board.dataset.mContent==="solid"&&isVisible(solid))

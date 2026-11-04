@@ -27,6 +27,7 @@ on:
       - 'public/cores-motion.js'
       - 'scripts/smoke-colors-browser.mjs'
       - 'public/manual.html'
+      - 'public/redes*'
       - 'public/motion.css'
       - 'scripts/prepare-motion.mjs'
       - 'scripts/smoke-symbols-browser.mjs'
@@ -154,6 +155,9 @@ jobs:
         run: |
           test -f dist/server/index.js
           test -f dist/client/editor/index.html
+          test -f dist/client/redes.html
+          test -f dist/client/redes.css
+          test -f dist/client/redes.js
           cp scripts/acervo-api.mjs dist/server/acervo-api.mjs
           cat > dist/server/worker-entry.js <<'JS'
           import handleRequest from './index.js';

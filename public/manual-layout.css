@@ -15,7 +15,7 @@
   --lm-layout-local-optical-y:0px;
   --lm-layout-cover-pad-top:clamp(36px,5svh,56px);
   --lm-layout-cover-pad-bottom:clamp(44px,6svh,70px);
-  --lm-layout-cover-body-band:160px;
+  --lm-layout-cover-body-band:176px;
   --lm-layout-title-offset:44px;
   --lm-layout-title-band:214px;
   --lm-layout-after-title:30px;

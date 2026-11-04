@@ -130,7 +130,7 @@ try {
         const audit=await areaPage.evaluate(()=>{
           const text=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
           const seen=[],errors=[];let node;
-          const title=Math.max(31,Math.min(innerWidth*.07,104)),body=innerWidth<=760?16:18,detail=innerWidth<=760?12:13;
+          const title=Math.max(31,Math.min(innerWidth*.07,104)),body=innerWidth<=760?17:19,detail=innerWidth<=760?12:13;
           const expect={title:{size:title,leading:title*.98},body:{size:body,leading:body*(innerWidth<=760?1.5:1.45)},detail:{size:detail,leading:detail*(innerWidth<=760?1.4:1.35)}};
           const scale=(min,mult,max,width)=>Math.min(max,Math.max(min,width*mult));
           while((node=text.nextNode())){
@@ -144,8 +144,8 @@ try {
             const width=artboard?.getBoundingClientRect().width;
             const vertical=artboard?.classList.contains('is-mobile');
             const sizes=width?vertical?
-              {title:scale(18,.096,38,width),body:scale(9,.0365,14,width),detail:scale(7,.0255,10,width)}:
-              {title:scale(12,.069,84,width),body:scale(8,.0175,18,width),detail:scale(6,.0125,13,width)}:null;
+              {title:scale(18,.096,38,width),body:scale(9.5,.0385,15,width),detail:scale(7,.0255,10,width)}:
+              {title:scale(12,.069,84,width),body:scale(8.5,.0185,19,width),detail:scale(6,.0125,13,width)}:null;
             const lab=e.closest('#labArtboard');
             const labVars=lab?getComputedStyle(lab):null;
             const labSize=labVars?parseFloat(labVars.getPropertyValue('--lm-type-'+role+'-size')):NaN;

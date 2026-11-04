@@ -30,7 +30,7 @@ try{
   const g=await geometry();report.viewports.push(g);assert.equal(g.document,width,'No horizontal scroll');assert.deepEqual(g.overflow,[],'No clipped words');assert.equal(g.styles.length,1,'Exactly ONE title style everywhere');
   const bodySize=await page.locator('.body-sample').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize));
   const detailSize=await page.locator('.detail-specimen .detail').evaluate(e=>parseFloat(getComputedStyle(e).fontSize));assert.ok(bodySize>detailSize);
-  const expected=width<=760?[16,12]:[18,13];
+  const expected=width<=760?[17,12]:[19,13];
   assert.deepEqual([bodySize,detailSize],expected,'Official size on '+width+'px');
   const labels=await page.locator('[data-lm-type-measure]').allTextContents();
   assert.deepEqual(labels,expected.map(value=>value+' px'),'Typography index labels must reflect real computed specimens');

@@ -432,8 +432,8 @@ try{
         logicalDetail:getComputedStyle(board).getPropertyValue("--lm-type-detail-size").trim()
       };
     });
-    assert(official.body===18&&official.detail===13&&official.footer===13&&
-      official.composedDetail===13&&official.logicalBody==="18px"&&official.logicalDetail==="13px",
+    assert(official.body===19&&official.detail===13&&official.footer===13&&
+      official.composedDetail===13&&official.logicalBody==="19px"&&official.logicalDetail==="13px",
       "Corpo/Detalhe must use the manual's exact logical-page sizes, never a per-format override: "+
         format+" "+JSON.stringify(official));
     await page.setViewportSize({width:1440,height:900});

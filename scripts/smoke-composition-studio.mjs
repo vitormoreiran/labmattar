@@ -101,6 +101,56 @@ try{
   assert(await page.locator("#labHelp-labMPresentation").isHidden(),
     "Help must close without changing the composition");
 
+  // Seven operational help cards replace the static construction prose.
+  const tourTrigger=page.locator("#labOverviewHelp");
+  const beforeTour=await page.locator("#labArtboard").evaluate(board=>({
+    format:board.dataset.format,title:board.querySelector("#labRenderedTitle").textContent,
+    body:board.querySelector("#labRenderedBody").textContent
+  }));
+  await tourTrigger.click();
+  const tour=page.locator("#labHelp-overview");
+  const titles=[
+    "Como funciona","Superfície e margem","M e geometria",
+    "Área de leitura","Título, Corpo e Detalhe","Imagem e contraste","Verificar e exportar"
+  ];
+  assert(await tour.isVisible()&&await tour.getAttribute("role")==="dialog"&&
+         await tourTrigger.getAttribute("aria-expanded")==="true",
+    "Dúvidas must open the accessible guided help dialog");
+  for(let step=0;step<titles.length;step++){
+    assert((await page.locator("#labTourTitle").textContent())===titles[step],
+      "Tour card order must be stable at step "+(step+1));
+    assert((await page.locator("#labTourProgress").textContent())===
+      String(step+1).padStart(2,"0")+" / 07",
+      "Tour must show its current step");
+    const spotlight=await page.locator(".lm-help-tour-spotlight").evaluate(el=>{
+      const r=el.getBoundingClientRect();
+      return {visible:!el.hidden,width:r.width,height:r.height,top:r.top,left:r.left};
+    });
+    assert(spotlight.visible&&spotlight.width>0&&spotlight.height>0,
+      "Each card must highlight a real target: "+JSON.stringify(spotlight));
+    if(step===1){
+      await page.locator("#labTourBack").click();
+      assert((await page.locator("#labTourTitle").textContent())===titles[0],
+        "Voltar returns to the preceding help card");
+      await page.locator("#labTourNext").click();
+    }
+    await page.locator("#labTourNext").click();
+  }
+  assert(await tour.isHidden()&&await tourTrigger.getAttribute("aria-expanded")==="false",
+    "Concluir must close the tour");
+  assert(await page.locator('button[data-mobile-module="m"]').getAttribute("aria-pressed")==="true",
+    "Closing tour restores the previous inspector module");
+  const afterTour=await page.locator("#labArtboard").evaluate(board=>({
+    format:board.dataset.format,title:board.querySelector("#labRenderedTitle").textContent,
+    body:board.querySelector("#labRenderedBody").textContent
+  }));
+  assert(JSON.stringify(beforeTour)===JSON.stringify(afterTour),
+    "Help must not change authored composition state");
+  await tourTrigger.click();
+  await page.keyboard.press("Escape");
+  assert(await tour.isHidden()&&await tourTrigger.getAttribute("aria-expanded")==="false",
+    "Escape must close the tour at any point");
+
   assert(await page.locator("#labPanel-imagem").isVisible() &&
          await page.locator("#labPanel-pagina").isHidden() &&
          await page.locator("#labPanel-texto").isHidden(),

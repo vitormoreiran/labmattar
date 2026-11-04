@@ -15,7 +15,7 @@ try {
     assert.equal(response.status(),200,'Capitulo 06 responde 200');
     await page.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await page.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1,'Navegacao ativa');
-    assert.equal(await page.locator('main>.lm-social').count(),6,'Capa + cinco secoes editoriais');
+    assert.equal(await page.locator('main>.lm-social').count(),7,'Capa + seis secoes editoriais');
     assert.equal(await page.locator('.rule-card').count(),3,'Tres intensidades visuais');
     assert.equal(await page.locator('.application article').count(),4,'Quatro enquadramentos');
     assert.equal(await page.locator('.method article').count(),6,'Seis funcoes editoriais');

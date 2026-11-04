@@ -859,6 +859,15 @@
 }
 
 
+/* Dúvidas tem o mesmo destino no manual e no editor concentrado. */
+.lm-studio-launch>.lm-studio-help{display:none!important}
+body.lm-studio-open #laboratorio .lm-studio-launch>.lm-studio-help{
+  display:inline-flex!important;align-items:center;justify-content:center;gap:6px;
+}
+body.lm-studio-open #laboratorio .lm-studio-help-label{white-space:nowrap}
+@media(max-width:700px){
+ body.lm-studio-open #laboratorio .lm-studio-help-label{display:none}
+}
 /* Ajuda guiada / uma etapa por vez, ancorada no controle real. */
 .lm-help-tour-backdrop{
   position:fixed;inset:0;z-index:198;background:transparent;cursor:default;

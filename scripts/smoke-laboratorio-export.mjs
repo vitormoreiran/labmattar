@@ -95,9 +95,10 @@ try{
 
   // Same authoring state must also be reversible as a versioned document.
   // This does not assert the Matriz motion renderer is already connected.
-  await page.locator('button[data-mobile-module="construcao"]').click();
+  await page.locator('[data-workspace-view=pages]').click();
+  await page.locator('.lab-project-settings>summary').click();
   assert(await page.locator("#labDownloadDocument").isVisible(),
-    "The document action must be accessible in Construction");
+    "The document action must be accessible next to the page sequence");
   const authored=await page.evaluate(()=>window.LabProductionBridge.snapshot().state);
   const projectDownloadPromise=page.waitForEvent("download",{timeout:30000});
   await page.locator("#labDownloadDocument").click();
@@ -116,6 +117,7 @@ try{
   assert(project.output.width===3840&&project.output.height===2160,
     "Document 4K profile must match the exported PNG");
 
+  await page.locator('[data-workspace-view=edit]').click();
   await page.locator('button[data-mobile-module="texto"]').click();
   await page.locator('#labPanel-texto [data-lab-more="texto"]').evaluate(details=>{details.open=true;});
   await page.locator("#labTitleInput").fill("TÍTULO ALTERADO PROVISORIAMENTE");

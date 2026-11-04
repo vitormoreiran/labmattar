@@ -235,6 +235,10 @@ figure,dl,dd{margin:0}
 }
 .ss-format-frame.show-guides .ss-format-caution:before{top:16%}
 .ss-format-frame.show-guides .ss-format-caution:after{top:81%}
+.ss-format-hint{margin:10px 0 0}
+.ss-format-frame{cursor:grab}
+.ss-format-frame:active{cursor:grabbing}
+.ss-format-frame img{pointer-events:none;user-select:none}
 .ss-format-caption{display:grid;grid-template-columns:160px 1fr;gap:22px;border-bottom:1px solid var(--ss-line);padding:18px 0}
 .ss-format-caption p{margin:0;max-width:38ch}
 .ss-format-guide-switch{display:flex;align-items:center;gap:11px;cursor:pointer;padding:17px 0}

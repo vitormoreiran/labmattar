@@ -1,6 +1,6 @@
 import {chromium} from "playwright";
 
-const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
+const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];
@@ -116,7 +116,7 @@ try{
 
   const legacy=await browser.newPage();
   await legacy.goto(new URL("/composicao.html?studio=1#laboratorio",url).href,{waitUntil:"load",timeout:60000});
-  assert(new URL(legacy.url()).pathname==="/laboratorio.html",
+  assert(new URL(legacy.url()).pathname==="/compor.html",
     "Old composition editor links must reopen the independent Laboratory");
   assert(await legacy.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
     "Legacy editor links must retain focused mode");
@@ -129,7 +129,7 @@ try{
     "Construction chapter must contain the original applied example");
   assert(await constructionPage.locator('.lm-case-facts, .lm-case-aside').count()===0,
     "Fixed construction explanations must move to Laboratory help");
-  assert(await constructionPage.locator('a[href="/laboratorio.html?studio=1#laboratorio"]').count()===1,
+  assert(await constructionPage.locator('a[href="/compor.html?studio=1#laboratorio"]').count()===1,
     "The demonstration must open the guided Laboratory help entrypoint");
   for(const step of ["campo","mascara","completa"]){
     await constructionPage.locator('[data-case-step="'+step+'"]').click();

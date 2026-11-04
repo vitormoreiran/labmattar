@@ -217,7 +217,8 @@
     get:key=>pool.get(key)||null,
     reopen:()=>selected?select({...selected}):null
   };
-  refresh().catch(()=>notify("Conexão com o serviço de acervo indisponível."));
+  // Acervo is optional: do not contact private APIs during the initial render.
+  // In static previews and offline use, the composition must remain functional.
   const result=new URL(location.href).searchParams.get("acervo");
   if(result){
     notify(result==="erro"?"Não foi possível concluir a autorização.":

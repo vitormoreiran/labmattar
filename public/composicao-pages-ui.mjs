@@ -41,7 +41,7 @@ function renderDelivery(){
   by('labDeliveryScope').textContent=deliveryFormat==='mp4'?`MP4 / ${included.length} página${included.length>1?'s':''} / ${Number(by('labVideoSeconds').value)*included.length} s / 30 fps / sem áudio`:deliveryFormat==='png'?`PNG / página ${current+1}: ${pages[current].name}`:deliveryFormat==='pdf'?`PDF / ${pages.length} página${pages.length>1?'s':''} / motions como quadros estáticos`:`SITE HTML / ${pages.length} página${pages.length>1?'s':''} / motions animados e recursos incorporados`;
 }
 function openDelivery(){
-  if(deliveryBusy())return;commit();renderDelivery();by('labExportStatus').textContent='';by('labExportStatus').dataset.state='idle';by('labDeliveryDialog').showModal();
+  if(deliveryBusy())return;commit();renderDelivery();by('labVideoProgress').hidden=true;by('labVideoProgress').value=0;by('labExportStatus').textContent='';by('labExportStatus').dataset.state='idle';by('labDeliveryDialog').showModal();
 }
 function initDelivery(){
   by('labOpenDelivery').addEventListener('click',openDelivery);by('labReviewDelivery').addEventListener('click',openDelivery);

@@ -366,8 +366,8 @@ export async function handleAcervoRequest(request,env={}){
     if(method==="GET"&&parts[0]==="callback"&&parts.length===2&&PROVIDERS.includes(parts[1]))
       return callback(request,url,env,parts[1]);
     if(method==="POST"&&path==="disconnect")return disconnect(request,env);
-    if(method==="GET"&&path==="picker-token"){
-      if(!isBrowserSameOrigin(request))return deny("Origem não autorizada",403);
+    if(method==="POST"&&path==="picker-token"){
+      if(!sameOriginPost(request))return deny("Origem não autorizada",403);
       const auth=await authorized(request,"google",env);
       return auth?auth.finish(json({accessToken:auth.session.access_token,
         expiresAt:auth.session.expires_at})):deny("Conecte sua conta Google",401);

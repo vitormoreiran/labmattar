@@ -228,7 +228,7 @@ try {
     report.manualHeadings.push({viewportWidth,areas:group});
   }
   // Chapter 06: the feed is a temporal archive of project seasons.
-  // Keep this as a lightweight integration check; the dedicated test covers editor exports.
+  // The dedicated social test also checks the real photographs and mobile layout.
   const socialPage=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
   try {
     const socialResponse=await socialPage.goto(new URL('/redes.html',url).href,{waitUntil:'networkidle',timeout:60000});
@@ -236,12 +236,13 @@ try {
     await socialPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await socialPage.locator('main > section.lm-manual-cover').count(),1,'Social page has canonical cover');
     assert.equal(await socialPage.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1,'Social nav active');
-    assert.equal(await socialPage.locator('#lmSeasonTimeline>button').count(),3,'Sample has three project seasons');
-    assert.equal(await socialPage.locator('.lm-season-frame-demo').count(),4,'Four official framing applications');
-    assert.equal(await socialPage.locator('#lmSeasonFeed>.lm-season-post').count(),7,'No artificial fixed 9-post mosaic');
-    const grouping=await socialPage.locator('#lmSeasonFeed>.lm-season-post').evaluateAll(posts=>posts.map(p=>p.dataset.seasonId));
-    assert.deepEqual(grouping,['season-7','season-7','season-7','season-4','season-4','season-1','season-1'],
-      'Projects remain contiguous in the reverse-chronological profile');
+    assert.equal(await socialPage.locator('main>.lm-social').count(),7,'Cover and six editorial sections');
+    assert.equal(await socialPage.locator('.rule-card').count(),3,'Three degrees of graphic intervention');
+    assert.equal(await socialPage.locator('.application article').count(),4,'Four official framing applications');
+    assert.equal(await socialPage.locator('.method article').count(),6,'Six editorial functions');
+    assert.equal(await socialPage.locator('#lmSeasonPlanner').count(),0,'Retired planner stays absent');
+    const content=await socialPage.locator('main').innerText();
+    for(const project of ['Cada Corpo Abre um Mundo','Poiesis','Aleteia'])assert.ok(content.includes(project),'Current editorial seasons: '+project);
     assert.equal(await socialPage.locator('[data-feed-mode]').count(),0,'Obsolete aesthetic alternation is absent');
   } finally { await socialPage.close(); }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {

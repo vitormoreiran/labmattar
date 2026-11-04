@@ -137,7 +137,7 @@ jobs:
       - name: Preparar inspeção do PDF
         run: |
           python3 -m pip install --quiet pypdf==6.10.0
-          sudo apt-get update -qq
+          sudo apt-get update -qq -o Acquire::Retries=1 -o Acquire::http::Timeout=15
           sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
       - name: Instalar navegador de testes
         run: |

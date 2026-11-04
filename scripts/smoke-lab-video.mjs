@@ -7,7 +7,7 @@ import path from 'node:path';
 const output=path.resolve('production-proof');await mkdir(output,{recursive:true});
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});
-const errors=[],report={exports:[]};let downloads=0;
+const errors=[],report={exports:[],fidelity:[]};let downloads=0;
 page.on('pageerror',error=>errors.push(error.message));page.on('dialog',dialog=>dialog.accept());
 page.on('download',()=>downloads++);
 const settle=()=>page.waitForTimeout(300);
@@ -35,6 +35,10 @@ try{
   await page.goto((process.env.COMPOSITION_URL||'http://127.0.0.1:8765/compor.html')+'?studio=1#laboratorio',{waitUntil:'networkidle'});
   await page.locator('#labPages[data-ready=true]').waitFor({state:'attached'});
   await state({title:'MATTAR EM MOVIMENTO',body:'Composição, motion e vídeo.',bodyMode:'visivel',mContent:'off',background:'color',marker:'none',guides:'nenhuma',titleScale:70});
+  await page.evaluate(()=>{
+    const capture=window.LabRenderer.capture;
+    window.LabRenderer.capture=async options=>{const scene=await capture(options);if(options?.live)window.videoCapturedScene=scene;return scene;};
+  });
   const original=await page.evaluate(()=>window.LabPages.create());
   for(const [format,width,height]of [['horizontal',1280,720],['vertical',720,1280],['quadrado',720,720],['editorial',1280,906]]){
     await state({format});await review();
@@ -48,14 +52,19 @@ try{
       const {sceneCanvas}=await import('/lab-scene.mjs');
       const scene=await window.LabRenderer.capture({edge:1920,ask:false});
       const canvas=await sceneCanvas(scene,1280,{width,height}),ctx=canvas.getContext('2d');
+      const nativePng=canvas.toDataURL('image/png').split(',')[1];
       const a=ctx.getImageData(0,0,width,height).data;
       const bitmap=await createImageBitmap(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
       ctx.drawImage(bitmap,0,0);bitmap.close();const b=ctx.getImageData(0,0,width,height).data;
       let delta=0;for(let i=0;i<a.length;i+=4)delta+=Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2]);
-      return delta/(width*height*3);
+      const texts=items=>items.flatMap(op=>op.kind==='group'?texts(op.items):op.kind==='text'?[op]:[]);
+      return {mae:delta/(width*height*3),nativePng,firstNative:[...a.slice(0,4)],firstVideo:[...b.slice(0,4)],
+        captured:{width:window.videoCapturedScene.width,height:window.videoCapturedScene.height,texts:texts(window.videoCapturedScene.items)},
+        restored:{width:scene.width,height:scene.height,texts:texts(scene.items)}};
     },{bytes:[...reference],width,height});
-    console.log(JSON.stringify({format,meanAbsoluteDifference:difference}));
-    assert.ok(difference<4,`Native/video final frame differs (${format}): ${difference}`);
+    await writeFile(target+'.native.png',Buffer.from(difference.nativePng,'base64'));
+    delete difference.nativePng;report.fidelity.push({format,...difference});
+    console.log(JSON.stringify({format,...difference}));
     await page.locator('#labDeliveryBack').click();
   }
   await page.evaluate(doc=>window.LabPages.load(doc),original);await settle();
@@ -92,4 +101,5 @@ try{
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(output,'video-delivery-mobile.png'),fullPage:true});
   assert.deepEqual(errors,[]);report.cancelled=true;report.mixedFormatsRefused=true;report.unsupportedCodecHandled=true;
   await writeFile(path.join(output,'lab-video-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));
+  for(const item of report.fidelity)assert.ok(item.mae<4,`Native/video final frame differs (${item.format}): ${item.mae}`);
 }finally{await browser.close();}

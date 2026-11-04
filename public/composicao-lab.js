@@ -954,7 +954,7 @@
       title:"Verificar e exportar",
       text:"Confira a composição e o aviso abaixo da prévia. Margens, legibilidade e elementos da página precisam estar resolvidos antes da exportação.",
       rule:"A saída preserva as proporções, os tratamentos tipográficos e o vetor da composição.",
-      target:"#labStatus"
+      target:"#labExportPng"
     }
   ];
   let tourIndex=-1;
@@ -1043,7 +1043,7 @@
     tour.hidden=true;
     tourBackdrop.hidden=true;
     tourSpotlight.hidden=true;
-    overviewTrigger?.setAttribute("aria-expanded","false");
+    for(const trigger of tourTriggers)trigger.setAttribute("aria-expanded","false");
     if(originalModule&&document.body.classList.contains("lm-studio-open")){
       const restore=document.querySelector('[data-mobile-module="'+originalModule+'"]');
       if(restore&&restore.getAttribute("aria-pressed")!=="true")restore.click();
@@ -1081,10 +1081,10 @@
     tourReturnFocus=document.activeElement;
     const current=document.querySelector('.lm-composition-module-index [data-mobile-module][aria-pressed="true"]');
     originalModule=current?.dataset.mobileModule||null;
-    overviewTrigger?.setAttribute("aria-expanded","true");
+    for(const trigger of tourTriggers)trigger.setAttribute("aria-expanded","true");
     renderTourStep(0);
   };
-  if(overviewTrigger)overviewTrigger.addEventListener("click",e=>{
+  for(const trigger of tourTriggers)trigger.addEventListener("click",e=>{
     e.stopPropagation();
     if(tourIndex>=0)closeTour();
     else startTour();

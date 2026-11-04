@@ -12,7 +12,7 @@ assert manifest["image"]["textContrast"]["veilColor"]=="#000000"
 assert manifest["image"]["textContrast"]["veilOpacity"]==0.2
 assert manifest["image"]["textContrast"]["otherwise"]=="no automatic veil"
 assert len(set(manifest["colors"]["palette"].values()))==5
-for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html"):
+for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","compor.html"):
  page=Path("public")/name
  assert page.exists(),f"Missing page: {page}"
  text=page.read_text(encoding="utf-8")
@@ -31,7 +31,10 @@ for page in ("manual.html","tipografia.html","cores.html","composicao.html","lab
  assert text.count('href="/manual-layout.css')==1,f"{page} must use one shared grid stylesheet"
  assert text.count('lm-manual-cover')==1,f"{page} must have exactly one canonical cover"
 construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
-composition=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
+laboratory_index=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
+composition=(Path("public")/"compor.html").read_text(encoding="utf-8")
+assert 'href="/editor/"' in laboratory_index and 'href="/compor.html?studio=1#laboratorio"' in laboratory_index, "Laboratory index must present both official instruments"
+assert 'id="labArtboard"' not in laboratory_index, "The composition editor must not be embedded in the Laboratory index"
 assert 'id="contraste"' in construction and "PRETO" in construction and "20%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in construction and 'id="laboratorio"' in composition

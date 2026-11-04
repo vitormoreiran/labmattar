@@ -108,6 +108,26 @@ main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
 .application .frame.detail-crop>img{transform:scale(1.12);object-position:center}
 @media(max-width:900px){.case-visual-real{aspect-ratio:auto;min-height:520px}}
 @media(max-width:600px){.case-visual-real{gap:4px;min-height:480px;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,160px)}.case-visual-real .tile.type-tile .poster-title{font-size:clamp(16px,4.5vw,25px)}.case-visual-real .tile.image-tile>span{font-size:8px;padding:5px}}
+
+.season-journey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 15px}
+.season-journey article{display:grid;grid-template-rows:auto auto auto;gap:10px;min-width:0}
+.season-journey .season-thumb{width:100%;height:clamp(160px,18vw,270px);overflow:hidden;background:#d8d5cd}
+.season-journey img{display:block;width:100%;height:100%;object-fit:cover}
+.season-journey strong{font:400 clamp(20px,2.3vw,34px)/1.1 PerpetuaMattar,Georgia,serif;max-width:20ch}
+.support-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,44px)}
+.support-panel{border-top:1px solid var(--ink);padding-top:14px;min-width:0}
+.support-panel figure{margin:16px 0 20px;background:#e5e1db;overflow:hidden}
+.support-post{width:100%;aspect-ratio:4/5}
+.support-post img,.support-story img{width:100%;height:100%;object-fit:cover;display:block}
+.support-carousel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:16px 0 20px;aspect-ratio:4/5}
+.support-carousel img{display:block;width:100%;height:100%;min-width:0;object-fit:cover}
+.support-story{width:71%;max-width:260px;aspect-ratio:9/16;position:relative;margin-left:auto!important;margin-right:auto!important}
+.support-safe{position:absolute;left:0;right:0;height:13%;background:#1818188a;color:white;display:flex;align-items:center;justify-content:center;font:400 9px/1.3 UniversMattar,Arial,sans-serif;letter-spacing:.08em}
+.support-safe.top{top:0}.support-safe.bottom{bottom:0;height:18%}
+.support-panel h3{font:400 clamp(24px,2.5vw,38px)/1.1 PerpetuaMattar,Georgia,serif;margin:0 0 12px}
+.support-panel>p:not(.meta){font:400 15px/1.48 UniversMattar,Arial,sans-serif;margin:0;max-width:37ch}
+@media(max-width:800px){.support-grid{grid-template-columns:1fr}.support-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px}.support-panel>.meta{grid-column:1/-1}.support-panel figure,.support-panel .support-carousel{grid-row:2/4;margin:0}.support-panel h3{align-self:end}.support-story{margin:0 auto!important}}
+@media(max-width:600px){.season-journey{gap:8px}.season-journey .season-thumb{height:125px}.season-journey strong{font-size:18px}.support-panel{grid-template-columns:1fr}.support-panel figure,.support-panel .support-carousel{grid-row:auto}.support-story{width:70%}}
 </style>
 </head>
 <body>
@@ -124,6 +144,11 @@ main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
 <section class="lm-social" id="temporadas"><div class="inner">
 <div class="section-head"><div><p class="eyebrow">01 / ORGANIZAÇÃO EDITORIAL</p><h2>O FEED<br><em>É TEMPO</em></h2></div><p class="copy">Cada projeto constitui uma temporada. Publicações do mesmo conjunto formam uma narrativa; quando a temporada seguinte começa, a anterior permanece como arquivo. A ordem no perfil é inversa à cronologia de publicação.</p></div>
 <div class="season-sequence"><span>01 / Cada Corpo Abre um Mundo</span><span class="arrow">→</span><span>02 / Poiesis</span><span class="arrow">→</span><span>03 / Aleteia</span><span class="meta">ORDEM DE ENTRADA</span></div>
+<div class="season-journey" aria-label="Entrada das temporadas em ordem cronológica">
+<article><div class="season-thumb"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Cada Corpo Abre um Mundo, primeira temporada no estudo"></div><span class="meta">01 / TEMPORADA</span><strong>Cada Corpo Abre um Mundo</strong></article>
+<article><div class="season-thumb"><img src="/redes-acervo/poiesis-34.jpg" alt="Poiesis, segunda temporada no estudo"></div><span class="meta">02 / TEMPORADA</span><strong>Poiesis</strong></article>
+<article><div class="season-thumb"><img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia, terceira temporada no estudo"></div><span class="meta">03 / TEMPORADA</span><strong>Aleteia</strong></article>
+</div><p class="footnote">ORDEM DE ENTRADA DAS TEMPORADAS, DA ESQUERDA PARA A DIREITA. NO PERFIL, O CONTEÚDO MAIS RECENTE APARECE PRIMEIRO.</p>
 <div class="case-stage"><div class="case-visual case-visual-real" aria-label="Seis aplicações de uma temporada, com fotografias de Cada Corpo Abre um Mundo">
 <div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Visão ampla da gastroperformance, com cena e projeção"><span>01 / SITUAÇÃO</span></div>
 <div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Simone Mattar na apresentação ao público"><span>02 / AÇÃO</span></div>
@@ -160,8 +185,17 @@ main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
 <article><div class="frame detail-crop"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Detalhe ampliado da imagem do projeto"></div><h3>Detalhe ampliado</h3><p>Aproximar a matéria sem perder o sentido do registro.</p></article>
 </div><p class="footnote">ESTUDOS DE ENQUADRAMENTO COM REGISTROS DO BOX DO SENTIR.</p>
 </div></section>
+<section class="lm-social" id="suportes"><div class="inner">
+<div class="section-head"><div><p class="eyebrow">05 / DA PEÇA À PLATAFORMA</p><h2>FEED,<br><em>SEQUÊNCIA, VÍDEO</em></h2></div><p class="copy">A mesma gramática editorial responde a suportes diferentes. Defina primeiro a função da imagem; depois confira proporção, ordem de leitura e elementos encobertos pela interface.</p></div>
+<div class="support-grid">
+<article class="support-panel"><p class="meta">01 / POST NO FEED</p><figure class="support-post"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Registro vertical sem sobreposição de textos"></figure><h3>Registro integral</h3><p>A fotografia já apresenta a cena. A autoria e os créditos podem ficar na legenda. Conferir o recorte da miniatura antes de publicar.</p></article>
+<article class="support-panel"><p class="meta">02 / CARROSSEL</p><div class="support-carousel"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Abertura com situação da gastroperformance"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Quadro de gesto e experiência"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Quadro de detalhe matérico"></div><h3>Uma progressão, não um template</h3><p>Começar pela situação, aproximar o gesto e terminar na matéria é uma possibilidade de leitura. Não repetir capa ou assinatura em todos os quadros.</p></article>
+<article class="support-panel"><p class="meta">03 / STORY E REEL</p><figure class="support-story"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Estudo de enquadramento vertical para vídeo ou story"><span class="support-safe top">ÁREA DE INTERFACE</span><span class="support-safe bottom">ÁREA DE INTERFACE</span></figure><h3>A imagem precisa sobreviver à interface</h3><p>Em 9:16, manter rostos, gestos e informações essenciais fora das faixas cobertas por nome do perfil, comandos e legendas. Em vídeo, usar movimento gráfico somente com função narrativa.</p></article>
+</div>
+<p class="footnote">REFERÊNCIAS DE PRODUÇÃO: POST 4:5 (1080 × 1350) OU 3:4 (1080 × 1440), QUANDO SUPORTADO; STORIES/REELS 9:16 (1080 × 1920). A ÁREA EXATA DE INTERFACE VARIA: CONFERIR PRÉVIA NO APLICATIVO.</p>
+</div></section>
 <section class="lm-social" id="regras"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">05 / REGRAS DE APLICAÇÃO</p><h2>UMA MESMA<br><em>GRAMÁTICA</em></h2></div><p class="copy">Não há uma identidade paralela para redes sociais. O sistema do manual continua válido; a aplicação adapta as proporções, o recorte e a leitura ao suporte.</p></div>
+<div class="section-head"><div><p class="eyebrow">06 / REGRAS DE APLICAÇÃO</p><h2>UMA MESMA<br><em>GRAMÁTICA</em></h2></div><p class="copy">Não há uma identidade paralela para redes sociais. O sistema do manual continua válido; a aplicação adapta as proporções, o recorte e a leitura ao suporte.</p></div>
 <table class="guide-table"><thead><tr><th>Elemento</th><th>Aplicar</th><th>Evitar</th></tr></thead><tbody>
 <tr><th>Tipografia</th><td>Univers e Perpetua; exclusivamente Título, Corpo e Detalhe, com hierarquia e margens do manual.</td><td>Novas classes, slogans decorativos, redução do texto até perder legibilidade.</td></tr>
 <tr><th>Imagem</th><td>Preservar composição e autoria; verificar corte do perfil e das interfaces.</td><td>Cortar gestos relevantes para completar uma grade ou cobrir áreas essenciais com texto.</td></tr>

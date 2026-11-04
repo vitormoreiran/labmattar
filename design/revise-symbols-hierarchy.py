@@ -64,7 +64,7 @@ assert html.count('data-motion-version="20261104-groups"') == 1
 assert 'id="state-morph-svg"' not in html
 assert html.count('id="manual-states-script"') == 0
 assert html.count('class="lm-reading-intro"') == 1
-html = re.sub(r'\n*(<link rel="stylesheet" href="/manual-symbols)', r'\n\1', html)
+html = re.sub(r'\n*(<link rel="stylesheet" href="/motion)', r'\n\1', html)
 html = re.sub(r'<h2 class="title">', '<h2 class="title lm-manual-section-title">', html)
 p.write_text(html, encoding='utf-8')
 print('Symbols: original artwork preserved; current Motion replaces contour demo')

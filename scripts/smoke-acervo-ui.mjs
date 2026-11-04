@@ -57,8 +57,21 @@ try{
   const remote=await page.evaluate(()=>window.LabPages.create());
   assert(remote.pages[0].clips[0].provider==="public","Video must retain public-link origin");
   assert(remote.pages[0].clips[0].projectId===projectId,"Video project scoping lost");
-  await page.locator("#labAcervoLocalInput").setInputFiles({name:"imagem-local.png",mimeType:"image/png",buffer:dot});
-  await page.waitForFunction(()=>document.getElementById("labPhoto").value.startsWith("loc-"));
+  const localImageResponse=await page.request.get(new URL("/ambiente-editorial/media/BOXDOSENTIR-64.jpg",base).href);
+  assert(localImageResponse.ok(),"Missing local JPG test fixture");
+  await page.locator("#labAcervoLocalInput").setInputFiles({
+    name:"imagem-local.jpg",mimeType:"image/jpeg",buffer:await localImageResponse.body()});
+  try{
+    await page.waitForFunction(()=>document.getElementById("labPhoto").value.startsWith("loc-"),
+      null,{timeout:12000});
+  }catch(error){
+    const debug=await page.evaluate(()=>({
+      current:document.getElementById("labAcervoCurrent").textContent,
+      value:document.getElementById("labPhoto").value,
+      file:document.getElementById("labAcervoLocalInput").files?.[0]?.name
+    }));
+    throw Error("Local image upload did not reach composition: "+JSON.stringify(debug)+" / "+error.message);
+  }
   const embedded=await page.evaluate(()=>window.LabPages.create());
   assert(embedded.pages[0].composition.assets.some(a=>a.id.startsWith("photo:loc-")&&
     a.uri.startsWith("data:image/webp;base64,")),"Local image must be included in JSON");

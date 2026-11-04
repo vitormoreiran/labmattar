@@ -19,14 +19,30 @@ As imagens são exemplos de diagramação e sequência; **não representam um ca
 | pe-de-verso-01.jpg | Pé de Verso | 1PnVmdAC_XXFqi0F5AsmnebgEpFt-A4kv |
 | dadiva-01.jpg | Dádiva | 14NO-vEtlrSHo5UoWb73x7vK1JmlfxMOu |
 
-## Funcionalidade do estudo de feed
+## Capítulo 06 / temporadas e enquadramentos
 
-- Escolher 9 imagens do acervo, arrastar para mudar a ordem ou usar **Mover**.
-- Alternar entre dois arranjos iniciais. Alterações livres recebem o estado **manual**.
-- Substituir uma imagem por outra do acervo; imagens já usadas são trocadas de posição, evitando duplicatas.
-- Salvar a sequência no `localStorage` deste navegador, sem conexão a servidores.
-- Copiar a ordem textual ou exportar uma prancha PNG 1200 × 1600 px com as nove imagens.
-- Escolher entre os SVGs oficiais para pré-visualizar um avatar e exportar PNG 1080 × 1080 px.
-- Explorar um carrossel demonstrativo de Aleteia e copiar seu roteiro editorial.
+O feed representa **um arquivo editorial acumulado no tempo**. Cada projeto ocupa uma temporada contínua de publicações. A ordem de exemplo **Fome Come → Poiesis → Aleteia** é apenas demonstrativa: não foi inferida da data das obras nem apresentada como histórico real do perfil. A grade exibe as publicações mais recentes primeiro, invertendo a sequência interna dos projetos, como a leitura do perfil.
 
-O capítulo não é agendador do Instagram, biblioteca remota editável nem substituto do Laboratório de Composição. As fontes tipográficas, o símbolo mestre, a matriz e o contrato editorial permanecem os da identidade oficial.
+O manual contém quatro **opções de enquadramento**, não quatro identidades novas:
+
+1. **Imagem integral**: fotografia sem intervenção; identificação na legenda.
+2. **Título sobre a imagem**: o tratamento Título existente, apenas em área com contraste suficiente. A simulação usa preto translúcido a 20%.
+3. **Imagem com respiro**: a fotografia é separada da área tipográfica por uma faixa clara editorial.
+4. **Recorte de detalhe**: imagem ampliada, com posição do foco controlável.
+
+Os mesmos princípios aplicam-se a fotografias, registros, processos e detalhes; não existe uma quantidade obrigatória de publicações por projeto.
+
+### Funcionalidade do estudo
+
+- Navegar entre temporadas, em ordem **mais antiga → mais recente**, alterando sua sequência como blocos, sem misturar projetos.
+- Acrescentar uma temporada do acervo, informar período somente quando conhecido, removê-la ou restaurar o estudo.
+- Editar as publicações **dentro** de cada temporada: papel editorial, enquadramento, mídia do projeto e foco (centro, superior, inferior, esquerda e direita).
+- Inserir ou remover publicações dentro do limite de fotos disponíveis no estudo. A capa, quando presente, permanece na abertura da temporada.
+- Visualizar o feed em ordem inversa, como o perfil: publicações recentes primeiro. Os separadores de temporada são apenas guias de edição.
+- Exportar a publicação selecionada em PNG 1080 × 1440 px, exportar o feed em PNG ou copiar o plano editorial com a sequência cronológica.
+- Salvar o estudo em `localStorage` do navegador, sem agendamento nem integração com Instagram.
+- Pré-visualizar os SVGs originais para avatar, exportar PNG 1080 × 1080 px, navegar um carrossel com registros do mesmo projeto.
+
+**Limites:** esta ferramenta é um estudo editorial local. Não utiliza a API do Instagram, não importa a ordem efetiva de publicações e não produz um calendário automático. A disponibilidade de fotos limita os exemplos; não são criadas imagens fictícias para preencher o feed.
+
+As fontes, a matriz vetorial, a geometria da identidade e os três tratamentos de texto permanecem normativos no restante do manual.

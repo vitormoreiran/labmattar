@@ -12,7 +12,7 @@ assert manifest["image"]["textContrast"]["veilColor"]=="#000000"
 assert manifest["image"]["textContrast"]["veilOpacity"]==0.2
 assert manifest["image"]["textContrast"]["otherwise"]=="no automatic veil"
 assert len(set(manifest["colors"]["palette"].values()))==5
-for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html"):
+for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","compor.html"):
  page=Path("public")/name
  assert page.exists(),f"Missing page: {page}"
  text=page.read_text(encoding="utf-8")
@@ -24,15 +24,18 @@ for name in ("manual.html","tipografia.html","cores.html","composicao.html","lab
 typography=(Path("public")/"manual-headings.css").read_text(encoding="utf-8")
 for font in ("univers-lt-std-45-light.otf","perpetua-titling-light.ttf"):
  assert typography.count(font)==1,f"Missing or duplicate official font in normative CSS: {font}"
-for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html"):
+for page in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","compor.html"):
  text=(Path("public")/page).read_text(encoding="utf-8")
  assert text.count('href="/manual-headings.css')==1,f"{page} must use one normative typography stylesheet"
  assert text.count('src="/manual-type-roles.js')==1,f"{page} must use one text role classifier"
  assert text.count('href="/manual-layout.css')==1,f"{page} must use one shared grid stylesheet"
  assert text.count('lm-manual-cover')==1,f"{page} must have exactly one canonical cover"
 construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
-composition=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
-assert 'id="contraste"' in construction and ("PRETO 20%" in construction or "20% DE PRETO" in construction)
+laboratory_index=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
+composition=(Path("public")/"compor.html").read_text(encoding="utf-8")
+assert 'href="/editor/"' in laboratory_index and 'href="/compor.html?studio=1#laboratorio"' in laboratory_index, "Laboratory index must present both official instruments"
+assert 'id="labArtboard"' not in laboratory_index, "The composition editor must not be embedded in the Laboratory index"
+assert 'id="contraste"' in construction and "PRETO" in construction and "20%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in construction and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition
@@ -98,6 +101,9 @@ assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
 assert "setFieldVisible" in lab_js and "selectPanel(activePanel)" in lab_js
 # Guidance is contextual; no instructions or numbered pseudo-steps clutter the UI.
 assert 'id="labOverviewHelp"' in composition
+assert 'id="labTourStudioHelp"' in composition, "The focused editor must expose Dúvidas"
+assert 'const tourSteps=[' in lab_js and 'tourNext.textContent' in lab_js, "Seven-step guided Laboratory help must exist"
+assert 'lm-case-facts' not in construction and 'lm-case-aside' not in construction, "Old static instruction columns must not return"
 assert '<strong>01 / Tipografia</strong>' not in composition
 for field in ("labFormat","labMargin","labTitleScale","labType","labBackground","labMContent",
               "labMPresentation","labMarker","labMScale","labFocalPreview","labSymbol"):

@@ -11,6 +11,8 @@ on:
       - 'scripts/smoke-symbols-browser.mjs'
       - 'design/composicao.html'
       - 'design/laboratorio.html'
+      - 'design/compor.html'
+      - 'public/laboratorio-index.css'
       - 'public/manual-composition-layout.css'
       - 'public/manual-layout.css'
       - 'design/manual-layout-contract.md'
@@ -60,7 +62,7 @@ jobs:
           npm ci --prefix tools/matriz-vetorial
           npm run build --prefix tools/matriz-vetorial
           node scripts/prepare-motion.mjs
-          for page in tipografia cores composicao laboratorio identidade inicio; do cp "design/$page.html" "public/$page.html"; done
+          for page in tipografia cores composicao laboratorio compor identidade inicio; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py
           python3 design/validate-identity.py
@@ -79,12 +81,12 @@ jobs:
       - name: Testar composicoes no navegador
         run: |
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
-          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-browser.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-laboratorio-export.mjs
-          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-signature-browser.mjs
-          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/laboratorio.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs

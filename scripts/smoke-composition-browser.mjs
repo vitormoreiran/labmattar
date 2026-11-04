@@ -1,6 +1,6 @@
 import {chromium} from "playwright";
 
-const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
+const url=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];
@@ -16,6 +16,17 @@ async function choose(group,value){
 try{
   await page.goto(url,{waitUntil:"load",timeout:60000});
   await page.evaluate(()=>document.fonts.ready);
+  const landing=await page.request.get(new URL("/laboratorio.html",url).href);
+  const landingHtml=await landing.text();
+  assert(landing.status()===200 &&
+    landingHtml.includes('href="/editor/"') &&
+    landingHtml.includes('href="/compor.html?studio=1#laboratorio"') &&
+    !landingHtml.includes('id="labArtboard"'),
+    "Laboratory must show two instrument previews without embedding Compor");
+  const standalone=await page.request.get(new URL("/compor.html",url).href);
+  assert(standalone.status()===200 &&
+    (await standalone.text()).includes('id="labAcervo"'),
+    "Compor must remain independent and preserve connected media library");
   const manual=await page.request.get(new URL("/composicao.html",url).href);
   assert(manual.status()===200,"Construction chapter must be available");
   const manualHtml=await manual.text();
@@ -116,7 +127,7 @@ try{
 
   const legacy=await browser.newPage();
   await legacy.goto(new URL("/composicao.html?studio=1#laboratorio",url).href,{waitUntil:"load",timeout:60000});
-  assert(new URL(legacy.url()).pathname==="/laboratorio.html",
+  assert(new URL(legacy.url()).pathname==="/compor.html",
     "Old composition editor links must reopen the independent Laboratory");
   assert(await legacy.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")),
     "Legacy editor links must retain focused mode");
@@ -127,6 +138,10 @@ try{
   await constructionPage.evaluate(()=>document.fonts.ready);
   assert(await constructionPage.locator('#caseFrame').count()===1,
     "Construction chapter must contain the original applied example");
+  assert(await constructionPage.locator('.lm-case-facts, .lm-case-aside').count()===0,
+    "Fixed construction explanations must move to Laboratory help");
+  assert(await constructionPage.locator('a[href="/compor.html?studio=1#laboratorio"]').count()===1,
+    "The demonstration must open the guided Laboratory help entrypoint");
   for(const step of ["campo","mascara","completa"]){
     await constructionPage.locator('[data-case-step="'+step+'"]').click();
     assert(await constructionPage.locator('#caseFrame').getAttribute("data-step")===step,
@@ -140,8 +155,8 @@ try{
   await constructionPage.locator('[data-case-view="estrutura"]').click();
   assert(await constructionPage.locator("#caseFrame").getAttribute("data-view")==="estrutura",
     "Structure mode must be a real preview state");
-  assert(await constructionPage.locator("#caseReadingMap").isVisible(),
-    "Structure mode must explain the four semantic reading fields");
+  assert(await constructionPage.locator("#caseReadingMap").count()===0,
+    "The structural preview keeps its overlays without a second explanatory column");
   const structural=await constructionPage.locator("#caseFrame").evaluate(frame=>({
     surface:getComputedStyle(frame).backgroundColor,
     titleOutline:getComputedStyle(frame.querySelector("h3")).outlineStyle,
@@ -154,14 +169,14 @@ try{
     "Contrast is irrelevant in the unphotographed structural diagram");
   await constructionPage.screenshot({path:"composition-structure-horizontal.png",fullPage:false});
   await constructionPage.locator('[data-case-view="resultado"]').click();
-  assert(await constructionPage.locator("#caseReadingMap").isHidden(),
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-view")==="resultado",
     "Result mode must show the clean composed page");
   await constructionPage.screenshot({path:"composition-manual-desktop.png",fullPage:true});
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
     "Construction must demonstrate responsive recomposition");
-  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("M como elemento"),
-    "The vertical example must explain the M in Elemento mode");
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="elemento",
+    "The vertical demonstration must retain the actual M in Elemento mode");
   assert(await constructionPage.locator(".lm-case-m-presentation").isVisible(),
     "Vertical mode must expose the two M appearances");
   const measureM=async()=>constructionPage.locator("#caseFrame").evaluate(frame=>{
@@ -181,8 +196,8 @@ try{
     "Completo must fit the full page height and bleed symmetrically beyond the sides: "+JSON.stringify(fullM));
   assert(Math.abs(fullM.mask.width/fullM.mask.height-990.08/743.18)<.005,
     "Completo must preserve the published M vector aspect: "+JSON.stringify(fullM));
-  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("M completo"),
-    "Sidebar must describe the complete vertical behavior");
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="completo",
+    "The vertical demo must retain the complete M without a redundant sidebar");
   await constructionPage.locator("#caseFrame").screenshot({path:"composition-vertical-m-completo.png"});
   await constructionPage.locator('[data-case-format="desktop"]').click();
   const horizontalFull=await measureM();

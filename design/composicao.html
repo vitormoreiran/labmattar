@@ -1,17 +1,17 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LABMATTAR — Sistema de composição</title><script>
 (()=>{const previous=new URL(location.href);
   if(previous.searchParams.get("studio")==="1"||previous.hash==="#laboratorio"){
-    previous.pathname="/laboratorio.html";
+    previous.pathname="/compor.html";
     location.replace(previous.pathname+previous.search+previous.hash);
   }
 })();
 </script><link rel="stylesheet" href="/manual-composition-layout.css"><link rel="stylesheet" href="/composicao-regras.css"><link rel="stylesheet" href="/composicao-lab.css"><style>
 /* Estudo aplicado: interface documental isolada, sem alterar regras existentes. */
 .lm-case{padding-block:clamp(75px,9vw,135px)}
-.lm-case-intro{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.65fr);gap:clamp(24px,4vw,80px);align-items:end}
+.lm-case-intro{display:block}
 .lm-case-intro h2{margin:15px 0 0;}
-.lm-case-intro p{max-width:45ch;margin:0}
-.lm-case-trace{margin-top:30px;border-top:1px solid var(--line);padding:16px 0 34px;display:flex;justify-content:space-between;gap:25px;flex-wrap:wrap}
+.lm-case-trace{margin-top:30px;border-top:1px solid var(--line);padding:16px 0 34px;display:flex;justify-content:space-between;gap:18px 28px;flex-wrap:wrap}
+.lm-case-trace a{color:inherit;text-underline-offset:4px;white-space:nowrap}
 .lm-case-controls{display:flex;align-items:center;gap:clamp(20px,4vw,55px);flex-wrap:wrap;padding:17px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
 .lm-case-control{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .lm-case-control>span{margin-right:6px}
@@ -19,7 +19,7 @@
 .lm-case-control button+button{margin-left:8px}
 .lm-case-control button[aria-pressed=true]{border-bottom-color:currentColor}
 .lm-case-control button:focus-visible{outline:2px solid currentColor;outline-offset:3px}
-.lm-case-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,270px);gap:clamp(20px,3vw,44px);margin-top:24px;align-items:start}
+.lm-case-layout{display:block;margin-top:24px}
 .lm-case-stage{min-width:0;min-height:595px;background:#e9e7e1;display:flex;align-items:center;justify-content:center;padding:clamp(12px,2.2vw,32px);border:1px solid var(--line)}
 .lm-case-frame{--lm-safe:clamp(18px,5.2cqw,68px);width:100%;max-width:1140px;aspect-ratio:16/9;background:#151914;color:#f7f6f2;container-type:size;position:relative;isolation:isolate;overflow:hidden;box-shadow:0 20px 45px #23282024;transition:width .25s}
 .lm-case-frame.is-mobile{width:min(100%,350px);aspect-ratio:9/16}
@@ -36,18 +36,7 @@
 .lm-case-frame[data-step=mascara] .lm-case-content{opacity:0}
 .lm-case-frame[data-step=campo] .lm-case-veil{opacity:0}
 /* Removed single safe-area overlay: functional fields are shown in Estrutura. */
-.lm-case-aside{border-top:1px solid var(--ink);padding-top:17px;min-width:0}
-.lm-case-aside .eyebrow{margin:0 0 25px}
-.lm-case-aside h3{margin:0 0 20px}
-.lm-case-aside p{margin:0 0 24px}
-.lm-case-aside .lm-case-number{display:block;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:18px}
-.lm-case-facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.3vw,32px);margin-top:65px}
-.lm-case-facts article{border-top:1px solid var(--ink);padding-top:13px}
-.lm-case-facts b{display:block;margin-bottom:22px}
-.lm-case-facts h3{margin:0 0 12px}
-.lm-case-facts p{margin:0}
 
-.lm-case-contrast-status{margin-top:24px!important;border-top:1px solid var(--line);padding-top:15px;}
 .lm-case-contrast{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(25px,5vw,85px);border-top:1px solid var(--ink);margin-top:clamp(65px,7vw,110px);padding-top:clamp(24px,3vw,42px)}
 .lm-case-contrast h3{margin:30px 0 0}
 .lm-case-contrast p:not(.eyebrow){margin:0 0 16px;max-width:64ch}
@@ -63,9 +52,9 @@
 .lm-case-validation p{max-width:55ch;margin:0 0 16px}
 .lm-case-validation ul{padding-left:18px;margin:15px 0 0;}
 .lm-case-validation li{margin:6px 0}
-@media(max-width:1000px){.lm-case-layout{grid-template-columns:1fr}.lm-case-stage{min-height:0}.lm-case-aside{display:grid;grid-template-columns:1fr 2fr;gap:25px}.lm-case-aside .eyebrow{grid-row:1/-1}.lm-case-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.lm-case-intro{grid-template-columns:1fr}.lm-case-stage{padding:8px}.lm-case-layout{gap:18px}.lm-case-aside{display:block}.lm-case-aside .eyebrow{margin-bottom:10px}.lm-case-frame:not(.is-mobile){--lm-safe:clamp(10px,5.2cqw,28px)}.lm-case-facts{margin-top:45px;gap:24px}.lm-case-validation{grid-template-columns:1fr;margin-top:45px}}
-@media(max-width:440px){.lm-case-facts{grid-template-columns:1fr}.lm-case-control{gap:8px}.lm-case-control button+button{margin-left:1px}.lm-case-frame.is-mobile{width:min(100%,305px)}}
+@media(max-width:1000px){.lm-case-stage{min-height:0}}
+@media(max-width:700px){.lm-case-stage{padding:8px}.lm-case-frame:not(.is-mobile){--lm-safe:clamp(10px,5.2cqw,28px)}.lm-case-validation{grid-template-columns:1fr;margin-top:45px}}
+@media(max-width:440px){.lm-case-control{gap:8px}.lm-case-control button+button{margin-left:1px}.lm-case-frame.is-mobile{width:min(100%,305px)}}
 @media(prefers-reduced-motion:reduce){.lm-case-frame{transition:none}}
 </style><link rel="stylesheet" href="/composicao-demo.css"><link rel="stylesheet" href="/manual-headings.css?v=20261102-normative"/>
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
@@ -80,15 +69,8 @@
       <p class="eyebrow">01 / CONSTRUÇÃO</p>
       <h2>CONSTRUÇÃO<br><em>DA PÁGINA</em></h2>
     </div>
-    <p>Quatro decisões organizam cada aplicação. A régua e a geometria são constantes; conteúdo e formato determinam as variações.</p>
   </div>
-  <div class="lm-case-facts lm-composition-vocabulary" aria-label="Etapas de construção da página">
-    <article><b>01 / SUPERFÍCIE</b><h3>Régua e margem</h3><p>Defina o formato e a área útil. Títulos, textos e detalhes partem do mesmo alinhamento.</p></article>
-    <article><b>02 / SÍMBOLO</b><h3>M no centro</h3><p>Posicione o M no eixo central. A escala pode variar; as proporções e a geometria, não.</p></article>
-    <article><b>03 / LEITURA</b><h3>Três tratamentos</h3><p>Organize o conteúdo apenas em Título, Corpo e Detalhe, dentro da área de leitura.</p></article>
-    <article><b>04 / IMAGEM</b><h3>Imagem e contraste</h3><p>Defina o enquadramento na superfície ou no M. Use preto 20% apenas quando houver texto sobre fotografia.</p></article>
-  </div>
-  <div class="lm-case-trace"><span><strong>EXEMPLO</strong> / CADA CORPO ABRE UM MUNDO</span><span><strong>DEMONSTRAÇÃO</strong> / CAMADAS E FORMATO</span></div>
+  <div class="lm-case-trace"><span><strong>EXEMPLO</strong> / CADA CORPO ABRE UM MUNDO</span><span><strong>DEMONSTRAÇÃO</strong> / CAMADAS E FORMATO</span><a href="/compor.html?studio=1#laboratorio" aria-label="Abrir ajuda e dúvidas na ferramenta de composição">DÚVIDAS NO COMPOR ↗</a></div>
   <div class="lm-case-controls" aria-label="Visualização das relações da página">
     <div class="lm-case-control" role="group" aria-label="Etapa da composição">
       <span>CAMADAS</span>
@@ -143,19 +125,6 @@
         </div>
       </div>
     </div>
-    <aside class="lm-case-aside" aria-live="polite">
-      <p class="eyebrow">COMO A PÁGINA É CONSTRUÍDA</p>
-      <span class="lm-case-number" id="caseStepNumber">03 / PÁGINA</span>
-      <h3 id="caseStepTitle">Uma estrutura, dois formatos.</h3>
-      <p id="caseStepBody">Identificação no alto, título e Corpo no núcleo de leitura, créditos no rodapé. O M mantém o eixo.</p>
-      <p class="lm-case-contrast-status" id="caseContrastNote">PRETO 20% / tratamento da fotografia no M.</p>
-      <dl class="lm-case-reading-map" id="caseReadingMap" hidden>
-        <div><dt>01 / DETALHE</dt><dd>Identificação no topo</dd></div>
-        <div><dt>02 / TÍTULO</dt><dd>Primeiro campo do núcleo de leitura</dd></div>
-        <div><dt>03 / CORPO</dt><dd>Texto vinculado ao título</dd></div>
-        <div><dt>04 / DETALHE</dt><dd>Créditos no rodapé</dd></div>
-      </dl>
-    </aside>
   </div>
 
   <div class="lm-case-contrast" id="contraste">
@@ -221,19 +190,7 @@
   "use strict";
   const frame=document.getElementById("caseFrame");
   if(!frame)return;
-  const aside={
-    number:document.getElementById("caseStepNumber"),
-    title:document.getElementById("caseStepTitle"),
-    body:document.getElementById("caseStepBody"),
-    note:document.getElementById("caseContrastNote"),
-    fields:document.getElementById("caseReadingMap")
-  };
   const state={step:"completa",format:"desktop",view:"resultado",contrast:"on",mPresentation:"elemento"};
-  const steps={
-    campo:["01 / CAMPO","O campo cria a atmosfera.","A fotografia desfocada forma a superfície. Texto e M ainda não aparecem."],
-    mascara:["02 / MÁSCARA","O M organiza a imagem.","O recorte usa o vetor publicado, preservando proporção e eixo. Sem texto, não há véu adicional."],
-    completa:["03 / PÁGINA","Uma estrutura, dois formatos.","Identificação no alto, núcleo de leitura no centro e créditos no rodapé."]
-  };
   function update(){
     const vertical=state.format==="mobile";
     const structure=state.view==="estrutura";
@@ -257,30 +214,6 @@
     const full=state.step==="completa";
     document.querySelectorAll("[data-case-view]").forEach(button=>{button.disabled=!full;});
     document.querySelectorAll("[data-case-contrast]").forEach(button=>{button.disabled=!full||structure;});
-    const base=steps[state.step];
-    aside.number.textContent=base[0];
-    aside.fields.hidden=!full||!structure;
-    if(full&&structure){
-      aside.title.textContent="Quatro campos, uma régua.";
-      aside.body.textContent="As linhas contornam os textos reais: identificação, título, Corpo e créditos. As posições mudam com o formato.";
-      aside.note.textContent="ESTRUTURA / sem fotografia, para observar a distribuição.";
-    }else if(full&&vertical){
-      aside.title.textContent="A leitura se recompõe no vertical.";
-      aside.body.textContent="Título e Corpo compartilham o núcleo central, sem deslocar os créditos. "+
-        (state.mPresentation==="completo"?
-          "M completo: ocupa toda a altura da superfície, com recorte conforme o formato e sem deformação.":
-          "M como elemento: aparece inteiro, alinhado ao eixo e com escala controlada.");
-      aside.note.textContent=state.contrast==="on"?
-        "CONTRASTE / preto 20% aplicado apenas à fotografia no M.":
-        "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
-    }else{
-      aside.title.textContent=base[1];
-      aside.body.textContent=base[2];
-      aside.note.textContent=!full?
-        "O contraste da imagem com texto é demonstrado na etapa 03 / Página.":
-        state.contrast==="on"?"CONTRASTE / preto 20% apenas na fotografia sob texto.":
-        "COMPARAÇÃO / fotografia sem o véu adicional de 20%.";
-    }
     frame.setAttribute("aria-label",(vertical?"Composição vertical":"Composição horizontal")+
       ", M "+state.mPresentation+
       (structure?", campos de identificação, título, Corpo e créditos":", imagem, M e leitura editorial"));

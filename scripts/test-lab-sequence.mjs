@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createPage,createMotion,motionBox,readSequence,sequenceDocument,movePage} from '../public/lab-sequence.mjs';
+import {createPage,createMotion,motionBox,readSequence,sequenceDocument,movePage,createSection,sectionState,hasSectionText} from '../public/lab-sequence.mjs';
 const photos={'64':'/ambiente-editorial/media/BOXDOSENTIR-64.jpg'};
 const state={format:'horizontal',color:'neutral',margin:7,guides:'nenhuma',marker:'none',markerFocus:'blur',
   textWidth:61,titleScale:100,type:'alternada',background:'color',mContent:'off',mPresentation:'elemento',photo:'64',
@@ -55,3 +55,6 @@ test('fotografia privada usa apenas referência estável, sem token ou host exte
   const host=clone(document);host.pages[0].composition.assets[1].uri='https://outro.example/image.jpg';
   assert.throws(()=>readSequence(host,photos,[asset]),/origem da fotografia/);
 });
+
+test('seções preservam fundo, páginas e conteúdo no JSON v2',()=>{const section=createSection('intro','Introdução',{...state,background:'photo'},photos);const p=createPage({id:'one',name:'Um',state:sectionState(state,section),photoCatalog:photos});p.sectionId=section.id;const doc=sequenceDocument('Seções',[p],[section]),loaded=readSequence(clone(doc),photos,[]);assert.deepEqual(sequenceDocument(loaded.name,loaded.pages,loaded.sections),doc);assert.equal(hasSectionText('intro',loaded.pages),true);const bad=clone(doc);bad.pages[0].sectionId='missing';assert.throws(()=>readSequence(bad,photos,[]),/seção da página/);const mismatch=clone(doc);mismatch.sections[0].background.focusX=20;assert.throws(()=>readSequence(mismatch,photos,[]),/diverge/);const unsafe=clone(doc);unsafe.sections[0].background.uri='https://outside.invalid/photo';assert.throws(()=>readSequence(unsafe,photos,[]));});
+test('recusa grupos intercalados e seções duplicadas sem alterar o original',()=>{const sections=['s1','s2'].map(id=>createSection(id,id,state,photos));const pages=['s1','s2','s1'].map((sectionId,index)=>({...page('p'+index),sectionId}));const doc=sequenceDocument('Ordem',pages,sections);assert.throws(()=>readSequence(doc,photos,[]),/ordem das seções/);const duplicate=sequenceDocument('Duplicado',[pages[0]],[sections[0],sections[0]]);assert.throws(()=>readSequence(duplicate,photos,[]),/seção repetido/);assert.equal(doc.pages[2].sectionId,'s1');});

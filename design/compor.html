@@ -42,8 +42,16 @@
       <section class="lab-delivery-options" aria-label="Configurar o arquivo final"><p class="detail lab-delivery-section-heading">ESCOLHA O ARQUIVO</p>
         <div class="lab-delivery-formats" role="group" aria-label="Formato de saída">
           <button type="button" data-delivery-format="pdf" aria-pressed="true"><span class="body">PDF</span><span class="detail">Apresentação completa · quadros estáticos</span></button>
-          <button type="button" data-delivery-format="html" aria-pressed="false"><span class="body">Site HTML</span><span class="detail">Apresentação completa · com animações</span></button>
+          <button type="button" data-delivery-format="html" aria-pressed="false"><span class="body">Site HTML</span><span class="detail">Prévia navegável · arquivo para o site</span></button>
           <button type="button" data-delivery-format="png" aria-pressed="false"><span class="body">Imagem PNG</span><span class="detail">Somente a página em edição</span></button>
+        </div>
+        <div id="labWebPublishing" class="lab-publication-note" hidden>
+          <p class="detail">APRESENTAÇÃO NO CAPÍTULO 4</p>
+          <p>O site usa os quatro cantos e os menus do Labmattar. O sumário acompanha as seções da sua apresentação.</p>
+          <ol><li>Monte as seções e páginas.</li><li>Confira a prévia com a interface final.</li><li>Depois da aprovação, publique com um endereço próprio no capítulo 4.</li></ol>
+          <p class="detail">ENDEREÇO PREVISTO</p><output id="labPublicationAddress"></output>
+          <p class="lab-publication-state">Publicação ainda não conectada. Baixar HTML salva o arquivo; não coloca a apresentação no ar.</p>
+          <p class="detail">No site, os quatro cantos são reservados à navegação. As assinaturas de cada página permanecem no PDF.</p>
         </div>
         <div class="lab-delivery-quality"><label class="detail" for="labExportSize">QUALIDADE DAS IMAGENS</label><select id="labExportSize" aria-label="Qualidade das imagens exportadas"><option value="3840">4K / maior definição</option><option value="1920">2K / arquivo mais leve</option></select><p class="detail">O formato de cada página é o escolhido na montagem. No PDF, textos e vetores permanecem nítidos.</p></div>
       </section>
@@ -56,8 +64,18 @@
         <section id="labPages" class="lab-pages lab-workflow-panel" hidden aria-label="Páginas da apresentação" data-ready="false">
           <div class="lab-pages-heading"><span>01 / MONTAR AS PÁGINAS</span><output id="labPageCount">1 / 1</output></div>
           
-          <p class="lab-workflow-helper">Adicione as páginas, edite cada composição e organize a ordem da apresentação.</p><select id="labPageSelect" hidden aria-hidden="true" tabindex="-1"><option value="0">01 / Página 1</option></select><div id="labPageList" class="lab-page-list" aria-label="Ordem das páginas"></div>
-          <label for="labPageName">Nome da página selecionada</label><input id="labPageName" maxlength="120" value="Página 1">
+          <p class="lab-workflow-helper">Organize as seções e suas páginas. Cada seção mantém um fundo durante a leitura.</p>
+          <div class="lab-section-start"><button type="button" id="labEnableSections">ORGANIZAR EM SEÇÕES</button><button type="button" id="labSectionDemo">ABRIR ENSAIO / 2 SEÇÕES</button><button type="button" id="labSectionRestore" hidden>VOLTAR AO PROJETO ANTERIOR</button></div>
+          <div id="labSectionTools" hidden>
+            <button type="button" id="labSectionAdd">+ NOVA SEÇÃO</button>
+            <details id="labSectionSettings"><summary id="labSectionSettingsTitle">FUNDO E AJUSTES DA SEÇÃO</summary><div>
+              <label for="labSectionName">Nome da seção atual</label><input id="labSectionName" maxlength="120">
+              <p id="labSectionBackgroundInfo" class="detail"></p><button id="labSectionEditBackground" type="button">EDITAR FUNDO COMPARTILHADO →</button>
+              <label for="labSectionTreatment">Tratamento do fundo</label><select id="labSectionTreatment"><option value="photo">Nítido</option><option value="blur">Desfocado</option></select>
+              <div class="lab-section-actions"><button id="labSectionEarlier" type="button">SUBIR SEÇÃO</button><button id="labSectionLater" type="button">DESCER SEÇÃO</button><button id="labSectionDelete" type="button">EXCLUIR SEÇÃO</button></div>
+            </div></details>
+          </div><select id="labPageSelect" hidden aria-hidden="true" tabindex="-1"><option value="0">01 / Página 1</option></select><div id="labPageList" class="lab-page-list" aria-label="Ordem das páginas"></div>
+          <div id="labPageSectionField" hidden><label for="labPageSection">Seção desta página / mover</label><select id="labPageSection"></select></div><label for="labPageName">Nome da página selecionada</label><input id="labPageName" maxlength="120" value="Página 1">
           <div class="lab-page-actions"><button type="button" id="labPageAdd">+ NOVA PÁGINA</button><button type="button" id="labPageDuplicate">DUPLICAR</button><button type="button" id="labPageEarlier" aria-label="Mover página para antes" title="Subir na sequência">↑</button><button type="button" id="labPageLater" aria-label="Mover página para depois" title="Descer na sequência">↓</button><button type="button" id="labPageDelete">EXCLUIR</button></div>
           <button id="labEditCurrentPage" class="lab-edit-current" type="button">EDITAR ESTA PÁGINA →</button>
           <button type="button" id="labReviewDelivery" class="lab-review-delivery">02 / REVISAR E EXPORTAR →</button>
@@ -87,7 +105,7 @@
           </div>
         </div>
         <dialog id="labMotionLibrary" aria-label="Acervo de motions da Matriz Vetorial"><header><span>ACERVO / MOTIONS DA MATRIZ</span><button id="labMotionClose" type="button" aria-label="Fechar acervo de motions">×</button></header><div id="labMotionLibraryItems"></div></dialog></section>
-<div id="labWorkflowContext" class="lab-workflow-context"></div>
+<div id="labWorkflowContext" class="lab-workflow-context"></div><p id="labSectionScope" class="lab-section-scope detail" hidden></p>
 <div class="lm-inspector-head"><span>FERRAMENTAS / COMPOSIÇÃO</span></div>
       <div class="lm-composition-module-index" aria-label="Partes da composição">
         <button type="button" data-mobile-module="superficie" aria-pressed="true">SUPERFÍCIE</button>
@@ -370,5 +388,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<link rel="stylesheet" href="/composicao-acervo.css"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs"></script>
+<link rel="stylesheet" href="/composicao-acervo.css"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs"></script>
 </body></html>

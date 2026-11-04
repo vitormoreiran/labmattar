@@ -1,3 +1,4 @@
+import {sectionWebDocument} from './lab-section-web.mjs';
 import {sceneSvg,escapeMarkup as esc} from './lab-scene.mjs';
 const bytesCache=new Map(),frameCache=new Map();
 export async function resource(path){
@@ -56,6 +57,7 @@ export function download(blob,name){
   setTimeout(()=>URL.revokeObjectURL(url),60000);
 }
 export async function webDocument(scenes,project,catalog,fonts){
+  if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes});
   const used=new Set(scenes.flatMap(scene=>scene.motions.map(motion=>motion.assetId))),videos={};
   for(const id of used){const asset=catalog.find(asset=>asset.id===id);videos[id]=base64(await motionBytes(asset));}
   const fontCss=`@font-face{font-family:UniversMattar;src:url(data:font/otf;base64,${base64(fonts.UniversMattar)});font-weight:300}@font-face{font-family:PerpetuaMattar;src:url(data:font/ttf;base64,${base64(fonts.PerpetuaMattar)});font-weight:300}`;

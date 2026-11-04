@@ -1,29 +1,33 @@
-import {createPage,createMotion,motionBox,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog} from './lab-sequence.mjs';
-import {verifyRoundTrip} from './composicao-document.mjs';
+import {createPage,createMotion,motionBox,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog,createSection,sectionState,hasSectionText} from './lab-sequence.mjs';
+import {createProductionDocument,verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs';
 const by=id=>document.getElementById(id),copy=value=>JSON.parse(JSON.stringify(value));
 const board=by('labArtboard'),bridge=()=>window.LabProductionBridge;
 const key='labmattar-pages-v1';
 const uid=prefix=>prefix+'-'+crypto.randomUUID();
 const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by('labPagesStatus').dataset.state=error?'error':'idle';by('labExportStatus').textContent=message;by('labExportStatus').dataset.state=error?'error':busy?'busy':'idle';};
-let pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=false,selectedMotion='';
+let sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=false,selectedMotion='';
 const panel=by('labPages');
 if(board&&panel){init().catch(error=>notify(error.message,true));}
 function nativePage(id=uid('page'),pageName='Página 1',motions=[]){
   const {state,photoCatalog}=bridge().snapshot();
-  return createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions});
+  const result=createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions});
+  if(sections)result.sectionId=pages[current]?.sectionId||sections[0].id;return result;
 }
 function commit(){
   if(switching||busy||!pages.length)return;
-  clearTimeout(timer);const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions);
-  try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages),current,enabled}));}
+  clearTimeout(timer);if(sections)syncSectionBackground();const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions);
+  try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages,sections),current,enabled}));}
   catch{notify('Salve o projeto JSON para guardar esta sequência.');}
-  renderPages();
+  renderPages();applySectionVisual();
 }
 let pageListKey='',deliveryFormat='pdf';
 function deliveryBusy(){return busy||Boolean(window.LabExportPNG?.isExporting?.());}
 function closeDelivery(){if(deliveryBusy())return;by('labDeliveryDialog').close();commit();}
 function renderDelivery(){
+  by('labWebPublishing').hidden=deliveryFormat!=='html';
+  const slug=name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,72)||'nova-apresentacao';
+  by('labPublicationAddress').textContent='labmattar.com/capitulo-4/'+slug+'/';
   const names={horizontal:'Horizontal / 16:9',vertical:'Vertical / 9:16',quadrado:'Quadrado / 1:1',editorial:'Editorial / √2:1'};
   const included=deliveryFormat==='png'?[{page:pages[current],index:current}]:pages.map((page,index)=>({page,index}));
   by('labDeliveryName').textContent=name;by('labDeliveryCount').textContent=included.length+' PÁGINA'+(included.length>1?'S':'');
@@ -61,10 +65,17 @@ function renderPages(){
   pages.forEach((page,index)=>select.add(new Option(String(index+1).padStart(2,'0')+' / '+page.name,String(index))));
   select.value=String(current);by('labPageName').value=pages[current].name;by('labSequenceName').value=name;
   by('labPageCount').textContent=`${current+1} / ${pages.length}`;
-  by('labWorkflowContext').textContent=`PÁGINA ${current+1} / ${pages[current].name}`;
-  const listKey=JSON.stringify(pages.map((page,index)=>[page.id,page.name,page.composition.pages[0].surface.format,index===current]));
+  by('labWorkflowContext').textContent=`${sections?sections.find(section=>section.id===pages[current].sectionId).name+' / ':''}${pages[current].name}`;
+  const listKey=JSON.stringify([sections,pages.map((page,index)=>[page.id,page.name,page.sectionId,page.composition.pages[0].surface.format,index===current])]);
   if(listKey!==pageListKey){
-    const list=by('labPageList');list.replaceChildren();
+    const list=by('labPageList');list.replaceChildren();const targets=new Map();
+    if(sections)for(const section of sections){
+      const group=document.createElement('section');group.className='lab-section-group';group.dataset.sectionId=section.id;
+      const header=document.createElement('div');header.className='lab-section-heading';
+      const caption=document.createElement('span');caption.textContent=section.name+' / '+pages.filter(page=>page.sectionId===section.id).length+' páginas';
+      const add=document.createElement('button');add.type='button';add.textContent='+ PÁGINA';add.dataset.addToSection=section.id;add.addEventListener('click',()=>addPageToSection(section.id).catch(error=>notify(error.message,true)));
+      header.append(caption,add);group.append(header);const entries=document.createElement('div');entries.className='lab-section-pages';group.append(entries);list.append(group);targets.set(section.id,entries);
+    }
     pages.forEach((page,index)=>{
       const button=document.createElement('button');button.type='button';button.dataset.pageId=page.id;button.dataset.pageIndex=String(index);
       button.setAttribute('aria-pressed',String(index===current));
@@ -72,12 +83,116 @@ function renderPages(){
       const caption=document.createElement('span'),name=document.createElement('span'),format=document.createElement('small');
       name.textContent=page.name;format.textContent=({horizontal:'16:9 / Horizontal',vertical:'9:16 / Vertical',quadrado:'1:1 / Quadrado',editorial:'Editorial'})[page.composition.pages[0].surface.format];
       caption.append(name,format);button.append(number,caption);
-      button.addEventListener('click',async()=>{try{await switchPage(index);by('labPageList').querySelector('[data-page-index="'+index+'"]')?.focus({preventScroll:true});}catch(error){notify(error.message,true);}});list.append(button);
+      button.addEventListener('click',async()=>{try{await switchPage(index);by('labPageList').querySelector('[data-page-index="'+index+'"]')?.focus({preventScroll:true});}catch(error){notify(error.message,true);}});(targets.get(page.sectionId)||list).append(button);
     });pageListKey=listKey;
   }
-  by('labPageEarlier').disabled=current===0;by('labPageLater').disabled=current===pages.length-1;
+  by('labPageEarlier').disabled=current===0||Boolean(sections&&pages[current-1]?.sectionId!==pages[current].sectionId);by('labPageLater').disabled=current===pages.length-1||Boolean(sections&&pages[current+1]?.sectionId!==pages[current].sectionId);
+  renderSectionControls();
   by('labPageDelete').disabled=pages.length===1;
 }
+
+function currentSection(){return sections?.find(section=>section.id===pages[current]?.sectionId)||null;}
+function currentSectionBackground(){
+  const section=currentSection();return section?{...copy(section.background),id:section.id,hasText:hasSectionText(section.id,pages)}:null;
+}
+function applySectionVisual(){
+  const background=currentSectionBackground();
+  if(!background){delete board.dataset.sectionActive;delete board.dataset.sectionPhotoText;by('labSectionScope').hidden=true;return;}
+  board.dataset.sectionActive='true';board.dataset.sectionPhotoText=String(background.mode==='photo'&&background.hasText);
+  board.dataset.backdrop=background.mode==='color'?'color':background.treatment;
+  by('labSectionScope').hidden=false;by('labSectionScope').textContent='Fundo da seção '+currentSection().name+' / compartilhado por '+pages.filter(page=>page.sectionId===background.id).length+' páginas.';
+}
+function syncSectionBackground(){
+  const section=currentSection();if(!section)return;
+  const snapshot=bridge().snapshot(),candidate=createSection(section.id,section.name,snapshot.state,snapshot.photoCatalog).background;
+  candidate.treatment=section.background.treatment;
+  if(candidate.mode==='photo'&&(snapshot.state.mContent==='photo'||pages.some((page,index)=>index!==current&&page.sectionId===section.id&&page.composition.pages[0].m.content==='photo')))candidate.treatment='blur';
+  const changed=JSON.stringify(candidate)!==JSON.stringify(section.background);section.background=candidate;
+  const expected=sectionState(snapshot.state,section);
+  if(['background','color','photo','focusX','focusY','mContent'].some(key=>snapshot.state[key]!==expected[key])){
+    const previous=switching;switching=true;try{bridge().restore(expected);}finally{switching=previous;}
+  }
+  if(changed)for(let index=0;index<pages.length;index++){
+    if(index===current||pages[index].sectionId!==section.id)continue;
+    const state=verifyRoundTrip(pages[index].composition,snapshot.photoCatalog);
+    pages[index].composition=createProductionDocument({state:sectionState(state,section),photoCatalog:snapshot.photoCatalog,maxEdge:pages[index].composition.output.maxEdge});
+  }
+}
+function renderSectionControls(){
+  const section=currentSection();by('labEnableSections').hidden=Boolean(sections);by('labSectionTools').hidden=!sections;by('labPageSectionField').hidden=!sections;
+  try{by('labSectionRestore').hidden=!localStorage.getItem(key+'-before-section-demo');}catch{by('labSectionRestore').hidden=true;}
+  if(!section)return;
+  by('labSectionName').value=section.name;by('labSectionSettingsTitle').textContent='FUNDO E AJUSTES / '+section.name;
+  by('labSectionBackgroundInfo').textContent=section.background.mode==='photo'?'Fotografia compartilhada / '+(section.background.treatment==='blur'?'desfocada':'nítida'):'Cor compartilhada / '+section.background.color;
+  by('labSectionTreatment').value=section.background.treatment;
+  by('labSectionTreatment').disabled=section.background.mode==='color'||pages.some(page=>page.sectionId===section.id&&page.composition.pages[0].m.content==='photo');
+  const index=sections.indexOf(section);by('labSectionEarlier').disabled=index===0;by('labSectionLater').disabled=index===sections.length-1;
+  by('labSectionDelete').disabled=sections.length===1||pages.every(page=>page.sectionId===section.id);
+  const select=by('labPageSection');select.replaceChildren();for(const item of sections)select.add(new Option(item.name,item.id));select.value=section.id;
+}
+function sortSectionPages(){const id=pages[current]?.id;pages.sort((a,b)=>sections.findIndex(section=>section.id===a.sectionId)-sections.findIndex(section=>section.id===b.sectionId));current=pages.findIndex(page=>page.id===id);}
+function blankPage(state,photoCatalog,sectionId){
+  const value={...copy(state),title:'NOVA\nPÁGINA',body:'',bodyMode:'oculto'};
+  const page=createPage({id:uid('page'),name:'Página '+(pages.length+1),state:value,photoCatalog,maxEdge:Number(by('labExportSize').value)});page.sectionId=sectionId;return page;
+}
+async function addPageToSection(sectionId){
+  if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}
+  commit();const section=sections.find(section=>section.id===sectionId),snapshot=bridge().snapshot();
+  const page=blankPage(sectionState(snapshot.state,section),snapshot.photoCatalog,sectionId);pages.push(page);sortSectionPages();
+  enabled=true;await switchPage(pages.findIndex(item=>item.id===page.id),{capture:false});
+}
+async function moveCurrentPageToSection(sectionId){
+  const target=sections.find(section=>section.id===sectionId);if(!target||target===currentSection())return;
+  commit();const id=pages[current].id,snapshot=bridge().snapshot();
+  pages[current].composition=createProductionDocument({state:sectionState(snapshot.state,target),photoCatalog:snapshot.photoCatalog,maxEdge:Number(by('labExportSize').value)});pages[current].sectionId=sectionId;
+  sortSectionPages();await switchPage(pages.findIndex(page=>page.id===id),{capture:false});
+}
+function enableSections(){
+  if(sections)return;commit();const snapshot=bridge().snapshot();
+  const next=pages.map((page,index)=>{const state=verifyRoundTrip(page.composition,snapshot.photoCatalog),section=createSection(uid('section'),index===0?'Introdução':'Seção '+(index+1),state,snapshot.photoCatalog);page.sectionId=section.id;page.composition=createProductionDocument({state:sectionState(state,section),photoCatalog:snapshot.photoCatalog,maxEdge:page.composition.output.maxEdge});return section;});
+  sections=next;enabled=true;commit();notify('Seções ativadas. As páginas existentes conservaram seus fundos. Use Seção desta página para agrupar.');
+}
+function confirmSectionAction(message,label='CONTINUAR'){
+  return new Promise(resolve=>{
+    const dialog=document.createElement('dialog');dialog.className='lab-section-confirm';dialog.setAttribute('aria-label','Confirmar alteração da apresentação');
+    const text=document.createElement('p');text.textContent=message;
+    const actions=document.createElement('div'),cancel=document.createElement('button'),accept=document.createElement('button');cancel.textContent='CANCELAR';accept.textContent=label;accept.dataset.sectionConfirm='true';
+    const finish=value=>{dialog.close();dialog.remove();resolve(value);};cancel.onclick=()=>finish(false);accept.onclick=()=>finish(true);dialog.addEventListener('cancel',event=>{event.preventDefault();finish(false);});actions.append(cancel,accept);dialog.append(text,actions);document.body.append(dialog);dialog.showModal();cancel.focus();
+  });
+}
+async function sectionDemo(){
+  if(!await confirmSectionAction('Abrir o ensaio com duas seções e seis páginas? Uma cópia do projeto atual será guardada neste navegador para restaurar depois.','ABRIR ENSAIO'))return;
+  commit();if(!localStorage.getItem(key+'-before-section-demo'))localStorage.setItem(key+'-before-section-demo',JSON.stringify(sequenceDocument(name,pages,sections)));
+  const snapshot=bridge().snapshot(),nextSections=[],nextPages=[];
+  const titles=['UM INÍCIO\nEM COMUM','O QUE NOS\nAPROXIMA','UMA IDEIA\nEM MOVIMENTO','O PROJETO\nGANHA FORMA','CONTEÚDO\nEM SEQUÊNCIA','UM NOVO\nPERCURSO'];
+  const bodies=['Uma imagem permanece enquanto a narrativa avança.','Role para percorrer as páginas desta seção.','O mesmo fundo reúne momentos diferentes de leitura.','Uma nova seção traz outra imagem e outro conjunto de páginas.','Os textos usam a entrada do sistema de identidade.','Ao voltar a rolagem, você revisita o conteúdo com a mesma organização.'];
+  const names=['Abertura','Contexto','Proposta','Conceito','Desenvolvimento','Encerramento'];
+  for(let group=0;group<2;group++){
+    const state={...copy(snapshot.state),format:'horizontal',background:'photo',photo:group===0?'64':'179',mContent:'off',marker:'none',focusX:50,focusY:50,guides:'nenhuma',type:'alternada',titleScale:85,textWidth:65,margin:7,
+      signature:{preset:'editorial',scale:100,slots:{tl:{kind:'text',text:'LABMATTAR / ENSAIO',symbol:'M.svg'},tr:{kind:'symbol',text:'',symbol:'vaso_03.svg'},bl:{kind:'text',text:'APRESENTAÇÃO POR SEÇÕES',symbol:'M.svg'},br:{kind:'text',text:'2026',symbol:'M.svg'}}}};
+    const section=createSection(uid('section'),group===0?'Introdução':'O projeto',state,snapshot.photoCatalog);nextSections.push(section);
+    for(let n=0;n<3;n++){const index=group*3+n;const page=createPage({id:uid('page'),name:names[index],state:{...state,title:titles[index],body:bodies[index],bodyMode:'visivel'},photoCatalog:snapshot.photoCatalog,maxEdge:1920});page.sectionId=section.id;nextPages.push(page);}
+  }
+  await load(sequenceDocument('Ensaio / apresentação por seções',nextPages,nextSections));setWorkspaceView('pages');notify('Ensaio aberto. Use Revisar e exportar → Site HTML ou Ver apresentação para percorrer as seções.');
+}
+function initSections(){
+  const handle=action=>()=>Promise.resolve().then(action).catch(error=>notify(error.message,true));
+  by('labEnableSections').addEventListener('click',handle(enableSections));
+  by('labSectionDemo').addEventListener('click',handle(sectionDemo));
+  by('labSectionRestore').addEventListener('click',handle(async()=>{const previous=localStorage.getItem(key+'-before-section-demo');if(!previous||!await confirmSectionAction('Restaurar o projeto anterior ao ensaio? Salve o ensaio como projeto antes, se quiser guardá-lo.','RESTAURAR PROJETO'))return;await load(JSON.parse(previous));localStorage.removeItem(key+'-before-section-demo');renderSectionControls();}));
+  by('labSectionAdd').addEventListener('click',handle(async()=>{
+    if(sections.length>=30||pages.length>=100){notify('Limite de seções ou páginas atingido.',true);return;}
+    commit();const snapshot=bridge().snapshot(),section=createSection(uid('section'),'Seção '+(sections.length+1),snapshot.state,snapshot.photoCatalog);
+    sections.splice(sections.indexOf(currentSection())+1,0,section);const page=blankPage(sectionState(snapshot.state,section),snapshot.photoCatalog,section.id);pages.push(page);sortSectionPages();await switchPage(pages.findIndex(item=>item.id===page.id),{capture:false});
+  }));
+  by('labSectionName').addEventListener('change',event=>{currentSection().name=event.target.value.trim().slice(0,120)||'Seção';commit();});
+  by('labSectionTreatment').addEventListener('change',event=>{currentSection().background.treatment=event.target.value;commit();});
+  by('labSectionEditBackground').addEventListener('click',()=>{setWorkspaceView('edit');by('laboratorio').querySelector('button[data-mobile-module=fundo]').click();});
+  by('labPageSection').addEventListener('change',event=>{const id=event.target.value;handle(()=>moveCurrentPageToSection(id))();});
+  for(const [id,delta] of [['labSectionEarlier',-1],['labSectionLater',1]])by(id).addEventListener('click',()=>{commit();const section=currentSection(),from=sections.indexOf(section),to=from+delta;if(to<0||to>=sections.length)return;sections.splice(from,1);sections.splice(to,0,section);sortSectionPages();commit();});
+  by('labSectionDelete').addEventListener('click',handle(async()=>{const section=currentSection();if(sections.length<2||pages.every(page=>page.sectionId===section.id)||!await confirmSectionAction('Excluir a seção '+section.name+' e suas páginas?','EXCLUIR SEÇÃO'))return;pages=pages.filter(page=>page.sectionId!==section.id);sections=sections.filter(item=>item!==section);current=0;await switchPage(0,{capture:false});}));
+}
+
 function registerPhotos(photoCatalog){
   const known=bridge().snapshot().photoCatalog;
   for(const [photoKey,original] of Object.entries(photoCatalog)){
@@ -99,7 +214,7 @@ async function switchPage(index,{capture=true}={}){
     const photoCatalog=privatePhotoCatalog(pages[current].composition,base);registerPhotos(photoCatalog);
     bridge().restore(verifyRoundTrip(pages[current].composition,photoCatalog));
     by('labExportSize').value=String(pages[current].composition.output.maxEdge);
-    await settled();selectedMotion=pages[current].motions[0]?.id||'';renderMotions();renderPages();
+    await settled();applySectionVisual();selectedMotion=pages[current].motions[0]?.id||'';renderMotions();renderPages();
   }finally{switching=false;commit();}
 }
 function renderMotions(){
@@ -163,14 +278,14 @@ function openLibrary(){
 async function load(document){
   const validated=readSequence(document,bridge().snapshot().photoCatalog,catalog);
   switching=true;
-  try{registerPhotos(validated.photoCatalog);pages=validated.pages.map(({state,...page})=>page);name=validated.name;current=0;enabled=true;}
+  try{registerPhotos(validated.photoCatalog);sections=validated.sections||null;pages=validated.pages.map(({state,...page})=>page);name=validated.name;current=0;enabled=true;}
   finally{switching=false;}
   await switchPage(0,{capture:false});
 }
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);
   switching=true;
-  try{registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[]}];current=0;enabled=false;}
+  try{sections=null;registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[]}];current=0;enabled=false;}
   finally{switching=false;}
   await switchPage(0,{capture:false});
 }
@@ -186,7 +301,7 @@ async function captureMotions(width,height){
 async function exportSequence(type){
   if(deliveryBusy())return;
   let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
-  commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages);
+  commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);
   const active=pages[current];busy=true;switching=true;panel.setAttribute('aria-busy','true');
   const lab=by('laboratorio'),previousInert=lab.inert;lab.inert=true;
@@ -196,7 +311,7 @@ async function exportSequence(type){
       current=index;notify(`Renderizando página ${index+1} de ${pages.length}…`);
       const photoCatalog=privatePhotoCatalog(pages[index].composition,bridge().snapshot().photoCatalog);
       registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[index].composition,photoCatalog));
-      await settled();renderMotions();
+      await settled();applySectionVisual();renderMotions();
       const scene=await window.LabRenderer.capture({edge:Number(by('labExportSize').value),ask:false});
       scene.id=pages[index].id;scene.name=pages[index].name;scene.documentName=name;scene.motions=copy(pages[index].motions);scenes.push(scene);
     }
@@ -229,22 +344,25 @@ async function init(){
   catalog=manifest.items;
   if(!catalog.length||catalog.some(asset=>!asset.video||!asset.sha256||!(asset.width>0)||!(asset.height>0)))throw Error('Catálogo Motion incompleto.');
   pages=[nativePage()];
-  window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,
+  window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages,sections);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
-    hasSequence:()=>enabled||pages.length>1||pages.some(page=>page.motions.length),
+    hasSequence:()=>Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length),
+    sectionBackground:currentSectionBackground,applySectionVisual,
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');
     if(saved){const result=readSequence(saved.document,bridge().snapshot().photoCatalog,catalog);
-      switching=true;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
+      switching=true;sections=result.sections||null;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
       bridge().restore(result.pages[current].state);switching=false;await settled();}
   }catch{switching=false;let recovered=false;try{localStorage.setItem(key+'-recovery',localStorage.getItem(key)||'');recovered=true;}catch{}notify('O rascunho anterior não pôde ser reaberto.'+(recovered?' Uma cópia de recuperação foi preservada neste navegador.':' Abra seu projeto JSON para recuperar a sequência.'),true);}
+  initSections();
   initDelivery();
-  setWorkspaceView('edit');
+  const initialView=new URLSearchParams(location.search).get('workspace');
+  setWorkspaceView(['pages','edit','motion'].includes(initialView)?initialView:'edit');
   for(const button of document.querySelectorAll('button[data-workspace-view]'))button.addEventListener('click',()=>setWorkspaceView(button.dataset.workspaceView));
   by('labEditCurrentPage').addEventListener('click',()=>{setWorkspaceView('edit');by('laboratorio').querySelector('button[data-mobile-module=superficie]').click();});
-  renderPages();renderMotions();
+  renderPages();applySectionVisual();renderMotions();
   window.addEventListener('labmattar:composition-change',()=>{if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}});
   by('labPageSelect').addEventListener('change',event=>switchPage(Number(event.target.value)).catch(error=>notify(error.message,true)));
   by('labSequenceName').addEventListener('change',event=>{name=event.target.value.slice(0,120);enabled=true;commit();});
@@ -253,14 +371,14 @@ async function init(){
     if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}
     commit();const snapshot=bridge().snapshot(),state=copy(snapshot.state);state.title='NOVA\nPÁGINA';state.body='';state.bodyMode='oculto';
     const page=createPage({id:uid('page'),name:'Página '+(pages.length+1),state,photoCatalog:snapshot.photoCatalog,maxEdge:Number(by('labExportSize').value)});
-    pages.splice(current+1,0,page);enabled=true;await switchPage(current+1);
+    if(sections)page.sectionId=pages[current].sectionId;pages.splice(current+1,0,page);enabled=true;await switchPage(current+1);
   });
   by('labPageDuplicate').addEventListener('click',async()=>{
     if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}
     commit();const duplicate=copy(pages[current]);duplicate.id=uid('page');duplicate.name=(duplicate.name+' / cópia').slice(0,120);
     duplicate.motions.forEach(motion=>{motion.id=uid('motion');});pages.splice(current+1,0,duplicate);enabled=true;await switchPage(current+1);
   });
-  for(const [id,delta] of [['labPageEarlier',-1],['labPageLater',1]])by(id).addEventListener('click',()=>{commit();current=movePage(pages,current,delta);enabled=true;renderPages();commit();});
+  for(const [id,delta] of [['labPageEarlier',-1],['labPageLater',1]])by(id).addEventListener('click',()=>{if(sections&&pages[current+delta]?.sectionId!==pages[current].sectionId)return;commit();current=movePage(pages,current,delta);enabled=true;renderPages();commit();});
   by('labPageDelete').addEventListener('click',async()=>{
     if(pages.length<2||!confirm('Excluir esta página da sequência?'))return;
     const index=current;pages.splice(index,1);current=Math.min(index,pages.length-1);switching=true;

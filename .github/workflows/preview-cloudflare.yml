@@ -123,7 +123,7 @@ jobs:
       - name: Validar seguranca do acervo
         run: node scripts/test-acervo.mjs
       - name: Validar contratos de páginas e elementos
-        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs
+        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar inspeção do PDF
         run: |
           python3 -m pip install --quiet pypdf==6.10.0
@@ -138,6 +138,7 @@ jobs:
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-sections.mjs
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
           COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
           EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs

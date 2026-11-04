@@ -39,120 +39,79 @@ try{
 
   await choose("background","photo");
   await choose("mContent","photo");
-  let state=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,mContent:el.dataset.mContent,
-    photo:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
-    m:getComputedStyle(el.querySelector("#labMask")).display,
-    mx:getComputedStyle(el).getPropertyValue("--lab-m-x").trim(),
-    veil:getComputedStyle(el.querySelector(".lm-lab-photo-contrast")).opacity
-  }));
-  assert(state.background==="photo"&&state.mContent==="photo",
-    "Background photo and photographic M must combine independently");
-  assert(state.photo!=="none"&&state.m!=="none"&&state.mx==="50%",
-    "Background and central M must render together");
-  assert(state.veil==="1","Text over background photography must keep the 20% contrast layer");
-
-  const scale=await page.locator("#labMScale").inputValue();
   await choose("marker","both");
-  assert(await page.locator("#labMScale").inputValue()===scale,
-    "Markers must not modify M scale");
-  assert(await page.locator("#labMMarkers").getAttribute("data-marker")==="both",
-    "M-tip markers must reach the canvas");
+  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),
+    "M sólido não pode aparecer nas composições de fotografia");
+  assert(await page.locator("#labMContent option[value=solid]").isDisabled(),
+    "O valor sólido não pode ser selecionado por controles nativos");
+  const photograph=async()=>page.locator("#labArtboard").evaluate(board=>{
+    const ambient=board.querySelector("#labAmbientPhoto");
+    const overlay=board.querySelector("#labMarkerPhotoLayer");
+    const marker=board.querySelector("#labMarkerPhoto");
+    const shape=board.querySelector(".lm-lab-m-marker-top");
+    return {background:board.dataset.background,backdrop:board.dataset.backdrop,
+      content:board.dataset.mContent,focus:board.dataset.markerFocus,
+      marked:board.dataset.markerBlur,source:ambient.getAttribute("src"),
+      overlaySource:marker.getAttribute("src"),
+      ambientFilter:getComputedStyle(ambient).filter,
+      overlayFilter:getComputedStyle(marker).filter,
+      overlayDisplay:getComputedStyle(overlay).display,
+      colorMarkerVisible:getComputedStyle(board.querySelector("#labMMarkers")).visibility,
+      mask:getComputedStyle(overlay).webkitMaskImage||getComputedStyle(overlay).maskImage,
+      vector:shape.querySelector("path").getAttribute("d"),
+      focused:getComputedStyle(ambient).objectPosition===getComputedStyle(marker).objectPosition};
+  });
+  let photo=await photograph();
+  assert(photo.background==="photo"&&photo.backdrop==="photo"&&photo.content==="photo"&&
+         photo.marked==="true"&&photo.focus==="blur"&&
+         photo.overlayDisplay!=="none"&&photo.overlayFilter.includes("blur(")&&
+         !photo.ambientFilter.includes("blur(")&&photo.colorMarkerVisible==="hidden"&&
+         photo.mask.includes("data:image/svg")&&photo.source===photo.overlaySource&&photo.focused,
+    "O marcador deve recortar blur sobre a mesma fotografia nítida: "+JSON.stringify(photo));
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-marcadores-blur-foto.png"});
 
-  await choose("mContent","solid");
-  state=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,mContent:el.dataset.mContent,
-    m:getComputedStyle(el.querySelector("#labMask")).display,
-    mImage:getComputedStyle(el.querySelector("#labMaskPhoto")).display
-  }));
-  assert(state.background==="photo"&&state.mContent==="solid"&&state.m!=="none"&&state.mImage==="none",
-    "A solid M must coexist with a photographic background");
+  await choose("markerFocus","sharp");
+  photo=await photograph();
+  assert(photo.backdrop==="blur"&&photo.focus==="sharp"&&photo.ambientFilter.includes("blur(")&&
+         !photo.overlayFilter.includes("blur(")&&photo.source===photo.overlaySource,
+    "A inversão deve manter os marcadores nítidos e o restante desfocado: "+JSON.stringify(photo));
+  await page.locator("#labArtboard").screenshot({path:"laboratorio-marcadores-nitidos-foto.png"});
+
+  for(const which of ["top","bottom","both"]){
+    await choose("marker",which);
+    const mask=await page.locator("#labMarkerPhotoLayer").evaluate(el=>getComputedStyle(el).webkitMaskImage);
+    assert(mask.includes("data:image/svg"),"Cada marcador deve usar máscara vetorial real: "+which);
+  }
+  await choose("marker","none");
+  photo=await photograph();
+  assert(photo.marked==="false"&&photo.overlayDisplay==="none"&&photo.backdrop==="blur",
+    "Desativar marcadores restaura M fotográfico nítido sobre fundo desfocado");
 
   await choose("background","color");
-  await choose("mContent","photo");
-  state=await page.locator("#labArtboard").evaluate(el=>({
-    background:el.dataset.background,mContent:el.dataset.mContent,markerBlur:el.dataset.markerBlur,
-    photo:getComputedStyle(el.querySelector(".lm-lab-photo-layer")).display,
-    m:getComputedStyle(el.querySelector("#labMask")).display,
-    mImage:getComputedStyle(el.querySelector("#labMaskPhoto")).display
-  }));
-  assert(state.background==="photo"&&state.markerBlur==="true"&&state.mImage!=="none",
-    "Active M-tip markers preserve the blurred photographic background");
-  // The lower layer is a blurred rendition of the selected photograph in
-  // EVERY composition containing M or M markers, even if Cor was selected.
-  const backdrop=async()=>page.locator("#labArtboard").evaluate(el=>{
-    const ambient=el.querySelector(".lm-lab-photo-ambient");
-    const mask=el.querySelector("#labMaskPhoto");
-    const layer=el.querySelector(".lm-lab-photo-layer");
-    return {
-      requested:el.dataset.backgroundRequested,background:el.dataset.background,
-      backdrop:el.dataset.backdrop,markerBlur:el.dataset.markerBlur,
-      layer:getComputedStyle(layer).display,display:getComputedStyle(ambient).display,
-      opacity:getComputedStyle(ambient).opacity,filter:getComputedStyle(ambient).filter,
-      src:ambient.getAttribute("src"),maskSrc:mask.getAttribute("src"),
-      loaded:ambient.complete&&ambient.naturalWidth>0,
-      focus:getComputedStyle(ambient).objectPosition,
-      m:getComputedStyle(el.querySelector("#labMask")).display,
-      mImage:getComputedStyle(mask).display
-    };
-  });
-  const assertBlur=async(label)=>{
-    const b=await backdrop();
-    assert(b.backdrop==="blur"&&b.background==="photo"&&b.layer!=="none"&&
-           b.display!=="none"&&b.opacity==="1"&&b.loaded&&b.filter.includes("blur("),
-      label+": lower layer must contain a LOADED blurred photograph: "+JSON.stringify(b));
-    return b;
-  };
-  let blurred=await assertBlur("M with both markers over color");
-  assert(blurred.requested==="color"&&blurred.src===blurred.maskSrc,
-    "Both layers must use exactly the same selected photograph");
-
-  await choose("marker","none");
-  blurred=await assertBlur("M without markers, color requested");
-  assert(blurred.markerBlur==="false"&&blurred.m!=="none"&&blurred.mImage!=="none"&&
-         await page.locator("#labMask").isVisible(),
-    "Disabling markers must NOT hide blur while a photographic M remains");
-  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-m.png"});
-
+  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
+    "M sólido deve retornar nas composições de cor");
   await choose("mContent","solid");
-  blurred=await assertBlur("solid M");
-  assert(blurred.m!=="none"&&blurred.mImage==="none",
-    "Solid M still preserves its blurred photograph below");
-  await choose("mContent","photo");
-  await choose("marker","top");
-  blurred=await assertBlur("top marker");
-  assert(blurred.markerBlur==="true",
-    "Top marker must activate photo blur");
-  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-marcador.png"});
-  await choose("marker","bottom");
-  await assertBlur("bottom marker");
-  await choose("marker","both");
-  await assertBlur("both markers");
-  await choose("marker","none");
+  const color=await page.locator("#labArtboard").evaluate(board=>({
+    effective:board.dataset.background,content:board.dataset.mContent,
+    photo:getComputedStyle(board.querySelector(".lm-lab-photo-layer")).display
+  }));
+  assert(color.effective==="color"&&color.content==="solid"&&color.photo==="none",
+    "Composição de cor permite M sólido sem introduzir fotografia");
 
-  await choose("photo","179");
-  blurred=await assertBlur("updated selected photograph");
-  assert(blurred.src?.includes("179")&&blurred.src===blurred.maskSrc,
-    "Changing the photo must update both blurred background and the M immediately");
-
-  await choose("mContent","off");
-  let restored=await backdrop();
-  assert(restored.backdrop==="color"&&restored.requested==="color"&&restored.layer==="none"&&
-         restored.display==="none"&&restored.m==="none",
-    "Only with M and markers off should the chosen plain color return: "+JSON.stringify(restored));
-  await choose("marker","top");
-  blurred=await assertBlur("marker without a central M");
-  assert(blurred.m==="none"&&blurred.markerBlur==="true",
-    "The marker alone must produce the same blurred photograph underneath");
-  await choose("marker","none");
-  restored=await backdrop();
-  assert(restored.backdrop==="color"&&restored.layer==="none",
-    "Turning the final marker off restores the saved color background");
+  // A project saved under the obsolete photo + solid combination is normalized.
   await choose("background","photo");
-  restored=await backdrop();
-  assert(restored.backdrop==="photo"&&restored.layer!=="none"&&
-         restored.display!=="none"&&!restored.filter.includes("blur("),
-    "Without M or markers a chosen photograph is not forcibly blurred");
+  assert((await page.locator("#labArtboard").getAttribute("data-m-content"))==="photo",
+    "Trocar para fotografia deve substituir M sólido por M fotográfico");
+  await choose("marker","top");
+  await choose("mContent","off");
+  photo=await photograph();
+  assert(photo.background==="photo"&&photo.marked==="true"&&photo.overlayDisplay!=="none",
+    "Marcadores sem M central também precisam recortar a fotografia");
+  await choose("marker","none");
+  photo=await photograph();
+  assert(photo.backdrop==="photo"&&photo.overlayDisplay==="none"&&
+         !photo.ambientFilter.includes("blur("),
+    "Sem M e sem marcadores, a fotografia deve ser nítida");
 
   const legacy=await browser.newPage();
   await legacy.goto(new URL("/composicao.html?studio=1#laboratorio",url).href,{waitUntil:"load",timeout:60000});

@@ -1,351 +1,168 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="LABMATTAR / identidade, edição e produção editorial para redes sociais.">
-<title>LABMATTAR — Redes Sociais</title>
+<meta name="description" content="Manual LABMATTAR — critérios de aplicação editorial nas redes sociais.">
+<title>LABMATTAR — 06 / Redes Sociais</title>
 <link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19">
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
-<link rel="stylesheet" href="/redes.css?v=20261104-temporadas1">
-<script defer src="/manual-type-roles.js?v=20261102-normative"></script>
-<script defer src="/redes.js?v=20261104-temporadas1"></script>
+<style>
+:root{--paper:#f7f6f2;--ink:#181818;--line:#cac8c0;--muted:#6d6b65;--red:#ce211a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--paper);color:var(--ink);margin:0}
+main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
+.lm-social>.inner{width:min(100% - 8vw,1460px);margin:auto;padding:clamp(84px,10vw,162px) 0}
+.lm-social .eyebrow,.meta,.index{}
+.lm-social .eyebrow{margin:0 0 24px}.lm-social h1,.lm-social h2{margin:0}
+.lm-social h1{}.lm-social h2{}.lm-social h1 em,.lm-social h2 em{}
+.lm-social .lead{max-width:37ch;margin:30px 0 0}
+.lm-social p{}.copy{max-width:55ch}
+.meta,.index{color:var(--muted)}.section-head{display:grid;grid-template-columns:1fr minmax(240px,440px);gap:clamp(24px,7vw,120px);align-items:end;margin-bottom:clamp(36px,6vw,90px)}
+.section-head .copy{margin:0}.divider{border:0;border-top:1px solid var(--line);margin:0}
+.thesis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:80px}
+.thesis article{border-top:1px solid var(--ink);padding-top:14px}.thesis strong{display:block;margin:20px 0}
+.thesis p{max-width:30ch;}
+.season-sequence{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-block:1px solid var(--line);padding:22px 0;margin:42px 0 48px}
+.season-sequence span{}
+.season-sequence .arrow{color:var(--muted)}
+.case-stage{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:clamp(20px,4vw,64px)}
+.case-visual{min-height:550px;background:#e9e7e1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px}
+.case-visual .tile{background:#ddd9d2;display:flex;align-items:flex-end;min-height:150px;padding:16px;position:relative;overflow:hidden}
+.case-visual .tile:nth-child(2),.case-visual .tile:nth-child(5){background:#d1cdc5}
+.case-visual .tile:nth-child(3){background:#ebe8e2}
+.case-visual .tile span{max-width:12ch}
+.case-visual .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.case-visual .tile img+span{position:relative;background:rgba(247,246,242,.92);padding:4px}
+.case-notes{display:flex;flex-direction:column;justify-content:space-between}
+.case-notes h3{margin:0 0 30px}
+.case-notes p{}
+.case-notes .small-note{border-top:1px solid var(--line);padding-top:16px;color:var(--muted)}
+.rule-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.rule-card{border-top:1px solid var(--ink);padding-top:14px}
+.rule-card h3{margin:20px 0}
+.rule-card .visual{height:clamp(230px,26vw,390px);background:#e6e3dc;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.rule-card .visual .photo{height:100%;width:100%;background:linear-gradient(130deg,#ccc6b9 0 40%,#e6dfd5 40% 75%,#b7b0a4 75%);filter:grayscale(1);opacity:.9}
+.rule-card .visual.identify .photo{position:absolute;inset:0}
+.rule-card .visual.identify .meta{position:absolute;left:7%;bottom:7%;color:#fff;z-index:2;background:#181818a8;padding:4px 6px}
+.rule-card .visual.compose{display:block;background:var(--paper);border:1px solid var(--line);padding:8%}
+.rule-card .visual.compose .big-type{position:absolute;top:26%;left:8%}
+.rule-card .visual.compose .meta{position:absolute;bottom:8%;left:8%}
+.rule-card .visual.compose .m-symbol{position:absolute;right:6%;bottom:8%;width:27%;opacity:.13}
+.rule-card p{max-width:37ch}
+.footnote{color:var(--muted);margin-top:24px}
+.method{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.method article{border-top:1px solid var(--line);display:grid;grid-template-columns:105px 1fr;gap:20px;padding:24px 0}
+.method h3{margin:0 0 12px}
+.method p{max-width:46ch;margin:0}
+.application{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.application article{min-width:0}.application .frame{aspect-ratio:3/4;background:#e2dfd8;position:relative;padding:9%;overflow:hidden}
+.application .frame.photo-full{background:linear-gradient(120deg,#bab4ac 0 35%,#ded7ca 35% 72%,#aaa39b 72%)}
+.application .frame.photo-title{background:linear-gradient(140deg,#c9c3b8 0 45%,#e5ded4 45%)}
+.application .frame.photo-title b{position:absolute;bottom:9%;left:9%;}
+.application .frame.breath{display:grid;grid-template-rows:68% 32%;padding:0}.application .frame.breath .photopart{background:linear-gradient(150deg,#ccc7be,#e2ded6)}.application .frame.breath b{padding:10%;}
+.application .frame.detail-crop{background:radial-gradient(ellipse at 65% 35%,#c9c1b4 0 18%,#e4ddd1 19% 32%,#b6aea2 33% 60%,#d5cec2 61%)}
+.application h3{margin:18px 0 8px}.application p{}
+.guide-table{width:100%;border-collapse:collapse}.guide-table td,.guide-table th{border-top:1px solid var(--line);text-align:left;vertical-align:top;padding:21px 14px 21px 0;}
+.guide-table th{width:25%;}.guide-table td:nth-child(2){width:40%}.guide-table td:nth-child(3){color:var(--muted)}
+.last-principle{max-width:19ch;margin:60px 0 0}
+@media(max-width:900px){.section-head,.case-stage{grid-template-columns:1fr}.case-notes{gap:30px}.rule-grid{grid-template-columns:1fr 1fr}.application{grid-template-columns:1fr 1fr}.thesis{margin-top:40px}.lm-social>.inner{width:calc(100% - 40px)}}
+@media(max-width:600px){.lm-social>.inner{padding:80px 0}.thesis,.rule-grid,.method{grid-template-columns:1fr}.method article{grid-template-columns:64px 1fr}.case-visual{min-height:420px}.rule-card .visual{height:340px}.guide-table th{width:30%}.guide-table td{padding:14px 8px 14px 0}.application .frame.photo-title b{}}
+
+/* Aplicações reais / Box do Sentir / Cada Corpo Abre um Mundo */
+.case-visual-real{grid-auto-rows:1fr;min-height:760px}
+.case-visual-real .tile{min-height:0;padding:0;background:#e6e3dc}
+.case-visual-real .tile.image-tile img{display:block;width:100%;height:100%;object-fit:cover}
+.case-visual-real .tile.image-tile>span{z-index:2;background:rgba(247,246,242,.93);padding:6px 8px;margin:12px}
+.case-visual-real .tile.detail-view img{object-position:70% 42%;transform:scale(1.4)}
+.case-visual-real .tile.alternate-view img{object-position:20% 50%;transform:scale(1.25)}
+.case-visual-real .tile.type-tile,.case-visual-real .tile.text-tile{display:flex;flex-direction:column;justify-content:space-between;padding:clamp(12px,2vw,28px);background:var(--paper)}
+.case-visual-real .tile.type-tile{background:#181818;color:#f7f6f2}
+.case-visual-real .tile.type-tile .poster-title{max-width:none}
+.case-visual-real .tile.type-tile .poster-title i{}
+.case-visual-real .tile .poster-footer{max-width:100%;background:transparent;padding:0}
+.case-visual-real .tile.text-tile .text-quote{max-width:none}
+.case-visual-real .tile.identity-tile{display:flex;align-items:center;justify-content:center;background:#ce211a;padding:18px}
+.case-visual-real .tile.identity-tile>img{width:65%;height:65%;object-fit:contain;filter:brightness(0) invert(1)}
+.case-visual-real .tile.identity-tile .poster-footer{position:absolute;bottom:14px;left:12px;color:white}
+.rule-card .visual .case-photo{width:100%;height:100%;object-fit:cover;display:block}
+.rule-card .visual.identify .case-photo{position:absolute;inset:0}
+.rule-card .visual.identify .meta{}
+.application .frame>img,.application .frame .photopart>img{height:100%;width:100%;object-fit:cover;display:block}
+.application .frame.photo-full,.application .frame.photo-title,.application .frame.detail-crop{padding:0;background:none}
+.application .frame.photo-title:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.53))}
+.application .frame.photo-title b{z-index:2;color:white;left:8%;bottom:8%;max-width:88%}
+.application .frame.breath .photopart{min-height:0}
+.application .frame.detail-crop>img{transform:scale(1.55);object-position:65% 40%}
+@media(max-width:600px){.case-visual-real{min-height:570px}.case-visual-real .tile.type-tile .poster-title{}.case-visual-real .tile.text-tile .text-quote{}.case-visual-real .tile .poster-footer{}}
+</style>
 </head>
 <body>
 <main id="conteudo">
-  <section class="chapter lm-manual-cover lm-social-cover" id="abertura">
-    <div class="inner">
-      <p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 06 — REDES SOCIAIS</p>
-      <h1 class="big"><span class="lm-cover-title-content">REDES<br><span class="perpetua">SOCIAIS</span></span></h1>
-      <div class="intro">
-        <p>O feed da Mattar funciona como arquivo temporal. Cada projeto abre uma temporada de publicações; as temporadas se acumulam, preservando suas imagens, seus ritmos e suas histórias. A identidade orienta a edição sem uniformizar as obras.</p>
-        <p class="detail"><a href="#criterio">COMO PUBLICAR ↓</a><br><a href="#temporadas">ESTUDAR O FEED ↓</a></p>
-      </div>
-    </div>
-  </section>
-
-<section class="chapter lm-manual-section lm-social-section" id="temporadas" aria-labelledby="temporadas-title">
-    <div class="inner">
-      <p class="eyebrow">01 / TEMPORADAS</p>
-      <h2 class="lm-manual-section-title" id="temporadas-title">O FEED<br><span class="perpetua">É TEMPO</span></h2>
-      <p class="copy">Cada projeto constitui uma temporada de publicações. As temporadas entram em sequência e se acumulam no perfil: a mais recente aparece primeiro, sem intercalar artificialmente imagens de projetos diferentes.</p>
-
-      <div class="lm-season-intro">
-        <div><p class="detail">01 / PROJETO</p><p>Definir o assunto e selecionar seu acervo.</p></div>
-        <div><p class="detail">02 / PUBLICAÇÕES</p><p>Organizar capa, registros, detalhes e contexto conforme o conteúdo existente.</p></div>
-        <div><p class="detail">03 / ARQUIVO</p><p>Ao iniciar outra temporada, a anterior permanece íntegra no histórico.</p></div>
-      </div>
-
-      <div class="lm-season-head">
-        <p class="detail">ESTUDO INTERATIVO / TEMPORADAS</p>
-        <p class="detail">ORDEM DE EXEMPLO. NÃO É O HISTÓRICO REAL DO PERFIL.</p>
-      </div>
-      <div class="lm-season-layout" id="lmSeasonPlanner">
-        <div class="lm-season-main">
-          <div class="lm-season-timeline-head">
-            <p class="detail">LINHA DO TEMPO / ANTIGO → RECENTE</p>
-            <p class="detail">SELECIONE UM PROJETO PARA EDITAR</p>
-          </div>
-          <nav class="lm-season-timeline" id="lmSeasonTimeline" aria-label="Temporadas, da mais antiga à mais recente"></nav>
-          <div class="lm-season-feed-caption">
-            <p class="detail">VISUALIZAÇÃO DO PERFIL / MAIS RECENTES PRIMEIRO ↓</p>
-            <p class="detail" id="lmSeasonCount">0 PUBLICAÇÕES</p>
-          </div>
-          <div class="lm-season-feed" id="lmSeasonFeed" aria-label="Grade editorial organizada por temporadas em ordem inversa à publicação"></div>
-          <p class="detail lm-season-feed-explainer">A grade mostra o recorte do perfil. As linhas de separação e a seleção são guias de edição, não aparecem nas imagens publicadas.</p>
-          <div class="lm-season-main-actions">
-            <button class="lm-social-link" type="button" id="lmSeasonExportFeed">BAIXAR VISÃO DO FEED PNG ↓</button>
-            <button class="lm-social-link" type="button" id="lmSeasonCopyPlan">COPIAR PLANO EDITORIAL ↗</button>
-          </div>
-        </div>
-
-        <aside class="lm-season-inspector" aria-label="Editor da temporada selecionada">
-          <p class="detail">TEMPORADA EM EDIÇÃO</p>
-          <label class="detail" for="lmSeasonSelect">PROJETO</label>
-          <select id="lmSeasonSelect" aria-label="Selecionar temporada"></select>
-          <label class="detail" for="lmSeasonPeriod">PERÍODO REAL (OPCIONAL)</label>
-          <input id="lmSeasonPeriod" type="text" maxlength="32" placeholder="Informe somente se souber" autocomplete="off">
-          <div class="lm-season-order">
-            <button type="button" id="lmSeasonMoveOlder">← MAIS ANTIGA</button>
-            <button type="button" id="lmSeasonMoveNewer">MAIS RECENTE →</button>
-          </div>
-          <div class="lm-season-inspector-rule"></div>
-          <div class="lm-season-inspector-bar">
-            <p class="detail">PUBLICAÇÃO / TEMPORADA</p>
-            <p class="detail" id="lmSeasonSelectedCounter">01 / 01</p>
-          </div>
-          <label class="detail" for="lmSeasonPostSelect">SELECIONAR PUBLICAÇÃO</label>
-          <select id="lmSeasonPostSelect" aria-label="Publicação dentro da temporada"></select>
-          <div class="lm-season-selected-preview" id="lmSeasonSelectedPreview" aria-label="Prévia da publicação selecionada"></div>
-          <label class="detail" for="lmSeasonRole">FUNÇÃO EDITORIAL</label>
-          <select id="lmSeasonRole">
-            <option value="capa">Capa / abertura da temporada</option>
-            <option value="abertura">Abertura</option>
-            <option value="conteudo">Registro / conteúdo</option>
-            <option value="detalhe">Detalhe</option>
-            <option value="contexto">Contexto</option>
-            <option value="encerramento">Encerramento</option>
-          </select>
-          <label class="detail" for="lmSeasonFrame">ENQUADRAMENTO</label>
-          <select id="lmSeasonFrame">
-            <option value="integral">Imagem integral</option>
-            <option value="titulo">Título sobre imagem</option>
-            <option value="respiro">Imagem + respiro</option>
-            <option value="recorte">Detalhe ampliado</option>
-          </select>
-          <label class="detail" for="lmSeasonAsset">IMAGEM DO PROJETO</label>
-          <select id="lmSeasonAsset"></select>
-          <div class="lm-season-framing">
-            <label class="detail" for="lmSeasonFocus">FOCO DO RECORTE</label>
-            <select id="lmSeasonFocus">
-              <option value="center">Centro</option>
-              <option value="top">Superior</option>
-              <option value="bottom">Inferior</option>
-              <option value="left">Esquerda</option>
-              <option value="right">Direita</option>
-            </select>
-          </div>
-          <div class="lm-season-edit-actions">
-            <button class="lm-social-link" type="button" id="lmSeasonAddPost">+ ADICIONAR PUBLICAÇÃO</button>
-            <button class="lm-social-link" type="button" id="lmSeasonRemovePost">RETIRAR PUBLICAÇÃO</button>
-            <button class="lm-social-link" type="button" id="lmSeasonPostOlder">← ANTERIOR NA TEMPORADA</button>
-            <button class="lm-social-link" type="button" id="lmSeasonPostNewer">PRÓXIMA NA TEMPORADA →</button>
-            <button class="lm-social-link" type="button" id="lmSeasonExportPost">BAIXAR PUBLICAÇÃO PNG ↓</button>
-          </div>
-          <p class="detail" id="lmSeasonStatus" role="status" aria-live="polite">ALTERAÇÕES SALVAS NESTE NAVEGADOR.</p>
-        </aside>
-      </div>
-      <div class="lm-season-collection">
-        <label class="detail" for="lmSeasonNewProject">INICIAR OUTRA TEMPORADA / PROJETO</label>
-        <div>
-          <select id="lmSeasonNewProject" aria-label="Projeto para uma nova temporada"></select>
-          <button type="button" class="lm-social-link" id="lmSeasonAddSeason">+ NOVA TEMPORADA</button>
-        </div>
-        <div class="lm-season-collection-options">
-          <button type="button" class="lm-social-link" id="lmSeasonRemoveSeason">REMOVER TEMPORADA SELECIONADA</button>
-          <button type="button" class="lm-social-link" id="lmSeasonReset">RESTAURAR ESTUDO</button>
-        </div>
-      </div>
-      <p class="detail lm-social-endnote">SIMULAÇÃO EDITORIAL COM ARQUIVOS DO ACERVO. PROJETOS E IMAGENS SÃO REAIS; A ORDEM PROPOSTA NÃO PRETENDE RECONSTITUIR DATAS DE PUBLICAÇÃO.</p>
-    </div>
-  </section>
-
-<section class="chapter lm-manual-section lm-social-section" id="enquadramentos" aria-labelledby="enquadramentos-title">
-    <div class="inner">
-      <p class="eyebrow">02 / ENQUADRAMENTOS</p>
-      <h2 class="lm-manual-section-title" id="enquadramentos-title">ABRIR UM<br><span class="perpetua">PROJETO</span></h2>
-      <p class="copy">A capa apresenta a temporada, não uma campanha. Quatro enquadramentos atendem à maioria dos materiais. Escolha pela imagem e pela necessidade de informação; nenhum tratamento é obrigatório em todas as temporadas.</p>
-      <div class="lm-season-frames">
-        <article>
-          <div class="lm-season-frame-demo" data-frame-demo="integral">
-            <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia em imagem integral, sem interferência gráfica" loading="lazy">
-          </div>
-          <div class="lm-season-frame-desc"><p class="detail">01 / IMAGEM PLENA</p><p>A fotografia apresenta o projeto sem título sobreposto. A identificação permanece na legenda.</p></div>
-          <button class="lm-social-link" data-apply-frame="integral" type="button">APLICAR À CAPA ↗</button>
-        </article>
-        <article>
-          <div class="lm-season-frame-demo lm-season-frame-demo-title" data-frame-demo="titulo">
-            <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia com título em área de imagem" loading="lazy">
-            <span class="title" data-lm-text-role="title">ALETEIA</span>
-          </div>
-          <div class="lm-season-frame-desc"><p class="detail">02 / TÍTULO NA IMAGEM</p><p>Usar apenas quando houver área de leitura e contraste suficientes. O texto não deve cobrir a obra.</p></div>
-          <button class="lm-social-link" data-apply-frame="titulo" type="button">APLICAR À CAPA ↗</button>
-        </article>
-        <article>
-          <div class="lm-season-frame-demo lm-season-frame-demo-breath" data-frame-demo="respiro">
-            <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia com imagem acima e faixa editorial de leitura abaixo" loading="lazy">
-            <span class="title" data-lm-text-role="title">ALETEIA</span>
-          </div>
-          <div class="lm-season-frame-desc"><p class="detail">03 / CAMPO DE RESPIRO</p><p>Separar imagem e título quando o nome ou a fotografia exigirem uma área própria de leitura.</p></div>
-          <button class="lm-social-link" data-apply-frame="respiro" type="button">APLICAR À CAPA ↗</button>
-        </article>
-        <article>
-          <div class="lm-season-frame-demo lm-season-frame-demo-detail" data-frame-demo="recorte">
-            <img src="/redes-acervo/aleteia-08.jpg" alt="Detalhe ampliado do registro Aleteia" loading="lazy">
-          </div>
-          <div class="lm-season-frame-desc"><p class="detail">04 / RECORTE DE DETALHE</p><p>Isolar uma textura, um gesto ou um elemento da imagem quando ele sustentar a apresentação.</p></div>
-          <button class="lm-social-link" data-apply-frame="recorte" type="button">APLICAR À CAPA ↗</button>
-        </article>
-      </div>
-      <div class="lm-season-frame-note">
-        <p class="detail">PARA OS DEMAIS CONTEÚDOS</p>
-        <p>Registros, processos e detalhes geralmente dispensam títulos. Se uma informação for necessária, utilize o tratamento tipográfico oficial ou a legenda. A mesma temporada pode alternar enquadramentos sem repetir uma fórmula gráfica.</p>
-      </div>
-      <p class="detail lm-social-endnote">EXEMPLOS COM A MESMA FOTOGRAFIA DE ALETEIA. OS BOTÕES APLICAM O ENQUADRAMENTO À CAPA DA TEMPORADA SELECIONADA NO ESTUDO ACIMA.</p>
-    </div>
-  </section>
-
-  <section class="chapter lm-manual-section lm-social-section" id="criterio">
-    <div class="inner">
-      <p class="eyebrow">03 / CRITÉRIO DE APLICAÇÃO</p>
-      <h2 class="lm-manual-section-title">O CONTEÚDO<br><span class="perpetua">VEM PRIMEIRO</span></h2>
-      <p class="copy">Dentro de uma temporada, cada publicação pode ter uma intensidade gráfica diferente. Preserve a imagem quando ela falar por si; identifique ou componha apenas quando a informação pedir. Os três exemplos utilizam Aleteia.</p>
-      <div class="lm-social-cases">
-        <article class="lm-social-case">
-          <figure class="lm-social-case-stage">
-            <img src="/redes-acervo/aleteia-08.jpg" alt="Registro do projeto Aleteia, apresentado integralmente" loading="lazy">
-          </figure>
-          <div class="lm-social-case-copy">
-            <p class="detail">01 / PRESERVAR</p>
-            <p>Quando a imagem já comunica, não acrescentar moldura, assinatura ou grafismo.</p>
-          </div>
-        </article>
-        <article class="lm-social-case">
-          <figure class="lm-social-case-stage lm-social-case-identify">
-            <img src="/redes-acervo/aleteia-08.jpg" alt="O mesmo registro de Aleteia com uma identificação discreta" loading="lazy">
-            <figcaption><span class="detail">ALETEIA / ACERVO</span><span class="detail">LABMATTAR</span></figcaption>
-          </figure>
-          <div class="lm-social-case-copy">
-            <p class="detail">02 / IDENTIFICAR</p>
-            <p>Se houver necessidade de identificação na imagem, usar apenas o tratamento Detalhe e o contraste previsto na identidade.</p>
-          </div>
-        </article>
-        <article class="lm-social-case">
-          <figure class="lm-social-case-stage lm-social-case-compose">
-            <p class="detail">LABMATTAR / PROJETOS</p>
-            <div class="lm-social-case-compose-title title" data-lm-text-role="title">ALE<br><span class="perpetua">TEIA</span></div>
-            <img src="/identidade/M.svg" alt="" aria-hidden="true">
-            <p class="detail">ACERVO / ALETEIA</p>
-          </figure>
-          <div class="lm-social-case-copy">
-            <p class="detail">03 / COMPOR</p>
-            <p>Quando o assunto é essencialmente textual, construir a imagem com Título, Corpo e Detalhe. Não criar um template para cada tema.</p>
-          </div>
-        </article>
-      </div>
-      <p class="detail lm-social-endnote">TRÊS POSSIBILIDADES DE EDIÇÃO / NÃO UMA SEQUÊNCIA OBRIGATÓRIA DE PUBLICAÇÕES.</p>
-    </div>
-  </section>
-
-  <section class="chapter lm-manual-section lm-social-section" id="sequencia">
-    <div class="inner">
-      <p class="eyebrow">04 / CARROSSÉIS</p>
-      <h2 class="lm-manual-section-title">NARRATIVA<br><span class="perpetua">EM CAMADAS</span></h2>
-      <p class="copy">Uma publicação da temporada também pode ser um carrossel. Dentro dele, cada imagem acrescenta uma informação: situação, desenvolvimento e detalhe. Este exemplo tem quatro quadros, mas não existe quantidade fixa.</p>
-      <div class="lm-social-storyboard" id="lmSocialStoryboard">
-        <div class="lm-social-story-main">
-          <div class="lm-social-story-frame">
-            <figure data-sequence-slide="0">
-              <img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia: registro geral que abre o carrossel">
-            </figure>
-            <figure data-sequence-slide="1" hidden>
-              <img src="/redes-acervo/aleteia-14.jpg" alt="Aleteia: segundo registro para desenvolvimento do carrossel">
-            </figure>
-            <figure data-sequence-slide="2" hidden>
-              <img src="/redes-acervo/aleteia-18.jpg" alt="Aleteia: registro de detalhe">
-            </figure>
-            <figure class="lm-social-story-closure" data-sequence-slide="3" hidden>
-              <p class="detail">LABMATTAR / ACERVO</p>
-              <div class="title" data-lm-text-role="title">ALE<br><span class="perpetua">TEIA</span></div>
-              <p class="detail">PROJETO / ALETEIA</p>
-            </figure>
-          </div>
-          <div class="lm-social-story-navigation">
-            <button type="button" class="lm-social-link" id="lmSocialStoryBack" aria-label="Quadro anterior">← ANTERIOR</button>
-            <p class="detail" id="lmSocialStoryCounter" aria-live="polite">01 / 04</p>
-            <button type="button" class="lm-social-link" id="lmSocialStoryNext" aria-label="Próximo quadro">PRÓXIMO →</button>
-          </div>
-        </div>
-        <div class="lm-social-story-description">
-          <p class="detail">LEITURA / ALETEIA</p>
-          <p id="lmSocialStoryTitle">Abertura</p>
-          <p id="lmSocialStoryDescription">A primeira imagem situa o projeto antes de introduzir detalhes.</p>
-          <div class="lm-social-story-index" aria-label="Quadros do carrossel">
-            <button data-story-index="0" type="button" aria-current="step">01</button>
-            <button data-story-index="1" type="button">02</button>
-            <button data-story-index="2" type="button">03</button>
-            <button data-story-index="3" type="button">04</button>
-          </div>
-          <button class="lm-social-link" id="lmSocialStoryCopy" type="button">COPIAR ROTEIRO ↓</button>
-          <p class="detail" id="lmSocialStoryFeedback" role="status" aria-live="polite"></p>
-          <p class="detail lm-social-story-foot">AS QUATRO IMAGENS SÃO UM EXERCÍCIO DE EDIÇÃO COM MATERIAIS DO ACERVO, NÃO UMA PUBLICAÇÃO PROGRAMADA.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="chapter lm-manual-section lm-social-section" id="derivacoes">
-    <div class="inner">
-      <p class="eyebrow">05 / DERIVAÇÕES DA IDENTIDADE</p>
-      <h2 class="lm-manual-section-title">A MESMA<br><span class="perpetua">IDENTIDADE</span></h2>
-      <p class="copy">Os vetores, a tipografia e o movimento permanecem os mesmos do manual. Muda o suporte; não surge uma linguagem paralela para redes.</p>
-
-      <div class="lm-social-identity">
-        <div class="lm-social-symbol-area">
-          <div class="lm-social-identity-heading"><p class="detail">01 / AVATAR E DESTAQUES</p><p class="detail">VETORES ORIGINAIS</p></div>
-          <div class="lm-social-avatar-stage">
-            <div class="lm-social-avatar-large"><img id="lmSocialAvatarArt" src="/identidade/M.svg" alt="Prévia do M mestre em recorte circular"></div>
-            <div class="lm-social-avatar-small"><img id="lmSocialAvatarSmall" src="/identidade/M.svg" alt="" aria-hidden="true"></div>
-            <p class="detail">LEITURA EM DUAS ESCALAS</p>
-          </div>
-          <div class="lm-social-symbol-picker" role="group" aria-label="Selecionar vetor para simulação">
-            <button type="button" data-avatar-source="M.svg" aria-pressed="true" aria-label="M mestre"><img src="/identidade/M.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_01.svg" aria-pressed="false" aria-label="Vaso 01"><img src="/identidade/vaso_01.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_03.svg" aria-pressed="false" aria-label="Vaso 03"><img src="/identidade/vaso_03.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_06.svg" aria-pressed="false" aria-label="Vaso 06"><img src="/identidade/vaso_06.svg" alt=""></button>
-            <button type="button" data-avatar-source="vaso_09.svg" aria-pressed="false" aria-label="Vaso 09"><img src="/identidade/vaso_09.svg" alt=""></button>
-          </div>
-          <div class="lm-social-tools-line"><p class="detail" id="lmSocialAvatarLabel" aria-live="polite">M MESTRE / RECORTE CIRCULAR</p><button type="button" class="lm-social-link" id="lmSocialAvatarExport">BAIXAR PNG 1080 × 1080 ↓</button></div>
-          <p>Para o avatar, priorizar o M mestre. Os vasos podem distinguir destaques quando isso fizer sentido editorial. Preservar a geometria original, inclusive no tamanho reduzido.</p>
-        </div>
-        <div class="lm-social-motion-area">
-          <div class="lm-social-identity-heading"><p class="detail">02 / ASSINATURA E MOVIMENTO</p><p class="detail">USO PONTUAL</p></div>
-          <video controls playsinline preload="metadata" poster="/motion/posters/perfil-corte.png" aria-label="Exemplo de movimento da Matriz Vetorial">
-            <source src="/motion/videos/perfil-corte.mp4" type="video/mp4">
-            <a href="/motion.html">Ver o sistema de movimento</a>
-          </video>
-          <div class="lm-social-motion-copy">
-            <p class="detail">MOTION / MATRIZ VETORIAL</p>
-            <p>Movimento serve para marcar passagens ou encerramentos. Não é necessária uma vinheta para abrir cada vídeo.</p>
-            <a class="lm-social-link" href="/motion.html">CONSULTAR MOTION ↗</a>
-          </div>
-          <div class="lm-social-signature-copy">
-            <p class="detail">ASSINATURAS</p>
-            <p>O perfil e a legenda já identificam a autoria. Utilizar a assinatura gráfica apenas quando houver uma função clara.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-
-
-
-  <section class="chapter lm-manual-section lm-social-section" id="boas-praticas">
-    <div class="inner">
-      <p class="eyebrow">06 / BOAS PRÁTICAS</p>
-      <h2 class="lm-manual-section-title">PUBLICAR<br><span class="perpetua">COM CRITÉRIO</span></h2>
-      <p class="copy">O formato é uma condição técnica, não uma receita visual. Escolha a proporção pela natureza do material e confira o resultado no celular antes de publicar.</p>
-      <div class="lm-social-specs">
-        <div><p class="detail">3:4 / FOTOGRAFIA</p><p>1080 × 1440 px. Preservar a leitura do registro e conferir o recorte da miniatura.</p></div>
-        <div><p class="detail">4:5 / POST</p><p>1080 × 1350 px. Alternativa para publicações editoriais e ferramentas de agendamento.</p></div>
-        <div><p class="detail">9:16 / STORY E REEL</p><p>1080 × 1920 px. Manter informações importantes livres das áreas cobertas pela interface.</p></div>
-      </div>
-      <div class="lm-social-guidelines">
-        <div><p class="detail">LEITURA</p><p>Testar textos no celular. Buscar contraste de pelo menos 4,5:1 para texto comum e reduzir informação antes de reduzir caracteres.</p></div>
-        <div><p class="detail">IMAGEM</p><p>Não aplicar filtros para igualar projetos diferentes. Preservar obras, cores, créditos e enquadramentos.</p></div>
-        <div><p class="detail">VÍDEO</p><p>Manter o ritmo próprio do registro. Usar legendas para falas e os movimentos da identidade somente quando contribuírem.</p></div>
-        <div><p class="detail">ASSINATURA</p><p>Créditos podem ficar na legenda. A marca gráfica não é uma marca-d'água obrigatória sobre fotografias.</p></div>
-      </div>
-      <div class="lm-social-review" id="revisao">
-        <p class="detail">ANTES DE PUBLICAR</p>
-        <ol>
-          <li>O enquadramento escolhido preserva a imagem e permite a leitura?</li>
-          <li>Há necessidade real de título, símbolo ou intervenção?</li>
-          <li>Ela pertence à temporada certa e respeita a sequência temporal?</li>
-        </ol>
-        <p>A temporada é o conjunto. Não misture projetos para criar um desenho de feed e não obrigue cada projeto a ter o mesmo número de publicações.</p>
-      </div>
-      <p class="detail lm-social-technical-note">CRITÉRIOS DE IDENTIDADE: SISTEMA MATTAR / CAPÍTULOS 01–05. REFERÊNCIA DE ACESSIBILIDADE: <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum" target="_blank" rel="noopener noreferrer">WCAG 2.2 — CONTRASTE MÍNIMO ↗</a>. FORMATOS: CONFERIR A INTERFACE DO INSTAGRAM NO MOMENTO DA PUBLICAÇÃO.</p>
-    </div>
-  </section>
+<section class="lm-social lm-social-cover lm-manual-cover" id="abertura"><div class="inner">
+<p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 06 — REDES SOCIAIS</p>
+<h1>REDES<br><em>SOCIAIS</em></h1>
+<p class="lead">Uma presença reconhecível não depende de repetir a marca. Depende de editar com os mesmos critérios.</p>
+<div class="thesis">
+<article><span class="index">01 / CONTEÚDO</span><strong>O projeto vem primeiro.</strong><p>As imagens, os gestos, a materialidade e os processos preservam sua singularidade.</p></article>
+<article><span class="index">02 / SISTEMA</span><strong>A identidade orienta.</strong><p>Tipografia, enquadramento, cor e vetor são utilizados conforme a função de cada publicação.</p></article>
+<article><span class="index">03 / TEMPO</span><strong>O perfil acumula temporadas.</strong><p>O feed registra a sequência dos projetos, sem depender de mosaicos ou alternâncias artificiais.</p></article>
+</div></div></section>
+<section class="lm-social" id="temporadas"><div class="inner">
+<div class="section-head"><div><p class="eyebrow">01 / ORGANIZAÇÃO EDITORIAL</p><h2>O FEED<br><em>É TEMPO</em></h2></div><p class="copy">Cada projeto constitui uma temporada. Publicações do mesmo conjunto formam uma narrativa; quando a temporada seguinte começa, a anterior permanece como arquivo. A ordem no perfil é inversa à cronologia de publicação.</p></div>
+<div class="season-sequence"><span>01 / Cada Corpo Abre um Mundo</span><span class="arrow">→</span><span>02 / Poiesis</span><span class="arrow">→</span><span>03 / Aleteia</span><span class="meta">ORDEM DE ENTRADA</span></div>
+<div class="case-stage"><div class="case-visual case-visual-real" aria-label="Estudo editorial com fotografias de Cada Corpo Abre um Mundo">
+<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="Registro fotográfico da gastroperformance Cada Corpo Abre um Mundo"><span>01 / ABERTURA</span></div>
+<div class="tile type-tile"><span class="poster-title">CADA<br>CORPO<br>ABRE UM<br><i>MUNDO</i></span><span class="poster-footer">SIMONE MATTAR / GASTROPERFORMANCE</span></div>
+<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Registro fotográfico do Box do Sentir"><span>03 / EXPERIÊNCIA</span></div>
+<div class="tile image-tile detail-view"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Detalhe do registro do projeto"><span>04 / DETALHE</span></div>
+<div class="tile text-tile"><span class="text-quote">AROMAS<br>SABORES<br>IMAGENS<br>SONS</span><span class="poster-footer">05 / CONTEXTO</span></div>
+<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Outro enquadramento da gastroperformance"><span>06 / MATERIALIDADE</span></div>
+<div class="tile image-tile alternate-view"><img src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Recorte vertical de um registro do projeto"><span>07 / RECORTE</span></div>
+<div class="tile identity-tile"><img src="/identidade/M.svg" alt="" aria-hidden="true"><span class="poster-footer">08 / IDENTIDADE</span></div>
+<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="Registro do projeto usado como continuidade da temporada"><span>09 / CONTINUIDADE</span></div>
+</div><div class="case-notes"><div><p class="meta">CASO PRINCIPAL / CADA CORPO ABRE UM MUNDO</p><h3>Uma temporada.<br>Várias escalas<br>de olhar.</h3><p>Este quadro apresenta funções possíveis de publicação, e não uma quantidade fixa de posts. A sequência final deriva dos materiais e do que há a narrar: apresentação, experiência, processo, aproximação e contexto.</p><p>Não se deve inserir imagens de outros projetos para completar uma grade. Os registros do Box do Sentir integram este estudo. Os quadros tipográficos demonstram quando compor; os registros mostram quando preservar a fotografia.</p></div><p class="small-note">ESTUDO DE APLICAÇÃO COM REGISTROS DO BOX DO SENTIR. A ORDEM E OS RECORTES SÃO PROPOSTAS EDITORIAIS, NÃO UM HISTÓRICO DE PUBLICAÇÃO.</p></div></div>
+</div></section>
+<section class="lm-social" id="intensidade"><div class="inner">
+<div class="section-head"><div><p class="eyebrow">02 / GRAU DE INTERVENÇÃO</p><h2>TRÊS FORMAS<br><em>DE PRESENÇA</em></h2></div><p class="copy">A intervenção gráfica é proporcional à necessidade de informação. O padrão é preservar a imagem; a identidade entra quando melhora identificação, leitura ou estrutura narrativa.</p></div>
+<div class="rule-grid">
+<article class="rule-card"><span class="meta">01 / PRESERVAR</span><div class="visual"><img class="case-photo" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Fotografia do projeto preservada sem interferência gráfica"></div><h3>A imagem basta.</h3><p>Registro e experiência sem elementos sobrepostos. A legenda identifica o conteúdo. Evita competição entre grafismo e imagem.</p></article>
+<article class="rule-card"><span class="meta">02 / IDENTIFICAR</span><div class="visual identify"><img class="case-photo" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Imagem do Box do Sentir com identificação editorial"><span class="meta">CADA CORPO ABRE UM MUNDO</span></div><h3>Informação mínima.</h3><p>Texto Detalhe apenas quando a leitura precisar de apoio. Contraste verificável e posição protegida dos elementos principais.</p></article>
+<article class="rule-card"><span class="meta">03 / COMPOR</span><div class="visual compose"><span class="meta">LABMATTAR / PROJETOS</span><span class="big-type">CADA CORPO<br>ABRE UM<br>MUNDO</span><img class="m-symbol" src="/identidade/M.svg" alt="" aria-hidden="true"><span class="meta">TEMPORADA / 01</span></div><h3>Peça editorial.</h3><p>Para abertura, texto curatorial ou informação que não cabe numa legenda. Usar apenas Título, Corpo e Detalhe e os vetores oficiais.</p></article>
+</div><p class="footnote">APLICAÇÕES COM FOTOGRAFIAS DO BOX DO SENTIR E COMPOSIÇÃO TIPOGRÁFICA DA IDENTIDADE.</p>
+</div></section>
+<section class="lm-social" id="funcoes"><div class="inner">
+<div class="section-head"><div><p class="eyebrow">03 / FUNÇÃO ANTES DO FORMATO</p><h2>O QUE CADA<br><em>PEÇA FAZ</em></h2></div><p class="copy">O tipo de publicação é definido por sua função na narrativa. A escolha do formato vem depois. Um carrossel pode reunir funções diferentes sem converter cada imagem em template.</p></div>
+<div class="method">
+<article><span class="index">01</span><div><h3>Abrir</h3><p>Situar o projeto com uma imagem forte ou título. A capa não precisa carregar logotipo, descrição e créditos ao mesmo tempo.</p></div></article>
+<article><span class="index">02</span><div><h3>Mostrar</h3><p>Publicar registros em que escala, ação, espaço ou corpo sejam legíveis, sem sobreposição gráfica desnecessária.</p></div></article>
+<article><span class="index">03</span><div><h3>Aproximar</h3><p>Usar detalhes para revelar matéria, gesto ou textura; o recorte deve acrescentar informação, não apenas variar esteticamente.</p></div></article>
+<article><span class="index">04</span><div><h3>Contextualizar</h3><p>Trazer notas, créditos, textos e processo. Preferir legenda; usar composição textual quando a informação precisar existir na própria imagem.</p></div></article>
+<article><span class="index">05</span><div><h3>Sequenciar</h3><p>Carrosséis organizam relações entre imagens. Cada quadro deve ampliar ou deslocar a leitura, sem repetição gratuita.</p></div></article>
+<article><span class="index">06</span><div><h3>Movimentar</h3><p>Vídeo apresenta ação e temporalidade; a Matriz Vetorial pode marcar transições pontuais, mas não deve virar vinheta obrigatória.</p></div></article>
+</div></div></section>
+<section class="lm-social" id="enquadramentos"><div class="inner">
+<div class="section-head"><div><p class="eyebrow">04 / ENQUADRAMENTOS</p><h2>VARIAR SEM<br><em>PADRONIZAR</em></h2></div><p class="copy">Quatro decisões recorrentes resolvem a maior parte das aplicações. A escolha depende do assunto, da área segura de leitura e do recorte visível na miniatura do perfil.</p></div>
+<div class="application">
+<article><div class="frame photo-full"><img src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Imagem integral do projeto"></div><h3>Imagem plena</h3><p>Registro e imagem autossuficiente. Sem texto sobreposto.</p></article>
+<article><div class="frame photo-title"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="Fotografia com título sobreposto"><b>CADA CORPO<br>ABRE UM MUNDO</b></div><h3>Título sobre imagem</h3><p>Somente quando existe área livre e contraste suficiente.</p></article>
+<article><div class="frame breath"><div class="photopart"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Imagem em campo de respiro"></div><b>CADA CORPO<br>ABRE UM MUNDO</b></div><h3>Campo de respiro</h3><p>Separar imagem e texto quando ambos precisam de autonomia.</p></article>
+<article><div class="frame detail-crop"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Detalhe ampliado da imagem do projeto"></div><h3>Detalhe ampliado</h3><p>Aproximar a matéria sem perder o sentido do registro.</p></article>
+</div><p class="footnote">ESTUDOS DE ENQUADRAMENTO COM REGISTROS DO BOX DO SENTIR.</p>
+</div></section>
+<section class="lm-social" id="regras"><div class="inner">
+<div class="section-head"><div><p class="eyebrow">05 / REGRAS DE APLICAÇÃO</p><h2>UMA MESMA<br><em>GRAMÁTICA</em></h2></div><p class="copy">Não há uma identidade paralela para redes sociais. O sistema do manual continua válido; a aplicação adapta as proporções, o recorte e a leitura ao suporte.</p></div>
+<table class="guide-table"><thead><tr><th>Elemento</th><th>Aplicar</th><th>Evitar</th></tr></thead><tbody>
+<tr><th>Tipografia</th><td>Univers e Perpetua; exclusivamente Título, Corpo e Detalhe, com hierarquia e margens do manual.</td><td>Novas classes, slogans decorativos, redução do texto até perder legibilidade.</td></tr>
+<tr><th>Imagem</th><td>Preservar composição e autoria; verificar corte do perfil e das interfaces.</td><td>Cortar gestos relevantes para completar uma grade ou cobrir áreas essenciais com texto.</td></tr>
+<tr><th>Cor</th><td>Usar apenas a paleta oficial, preto e branco; estabelecer contraste entre informação e fundo.</td><td>Cores de ocasião, filtros arbitrários e efeitos que descaracterizem registros.</td></tr>
+<tr><th>M / Vetores</th><td>Avatar, peças compostas e transições pontuais conforme o comportamento vetorial aprovado.</td><td>Marca d'água em todas as fotografias; M sólido sobre imagem; distorções e novos tratamentos.</td></tr>
+<tr><th>Movimento</th><td>Usar vídeos do acervo e a Matriz Vetorial quando houver função narrativa.</td><td>Vinheta automática ou transição sem relação com o conteúdo.</td></tr>
+<tr><th>Feed / Temporadas</th><td>Publicar em sequência; conferir a leitura do conjunto na ordem inversa do perfil.</td><td>Mosaicos dependentes de posições fixas ou mistura artificial entre projetos.</td></tr>
+<tr><th>Carrossel</th><td>Ordenar abertura, desenvolvimento e informações complementares segundo o material.</td><td>Obrigar todas as sequências ao mesmo número de quadros.</td></tr>
+<tr><th>Formato</th><td>Escolher proporção conforme fotografia, vídeo e leitura; revisar em tela móvel antes de publicar.</td><td>Tratar dimensões da plataforma como uma nova regra estética da marca.</td></tr>
+</tbody></table>
+<p class="last-principle">A consistência vem das decisões, não da repetição de uma aparência.</p>
+</div></section>
 </main>
-<footer class="lm-social-footer">
-  <p class="detail">LABMATTAR / MANUAL DE IDENTIDADE / 06</p>
-  <a class="detail" href="/laboratorio.html">← LABORATÓRIO</a>
-  <a class="detail" href="#abertura">VOLTAR AO INÍCIO ↑</a>
-</footer>
-</body>
-</html>
+<script defer src="/manual-type-roles.js?v=20261102-normative"></script>
+</body></html>

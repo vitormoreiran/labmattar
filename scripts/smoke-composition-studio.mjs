@@ -193,6 +193,7 @@ try{
 
   await choose("marker","none");
   await choose("background","color");
+  await choose("mContent","off");
   await choose("mContent","solid");
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
     "M sólido deve existir em composição de cor");

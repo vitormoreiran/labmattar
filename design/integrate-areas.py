@@ -8,7 +8,7 @@ NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/tipografia.html" data-area="tipografia">02 / TIPOGRAFIA</a>
 <a href="/cores.html" data-area="cores">03 / CORES</a>
 <a href="/composicao.html" data-area="composicao">04 / COMPOSIÇÃO</a>
-<a href="/laboratorio.html" data-area="laboratorio">05 / LABORATÓRIO DE COMPOSIÇÃO</a>
+<a href="/laboratorio.html" data-area="laboratorio">05 / LABORATÓRIO</a>
 </nav>'''
 STYLE='''<style>
 .lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:safe flex-end;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(16px,2vw,32px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
@@ -19,7 +19,7 @@ STYLE='''<style>
 .lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 @media(max-width:600px){.lm-site-nav{justify-content:flex-start;gap:18px;padding:10px 16px;min-height:48px}}
 </style>'''
-areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","laboratorio.html":"laboratorio"}
+areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","laboratorio.html":"laboratorio","compor.html":"laboratorio"}
 if Path("public/motion.html").exists():
  areas["motion.html"]="motion"
 if len(sys.argv)>1:

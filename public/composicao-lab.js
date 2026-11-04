@@ -181,8 +181,9 @@
     // A solid M is a color-only treatment. Do not offer or restore it
     // on photographic surfaces, including legacy saved projects.
     const solidChoice=document.querySelector('[data-lab-choice="mContent"][data-value="solid"]');
-    if(solidChoice)solidChoice.hidden=state.background==="photo";
-    by("labMContent").querySelector('option[value="solid"]').disabled=state.background==="photo";
+    const solidAllowed=state.background==="color"&&state.mContent!=="photo";
+    if(solidChoice)solidChoice.hidden=!solidAllowed;
+    by("labMContent").querySelector('option[value="solid"]').disabled=!solidAllowed;
     const focusField=by("labMarkerFocusField");
     if(focusField)focusField.hidden=!(markerActive&&backgroundPhoto);
     by("labMarkerFocus").disabled=!(markerActive&&backgroundPhoto);

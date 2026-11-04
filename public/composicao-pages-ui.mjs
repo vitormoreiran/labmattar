@@ -550,7 +550,7 @@ async function init(){
     if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}
     commit();const snapshot=bridge().snapshot(),state=copy(snapshot.state);state.title='NOVA\nPÁGINA';state.body='';state.bodyMode='oculto';
     const page=createPage({id:uid('page'),name:'Página '+(pages.length+1),state,photoCatalog:snapshot.photoCatalog,maxEdge:Number(by('labExportSize').value)});
-    if(sections)page.sectionId=pages[current].sectionId;pages.splice(current+1,0,page);enabled=true;await switchPage(current+1);
+    if(sections){page.sectionId=pages[current].sectionId;if(currentSection().background.video)page.backgroundVideo=copy(currentSection().background.video);}pages.splice(current+1,0,page);enabled=true;await switchPage(current+1);
   });
   by('labPageDuplicate').addEventListener('click',async()=>{
     if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}

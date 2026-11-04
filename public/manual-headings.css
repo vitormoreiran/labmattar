@@ -9,7 +9,7 @@
  --lm-type-perpetua:PerpetuaMattar,Georgia,serif;
  --lm-type-title-size:clamp(31px,7vw,104px);
  /* Official logical-page sizes: the canvas always uses these source values. */
- --lm-type-page-body-size:18px;
+ --lm-type-page-body-size:19px;
  --lm-type-page-detail-size:13px;
  --lm-type-body-size:var(--lm-type-page-body-size);
  --lm-type-detail-size:var(--lm-type-page-detail-size);
@@ -101,12 +101,12 @@ html body :is(.perpetua,.p,em) [data-lm-text-role="title"]:not(#__lm_type_guard_
  * It preserves both font families, line heights, letterspacing and roles. */
 html body main .lm-case-frame{
  --lm-type-title-size:clamp(12px,6.9cqw,84px);
- --lm-type-body-size:clamp(8px,1.75cqw,18px);
+ --lm-type-body-size:clamp(8.5px,1.85cqw,19px);
  --lm-type-detail-size:clamp(6px,1.25cqw,13px);
 }
 html body main .lm-case-frame.is-mobile{
  --lm-type-title-size:clamp(18px,9.6cqw,38px);
- --lm-type-body-size:clamp(9px,3.65cqw,14px);
+ --lm-type-body-size:clamp(9.5px,3.85cqw,15px);
  --lm-type-detail-size:clamp(7px,2.55cqw,10px);
 }
 html body main .lm-case-frame .lm-case-safe::before{
@@ -165,7 +165,7 @@ html body .compact-band{grid-template-columns:minmax(0,1fr)!important}
 html body.lm-studio-open .lm-lab-prep-label{font-size:0!important}
 @media(max-width:760px){
  :root{
-  --lm-type-body-size:16px;
+  --lm-type-body-size:17px;
   --lm-type-detail-size:12px;
   --lm-type-body-leading:1.5;
   --lm-type-detail-leading:1.4;

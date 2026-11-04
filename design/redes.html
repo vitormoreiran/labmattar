@@ -21,7 +21,7 @@ main{overflow:hidden}
 .chapter-intro{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:end;gap:clamp(30px,5vw,100px);margin-bottom:48px}
 .chapter-intro>.copy{max-width:45ch}
 .captionline{border-top:1px solid var(--line);padding-top:13px;margin-top:12px!important;color:var(--muted)}
-.chapter-cover .intro{margin-top:50px}
+.chapter-cover .intro{margin-top:50px}.chapter-cover .intro p{max-width:55ch}
 .chapter-cover .intro p{max-width:55ch}
 .hero-photo{position:relative;aspect-ratio:16/9;background:#d8d4d0;overflow:hidden}
 .hero-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 44%}
@@ -41,8 +41,8 @@ main{overflow:hidden}
 .edition-rows h3{margin:0 0 14px}
 .edition-rows article>p:last-child{max-width:36ch}
 .edition-rows figure .photo-label{position:absolute;left:0;bottom:0;padding:8px 10px;background:var(--paper)}
-.edition-rows .graphic-only{background:#1b1b1b;color:#f7f6f2;display:flex;flex-direction:column;justify-content:space-between;padding:9%}
-.edition-rows .graphic-only .type-mark{display:block;max-width:10ch;overflow-wrap:break-word;--lm-type-title-size:clamp(29px,5vw,65px)}
+.edition-rows .graphic-only{container-type:inline-size;background:#1b1b1b;color:#f7f6f2;display:flex;flex-direction:column;justify-content:space-between;padding:9%}
+.edition-rows .graphic-only .type-mark{display:block;max-width:10ch;overflow-wrap:break-word;--lm-type-title-size:clamp(24px,7cqw,43px)}
 .edition-rows .graphic-only .type-mark em{display:block}
 .edition-rows .graphic-only .detail{color:#f7f6f2}
 .formats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(16px,3vw,40px)}

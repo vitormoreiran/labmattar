@@ -34,6 +34,7 @@ for(const part of ["media","thumb"]){
 }
 try{
   await page.goto(base,{waitUntil:"load",timeout:60000});
+  await page.locator('button[data-mobile-module="fundo"]').click();
   assert(await page.locator("#labAcervoDialog").isHidden(),"Dialog should never be forced on editor load");
   assert(await page.locator("#labAcervoLaunch").isVisible(),"One clear media library entry");
   assert(await page.locator("#labAcervoLaunch .lm-acervo-provider-icon").count()===2,

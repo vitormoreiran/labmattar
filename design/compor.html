@@ -87,10 +87,10 @@
           </div>
         </div>
         <div class="lab-motion-assets lab-private-video-panel">
-          <div class="lm-lab-field-title">VÍDEOS DO ACERVO</div>
-          <button type="button" id="labClipOpen">+ VÍDEO DO ACERVO 01_PORTFOLIO</button><button type="button" id="labClipLocal">+ VÍDEO DO COMPUTADOR</button>
-          <p id="labClipEmpty" class="lab-workflow-helper">Use um vídeo do acervo compartilhado ou do computador nesta página.</p>
-          <div id="labClipSettings" hidden>
+          <div class="lm-lab-field-title">VÍDEO DE FUNDO</div>
+          <button type="button" id="labClipOpen">ESCOLHER VÍDEO DO ACERVO</button><button type="button" id="labClipLocal">ESCOLHER VÍDEO DO COMPUTADOR</button>
+          <p id="labClipEmpty" class="lab-workflow-helper">O vídeo selecionado ocupa toda a superfície como fundo. Ajuste o enquadramento em Fundo.</p>
+          <div id="labClipSettings" hidden><p class="lab-workflow-helper">Controles de vídeos posicionados em projetos anteriores. Novos vídeos entram exclusivamente no fundo.</p>
             <label for="labClipInstance">Vídeo da página</label><select id="labClipInstance"></select>
             <label for="labClipX">Posição horizontal</label><input id="labClipX" type="range" min="0" max="100" step="1">
             <label for="labClipY">Posição vertical</label><input id="labClipY" type="range" min="0" max="100" step="1">
@@ -163,11 +163,11 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             </select>
             <div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labBackgroundTitle">
               <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="color" aria-pressed="false"><span class="lm-ctrl-name">Cor</span></button>
-              <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="background" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Foto ou vídeo</span></button>
             </div>
             <small class="lm-ctrl-helper" id="labBackdropContext" aria-live="polite">Sem M nem marcadores, o fundo segue a escolha de cor ou fotografia.</small>
           </div>
-                  <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
+                  <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Imagem de referência</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
           <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="179" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg"></span></span><span class="lm-ctrl-name">Imagem 02</span><span class="lm-ctrl-meta">Projeto</span></button>
           <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="151" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg"></span></span><span class="lm-ctrl-name">Imagem 03</span><span class="lm-ctrl-meta">Detalhe</span></button></div></div>
                   
@@ -179,6 +179,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
           </button>
           <button id="labAcervoLocal" type="button" class="lm-acervo-local">+ ADICIONAR DO COMPUTADOR</button><input id="labAcervoLocalInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple hidden aria-label="Escolher fotografias ou vídeos do computador"><small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
+          <div class="lm-acervo-background-selection" aria-live="polite"><span id="labBackgroundVideoStatus"></span><button id="labBackgroundVideoRemove" type="button" hidden>Remover vídeo</button></div>
         </div>
         <div id="labAcervoDialog" class="lm-acervo-overlay" hidden>
           <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">
@@ -403,5 +404,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-biblioteca-2"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs"></script>
+<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-video-fundo-1"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js?v=20261104-video-fundo-1" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs?v=20261104-video-fundo-1"></script>
 </body></html>

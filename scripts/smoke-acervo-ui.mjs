@@ -84,15 +84,21 @@ try{
     "Photo was not applied to the editor");
   await choose();
   await page.locator(".lm-acervo-item").filter({hasText:"Aleteia Evento horizontal.mp4"}).click();
-  await page.locator("#labClipSettings").waitFor({state:"visible"});
-  assert(await page.locator("#labPageVideos video").count()===1,"Public video not added to page");
+  await page.locator("#labAmbientVideo").waitFor({state:"visible"});
+  assert(await page.locator("#labArtboard").getAttribute("data-video-background")==="true",
+    "Selecting a public video must apply it as background");
+  assert(await page.locator("#labPageVideos video").count()===0,
+    "Selecting a background must not create a movable clip");
   const remote=await page.evaluate(()=>window.LabPages.create());
-  assert(remote.pages[0].clips[0].provider==="public","Video must retain public-link origin");
-  assert(remote.pages[0].clips[0].projectId===projectId,"Video project scoping lost");
+  assert(remote.pages[0].backgroundVideo.provider==="public","Video background must retain public-link origin");
+  assert(remote.pages[0].backgroundVideo.projectId===projectId,"Video background project scoping lost");
+  assert(remote.pages[0].composition.pages[0].surface.background==="photo","Video must activate visual background");
   const localImageResponse=await page.request.get(new URL("/ambiente-editorial/media/BOXDOSENTIR-64.jpg",base).href);
   assert(localImageResponse.ok(),"Missing local JPG test fixture");
   await page.locator("#labAcervoLocalInput").setInputFiles({
     name:"imagem-local.jpg",mimeType:"image/jpeg",buffer:await localImageResponse.body()});
+  await page.waitForFunction(()=>!window.LabPages?.create?.().pages[0].backgroundVideo,
+    null,{timeout:12000});
   try{
     await page.waitForFunction(()=>document.getElementById("labPhoto").value.startsWith("loc-"),
       null,{timeout:12000});
@@ -112,11 +118,12 @@ try{
     "Local image missing after opening saved project");
   await page.locator("#labAcervoLocalInput").setInputFiles({
     name:"video-local.mp4",mimeType:"video/mp4",buffer:mp4});
-  await page.waitForFunction(()=>window.LabPages?.create?.().pages[0].clips?.some(c=>c.provider==="local"),
+  await page.waitForFunction(()=>window.LabPages?.create?.().pages[0].backgroundVideo?.provider==="local",
     null,{timeout:25000});
   const mixed=await page.evaluate(()=>window.LabPages.create());
-  assert(mixed.pages[0].clips.length===2,"Both public and local videos should be on the same page");
+  assert(mixed.pages[0].backgroundVideo.provider==="local","Local video should replace the background");
+  assert(!mixed.pages[0].clips?.length,"New videos may not become independent page elements");
   assert(!JSON.stringify(mixed).includes("access_token"),"Project must not persist OAuth tokens");
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
-  console.log("LABMATTAR: public folder gallery without OAuth, nested project photos/videos, local image JSON and local IndexedDB video OK");
+  console.log("LABMATTAR: public/local videos replace the page background; local photos and JSON remain intact");
 }finally{await browser.close();}

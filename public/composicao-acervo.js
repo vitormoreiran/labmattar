@@ -125,48 +125,95 @@
       activeProvider==="dropbox"?(folder||"Dropbox / Seus arquivos"):"Google Drive / 01_Portfolio";
     by("labAcervoBack").hidden=activeProvider==="public"?!publicTrail.length:activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
-    if(search)search.hidden=activeProvider!=="public";
+    if(search)search.parentElement.hidden=activeProvider!=="public";
     by("labAcervoProvidersBack").hidden=activeProvider==="public";
   }
+  function groupFor(kind){
+    let section=list.querySelector('[data-acervo-group="'+kind+'"]');
+    if(section)return section.querySelector('.lm-acervo-group-grid');
+    section=document.createElement("section");
+    section.className="lm-acervo-group";
+    section.dataset.acervoGroup=kind;
+    const header=document.createElement("div");
+    header.className="lm-acervo-group-heading";
+    const label=document.createElement("strong");
+    label.textContent=kind==="folder"?"PASTAS":"FOTOGRAFIAS E VÍDEOS";
+    const count=document.createElement("span");
+    count.className="lm-acervo-group-count";
+    header.append(label,count);
+    const grid=document.createElement("div");
+    grid.className="lm-acervo-group-grid "+(kind==="folder"?"lm-acervo-folder-grid":"lm-acervo-media-grid");
+    section.append(header,grid);
+    // Keep folder navigation above media, even with paginated sources.
+    if(kind==="folder"&&list.firstChild)list.prepend(section);
+    else list.append(section);
+    return grid;
+  }
   function show(items,append=false){
-    if(!append)list.replaceChildren();
+    if(!append){list.replaceChildren();list.scrollTop=0;}
     if(!append&&!items.length){
       const empty=document.createElement("p");
       empty.className="lm-acervo-empty";
       empty.textContent="Nenhuma fotografia ou vídeo encontrado nesta pasta.";
-      list.append(empty);
+      list.append(empty);return;
     }
     for(const item of items){
       const button=document.createElement("button");
       button.type="button";
       button.className="lm-acervo-item";
+      button.title=escapeName(item.name);
       if(item.kind==="folder"){
         button.classList.add("lm-acervo-folder");
+        button.setAttribute("aria-label","Abrir pasta "+escapeName(item.name));
         const glyph=document.createElement("span");
-        glyph.textContent="▱";glyph.setAttribute("aria-hidden","true");
+        glyph.className="lm-acervo-folder-icon";
+        glyph.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5h6l2.1 2H20.5v10H3.5z"/><path d="M3.5 8.5V6.5a2 2 0 0 1 2-2h4"/></svg>';
         const name=document.createElement("span");
+        name.className="lm-acervo-folder-name";
         name.textContent=escapeName(item.name);
-        button.append(glyph,name);
+        const arrow=document.createElement("span");
+        arrow.className="lm-acervo-folder-arrow";
+        arrow.textContent="›";arrow.setAttribute("aria-hidden","true");
+        button.append(glyph,name,arrow);
         button.addEventListener("click",()=>{
           if(activeProvider==="public")openPublicFolder(item);
           else openDropbox(item.path);
         });
+        groupFor("folder").append(button);
       }else if(valid(item)){
-        const thumb=document.createElement("span");thumb.className="lm-acervo-thumb";
-        if(item.kind==="image"){
-          const image=document.createElement("img");
-          image.loading="lazy";image.alt="";image.src=item.preview;
-          image.addEventListener("error",()=>{image.hidden=true;thumb.textContent="IMAGEM"});
-          thumb.append(image);
-        }else thumb.textContent="VÍDEO";
-        const meta=document.createElement("span");meta.className="lm-acervo-item-meta";
-        const name=document.createElement("strong");name.textContent=escapeName(item.name);
+        button.classList.add("lm-acervo-file");
+        if(item.kind==="video")button.classList.add("lm-acervo-video");
+        button.setAttribute("aria-label","Selecionar "+(item.kind==="video"?"vídeo ":"fotografia ")+escapeName(item.name));
+        const thumb=document.createElement("span");
+        thumb.className="lm-acervo-thumb";
+        const image=document.createElement("img");
+        image.loading="lazy";image.decoding="async";image.alt="";
+        image.addEventListener("error",()=>{image.hidden=true;thumb.classList.add("is-missing")});
+        image.src=item.preview;
+        const fallback=document.createElement("span");
+        fallback.className="lm-acervo-thumb-label";
+        fallback.textContent=item.kind==="video"?"VÍDEO":"IMAGEM";
+        thumb.append(image,fallback);
+        if(item.kind==="video"){
+          const play=document.createElement("span");
+          play.className="lm-acervo-play";
+          play.textContent="▶";play.setAttribute("aria-hidden","true");
+          thumb.append(play);
+        }
+        const meta=document.createElement("span");
+        meta.className="lm-acervo-item-meta";
+        const name=document.createElement("strong");
+        name.textContent=escapeName(item.name);
         const kind=document.createElement("small");
-        kind.textContent=item.kind==="video"?"Vídeo · adicionar à página":"Fotografia · usar como fundo";
+        kind.textContent=item.kind==="video"?"VÍDEO":"FOTOGRAFIA";
         meta.append(name,kind);button.append(thumb,meta);
         button.addEventListener("click",()=>select(item));
-      }else continue;
-      list.append(button);
+        groupFor("media").append(button);
+      }
+    }
+    for(const section of list.querySelectorAll(".lm-acervo-group")){
+      const count=section.querySelector(".lm-acervo-group-grid").childElementCount;
+      section.querySelector(".lm-acervo-group-count").textContent=String(count).padStart(2,"0");
     }
   }
 
@@ -214,8 +261,7 @@
       }
       if(query&&!publicTrail.length)items=items.filter(x=>x.name.toLocaleLowerCase("pt-BR").includes(query));
       heading();show(items);
-      notify(items.length+" itens · "+(publicTrail.length?"Selecione uma fotografia ou vídeo.":"Selecione um projeto.")+
-        " Não é necessário login.");
+      notify(items.length+" itens · "+(publicTrail.length?"Escolha uma fotografia ou vídeo para inserir.":"Escolha uma pasta de projeto."));
     }catch(error){
       list.replaceChildren();notify(error.message);
     }finally{setBusy(false);}

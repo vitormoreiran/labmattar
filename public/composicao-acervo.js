@@ -115,7 +115,7 @@
     if(!cfg?.apiKey||!cfg?.appId){notify("O Google Picker ainda não foi configurado.");return}
     setBusy(true);
     try{
-      const token=await api("picker-token");
+      const token=await api("picker-token",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
       if(!window.gapi){
         await new Promise((resolve,reject)=>{
           const script=document.createElement("script");

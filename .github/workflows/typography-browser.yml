@@ -39,7 +39,7 @@ jobs:
       - name: Preparar pagina com navegacao e fontes oficiais
         if: github.event_name != 'workflow_run'
         run: |
-          for page in tipografia cores composicao laboratorio; do cp "design/$page.html" "public/$page.html"; done
+          for page in tipografia cores composicao laboratorio compor; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           mkdir -p public/fonts
           curl --fail --location --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf -o public/fonts/univers-lt-std-45-light.otf

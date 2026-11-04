@@ -102,7 +102,8 @@ try{
     "Help must close without changing the composition");
 
   // Seven operational help cards replace the static construction prose.
-  const tourTrigger=page.locator("#labOverviewHelp");
+  const tourTrigger=page.locator("#labTourStudioHelp");
+  assert(await tourTrigger.isVisible(),"Focused editor must expose Dúvidas in its own toolbar");
   const beforeTour=await page.locator("#labArtboard").evaluate(board=>({
     format:board.dataset.format,title:board.querySelector("#labRenderedTitle").textContent,
     body:board.querySelector("#labRenderedBody").textContent

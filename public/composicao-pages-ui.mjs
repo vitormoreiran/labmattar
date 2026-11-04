@@ -164,7 +164,7 @@ function renderClips(){
     const video=document.createElement('video');
     video.dataset.clipId=clip.id;video.setAttribute('aria-label',clip.name);
     video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
-    video.preload='auto';video.autoplay=clipsPlaying;
+    video.preload='metadata';video.autoplay=clipsPlaying;
     video.src=privateClipUrl(clip);
     video.addEventListener('loadedmetadata',()=>{
       if(pages[current]?.clips?.includes(clip)&&video.videoWidth&&video.videoHeight){

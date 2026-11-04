@@ -31,8 +31,8 @@
       <div class="lm-lab-export-tools" role="group" aria-label="Exportar imagem da composição">
         <label class="lm-lab-export-label" for="labExportSize">QUALIDADE</label>
         <select id="labExportSize" aria-label="Qualidade das imagens exportadas"><option value="3840">4K</option><option value="1920">2K</option></select>
-        <button type="button" id="labExportPng" aria-describedby="labExportStatus" title="Exportar PNG nas dimensões reais, com checagem de imagens e texto"><span class="lm-lab-export-verb">EXPORTAR</span> PNG</button>
-        <details class="lab-export-menu"><summary aria-label="Outros formatos de exportação">▾</summary><div><button type="button" id="labExportPdf">PDF / TODAS AS PÁGINAS</button><button type="button" id="labExportHtml">SITE HTML / TODAS AS PÁGINAS</button><button type="button" id="labPresentation">APRESENTAR SEQUÊNCIA ↗</button></div></details>
+        <button type="button" id="labExportPng" aria-describedby="labExportStatus" title="Baixar PNG somente da página atual" aria-label="Baixar PNG da página atual"><span class="lm-lab-export-verb">EXPORTAR</span> PNG</button>
+        <details class="lab-export-menu"><summary aria-label="Exportar a apresentação">EXPORTAR <span aria-hidden="true">▾</span></summary><div><p class="lab-export-heading">APRESENTAÇÃO COMPLETA</p><button type="button" id="labPresentation"><span>APRESENTAR ↗</span><small>Ver a sequência no navegador</small></button><button type="button" id="labExportPdf"><span>BAIXAR PDF</span><small>Todas as páginas nos formatos escolhidos</small></button><button type="button" id="labExportHtml"><span>BAIXAR SITE HTML</span><small>Páginas e motions em um arquivo independente</small></button><p class="lab-workflow-helper">O botão PNG exporta somente a página em edição.</p></div></details>
       </div>
       <button type="button" id="labStudioToggle" aria-pressed="false" aria-controls="labArtboard">
         <span id="labStudioToggleText">ABRIR EDITOR</span><span class="lm-studio-launch-symbol" aria-hidden="true">↗</span>
@@ -41,7 +41,42 @@
   </div>
   <div class="lm-lab-workspace">
     <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">
-      <div class="lm-inspector-head"><span>FERRAMENTAS / COMPOSIÇÃO</span></div>
+      <nav class="lab-workflow-switch" aria-label="Organizar e editar a apresentação"><button type="button" data-workspace-view="pages" aria-pressed="false" aria-controls="labPages">PÁGINAS</button><button type="button" data-workspace-view="edit" aria-pressed="true">EDITAR PÁGINA</button><button type="button" data-workspace-view="motion" aria-pressed="false" aria-controls="labWorkflowMotion">MOTION</button></nav>
+        <section id="labPages" class="lab-pages lab-workflow-panel" hidden aria-label="Páginas da apresentação" data-ready="false">
+          <div class="lab-pages-heading"><span>PÁGINAS DA APRESENTAÇÃO</span><output id="labPageCount">1 / 1</output></div>
+          
+          <p class="lab-workflow-helper">Escolha uma página para editar. A ordem abaixo será a ordem da apresentação.</p><select id="labPageSelect" hidden aria-hidden="true" tabindex="-1"><option value="0">01 / Página 1</option></select><div id="labPageList" class="lab-page-list" aria-label="Ordem das páginas"></div>
+          <label for="labPageName">Nome da página selecionada</label><input id="labPageName" maxlength="120" value="Página 1">
+          <div class="lab-page-actions"><button type="button" id="labPageAdd">+ NOVA PÁGINA</button><button type="button" id="labPageDuplicate">DUPLICAR</button><button type="button" id="labPageEarlier" aria-label="Mover página para antes" title="Mover para antes">←</button><button type="button" id="labPageLater" aria-label="Mover página para depois" title="Mover para depois">→</button><button type="button" id="labPageDelete">EXCLUIR</button></div>
+          <button id="labEditCurrentPage" class="lab-edit-current" type="button">EDITAR ESTA PÁGINA →</button>
+          <details class="lab-project-settings"><summary>PROJETO / SALVAR E ABRIR</summary><div><label for="labSequenceName">Nome do projeto</label><input id="labSequenceName" maxlength="120" value="Apresentação LABMATTAR">          <div class="lm-lab-field lm-lab-document-field">
+            <div class="lm-lab-field-title">ARQUIVO EDITÁVEL</div>
+            <div class="lm-lab-document-actions">
+              <button type="button" id="labDownloadDocument" title="Salvar composição editável como documento versionado JSON">SALVAR PROJETO</button>
+              <button type="button" id="labImportDocument" title="Abrir documento JSON compatível com o Laboratório">ABRIR PROJETO</button>
+              <input type="file" id="labDocumentFile" accept=".json,application/json" hidden>
+            </div>
+            <small class="lm-ctrl-helper">Salva as páginas, a ordem, os elementos Motion e as referências oficiais. Os originais fotográficos permanecem no acervo de origem.</small>
+            <output id="labDocumentStatus" role="status" aria-live="polite"></output>
+          </div></div></details>
+          <output id="labPagesStatus" role="status" aria-live="polite"></output>
+        </section>
+<section id="labWorkflowMotion" class="lab-workflow-panel" hidden aria-label="Motion da página">        <div class="lab-motion-assets">
+          <div class="lm-lab-field-title">MOTION DA PÁGINA</div>
+          <button type="button" id="labMotionOpen">+ ADICIONAR MOTION</button>
+          <p class="lab-workflow-helper" id="labMotionEmpty">Adicione uma animação da Matriz à página atual.</p><div id="labMotionSettings" hidden>
+            <label for="labMotionInstance">Motion selecionado</label><select id="labMotionInstance"></select>
+            <label for="labMotionX">Posição horizontal</label><input id="labMotionX" type="range" min="0" max="100" step="1">
+            <label for="labMotionY">Posição vertical</label><input id="labMotionY" type="range" min="0" max="100" step="1">
+            <label for="labMotionWidth">Tamanho na página</label><input id="labMotionWidth" type="range" min="5" max="100" step="1">
+            <p class="lab-workflow-helper">No site, a animação roda em loop. Para PDF e PNG, escolha o quadro que deve aparecer.</p><label for="labMotionFrame">Quadro estático / tempo em segundos</label><input id="labMotionFrame" type="number" min="0" max="20" step="0.01" value="0">
+            <div class="lab-motion-actions"><button type="button" id="labMotionPreview" aria-pressed="false">VER QUADRO DO PDF</button><button type="button" id="labMotionRemove">REMOVER</button></div>
+            <a id="labMotionEdit" target="_blank" rel="noopener">EDITAR ROTEIRO NA MATRIZ ↗</a>
+          </div>
+        </div>
+        <dialog id="labMotionLibrary" aria-label="Acervo de motions da Matriz Vetorial"><header><span>ACERVO / MOTIONS DA MATRIZ</span><button id="labMotionClose" type="button" aria-label="Fechar acervo de motions">×</button></header><div id="labMotionLibraryItems"></div></dialog></section>
+<div id="labWorkflowContext" class="lab-workflow-context"></div>
+<div class="lm-inspector-head"><span>FERRAMENTAS / COMPOSIÇÃO</span></div>
       <div class="lm-composition-module-index" aria-label="Partes da composição">
         <button type="button" data-mobile-module="superficie" aria-pressed="true">SUPERFÍCIE</button>
         <button type="button" data-mobile-module="fundo" aria-pressed="false">FUNDO</button>
@@ -52,14 +87,7 @@
       </div>
       <section class="lm-inspector-panel lm-composition-module" id="labPanel-pagina" data-lab-panel="pagina" data-module="superficie">
         <div class="lm-inspector-panel-heading"><span>SUPERFÍCIE</span></div>
-        <section id="labPages" class="lab-pages" aria-label="Páginas da apresentação" data-ready="false">
-          <div class="lab-pages-heading"><span>SEQUÊNCIA DE PÁGINAS</span><output id="labPageCount">1 / 1</output></div>
-          <label for="labSequenceName">Nome do projeto</label><input id="labSequenceName" maxlength="120" value="Apresentação LABMATTAR">
-          <label for="labPageSelect">Página em edição</label><select id="labPageSelect"><option value="0">01 / Página 1</option></select>
-          <label for="labPageName">Nome desta página</label><input id="labPageName" maxlength="120" value="Página 1">
-          <div class="lab-page-actions"><button type="button" id="labPageAdd">+ PÁGINA</button><button type="button" id="labPageDuplicate">DUPLICAR</button><button type="button" id="labPageEarlier" aria-label="Mover página para antes">←</button><button type="button" id="labPageLater" aria-label="Mover página para depois">→</button><button type="button" id="labPageDelete">EXCLUIR</button></div>
-          <output id="labPagesStatus" role="status" aria-live="polite"></output>
-        </section>
+
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labFormatTitle" class="lm-lab-field-title">Proporção da superfície</div><select id="labFormat" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
           <option value="horizontal">Horizontal / 16:9</option><option value="vertical">Vertical / 9:16</option><option value="quadrado">Quadrado / 1:1</option><option value="editorial">Editorial / √2:1</option>
         </select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labFormatTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="horizontal" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="horizontal"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Horizontal</span><span class="lm-ctrl-meta">16:9</span></button>
@@ -73,16 +101,7 @@
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labGuidesTitle" class="lm-lab-field-title">Guias de construção</div><select id="labGuides" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="nenhuma">Ocultar</option><option value="margens">Área útil</option><option value="grid">Área útil + 12 colunas</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labGuidesTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="nenhuma" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="none"><i></i><i></i></span></span><span class="lm-ctrl-name">Sem guias</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="margens" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="safe"><i></i><i></i></span></span><span class="lm-ctrl-name">Margens</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="guides" data-value="grid" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-guide" data-guide="grid"><i></i><i></i></span></span><span class="lm-ctrl-name">12 colunas</span></button></div><small class="lm-ctrl-helper">As guias servem apenas à construção.</small></div>
-          <div class="lm-lab-field lm-lab-document-field">
-            <div class="lm-lab-field-title">PROJETO EDITÁVEL / PÁGINAS</div>
-            <div class="lm-lab-document-actions">
-              <button type="button" id="labDownloadDocument" title="Salvar composição editável como documento versionado JSON">BAIXAR JSON</button>
-              <button type="button" id="labImportDocument" title="Abrir documento JSON compatível com o Laboratório">ABRIR JSON</button>
-              <input type="file" id="labDocumentFile" accept=".json,application/json" hidden>
-            </div>
-            <small class="lm-ctrl-helper">Salva as páginas, a ordem, os elementos Motion e as referências oficiais. Os originais fotográficos permanecem no acervo de origem.</small>
-            <output id="labDocumentStatus" role="status" aria-live="polite"></output>
-          </div></div>
+</div>
         </details>
       </section>
       <section class="lm-inspector-panel lm-composition-module" id="labPanel-texto" data-lab-panel="texto" data-module="texto">
@@ -244,20 +263,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         </div>
         <div class="lm-lab-field lm-m-scale-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"></div>
         
-        <div class="lab-motion-assets">
-          <div class="lm-lab-field-title">ELEMENTOS / MOTION</div>
-          <button type="button" id="labMotionOpen">ABRIR ACERVO DA MATRIZ ↗</button>
-          <div id="labMotionSettings" hidden>
-            <label for="labMotionInstance">Elemento nesta página</label><select id="labMotionInstance"></select>
-            <label for="labMotionX">Posição horizontal</label><input id="labMotionX" type="range" min="0" max="100" step="1">
-            <label for="labMotionY">Posição vertical</label><input id="labMotionY" type="range" min="0" max="100" step="1">
-            <label for="labMotionWidth">Largura no formato da página</label><input id="labMotionWidth" type="range" min="5" max="100" step="1">
-            <label for="labMotionFrame">Quadro do PDF / segundos</label><input id="labMotionFrame" type="number" min="0" max="20" step="0.01" value="0">
-            <div class="lab-motion-actions"><button type="button" id="labMotionPreview" aria-pressed="false">VER QUADRO DO PDF</button><button type="button" id="labMotionRemove">REMOVER</button></div>
-            <a id="labMotionEdit" target="_blank" rel="noopener">EDITAR ROTEIRO NA MATRIZ ↗</a>
-          </div>
-        </div>
-        <dialog id="labMotionLibrary" aria-label="Acervo de motions da Matriz Vetorial"><header><span>ACERVO / MOTIONS DA MATRIZ</span><button id="labMotionClose" type="button" aria-label="Fechar acervo de motions">×</button></header><div id="labMotionLibraryItems"></div></dialog>
+
       </div>
         <details class="lm-inspector-more" data-lab-more="imagem">
           <summary><span>ASSINATURA E ENQUADRAMENTO</span></summary>

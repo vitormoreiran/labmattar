@@ -11,7 +11,7 @@ const context=await browser.newContext({viewport:{width:1440,height:1000},accept
 const page=await context.newPage(),report={url,steps:[],errors:[]};
 page.on('pageerror',error=>report.errors.push(error.message));page.on('dialog',dialog=>dialog.accept());
 const pause=()=>page.waitForTimeout(170);
-async function surface(){await page.locator('button[data-mobile-module="superficie"]').click();}
+async function surface(){await page.locator('[data-workspace-view=pages]').click();}
 async function state(patch){
   await page.evaluate(patch=>{const b=window.LabProductionBridge;b.restore({...b.snapshot().state,...patch});},patch);await pause();
 }
@@ -30,21 +30,26 @@ async function reference(index){
 }
 try{
   await page.goto(url+'?studio=1#laboratorio',{waitUntil:'networkidle'});
-  await page.waitForSelector('#labPages[data-ready="true"]');
+  await page.waitForSelector('#labPages[data-ready="true"]',{state:'attached'});
   if(!await page.locator('body').evaluate(body=>body.classList.contains('lm-studio-open')))await page.locator('#labStudioToggle').click();
   await surface();assert.equal(await page.locator('#labPageSelect option').count(),1);
+  await page.locator('.lab-project-settings>summary').click();
   await page.locator('#labSequenceName').fill('MATTAR </script><script>window.injected=true</script>');
   await page.locator('#labSequenceName').press('Tab');
   await state({title:'PÁGINA UM',body:'Uma sequência editável.',bodyMode:'visivel',mContent:'off',background:'color',guides:'nenhuma'});
   await page.locator('#labPageName').fill('Abertura');await page.locator('#labPageName').press('Tab');
-  await page.locator('button[data-mobile-module="m"]').click();
-  assert.equal(await page.locator('#labMotionOpen').isVisible(),true,'Motion library must be reachable from the element panel');
+  await page.locator('[data-workspace-view=motion]').click();
+  assert.equal(await page.locator('#labMotionOpen').isVisible(),true,'Motion library must have its own workspace');
   await page.locator('#labMotionOpen').click();
   assert.equal(await page.locator('#labMotionLibraryItems [data-motion-asset]').count(),8);
   await page.locator('[data-motion-asset="m-form"]').click();
   assert.equal(await page.locator('#labPageMotions video').count(),1);
   await page.locator('#labMotionFrame').fill('0.6');
   assert.equal(await page.locator('#labMotionPreview').textContent(),'VER MOVIMENTO');
+  await page.screenshot({path:path.join(output,'controls-motion-desktop.png')});
+  await page.locator('[data-workspace-view=edit]').click();await page.locator('button[data-mobile-module=superficie]').click();
+  assert.ok(await page.locator('#labFormatTitle').isVisible());
+  await page.screenshot({path:path.join(output,'controls-edit-desktop.png')});
   report.steps.push('Motion catalog, insertion and static frame');
 
   await surface();await page.locator('#labPageAdd').click();await pause();
@@ -78,11 +83,11 @@ try{
   const corrupted=structuredClone(authored);corrupted.pages[1].composition.assets[0].uri='/identidade/vaso_03.svg';
   const refused=await page.evaluate(async document=>{try{await window.LabPages.load(document);return false;}catch{return true;}},corrupted);
   assert.ok(refused);assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),authored);
-  await page.reload({waitUntil:'networkidle'});await page.waitForSelector('#labPages[data-ready="true"]');
+  await page.reload({waitUntil:'networkidle'});await page.waitForSelector('#labPages[data-ready="true"]',{state:'attached'});
   assert.equal(await page.locator('#labPageSelect option').count(),4,'Local sequence survives reload');
   await surface();
   for(let index=0;index<4;index++){
-    await page.locator('#labPageSelect').selectOption(String(index));await pause();
+    await page.locator('[data-page-index="'+index+'"]').click();await pause();
     assert.equal(await page.locator('#labArtboard').getAttribute('data-state'),'ok',`Page ${index+1} must pass layout preflight`);
     await page.locator('#labExportSize').selectOption('1920');
     if(index===2){
@@ -92,6 +97,7 @@ try{
     }
     await reference(index);
   }
+  await page.screenshot({path:path.join(output,'controls-pages-desktop.png')});
   const before=await page.evaluate(()=>window.LabProductionBridge.snapshot().state);
   await writeFile(path.join(output,'expected.json'),JSON.stringify(await page.evaluate(()=>window.LabPages.create()),null,2));
   await downloadButton('labExportPdf','labmattar-apresentacao.pdf');
@@ -116,7 +122,8 @@ try{
   await htmlPage.screenshot({path:path.join(output,'web-presentation.png')});await htmlPage.close();
 
   await page.setViewportSize({width:390,height:844});await surface();await pause();
-  assert.equal(await page.locator('#labPageSelect').isVisible(),true);
+  assert.equal(await page.locator('#labPageList button').count(),4);
+  assert.equal(await page.locator('#labPageList').isVisible(),true);
   assert.equal(await page.locator('#labPageAdd').isVisible(),true);
   assert.equal(await page.locator('.lab-export-menu>summary').isVisible(),true);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);

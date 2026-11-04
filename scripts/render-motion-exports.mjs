@@ -79,11 +79,11 @@ try{
       assert.equal(await page.locator('.motion-status, .motion-card[data-status]').count(),0);
       assert.equal(await page.locator('[data-motion-group]').count(),3);
       assert.equal(await page.locator('.motion-card video').count(),8);
-      assert.equal(await page.locator('video[autoplay]').count(),0);
+      assert.equal(await page.locator('video[autoplay][muted][loop][playsinline]:not([controls])').count(),8);
       const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);
       assert.equal(overflow,false,'Galeria com rolagem horizontal');
       const video=page.locator('.motion-card video').first();
-      await video.evaluate(async element=>{await element.play();});
+      assert.equal(await video.evaluate(element=>element.muted),true);
       await page.waitForFunction(()=>document.querySelector('video').currentTime>0.1);
       await video.evaluate(element=>element.pause());
       assert.deepEqual(errors,[],'Erro na galeria');

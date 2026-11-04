@@ -22,7 +22,7 @@ section = '''<section class="chapter chapter-spacious" id="transformacao"><div c
 <h2 class="title"><span class="line">SÍMBOLOS EM</span><span class="line perpetua">MOVIMENTO</span></h2>
 <p class="copy section-lead">O M encontra os pictogramas por giros e transformações. Explore os roteiros de símbolo, assinaturas e transições ou componha um percurso na Matriz.</p>
 <div class="motion-symbol-preview" data-motion-version="20261104-groups">
-<video controls playsinline preload="none" poster="/motion/posters/m-form.png" aria-label="M + Forma — símbolo em movimento"><source src="/motion/videos/m-form.mp4" type="video/mp4"/><a href="/motion/videos/m-form.mp4">Baixar vídeo M + Forma</a></video>
+<video autoplay muted loop playsinline preload="auto" poster="/motion/posters/m-form.png" aria-label="M + Forma — símbolo em movimento"><source src="/motion/videos/m-form.mp4" type="video/mp4"/><a href="/motion/videos/m-form.mp4">Baixar vídeo M + Forma</a></video>
 </div>
 <div class="motion-group-links detail"><a href="/motion.html#roteiros">SÍMBOLO EM MOVIMENTO ↗</a><a href="/motion.html#assinaturas">ASSINATURAS E ABERTURAS ↗</a><a href="/motion.html#transicoes">TRANSIÇÕES ↗</a><a href="/motion/matriz/index.html">ABRIR MATRIZ ↗</a></div>
 </div></section>'''
@@ -31,7 +31,8 @@ assert count == 1
 html = re.sub(r'<link[^>]*href="/manual-symbols\.css[^>]*>', '', html)
 html = re.sub(r'<script[^>]*src="/(?:vendor/MorphSVGPlugin|manual-symbols)\.js[^>]*>\s*</script>', '', html)
 html = re.sub(r'<link[^>]*href="/motion\.css[^>]*>', '', html)
-html = html.replace('</head>', '<link rel="stylesheet" href="/motion.css"/>\n</head>', 1)
+html = re.sub(r'<script[^>]*src="/motion\.js[^>]*>\s*</script>', '', html)
+html = html.replace('</head>', '<link rel="stylesheet" href="/motion.css"/>\n<script defer src="/motion.js"></script>\n</head>', 1)
 html = html.replace('href="#transformacao">Transformação', 'href="#transformacao">Motion')
 rules = re.search(r'<section class="chapter" id="regras">.*?</section>', html, re.S)
 if rules:
@@ -65,6 +66,7 @@ assert 'id="state-morph-svg"' not in html
 assert html.count('id="manual-states-script"') == 0
 assert html.count('class="lm-reading-intro"') == 1
 html = re.sub(r'\n*(<link rel="stylesheet" href="/motion)', r'\n\1', html)
+html = re.sub(r'\n*(<script defer src="/motion)', r'\n\1', html)
 html = re.sub(r'<h2 class="title">', '<h2 class="title lm-manual-section-title">', html)
 p.write_text(html, encoding='utf-8')
 print('Symbols: original artwork preserved; current Motion replaces contour demo')

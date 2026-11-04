@@ -230,19 +230,28 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
               </div>
             </div>
             <section id="labAcervoBrowser" class="lm-acervo-browser" aria-label="Arquivos disponíveis" hidden>
-              <div class="lm-acervo-browser-heading">
-                <button id="labAcervoProvidersBack" type="button">‹ Fontes</button>
-                <strong id="labAcervoPath">Arquivos disponíveis</strong>
+              <div class="lm-acervo-browser-tools">
+                <div class="lm-acervo-browser-heading">
+                  <button id="labAcervoBack" class="lm-acervo-nav-back" type="button" hidden aria-label="Voltar à pasta anterior"><span aria-hidden="true">←</span> Voltar</button>
+                  <button id="labAcervoProvidersBack" class="lm-acervo-nav-back" type="button">← Fontes</button>
+                  <div class="lm-acervo-location"><span class="lm-acervo-location-label">LOCALIZAÇÃO</span><strong id="labAcervoPath" title="Pasta atual">Arquivos disponíveis</strong></div>
+                  <button id="labAcervoMore" class="lm-acervo-nav-more" type="button" hidden>Carregar mais</button>
+                </div>
+                <div class="lm-acervo-search-field">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
+                  <label class="lm-acervo-search-label" for="labAcervoSearch">Buscar nesta pasta</label>
+                  <input id="labAcervoSearch" class="lm-acervo-search" type="search" placeholder="Buscar nesta pasta" autocomplete="off">
+                </div>
               </div>
-              <div class="lm-acervo-toolbar">
-                <button id="labAcervoBack" type="button" hidden>Voltar à pasta anterior</button>
-                <button id="labAcervoMore" type="button" hidden>Carregar mais</button>
-              </div>
-              <label class="lm-acervo-search-label" for="labAcervoSearch">Buscar nesta pasta</label><input id="labAcervoSearch" class="lm-acervo-search" type="search" placeholder="Buscar fotografias e vídeos" autocomplete="off"><div id="labAcervoItems" class="lm-acervo-items"></div>
+              <div id="labAcervoItems" class="lm-acervo-items" role="region" aria-label="Pastas, fotografias e vídeos"></div>
             </section>
-            <p id="labAcervoStatus" class="lm-acervo-status" role="status" aria-live="polite"></p>
-            <a id="labAcervoPortfolioLink" class="lm-acervo-portfolio-link" href="https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW" target="_blank" rel="noopener noreferrer">Conferir 01_Portfolio diretamente no Google Drive ↗</a>
-            <footer class="lm-acervo-footer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Acervo compartilhado por link. Arquivos locais só são adicionados quando você escolhe.</span></footer>
+            <div class="lm-acervo-dialog-bottom">
+              <div class="lm-acervo-dialog-bottom-main">
+                <p id="labAcervoStatus" class="lm-acervo-status" role="status" aria-live="polite"></p>
+                <a id="labAcervoPortfolioLink" class="lm-acervo-portfolio-link" href="https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW" target="_blank" rel="noopener noreferrer">Ver pasta no Drive ↗</a>
+              </div>
+              <footer class="lm-acervo-footer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Arquivos compartilhados por link. A seleção não altera os originais.</span></footer>
+            </div>
           </section>
         </div>
         <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>

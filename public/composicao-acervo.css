@@ -1,10 +1,11 @@
-/* LABMATTAR / Biblioteca de mídia — interface convencional e discreta.
-   Camada visual: não altera escala, tipografia, margens nem o motor da composição. */
+/* LABMATTAR / Biblioteca de mídia.
+   Um único viewport de rolagem para os arquivos. Sem alterar a Matriz
+   nem a tipografia e a escala do canvas de composição. */
 .lm-acervo{display:grid;gap:9px;margin:10px 0 14px;padding:12px 0;border-top:1px solid rgba(65,65,65,.19);border-bottom:1px solid rgba(65,65,65,.19);color:inherit}
 .lm-acervo-heading{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.08em;font-weight:500}
 .lm-acervo-launch{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:9px 11px;background:transparent;border:1px solid rgba(70,70,70,.28);border-radius:8px;color:inherit;text-align:left;cursor:pointer;font:inherit}
 .lm-acervo-launch:hover,.lm-acervo-launch:focus-visible{border-color:rgba(60,60,60,.66);background:rgba(90,90,90,.055)}
-.lm-acervo-launch:focus-visible,.lm-acervo-dialog button:focus-visible,.lm-acervo-dialog a:focus-visible{outline:2px solid #1f3554;outline-offset:3px}
+.lm-acervo-launch:focus-visible,.lm-acervo-local:focus-visible,.lm-acervo-dialog button:focus-visible,.lm-acervo-dialog a:focus-visible{outline:2px solid #1f3554;outline-offset:2px}
 .lm-acervo-launch-logos{display:flex;align-items:center;flex-shrink:0;gap:4px}
 .lm-acervo-launch-logos svg{width:21px;height:21px}
 .lm-acervo-launch-text{display:grid;flex:1;gap:3px;min-width:0}
@@ -12,73 +13,124 @@
 .lm-acervo-launch-text small{font-size:10px;opacity:.69}
 .lm-acervo-chevron{flex-shrink:0;opacity:.55}
 .lm-acervo-current{font-size:10px;line-height:1.3;opacity:.67;overflow-wrap:anywhere}
+.lm-acervo-local{display:block;width:100%;padding:10px 12px;border:1px solid #b8b5ae;border-radius:7px;background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit;font-size:11px;letter-spacing:.025em}
+.lm-acervo-local:hover,.lm-acervo-local:focus-visible{background:#eeece5;border-color:#64635f}
+
 .lm-acervo-overlay[hidden],.lm-acervo-dialog [hidden],.lm-acervo-overlay [hidden],.lm-acervo [hidden]{display:none!important}
-.lm-acervo-overlay{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:rgba(15,16,15,.44);padding:16px}
-.lm-acervo-dialog{box-sizing:border-box;display:grid;gap:16px;width:min(520px,100%);max-height:min(90vh,770px);overflow-y:auto;padding:26px;background:#f7f6f2;color:#181818;border:1px solid #d1d0c9;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.14);font-family:inherit}
-.lm-acervo-dialog-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}
-.lm-acervo-kicker{font-size:10px;letter-spacing:.1em;opacity:.66;font-weight:500}
-.lm-acervo-dialog h3{font-size:23px;line-height:1.1;letter-spacing:-.026em;font-weight:500;margin:9px 0 6px}
-.lm-acervo-dialog-heading p{margin:0;font-size:13px;line-height:1.4;color:#6a6963}
+.lm-acervo-overlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(19,20,20,.5)}
+.lm-acervo-dialog{box-sizing:border-box;display:flex;flex-direction:column;gap:0;width:min(920px,100%);max-height:min(90dvh,840px);min-width:0;min-height:0;overflow:hidden;padding:0;background:#f7f6f2;color:#20201e;border:1px solid #d5d3cc;border-radius:13px;box-shadow:0 25px 90px rgba(0,0,0,.2);font-family:inherit}
+.lm-acervo-dialog:has(.lm-acervo-browser:not([hidden])){height:min(85dvh,800px)}
 .lm-acervo-dialog button{font:inherit;color:inherit;cursor:pointer}
-.lm-acervo-close{display:grid;place-items:center;flex-shrink:0;width:32px;height:32px;padding:0;border:1px solid #d4d2cd;border-radius:7px;background:transparent}
-.lm-acervo-close:hover,.lm-acervo-dialog .lm-acervo-source:hover{background:#efeee9}
-.lm-acervo-sources{display:grid;gap:8px}
+.lm-acervo-dialog-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex:none;padding:20px 24px 17px;border-bottom:1px solid #dedcd5}
+.lm-acervo-dialog-heading>div{min-width:0}
+.lm-acervo-kicker{font-size:10px;letter-spacing:.095em;opacity:.65;font-weight:500}
+.lm-acervo-dialog h3{margin:6px 0 4px;font-size:22px;line-height:1.1;letter-spacing:-.025em;font-weight:500}
+.lm-acervo-dialog-heading p{margin:0;font-size:12px;line-height:1.45;color:#727069}
+.lm-acervo-close{display:grid;place-items:center;flex-shrink:0;width:34px;height:34px;padding:0;border:1px solid #d4d2cb;border-radius:7px;background:transparent}
+.lm-acervo-close:hover{background:#ebe9e3}
+
+/* The location and search never scroll with the asset grid. */
+.lm-acervo-browser{display:flex;flex-direction:column;flex:1 1 auto;gap:0;min-height:0;min-width:0;overflow:hidden}
+.lm-acervo-browser-tools{display:grid;gap:12px;flex:none;padding:16px 24px 15px;border-bottom:1px solid #e0ded7}
+.lm-acervo-browser-heading{display:flex;align-items:center;gap:14px;min-width:0}
+.lm-acervo-browser-heading button{flex:none;min-height:33px;padding:7px 12px;background:#fbfaf7;border:1px solid #d7d5ce;border-radius:7px;font-size:11px;line-height:1.1}
+.lm-acervo-browser-heading button:hover,.lm-acervo-browser-heading button:focus-visible{background:#eae8e2}
+.lm-acervo-nav-back span{font-size:16px;vertical-align:-1px;margin-right:3px}
+.lm-acervo-location{display:grid;gap:4px;flex:1 1 auto;min-width:0}
+.lm-acervo-location-label{font-size:9px;letter-spacing:.1em;color:#908e86}
+.lm-acervo-location strong{display:block;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;line-height:1.35;font-weight:550}
+.lm-acervo-nav-more{margin-left:auto}
+.lm-acervo-search-field{display:flex;align-items:center;gap:9px;min-width:0;height:40px;padding:0 12px;border:1px solid #d7d5ce;border-radius:8px;background:#fff}
+.lm-acervo-search-field:focus-within{border-color:#74736d;box-shadow:0 0 0 2px rgba(50,50,50,.08)}
+.lm-acervo-search-field svg{flex:none;color:#85837d}
+.lm-acervo-search-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.lm-acervo-search{box-sizing:border-box;flex:1;min-width:0;width:100%;height:100%;padding:0;border:0;outline:0;background:transparent;color:#20201e;font:inherit;font-size:12px}
+.lm-acervo-search::placeholder{color:#8f8e87}
+.lm-acervo-search:focus-visible{outline:none}
+
+/* One scroll surface. Groups keep folders above content; cards do not shrink. */
+.lm-acervo-items{box-sizing:border-box;display:flex;flex-direction:column;flex:1 1 auto;gap:23px;min-height:0;min-width:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:19px 23px 26px;align-content:flex-start}
+.lm-acervo-group{display:grid;gap:11px;flex:none;min-width:0}
+.lm-acervo-group-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;color:#77756f}
+.lm-acervo-group-heading strong{font-size:10px;letter-spacing:.09em;font-weight:550;line-height:1.2}
+.lm-acervo-group-count{font-size:11px;font-variant-numeric:tabular-nums}
+.lm-acervo-group-grid{display:grid;align-items:start;grid-auto-rows:max-content;gap:10px;min-width:0}
+.lm-acervo-folder-grid{grid-template-columns:repeat(auto-fill,minmax(186px,1fr))}
+.lm-acervo-media-grid{grid-template-columns:repeat(auto-fill,minmax(174px,1fr));gap:12px}
+.lm-acervo-item{box-sizing:border-box;min-width:0;min-height:0;margin:0;align-self:start;overflow:hidden;border:1px solid #dfddd7;border-radius:8px;background:#fbfaf8;text-align:left;transition:border-color .15s ease,background-color .15s ease,box-shadow .15s ease}
+.lm-acervo-item:hover:not(:disabled){border-color:#a4a29a;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.055)}
+.lm-acervo-item:active:not(:disabled){background:#eeece7}
+.lm-acervo-item:disabled{cursor:not-allowed;opacity:.6}
+.lm-acervo-folder{display:flex;align-items:center;gap:10px;width:100%;min-height:58px;padding:10px 12px}
+.lm-acervo-folder-icon{display:grid;place-items:center;flex:none;width:25px;height:25px;color:#6f6d66}
+.lm-acervo-folder-icon svg{display:block;width:24px;height:24px}
+.lm-acervo-folder-name{display:block;flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;line-height:1.4;font-weight:500}
+.lm-acervo-folder-arrow{flex:none;color:#b0ada6;font-size:20px;line-height:1}
+.lm-acervo-file{display:flex;flex-direction:column;width:100%;padding:0;gap:0}
+.lm-acervo-thumb{box-sizing:border-box;display:block;position:relative;flex:0 0 auto;width:100%;aspect-ratio:4/3;min-height:108px;overflow:hidden;background:#e5e3dc;color:#6f6d67}
+.lm-acervo-thumb img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
+.lm-acervo-thumb img[hidden]{display:none!important}
+.lm-acervo-thumb-label{display:none;position:absolute;inset:0;place-items:center;font-size:10px;letter-spacing:.08em}
+.lm-acervo-thumb.is-missing .lm-acervo-thumb-label{display:grid}
+.lm-acervo-play{position:absolute;top:50%;left:50%;display:grid;place-items:center;width:36px;height:36px;transform:translate(-50%,-50%);padding-left:2px;border-radius:50%;background:rgba(27,28,26,.78);color:white;font-size:12px;line-height:1}
+.lm-acervo-item-meta{box-sizing:border-box;display:grid;align-content:start;gap:5px;min-height:63px;width:100%;padding:10px 11px 11px}
+.lm-acervo-item-meta strong{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-size:12px;font-weight:500;line-height:1.4;max-height:2.8em}
+.lm-acervo-item-meta small{display:block;color:#89877f;font-size:9px;letter-spacing:.07em;line-height:1.25}
+.lm-acervo-empty{margin:0;padding:26px 16px;border:1px dashed #d5d2cc;border-radius:8px;text-align:center;color:#77756e;font-size:12px}
+
+/* Status and provenance remain visible while browsing. */
+.lm-acervo-dialog-bottom{display:grid;gap:7px;flex:none;min-width:0;padding:12px 24px 13px;border-top:1px solid #e0ded7}
+.lm-acervo-dialog-bottom-main{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.lm-acervo-status{margin:0;min-width:0;font-size:11px;line-height:1.35;color:#67655f}
+.lm-acervo-status:empty{display:none}
+.lm-acervo-portfolio-link{flex:none;color:#65635f;text-decoration:underline;text-underline-offset:3px;font-size:11px;line-height:1.35;white-space:nowrap}
+.lm-acervo-portfolio-link:hover{color:#181818}
+.lm-acervo-footer{display:flex;align-items:center;gap:7px;color:#929087;font-size:10px;line-height:1.3}
+.lm-acervo-footer svg{flex:none}
+
+/* Legacy OAuth controls remain available without distracting from 01_Portfolio. */
+.lm-acervo-sources{display:grid;gap:8px;padding:20px 24px}
 .lm-acervo-source-row{display:flex;align-items:stretch;gap:6px;min-width:0}
-.lm-acervo-source{display:flex;flex:1;gap:14px;min-width:0;align-items:center;text-align:left;padding:14px 15px;border:1px solid #d8d6cf;border-radius:9px;background:#fbfaf7;min-height:74px}
+.lm-acervo-source{display:flex;flex:1;align-items:center;gap:14px;min-width:0;min-height:68px;padding:12px 14px;text-align:left;border:1px solid #d8d6cf;border-radius:8px;background:#fbfaf7}
+.lm-acervo-source:hover{background:#efeee9}
 .lm-acervo-source[aria-current="true"]{border-color:#5b5b54;background:#edede8}
-.lm-acervo-provider-icon{flex-shrink:0;width:27px;height:27px}
-.lm-acervo-source-text{flex:1;display:grid;gap:5px;min-width:0}
-.lm-acervo-source-text strong{font-size:14px;font-weight:550;line-height:1.15}
+.lm-acervo-provider-icon{flex:none;width:26px;height:26px}
+.lm-acervo-source-text{display:grid;flex:1;gap:5px;min-width:0}
+.lm-acervo-source-text strong{font-size:13px;font-weight:550;line-height:1.2}
 .lm-acervo-source-text small{font-size:11px;line-height:1.25;color:#66645f}
 .lm-acervo-disconnect{align-self:center;padding:8px 9px;border:1px solid #d8d6cf;border-radius:6px;background:transparent;font-size:10px!important}
 .lm-acervo-disconnect:hover{background:#edede7}
-.lm-acervo-setup{display:flex;gap:12px;padding:14px;border:1px solid #dfdcd4;background:#f1efe9;border-radius:9px}
-.lm-acervo-setup-icon{display:grid;place-items:center;flex-shrink:0;align-self:flex-start;width:30px;height:30px;border:1px solid #dedcd5;border-radius:7px}
+.lm-acervo-setup{display:flex;gap:12px;margin:18px 24px;padding:14px;border:1px solid #dfdcd4;background:#f1efe9;border-radius:9px}
+.lm-acervo-setup-icon{display:grid;place-items:center;flex:none;align-self:flex-start;width:30px;height:30px;border:1px solid #dedcd5;border-radius:7px}
 .lm-acervo-setup strong{display:block;font-size:13px;font-weight:550;line-height:1.3}
-.lm-acervo-setup p{font-size:12px;line-height:1.6;margin:6px 0;color:#5e5c55}
+.lm-acervo-setup p{font-size:12px;line-height:1.5;margin:6px 0;color:#5e5c55}
 .lm-acervo-setup a{display:inline-block;margin-top:4px;font-size:12px;line-height:1.4;color:#252523;text-underline-offset:3px}
-.lm-acervo-status{margin:0;min-height:0;font-size:12px;line-height:1.45;color:#5b5953}
-.lm-acervo-status:empty{display:none}
-.lm-acervo-footer{display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid #e0ded7;color:#6c6a63;font-size:11px;line-height:1.35}
-.lm-acervo-footer svg{flex-shrink:0}
-.lm-acervo-browser{display:grid;gap:13px}
-.lm-acervo-browser-heading{display:flex;align-items:center;gap:12px;min-width:0}
-.lm-acervo-browser-heading strong{font-size:12px;font-weight:550;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.lm-acervo-browser-heading button,.lm-acervo-toolbar button{flex-shrink:0;padding:7px 10px;border:1px solid #ddd9d0;border-radius:6px;background:transparent;font-size:11px}
-.lm-acervo-browser-heading button:hover,.lm-acervo-toolbar button:hover{background:#eae8e2}
-.lm-acervo-toolbar{display:flex;gap:8px;flex-wrap:wrap}
-.lm-acervo-items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;min-height:0;max-height:340px;overflow:auto}
-.lm-acervo-item{display:grid;align-content:start;text-align:left;gap:7px;min-width:0;overflow:hidden;padding:8px;border:1px solid #dedcd5;background:#fbfaf7;border-radius:7px}
-.lm-acervo-item:hover:not(:disabled){background:#edede8}
-.lm-acervo-item:disabled{cursor:not-allowed;opacity:.55}
-.lm-acervo-item strong{font-size:11px;font-weight:550;overflow-wrap:anywhere}
-.lm-acervo-item small{font-size:10px;line-height:1.25;color:#77756e;overflow-wrap:anywhere}
-.lm-acervo-item-meta{display:grid;gap:3px}
-.lm-acervo-thumb{display:grid;place-items:center;aspect-ratio:4/3;width:100%;border-radius:4px;background:#e9e7e1;font-size:10px;letter-spacing:.07em;overflow:hidden}
-.lm-acervo-thumb img{width:100%;height:100%;object-fit:cover}
-.lm-acervo-folder{display:flex;align-items:center;gap:8px;min-height:72px}
-.lm-acervo-folder span:first-child{font-size:20px}
-.lm-acervo-empty{grid-column:1/-1;color:#77756e;font-size:12px;margin:12px 0}
-@media(max-width:600px){.lm-acervo-overlay{align-items:end;padding:0}.lm-acervo-dialog{width:100%;max-height:90dvh;border-radius:14px 14px 0 0;padding:22px 17px;gap:14px}.lm-acervo-items{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(prefers-reduced-motion:reduce){.lm-acervo-dialog,.lm-acervo-launch,.lm-acervo-source{transition:none}}
 
-/* Private Drive portfolio fallback; visible whenever native Picker is unavailable. */
-.lm-acervo-portfolio-link{display:inline-flex;width:fit-content;align-items:center;gap:5px;color:inherit;text-decoration:underline;text-underline-offset:3px;font-size:11px;line-height:1.45;opacity:.75}
-.lm-acervo-portfolio-link:hover{opacity:1}
-
-/* Biblioteca 01_Portfolio por projeto. Interface neutra, sem nova linguagem de marca. */
-.lm-acervo-local{display:block;width:100%;padding:10px 12px;border:1px solid #b8b5ae;
-  border-radius:7px;background:transparent;color:inherit;text-align:left;cursor:pointer;
-  font:inherit;font-size:11px;letter-spacing:.025em}
-.lm-acervo-local:hover,.lm-acervo-local:focus-visible{background:#eeece5;border-color:#64635f}
-.lm-acervo-dialog{width:min(700px,100%)}
-.lm-acervo-search-label{font-size:10px;line-height:1.2;letter-spacing:.06em;opacity:.7}
-.lm-acervo-search{box-sizing:border-box;width:100%;min-height:38px;padding:8px 12px;
-  background:#fbfaf7;color:inherit;border:1px solid #d8d6cf;border-radius:7px;font:inherit;font-size:13px}
-.lm-acervo-search:focus-visible{outline:2px solid #1f3554;outline-offset:2px}
-.lm-acervo-items{max-height:min(46vh,430px)}
-.lm-acervo-item.lm-acervo-folder{min-height:65px;align-content:center;grid-template-columns:auto 1fr;
-  align-items:center;gap:10px;font-size:12px}
-.lm-acervo-item.lm-acervo-folder>span:first-child{font-size:21px;opacity:.65}
-@media(max-width:550px){.lm-acervo-items{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .lm-acervo-dialog{padding:17px}.lm-acervo-dialog h3{font-size:20px}}
+@media(max-width:640px){
+  .lm-acervo-overlay{align-items:flex-end;padding:0}
+  .lm-acervo-dialog{width:100%;max-height:95dvh;border-radius:16px 16px 0 0;border-bottom:0}
+  .lm-acervo-dialog:has(.lm-acervo-browser:not([hidden])){height:93dvh}
+  .lm-acervo-dialog-heading{padding:17px 18px 15px}
+  .lm-acervo-dialog h3{font-size:20px}
+  .lm-acervo-dialog-heading p{font-size:11px}
+  .lm-acervo-browser-tools{padding:13px 16px}
+  .lm-acervo-items{padding:16px;gap:20px}
+  .lm-acervo-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lm-acervo-media-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .lm-acervo-folder{min-height:54px;padding:9px}
+  .lm-acervo-folder-name{font-size:11px}
+  .lm-acervo-thumb{min-height:90px}
+  .lm-acervo-item-meta{padding:8px;min-height:61px}
+  .lm-acervo-item-meta strong{font-size:11px}
+  .lm-acervo-dialog-bottom{padding:11px 16px 12px}
+  .lm-acervo-dialog-bottom-main{align-items:flex-start}
+  .lm-acervo-sources{padding:16px}
+  .lm-acervo-setup{margin:16px}
+}
+@media(max-width:375px){
+  .lm-acervo-folder-grid{grid-template-columns:1fr}
+  .lm-acervo-dialog-heading p{display:none}
+  .lm-acervo-dialog-bottom-main{flex-wrap:wrap;gap:5px}
+  .lm-acervo-footer{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.lm-acervo-item{transition:none}}

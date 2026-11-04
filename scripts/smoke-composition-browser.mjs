@@ -16,6 +16,17 @@ async function choose(group,value){
 try{
   await page.goto(url,{waitUntil:"load",timeout:60000});
   await page.evaluate(()=>document.fonts.ready);
+  const landing=await page.request.get(new URL("/laboratorio.html",url).href);
+  const landingHtml=await landing.text();
+  assert(landing.status()===200 &&
+    landingHtml.includes('href="/editor/"') &&
+    landingHtml.includes('href="/compor.html?studio=1#laboratorio"') &&
+    !landingHtml.includes('id="labArtboard"'),
+    "Laboratory must show two instrument previews without embedding Compor");
+  const standalone=await page.request.get(new URL("/compor.html",url).href);
+  assert(standalone.status()===200 &&
+    (await standalone.text()).includes('id="labAcervo"'),
+    "Compor must remain independent and preserve connected media library");
   const manual=await page.request.get(new URL("/composicao.html",url).href);
   assert(manual.status()===200,"Construction chapter must be available");
   const manualHtml=await manual.text();

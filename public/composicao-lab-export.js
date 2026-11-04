@@ -204,7 +204,7 @@
     if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
     await Promise.all([...board.querySelectorAll("img")].filter(isVisible).map(img=>img.decode().catch(()=>{throw Error("Imagem indisponível. Conecte o acervo ou aguarde o carregamento.");})));
     if(board.dataset.videoBackground==="true"){
-      const videos=[...board.querySelectorAll(".lm-lab-photo-layer video.lm-lab-background-video")]
+      const videos=[...board.querySelectorAll("video.lm-lab-background-video")]
         .filter(isVisible);
       if(!videos.length)throw Error("Vídeo de fundo não encontrado.");
       await Promise.all(videos.map(async video=>{

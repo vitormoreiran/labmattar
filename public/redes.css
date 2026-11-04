@@ -147,7 +147,7 @@ figure,dl,dd{margin:0}
 .ss-feed-post{
   padding:0;position:relative;aspect-ratio:3/4;border:0;background:#e6e1da;
   overflow:hidden;min-width:0;cursor:grab;container-type:inline-size;
-  --lm-type-title-size:clamp(23px,12.5cqw,50px);
+  --lm-type-title-size:clamp(23px,21cqw,62px);
   --lm-type-body-size:clamp(8px,3cqw,19px);
   --lm-type-detail-size:clamp(7px,2cqw,13px);
 }

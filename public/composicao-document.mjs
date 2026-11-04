@@ -117,7 +117,7 @@ function captureState(state,photoCatalog){
 function assetList(state,photoCatalog){
   const result=[
     {id:"identity:m-mask",type:"vector",uri:OFFICIAL_M_MASK,source:"identidade-oficial"},
-    {id:"photo:"+state.photo,type:"image",uri:photoCatalog[state.photo],source:state.photo.startsWith("loc-")?"arquivo-local":state.photo.startsWith("ext-")?"acervo-drive":"prévia-local",masterVerified:false}
+    {id:"photo:"+state.photo,type:"image",uri:photoCatalog[state.photo],source:state.photo.startsWith("loc-")?"arquivo-local":state.photo.startsWith("ext-")?"acervo-privado":"prévia-local",masterVerified:false}
   ];
   const refs=new Set();
   if(state.symbol!=="none")refs.add(state.symbol);

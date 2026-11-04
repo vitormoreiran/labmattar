@@ -81,10 +81,13 @@ function renderPages(){
 function registerPhotos(photoCatalog){
   const known=bridge().snapshot().photoCatalog;
   for(const [photoKey,original] of Object.entries(photoCatalog)){
-    if(known[photoKey]||!photoKey.startsWith('ext-'))continue;
-    const url=new URL(original,location.origin);
-    window.dispatchEvent(new CustomEvent('labmattar:acervo-select',{detail:{photoKey,original,
-      provider:url.searchParams.get('provider'),id:url.searchParams.get('id'),name:'Fotografia do projeto'}}));
+    if(known[photoKey]||!(/^(ext|loc)-/.test(photoKey)))continue;
+    const isLocal=photoKey.startsWith('loc-');
+    const url=isLocal?null:new URL(original,location.origin);
+    const provider=isLocal?'local':url.pathname==='/api/acervo/public-media'?'public':url.searchParams.get('provider');
+    window.dispatchEvent(new CustomEvent('labmattar:acervo-select',{detail:{photoKey,original,provider,
+      id:isLocal?photoKey:url.searchParams.get('id'),projectId:url?.searchParams.get('project')||undefined,
+      name:isLocal?'Fotografia local do projeto':'Fotografia do projeto',restore:true}}));
   }
 }
 async function settled(){
@@ -165,7 +168,14 @@ function renderClips(){
     video.dataset.clipId=clip.id;video.setAttribute('aria-label',clip.name);
     video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
     video.preload='metadata';video.autoplay=clipsPlaying;
-    video.src=privateClipUrl(clip);
+    if(clip.provider==='local'){
+      window.LabAcervo?.localVideoUrl?.(clip.fileId).then(src=>{
+        if(layer.contains(video)){video.src=src;if(clipsPlaying)video.play().catch(()=>{});}
+      }).catch(()=>{
+        if(layer.contains(video))
+          by('labClipStatus').textContent='Vídeo local não encontrado neste navegador. Reimporte o arquivo original.';
+      });
+    }else video.src=privateClipUrl(clip);
     video.addEventListener('loadedmetadata',()=>{
       if(pages[current]?.clips?.includes(clip)&&video.videoWidth&&video.videoHeight){
         const aspect=video.videoWidth/video.videoHeight;

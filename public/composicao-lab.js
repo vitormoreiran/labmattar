@@ -50,7 +50,7 @@
     tipografia:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       textWidth:61,titleScale:100,type:"alternada",
-      background:"color",mContent:"off",mPresentation:"elemento",photo:"64",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      background:"color",mContent:"off",mPresentation:"elemento",photo:"64",marker:"none",markerFocus:"blur",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"PRÁTICAS\nMATERIAIS E\nPROCESSOS",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"oculto",
       ...defaultMetadata
@@ -58,7 +58,7 @@
     mascara:{
       format:"horizontal",color:"neutral",margin:7,guides:"margens",
       textWidth:40,titleScale:95,type:"alternada",
-      background:"color",mContent:"photo",mPresentation:"elemento",photo:"64",marker:"none",mScale:50,focusX:50,focusY:50,symbol:"none",
+      background:"color",mContent:"photo",mPresentation:"elemento",photo:"64",marker:"none",markerFocus:"blur",mScale:50,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM\nMUNDO",
       body:"Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -66,7 +66,7 @@
     imagem:{
       format:"horizontal",color:"neutral",margin:7,guides:"nenhuma",
       textWidth:80,titleScale:95,type:"alternada",
-      background:"photo",mContent:"off",mPresentation:"elemento",photo:"179",marker:"none",mScale:60,focusX:50,focusY:50,symbol:"none",
+      background:"photo",mContent:"off",mPresentation:"elemento",photo:"179",marker:"none",markerFocus:"blur",mScale:60,focusX:50,focusY:50,symbol:"none",
       title:"CADA CORPO\nABRE UM MUNDO",
       body:"Uma gastroperformance que investiga a sinestesia como possibilidade de encontro entre diferentes formas de sentir e perceber o mundo.",bodyMode:"visivel",
       ...defaultMetadata
@@ -74,7 +74,7 @@
   };
   const fields={
     format:"labFormat",color:"labColor",margin:"labMargin",guides:"labGuides",
-    marker:"labMarker",textWidth:"labTextWidth",
+    marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
     mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
@@ -121,6 +121,9 @@
       if(typeof data[key]==="string")result[key]=data[key].replace(/[\r\n]+/g," ").slice(0,max);
     }
     result.signature=sanitizeSignature(data.signature,data);
+    // Saved projects made before this rule may contain a solid M on a photo.
+    // Normalize that impossible combination before rendering or exporting.
+    if(result.background==="photo"&&result.mContent==="solid")result.mContent="photo";
     return result;
   }
   let state=copy(presets.tipografia);
@@ -134,7 +137,7 @@
   const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
-  const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),mark=by("labSignature");
+  const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),markerImg=by("labMarkerPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
   const editorTabs=[];
@@ -155,14 +158,13 @@
     for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     const mActive=state.mContent!=="off";
-    const blurBackdrop=mActive||markerActive;
-    const backgroundPhoto=state.background==="photo"||blurBackdrop;
-    const mPhoto=state.mContent==="photo";
-    const activeImage=backgroundPhoto||mPhoto;
+    const backgroundPhoto=state.background==="photo"||state.mContent==="photo";
+    const activeImage=backgroundPhoto;
     const backdropContext=by("labBackdropContext");
-    if(backdropContext)backdropContext.textContent=blurBackdrop?
-      "M ou marcadores ativos: fundo automático com a mesma fotografia desfocada. Cor e fotografia selecionadas são preservadas para quando o M for desligado.":
-      "Sem M nem marcadores: o fundo segue a escolha de cor ou fotografia.";
+    if(backdropContext)backdropContext.textContent=backgroundPhoto?
+      markerActive?"Mesma fotografia, duas nitidezes. Os marcadores recortam a variante escolhida; o restante recebe a variante oposta.":
+      state.mContent==="photo"?"A mesma fotografia ocupa o M e o fundo, sem preenchimentos sólidos.":"A fotografia permanece nítida, salvo ajuste pelos marcadores.":
+      "Composição de cor: M sólido e marcadores cromáticos disponíveis.";
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     const fullM=mActive&&state.mPresentation==="completo";
     by("labMPresentationField").hidden=false;
@@ -174,8 +176,16 @@
       "Completo: M com 100% da altura do canvas, com proporção preservada. A escala anterior fica salva para Elemento.":
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
-    by("labColor").disabled=false;
+    by("labColor").disabled=state.background==="photo";
     by("labMarker").disabled=fullM;
+    // A solid M is a color-only treatment. Do not offer or restore it
+    // on photographic surfaces, including legacy saved projects.
+    const solidChoice=document.querySelector('[data-lab-choice="mContent"][data-value="solid"]');
+    if(solidChoice)solidChoice.hidden=state.background==="photo";
+    by("labMContent").querySelector('option[value="solid"]').disabled=state.background==="photo";
+    const focusField=by("labMarkerFocusField");
+    if(focusField)focusField.hidden=!(markerActive&&backgroundPhoto);
+    by("labMarkerFocus").disabled=!(markerActive&&backgroundPhoto);
     for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMScale","labMarker"])
       setFieldVisible(id,true);
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
@@ -278,16 +288,18 @@
     board.dataset.format=state.format;
     board.dataset.mPresentation=state.mPresentation;
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
-    // The lower image is always the SAME selected photo with blur while an
-    // M (solid/photo) or its end markers are present. Keep the user's original
-    // background choice in state and restore it when those layers are absent.
-    const blurredBackdrop=markerActive||state.mContent!=="off";
-    const effectiveBackground=blurredBackdrop?"photo":state.background;
-    const backdrop=blurredBackdrop?"blur":state.background;
+    // Photo compositions use one photographic source in two variants.
+    // The marker mask chooses which region is sharp and which has blur.
+    // The M is a vector clipping region, never a solid substitute for photo.
+    const effectiveBackground=(state.background==="photo"||state.mContent==="photo")?"photo":"color";
+    const backdrop=effectiveBackground==="color"?"color":
+      markerActive?(state.markerFocus==="sharp"?"blur":"photo"):
+      state.mContent==="photo"?"blur":"photo";
     board.dataset.background=effectiveBackground;
     board.dataset.backdrop=backdrop;
     board.dataset.backgroundRequested=state.background;
-    board.dataset.markerBlur=String(markerActive);
+    board.dataset.markerBlur=String(markerActive&&effectiveBackground==="photo");
+    board.dataset.markerFocus=state.markerFocus;
     board.dataset.mContent=state.mContent;
     board.dataset.guide=state.guides;
     board.dataset.photoText="false";
@@ -306,6 +318,8 @@
     const src=photos[state.photo];
     previewImg.src=src;
     maskImg.src=src;
+    markerImg.src=src;
+    syncMarkerMask(markerActive&&effectiveBackground==="photo");
     mark.hidden=state.symbol==="none";
     if(!mark.hidden)mark.src="/identidade/"+state.symbol;
     renderTitle();
@@ -343,9 +357,40 @@
       save();
     }
   };
+
+  function syncMarkerMask(active){
+    const overlay=by("labMarkerPhotoLayer");
+    if(!overlay)return;
+    if(!active){
+      overlay.style.removeProperty("-webkit-mask-image");
+      overlay.style.removeProperty("mask-image");
+      return;
+    }
+    const width=board.offsetWidth,height=board.offsetHeight;
+    if(width<=0||height<=0)return;
+    // Reuse the paths and viewBoxes of the actual marker SVG elements:
+    // no approximation, independent vector, or duplicated geometry.
+    const paths=[];
+    const boardRect=board.getBoundingClientRect();
+    const zoom=boardRect.width/width||1;
+    for(const svg of by("labMMarkers").querySelectorAll("svg")){
+      if(getComputedStyle(svg).display==="none")continue;
+      const box=svg.getBoundingClientRect(),view=svg.viewBox.baseVal;
+      const shape=svg.querySelector("path")?.getAttribute("d");
+      if(!shape||!view.width||!view.height)continue;
+      const x=(box.left-boardRect.left)/zoom,y=(box.top-boardRect.top)/zoom;
+      const sx=box.width/zoom/view.width,sy=box.height/zoom/view.height;
+      paths.push('<path transform="translate('+x+' '+y+') scale('+sx+' '+sy+')" d="'+shape+'" fill="white"/>');
+    }
+    if(!paths.length)return;
+    const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'">'+paths.join("")+'</svg>';
+    const url='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+    overlay.style.setProperty("-webkit-mask-image",url);
+    overlay.style.setProperty("mask-image",url);
+  }
   function requestMeasurement(){
     if(frame)return;
-    frame=requestAnimationFrame(()=>{frame=0;measure()});
+    frame=requestAnimationFrame(()=>{frame=0;syncMarkerMask(board.dataset.markerBlur==="true");measure()});
   }
   function intersects(a,b){
     return a.width>0&&a.height>0&&b.width>0&&b.height>0&&
@@ -725,7 +770,7 @@
       "Define se a superfície usa cor ou fotografia.",
       "O fundo é independente do M."],
     labMContent:["M",
-      "Define se o M está ausente, sólido ou preenchido por fotografia.",
+      "Em superfícies fotográficas, o M nunca recebe cor sólida. O preenchimento sólido só existe nas composições de cor.",
       "O M permanece central e sua geometria não muda."],
     labMPresentation:["Aparição do M",
       "Elemento mantém o M inteiro e permite ajustar sua escala; Completo ocupa 100% da altura da superfície.",
@@ -734,8 +779,11 @@
       "Escolha a imagem.",
       "O enquadramento pode ser ajustado separadamente."],
     labMarker:["Marcadores do M",
-      "Ativa a ponta superior, a ponta inferior ou as duas pontas como elementos de marcação da página.",
-      "Os marcadores derivam da mesma geometria do M e não alteram o eixo central."],
+      "Em fotografia, as pontas recortam a versão nítida ou desfocada da mesma imagem. Em cor, permanecem marcadores gráficos.",
+      "Os recortes usam a mesma geometria vetorial do M, sem blocos de cor sobre fotografia."],
+    labMarkerFocus:["Tratamento dos marcadores",
+      "Blur nos marcadores deixa o restante nítido. Nítido nos marcadores deixa o restante com blur.",
+      "As duas regiões utilizam a mesma fotografia e o mesmo ponto de enquadramento."],
     labMScale:["Escala do M",
       "Ajusta o tamanho do M mantendo-o no eixo central da página.",
       "A escala varia; posição central e proporção permanecem."],

@@ -61,3 +61,7 @@
 .lm-acervo-empty{grid-column:1/-1;color:#77756e;font-size:12px;margin:12px 0}
 @media(max-width:600px){.lm-acervo-overlay{align-items:end;padding:0}.lm-acervo-dialog{width:100%;max-height:90dvh;border-radius:14px 14px 0 0;padding:22px 17px;gap:14px}.lm-acervo-items{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.lm-acervo-dialog,.lm-acervo-launch,.lm-acervo-source{transition:none}}
+
+/* Private Drive portfolio fallback; visible whenever native Picker is unavailable. */
+.lm-acervo-portfolio-link{display:inline-flex;width:fit-content;align-items:center;gap:5px;color:inherit;text-decoration:underline;text-underline-offset:3px;font-size:11px;line-height:1.45;opacity:.75}
+.lm-acervo-portfolio-link:hover{opacity:1}

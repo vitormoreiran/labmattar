@@ -15,9 +15,12 @@
   const PORTFOLIO_FOLDER_ID="13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW";
   const PORTFOLIO_URL="https://drive.google.com/drive/folders/"+PORTFOLIO_FOLDER_ID;
   const providers=["google","dropbox"];
-  const serviceNames={google:"Google Drive",dropbox:"Dropbox"};
+  const serviceNames={google:"Google Drive",dropbox:"Dropbox",public:"01_Portfolio",local:"Computador"};
   const setup=by("labAcervoSetup"),browser=by("labAcervoBrowser");
   const launch=by("labAcervoLaunch"),sources=by("labAcervoProviders");
+  const localInput=by("labAcervoLocalInput"),search=by("labAcervoSearch");
+  let publicIndex=null,publicTrail=[],publicCurrent=null;
+  const publicProjects=new Map(),localVideoUrls=new Map();
   const pool=new Map();
   let statusData=null,activeProvider=null,folder="",cursor="",entries=[];
   let selected=null,busy=false,previousFocus=null;
@@ -41,11 +44,11 @@
     return response.json();
   }
   function valid(item){
-    return item && providers.includes(item.provider) &&
+    return item && [...providers,"public"].includes(item.provider) &&
       typeof item.id==="string" && item.id.length<220 &&
       ["image","video"].includes(item.kind) &&
       typeof item.original==="string" &&
-      item.original.startsWith(BASE+"media?") &&
+      item.original.startsWith(BASE+(item.provider==="public"?"public-media?":"media?")) &&
       typeof item.name==="string";
   }
   function displayProviders(){
@@ -117,10 +120,12 @@
     else launch.focus({preventScroll:true});
   }
   function heading(){
-    by("labAcervoPath").textContent=activeProvider==="dropbox"?
-      (folder||"Dropbox / Seus arquivos"):"Google Drive / 01_Portfolio";
-    by("labAcervoBack").hidden=activeProvider!=="dropbox"||!folder;
+    by("labAcervoPath").textContent=activeProvider==="public"?
+      "01_Portfolio"+(publicTrail.length?" / "+publicTrail.map(x=>x.name).join(" / "):""):
+      activeProvider==="dropbox"?(folder||"Dropbox / Seus arquivos"):"Google Drive / 01_Portfolio";
+    by("labAcervoBack").hidden=activeProvider==="public"?!publicTrail.length:activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
+    if(search)search.hidden=activeProvider!=="public";
   }
   function show(items,append=false){
     if(!append)list.replaceChildren();
@@ -141,7 +146,10 @@
         const name=document.createElement("span");
         name.textContent=escapeName(item.name);
         button.append(glyph,name);
-        button.addEventListener("click",()=>openDropbox(item.path));
+        button.addEventListener("click",()=>{
+          if(activeProvider==="public")openPublicFolder(item);
+          else openDropbox(item.path);
+        });
       }else if(valid(item)){
         const thumb=document.createElement("span");thumb.className="lm-acervo-thumb";
         if(item.kind==="image"){
@@ -253,6 +261,7 @@
     if(!valid(item))return;
     if(item.kind==="video"){
       const descriptor={kind:"video",provider:item.provider,id:item.id,name:item.name,
+        ...(item.projectId?{projectId:item.projectId}:{}),
         mimeType:item.mimeType,original:item.original,preview:item.preview};
       window.dispatchEvent(new CustomEvent("labmattar:acervo-video-select",{detail:descriptor}));
       by("labAcervoCurrent").textContent="Vídeo · "+item.name;
@@ -263,6 +272,7 @@
     const photoKey="ext-"+Array.from(new TextEncoder().encode(key))
       .reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
     const descriptor={provider:item.provider,id:item.id,name:item.name,
+      ...(item.projectId?{projectId:item.projectId}:{}),
       mimeType:item.mimeType,original:item.original,preview:item.preview,photoKey};
     pool.set(photoKey,descriptor);
     selected=descriptor;

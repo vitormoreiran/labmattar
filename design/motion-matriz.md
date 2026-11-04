@@ -7,7 +7,7 @@ A área `/motion.html` reúne a Matriz atual e os roteiros exportados. Motion te
 - `tools/matriz-vetorial/`: versão atual da ferramenta, com dependências e CSS isolados. O site publica seu build em `/motion/matriz/index.html`.
 - `tools/matriz-vetorial/src/motion-catalog.mjs`: catálogo dos oito percursos e seus estados editoriais.
 - `tools/matriz-vetorial/src/timeline.mjs`: pares preparados, presets, tempos e orientação acumulada.
-- `tools/matriz-vetorial/src/roteiros/`: cinco projetos em avaliação. Os três aprovados vêm dos presets existentes.
+- `tools/matriz-vetorial/src/roteiros/`: cinco projetos complementares. Os três primeiros percursos vêm dos presets existentes.
 - `design/motion.html`, `public/motion.css` e `public/motion.js`: estrutura, apresentação e reprodução da galeria.
 - `public/motion/exports.json`: vínculo verificável entre cada MP4 e o projeto que o gerou.
 - `scripts/prepare-motion.mjs`: valida os exports, gera a página e os downloads JSON, e copia o build da Matriz para o manual.
@@ -26,7 +26,7 @@ A sequência pública segue a função: Símbolo em movimento (M + Forma); Assin
 
 ## Estados editoriais internos
 
-M + Forma, Onda e resposta e Composição MATTAR foram aprovados pelo autor. Acervo vira MATTAR, Abertura e fecho, Perfil · corte, Passagem de bastão e Forma · intervalo permanecem em avaliação. Publicar um vídeo na galeria não aprova seu uso final.
+Em 4 de novembro de 2026, o autor aprovou os oito roteiros: M + Forma, Onda e resposta, Composição MATTAR, Acervo vira MATTAR, Abertura e fecho, Perfil · corte, Passagem de bastão e Forma · intervalo. O catálogo e os cartões da Matriz registram a aprovação; a galeria pública apresenta somente os grupos por função.
 
 Assinaturas devem encerrar com uma leitura reconhecível e uma pausa adequada. Transições precisam ser testadas entre conteúdos reais: o vídeo da Matriz fornece o gesto; o corte A→B acontece na edição.
 

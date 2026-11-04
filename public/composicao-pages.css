@@ -34,3 +34,7 @@
 }
 
 body.lm-studio-open #laboratorio .lm-lab-inspector:not([data-mobile-module=m]) .lab-motion-assets{display:none}
+
+/* O M sólido continua visível quando o fundo não usa fotografia. */
+.lm-lab-board[data-backdrop=color][data-m-content=solid] .lm-lab-photo-layer{display:block!important}
+.lm-lab-board[data-backdrop=color] :is(.lm-lab-photo-ambient,.lm-lab-photo-contrast,.lm-lab-marker-photo){display:none!important}

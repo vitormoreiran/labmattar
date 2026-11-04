@@ -85,6 +85,11 @@ try{
     await page.locator('#labPageSelect').selectOption(String(index));await pause();
     assert.equal(await page.locator('#labArtboard').getAttribute('data-state'),'ok',`Page ${index+1} must pass layout preflight`);
     await page.locator('#labExportSize').selectOption('1920');
+    if(index===2){
+      assert.ok(await page.locator('#labMask').isVisible(),'Solid M must remain visible over a color background');
+      const vector=await page.evaluate(async()=>{const scene=await window.LabRenderer.capture({ask:false});return scene.items.some(item=>item.kind==='vector'&&item.paths.length&&item.box.w>0);});
+      assert.ok(vector,'The official M must be present as a vector in the scene');
+    }
     await reference(index);
   }
   const before=await page.evaluate(()=>window.LabProductionBridge.snapshot().state);

@@ -30,7 +30,7 @@ for index, page in enumerate(reader.pages):
         report['embeddedFonts'].append(str(font['/BaseFont']))
     contents = page.get_contents().get_data()
     if index == 2:
-        assert b' c' in contents, 'The official M must remain a vector path'
+        assert re.search(rb'\s[-.0-9 ]+ c\s', contents), 'The official M must remain a vector path'
         assert not page['/Resources'].get('/XObject'), 'Pure vector page must not become a screenshot'
     report['pages'].append({'page': index + 1, 'widthPoints': float(page.mediabox.width),
                             'heightPoints': float(page.mediabox.height), 'selectableText': True})

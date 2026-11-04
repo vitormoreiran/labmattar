@@ -110,6 +110,11 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             </div>
             <small class="lm-ctrl-helper" id="labBackdropContext" aria-live="polite">Sem M nem marcadores, o fundo segue a escolha de cor ou fotografia.</small>
           </div>
+                  <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
+          <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="179" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg"></span></span><span class="lm-ctrl-name">Imagem 02</span><span class="lm-ctrl-meta">Projeto</span></button>
+          <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="151" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg"></span></span><span class="lm-ctrl-name">Imagem 03</span><span class="lm-ctrl-meta">Detalhe</span></button></div></div>
+                  
+                  <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>
         </div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labColorTitle" class="lm-lab-field-title">Cor do fundo</div><select id="labColor" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
           <option value="neutral">Neutro / papel</option><option value="green">Verde / acento</option><option value="red">Vermelho / acento</option><option value="beige">Bege / neutro</option><option value="blue">Azul / em avaliação</option><option value="brown">Marrom / em avaliação</option>
@@ -119,35 +124,30 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="color" data-value="red" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-color-circle" style="--lm-color-dot:#e22e24" aria-hidden="true"></span></span><span class="lm-ctrl-name">Vermelho</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="color" data-value="blue" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-color-circle" style="--lm-color-dot:#1f3554" aria-hidden="true"></span></span><span class="lm-ctrl-name">Azul</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="color" data-value="brown" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-color-circle" style="--lm-color-dot:#5b463e" aria-hidden="true"></span></span><span class="lm-ctrl-name">Marrom</span></button></div></div>
-        <div class="lm-composition-submodule" data-submodule="m">
-          <div class="lm-lab-field lm-ctrl-choice-field lm-vocab-field">
-            <div id="labMContentTitle" class="lm-lab-field-title">Conteúdo do M</div>
-            <select id="labMContent" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
-              <option value="off">Sem M</option><option value="solid">Sólido</option><option value="photo">Fotografia</option>
-            </select>
-            <div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labMContentTitle">
-              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="off" aria-pressed="false"><span class="lm-ctrl-name">Sem M</span></button>
-              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="solid" aria-pressed="false"><span class="lm-ctrl-name">Sólido</span></button>
-              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
-            </div>
-          </div>
+        <div class="lm-composition-submodule lm-lab-m-flow" data-submodule="m">
           <div id="labMPresentationField" class="lm-lab-field lm-ctrl-choice-field lm-m-presentation-field">
-            <div id="labMPresentationTitle" class="lm-lab-field-title">Aparição do M / superfície</div>
+            <div id="labMPresentationTitle" class="lm-lab-field-title">Aplicação do M</div>
             <select id="labMPresentation" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
               <option value="elemento">Elemento</option><option value="completo">Completo</option>
             </select>
-            <div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labMPresentationTitle">
-              <button type="button" class="lm-ctrl-choice" data-lab-choice="mPresentation" data-value="elemento" aria-pressed="true">
-                <span class="lm-m-presentation-icon" data-presentation="elemento" aria-hidden="true"><i></i></span>
-                <span class="lm-ctrl-name">Elemento</span><span class="lm-ctrl-meta">Escala ajustável</span>
-              </button>
-              <button type="button" class="lm-ctrl-choice" data-lab-choice="mPresentation" data-value="completo" aria-pressed="false">
-                <span class="lm-m-presentation-icon" data-presentation="completo" aria-hidden="true"><i></i></span>
-                <span class="lm-ctrl-name">Completo</span><span class="lm-ctrl-meta">100% da altura</span>
-              </button>
+            <div class="lm-ctrl-choice-grid lm-lab-m-application-grid" role="group" aria-labelledby="labMPresentationTitle">
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="off" aria-pressed="false"><span class="lm-ctrl-name">Sem M</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mPresentation" data-value="elemento" aria-pressed="true"><span class="lm-ctrl-name">Elemento</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mPresentation" data-value="completo" aria-pressed="false"><span class="lm-ctrl-name">Completo</span></button>
             </div>
-            <small id="labMPresentationHint" class="lm-ctrl-helper">Elemento preserva a escala. Completo ocupa toda a altura, sem deformação. A sangria depende do formato.</small>
+            <small id="labMPresentationHint" class="lm-ctrl-helper">Elemento permite ajustar a escala. Completo usa toda a altura da página.</small>
           </div>
+          <div id="labMContentField" class="lm-lab-field lm-ctrl-choice-field lm-vocab-field" hidden>
+            <div id="labMContentTitle" class="lm-lab-field-title">Conteúdo do M</div>
+            <select id="labMContent" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
+              <option value="off">Sem M</option><option value="solid">Cor</option><option value="photo">Fotografia</option>
+            </select>
+            <div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labMContentTitle">
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="solid" aria-pressed="false"><span class="lm-ctrl-name">Cor</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="mContent" data-value="photo" aria-pressed="false"><span class="lm-ctrl-name">Fotografia</span></button>
+            </div>
+          </div>
+          <button type="button" id="labOpenPhotoFromM" class="lm-lab-photo-jump" hidden>Editar imagem em Fundo <span aria-hidden="true">↗</span></button>
         </div>
         
         <div class="lm-lab-field lm-ctrl-choice-field lm-marker-field lm-vocab-field">
@@ -178,11 +178,6 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         </div>
         <div class="lm-lab-field lm-m-scale-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"></div>
         
-        <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
-<button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="179" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg"></span></span><span class="lm-ctrl-name">Imagem 02</span><span class="lm-ctrl-meta">Projeto</span></button>
-<button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="151" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg"></span></span><span class="lm-ctrl-name">Imagem 03</span><span class="lm-ctrl-meta">Detalhe</span></button></div></div>
-        
-        <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>
       </div>
         <details class="lm-inspector-more" data-lab-more="imagem">
           <summary><span>ASSINATURA E ENQUADRAMENTO</span></summary>

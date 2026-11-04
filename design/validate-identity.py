@@ -32,7 +32,7 @@ for page in ("manual.html","tipografia.html","cores.html","composicao.html","lab
  assert text.count('lm-manual-cover')==1,f"{page} must have exactly one canonical cover"
 construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
 composition=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
-assert 'id="contraste"' in construction and ("PRETO 20%" in construction or "20% DE PRETO" in construction)
+assert 'id="contraste"' in construction and "PRETO" in construction and "20%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in construction and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition
@@ -98,6 +98,9 @@ assert "labPrecision-" in lab_js and "number.type=\"number\"" in lab_js
 assert "setFieldVisible" in lab_js and "selectPanel(activePanel)" in lab_js
 # Guidance is contextual; no instructions or numbered pseudo-steps clutter the UI.
 assert 'id="labOverviewHelp"' in composition
+assert 'id="labTourStudioHelp"' in composition, "The focused editor must expose Dúvidas"
+assert 'const tourSteps=[' in lab_js and 'tourNext.textContent' in lab_js, "Seven-step guided Laboratory help must exist"
+assert 'lm-case-facts' not in construction and 'lm-case-aside' not in construction, "Old static instruction columns must not return"
 assert '<strong>01 / Tipografia</strong>' not in composition
 for field in ("labFormat","labMargin","labTitleScale","labType","labBackground","labMContent",
               "labMPresentation","labMarker","labMScale","labFocalPreview","labSymbol"):

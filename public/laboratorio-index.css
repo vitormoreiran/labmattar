@@ -23,7 +23,7 @@
 .lm-lab-composition-title{display:block;margin:auto 0;color:inherit}
 .lm-lab-tool-preview-composition .lm-lab-preview-index{top:auto;bottom:4%;left:auto;right:5%}
 .lm-lab-tool-text{display:flex;flex-direction:column;gap:15px;border-top:1px solid #181818;padding:20px 0 0;margin-top:18px}
-.lm-lab-tool-text h2{margin:0;max-width:95%}
+.lm-lab-tool-text h3{margin:0;max-width:95%}
 .lm-lab-tool-text p{margin:0;max-width:44ch}
 .lm-lab-tool-action{display:inline-block;align-self:flex-start;border-bottom:1px solid currentColor;padding:0 0 6px;margin-top:13px}
 .lm-lab-tool:hover .lm-lab-tool-action{border-bottom-width:2px}

@@ -887,12 +887,12 @@ body.lm-studio-open #laboratorio .lm-studio-help-label{white-space:nowrap}
 }
 .lm-help-tour[hidden],.lm-help-tour-spotlight[hidden],.lm-help-tour-backdrop[hidden]{display:none!important}
 .lm-help-tour-progress{
-  margin:0 0 19px;color:#77736b;
+  display:block;margin:0 0 19px;color:#77736b;
 }
 .lm-help-tour-title{margin:0 74px 15px 0}
 .lm-help-tour-copy{margin:0 0 16px}
 .lm-help-tour-rule{
-  margin:0;padding:14px 0 18px;border-top:1px solid #d1cec7;color:#57534c;
+  display:block;margin:0;padding:14px 0 18px;border-top:1px solid #d1cec7;color:#57534c;
 }
 .lm-help-tour-rule strong{display:block;margin-bottom:6px;color:#181818}
 .lm-help-tour-actions{

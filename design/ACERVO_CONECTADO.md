@@ -32,6 +32,28 @@ Se o Picker não abrir, o modal deixa uma mensagem de erro contextual
 e um link para conferência da pasta original no Google Drive, sem
 retornar uma falsa mensagem de sucesso.
 
+## Inserção de fotografias e vídeos nos projetos
+
+- **Fotografias:** escolha no Google Picker (pasta inicial 01_Portfolio) ou Dropbox;
+  elas passam ao catálogo da página e podem ocupar fundo, M e marcadores,
+  mantendo enquadramento coerente nas três camadas.
+- **Vídeos:** escolha no mesmo seletor. Cada vídeo vira um elemento da página ativa,
+  com controles em **MOTION → Vídeos do acervo** para posição, largura, quadro
+  estático e reprodução sem som em loop. Até 8 vídeos por página.
+- **Projeto JSON:** guarda somente \`provider\`, identificador do arquivo,
+  tipo, nome e geometria. Não inclui bytes do vídeo ou tokens. Reabrir o
+  projeto demanda acesso privado válido ao Drive/Dropbox para tocar os originais.
+  Projetos anteriores, sem vídeos, permanecem válidos.
+- **PDF / PNG:** capturam um quadro no segundo configurado; não há áudio ou
+  reprodução em arquivos estáticos.
+- **Site HTML offline:** incorporar vídeos privados no arquivo só após
+  confirmação explícita do usuário. Há limite de 32 MB por vídeo e 64 MB
+  por projeto, pois vídeos grandes geram HTML impraticavelmente pesado.
+  Para vídeos maiores, é necessário um serviço de streaming/hospedagem
+  com autenticação apropriada, não links públicos improvisados.
+- **Permissões:** não alterar compartilhamento da pasta para "qualquer pessoa".
+  A conexão de um usuário não transfere suas permissões para outro.
+
 ## Segurança
 
 - OAuth 2.0 com PKCE e `state` criptografado, validade de 10 minutos.

@@ -23,9 +23,9 @@ function commit(){
 let pageListKey='';
 function setWorkspaceView(view){
   const inspector=by('laboratorio').querySelector('.lm-lab-inspector');
-  inspector.dataset.workspaceView=view;
+  inspector.dataset.workspaceContext=view;
   by('labPages').hidden=view!=='pages';by('labWorkflowMotion').hidden=view!=='motion';
-  for(const button of document.querySelectorAll('[data-workspace-view]'))button.setAttribute('aria-pressed',String(button.dataset.workspaceView===view));
+  for(const button of document.querySelectorAll('button[data-workspace-view]'))button.setAttribute('aria-pressed',String(button.dataset.workspaceView===view));
 }
 function renderPages(){
   const select=by('labPageSelect');select.replaceChildren();
@@ -212,7 +212,7 @@ async function init(){
       bridge().restore(result.pages[current].state);switching=false;await settled();}
   }catch{switching=false;let recovered=false;try{localStorage.setItem(key+'-recovery',localStorage.getItem(key)||'');recovered=true;}catch{}notify('O rascunho anterior não pôde ser reaberto.'+(recovered?' Uma cópia de recuperação foi preservada neste navegador.':' Abra seu projeto JSON para recuperar a sequência.'),true);}
   setWorkspaceView('edit');
-  for(const button of document.querySelectorAll('[data-workspace-view]'))button.addEventListener('click',()=>setWorkspaceView(button.dataset.workspaceView));
+  for(const button of document.querySelectorAll('button[data-workspace-view]'))button.addEventListener('click',()=>setWorkspaceView(button.dataset.workspaceView));
   by('labEditCurrentPage').addEventListener('click',()=>{setWorkspaceView('edit');by('laboratorio').querySelector('button[data-mobile-module=superficie]').click();});
   renderPages();renderMotions();
   window.addEventListener('labmattar:composition-change',()=>{if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}});

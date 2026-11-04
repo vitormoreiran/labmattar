@@ -46,7 +46,7 @@
 #laboratorio .lab-workflow-panel{grid-column:1/-1;min-width:0}
 #laboratorio .lab-workflow-panel[hidden]{display:none!important}
 #laboratorio .lab-workflow-context{grid-column:1/-1;padding:14px 16px 0;overflow-wrap:anywhere}
-#laboratorio .lm-lab-inspector:is([data-workspace-view=pages],[data-workspace-view=motion])>:is(.lm-inspector-head,.lm-composition-module-index,.lm-inspector-panel,.lm-lab-mini-actions,.lab-workflow-context){display:none!important}
+#laboratorio .lm-lab-inspector:is([data-workspace-context=pages],[data-workspace-context=motion])>:is(.lm-inspector-head,.lm-composition-module-index,.lm-inspector-panel,.lm-lab-mini-actions,.lab-workflow-context){display:none!important}
 #laboratorio .lab-workflow-helper{margin:0;opacity:.7;line-height:1.5}
 #laboratorio .lab-page-list{display:grid;gap:7px;margin:8px 0 14px}
 #laboratorio .lab-page-list button{display:flex;align-items:center;gap:13px;text-align:left;padding:12px;background:none;color:inherit;font:inherit;border:1px solid #c9c8c2;cursor:pointer;min-width:0}
@@ -79,5 +79,5 @@
 
 #laboratorio .lab-workflow-panel{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;align-content:start}
 #laboratorio .lab-workflow-switch,#laboratorio .lab-workflow-context{flex:none}
-body.lm-studio-open #laboratorio .lm-lab-inspector[data-workspace-view]>.lm-inspector-head{display:none!important}
-body.lm-studio-open #laboratorio .lm-lab-inspector:is([data-workspace-view=pages],[data-workspace-view=motion])>:is(.lm-composition-module-index,.lm-inspector-panel,.lm-lab-mini-actions,.lab-workflow-context){display:none!important}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-workspace-context]>.lm-inspector-head{display:none!important}
+body.lm-studio-open #laboratorio .lm-lab-inspector:is([data-workspace-context=pages],[data-workspace-context=motion])>:is(.lm-composition-module-index,.lm-inspector-panel,.lm-lab-mini-actions,.lab-workflow-context){display:none!important}

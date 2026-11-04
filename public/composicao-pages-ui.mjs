@@ -384,7 +384,7 @@ async function init(){
     finally{switching=false;enabled=true;renderMotions();commit();}
   });
   // Each selected video is referenced by provider and file ID, never a token.
-  by('labClipOpen').addEventListener('click',()=>window.LabAcervo?.open?.({autoProvider:'google'}));
+  by('labClipOpen').addEventListener('click',()=>window.LabAcervo?.openPublic?.());
   window.addEventListener('labmattar:acervo-video-select',event=>{
     if(!pages.length||busy||switching)return;
     try{

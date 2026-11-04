@@ -82,15 +82,26 @@
     setup.hidden=false;
     notify("O seletor de arquivos locais continua disponível.");
   }
-  function openDialog(){
+  function openDialog({autoProvider=null}={}){
     if(!overlay.hidden)return;
     previousFocus=document.activeElement;
     overlay.hidden=false;
     displayProviders();
-    notify("Selecione a origem das fotografias.");
+    notify(autoProvider?"Verificando a conexão. Abrindo seus arquivos…":"Selecione a origem das fotografias.");
     dialog.focus({preventScroll:true});
-    refresh().then(()=>notify("Selecione a origem das fotografias."))
-      .catch(()=>notify("Não foi possível verificar as conexões. Tente selecionar uma origem novamente."));
+    refresh().then(async state=>{
+      // The OAuth callback returned to Compor. Complete the same action the
+      // user originally requested; do not require a second click to open Drive.
+      if(autoProvider && providers.includes(autoProvider)){
+        if(state.providers?.[autoProvider]?.connected){
+          await openProvider(autoProvider);
+        }else{
+          notify("O login não foi concluído neste navegador. Clique em "+serviceNames[autoProvider]+" para tentar novamente.");
+        }
+      }else{
+        notify("Selecione a origem das fotografias.");
+      }
+    }).catch(error=>notify("Não foi possível verificar a conexão: "+error.message));
   }
   function closeDialog(){
     overlay.hidden=true;
@@ -188,6 +199,9 @@
       if(!window.google?.picker)throw Error("Google Picker indisponível.");
       const picker=window.google.picker;
       const view=new picker.DocsView(picker.ViewId.DOCS);
+      // drive.file does not grant thumbnail enumeration. LIST is the
+      // documented safe UI until the user explicitly selects an asset.
+      if(picker.DocsViewMode?.LIST)view.setMode(picker.DocsViewMode.LIST);
       view.setMimeTypes("image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime");
       const instance=new picker.PickerBuilder()
         .addView(view).setOAuthToken(token.accessToken).setDeveloperKey(config.apiKey)
@@ -317,11 +331,17 @@
   if(result){
     const url=new URL(location.href);url.searchParams.delete("acervo");
     history.replaceState(null,"",url.pathname+url.search+url.hash);
-    openDialog();
-    const message=result==="erro"?"A autorização não foi concluída. Tente conectar novamente.":
-      result==="cancelado"?"Autorização cancelada. Nenhuma conta foi conectada.":
-      "Conta autorizada. Escolha o serviço para selecionar suas fotografias.";
-    notify(message);
-    refresh().then(()=>notify(message)).catch(()=>{});
+    if(providers.includes(result)){
+      openDialog({autoProvider:result});
+    }else{
+      openDialog();
+      const message=result==="erro"
+        ?"Não foi possível concluir a autorização. Clique no serviço para tentar novamente."
+        :result==="cancelado"
+          ?"Autorização cancelada. Nenhuma conta foi conectada."
+          :"Selecione a origem das fotografias.";
+      // openDialog also checks availability, but preserve the OAuth error.
+      if(result==="erro"||result==="cancelado")queueMicrotask(()=>notify(message));
+    }
   }
 })();

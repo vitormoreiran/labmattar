@@ -28,6 +28,11 @@ try {
       src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0,width:img.naturalWidth,height:img.naturalHeight
     })));
     assert.ok(media.length>=9,'Exemplos fotografados do caso-base');
+    assert.equal(await page.locator('.case-visual-real .image-tile img').count(),5,'Cinco imagens distintas da temporada');
+    assert.equal(await page.locator('.case-visual-real .image-tile img').evaluateAll(imgs=>new Set(imgs.map(img=>img.getAttribute('src'))).size),5,'Acervo sem repeticao na matriz principal');
+    assert.ok(await page.locator('.rule-card h3.title').count()===3,'Tres aplicacoes com tratamento Titulo');
+    assert.equal(await page.locator('.case-visual-real .poster-title').getAttribute('data-lm-text-role'),'title','Composicao usa Titulo oficial');
+    assert.equal(await page.locator('.case-visual-real .poster-footer').getAttribute('data-lm-text-role'),'detail','Creditos usam Detalhe oficial');
     assert.ok(media.every(image=>image.loaded),'Fotografias carregadas');
     report.media=media;
     const horizontalOverflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);

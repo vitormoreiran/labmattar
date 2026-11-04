@@ -37,10 +37,11 @@
     },
     {
       "id": "laboratory",
-      "label": "Laboratório de composição",
+      "label": "Laboratório",
       "path": "/laboratorio.html",
       "stage": "experimental",
-      "editor": "/laboratorio.html?studio=1#laboratorio"
+      "editor": "/compor.html?studio=1#laboratorio",
+      "matrixEditor": "/editor/"
     },
     {
       "id": "applications",

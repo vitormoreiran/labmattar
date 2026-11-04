@@ -55,7 +55,7 @@ try{
       const nativePng=canvas.toDataURL('image/png').split(',')[1];
       const a=ctx.getImageData(0,0,width,height).data;
       const bitmap=await createImageBitmap(new Blob([new Uint8Array(bytes)],{type:'image/png'}));
-      ctx.drawImage(bitmap,0,0);bitmap.close();const b=ctx.getImageData(0,0,width,height).data;
+      ctx.setTransform(1,0,0,1,0,0);ctx.drawImage(bitmap,0,0);bitmap.close();const b=ctx.getImageData(0,0,width,height).data;
       let delta=0;for(let i=0;i<a.length;i+=4)delta+=Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2]);
       const texts=items=>items.flatMap(op=>op.kind==='group'?texts(op.items):op.kind==='text'?[op]:[]);
       return {mae:delta/(width*height*3),nativePng,firstNative:[...a.slice(0,4)],firstVideo:[...b.slice(0,4)],
@@ -63,8 +63,10 @@ try{
         restored:{width:scene.width,height:scene.height,texts:texts(scene.items)}};
     },{bytes:[...reference],width,height});
     await writeFile(target+'.native.png',Buffer.from(difference.nativePng,'base64'));
-    delete difference.nativePng;report.fidelity.push({format,...difference});
-    console.log(JSON.stringify({format,...difference}));
+    delete difference.nativePng;
+    assert.deepEqual(difference.captured,difference.restored,'Native text geometry is preserved');
+    delete difference.captured;delete difference.restored;
+    report.fidelity.push({format,...difference});console.log(JSON.stringify({format,...difference}));
     await page.locator('#labDeliveryBack').click();
   }
   await page.evaluate(doc=>window.LabPages.load(doc),original);await settle();

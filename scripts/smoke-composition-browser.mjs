@@ -106,6 +106,9 @@ try{
 
   await choose("background","color");
   await choose("mContent","off");
+  assert(await page.locator("#labMContentField").isHidden(),
+    "Sem M deve ocultar opções de material que ainda não se aplicam");
+  await choose("mPresentation","elemento");
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
     "M sólido deve retornar nas composições de cor");
   await choose("mContent","solid");

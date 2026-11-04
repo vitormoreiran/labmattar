@@ -21,7 +21,7 @@ function commit(){
   renderPages();
 }
 let pageListKey='',deliveryFormat='pdf';
-function deliveryBusy(){return busy||by('labExportStatus').dataset.state==='busy';}
+function deliveryBusy(){return busy||Boolean(window.LabExportPNG?.isExporting?.());}
 function closeDelivery(){if(deliveryBusy())return;by('labDeliveryDialog').close();commit();}
 function renderDelivery(){
   const names={horizontal:'Horizontal / 16:9',vertical:'Vertical / 9:16',quadrado:'Quadrado / 1:1',editorial:'Editorial / √2:1'};
@@ -184,7 +184,7 @@ async function captureMotions(width,height){
   return items;
 }
 async function exportSequence(type){
-  if(busy)return;
+  if(deliveryBusy())return;
   let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
   commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);

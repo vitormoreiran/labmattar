@@ -300,6 +300,6 @@
     finally{button.disabled=false;exporting=false}
   }
   button.addEventListener("click",exportPng);
-  window.LabExportPNG={capture:rasterize,dimensions};
+  window.LabExportPNG={capture:rasterize,dimensions,isExporting:()=>exporting};
   window.LabRenderer={capture:captureScene};
 })();

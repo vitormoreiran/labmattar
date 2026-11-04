@@ -94,6 +94,39 @@
     "179":"/ambiente-editorial/media/BOXDOSENTIR-179.jpg",
     "151":"/ambiente-editorial/media/BOXDOSENTIR-151.jpg"
   };
+  // Only same-origin media endpoints are accepted. Credentials never enter state.
+  const externalMedia=new Map();
+  function loadExternalMedia(){
+    try{
+      const cached=JSON.parse(sessionStorage.getItem("lm-acervo-selected")||"null");
+      if(cached && /^(google|dropbox)$/.test(cached.provider)&&
+        /^ext-[a-z0-9]+$/.test(cached.photoKey)&&
+        typeof cached.id==="string"&&cached.id.length<220){
+        const url="/api/acervo/media?provider="+cached.provider+"&id="+encodeURIComponent(cached.id);
+        photos[cached.photoKey]=url;
+        externalMedia.set(cached.photoKey,{...cached,original:url});
+        const select=by("labPhoto");
+        select.add(new Option(cached.name+" / "+cached.provider,cached.photoKey));
+      }
+    }catch{}
+  }
+  loadExternalMedia();
+  // Register the saved external option before the editor restores its state.
+  const cachedExternal=[...externalMedia.values()][0];
+  if(cachedExternal){
+    const button=document.createElement("button");
+    button.type="button";button.className="lm-ctrl-choice";
+    button.dataset.labChoice="photo";button.dataset.value=cachedExternal.photoKey;
+    const name=document.createElement("span");name.className="lm-ctrl-name";
+    name.textContent=String(cachedExternal.name).slice(0,100);
+    button.append(name);
+    button.addEventListener("click",()=>{
+      const select=by("labPhoto");
+      select.value=cachedExternal.photoKey;
+      select.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+    document.querySelector(".lm-ctrl-photos")?.append(button);
+  }
   const formatNames={
     horizontal:"HORIZONTAL / 16:9",vertical:"VERTICAL / 9:16",
     quadrado:"QUADRADO / 1:1",editorial:"EDITORIAL / √2:1"
@@ -345,6 +378,34 @@
   // Read-only bridge for the versioned production document.  The existing
   // state remains the single source of truth; imports use its normal renderer
   // and local-draft persistence rather than rewriting the canvas DOM.
+  window.addEventListener("labmattar:acervo-select",event=>{
+    const data=event.detail;
+    if(!data || !/^(google|dropbox)$/.test(data.provider) ||
+      !/^ext-[a-z0-9]+$/.test(data.photoKey)||!data.original?.startsWith("/api/acervo/media?"))return;
+    photos[data.photoKey]=data.original;
+    externalMedia.set(data.photoKey,data);
+    const input=by("labPhoto");
+    if(![...input.options].some(option=>option.value===data.photoKey))
+      input.add(new Option(data.name+" / "+data.provider,data.photoKey));
+    const name=escape=>String(escape).slice(0,100);
+    const buttons=document.querySelector(".lm-ctrl-photos");
+    if(buttons && !buttons.querySelector('[data-value="'+data.photoKey+'"]')){
+      const button=document.createElement("button");
+      button.type="button";button.className="lm-ctrl-choice";
+      button.dataset.labChoice="photo";button.dataset.value=data.photoKey;
+      const span=document.createElement("span");span.className="lm-ctrl-name";
+      span.textContent=name(data.name);button.append(span);
+      button.addEventListener("click",()=>{
+        input.value=data.photoKey;input.dispatchEvent(new Event("change",{bubbles:true}));
+      });
+      buttons.append(button);
+    }
+    try{sessionStorage.setItem("lm-acervo-selected",JSON.stringify({
+      provider:data.provider,id:data.id,name:data.name,photoKey:data.photoKey
+    }))}catch{}
+    input.value=data.photoKey;
+    input.dispatchEvent(new Event("change",{bubbles:true}));
+  });
   window.LabProductionBridge={
     snapshot:()=>({state:JSON.parse(JSON.stringify(state)),photoCatalog:{...photos}}),
     restore:next=>{

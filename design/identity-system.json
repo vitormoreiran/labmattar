@@ -11,6 +11,13 @@
       "editor": "/motion/matriz/index.html"
     },
     {
+      "id": "motion",
+      "label": "Motion",
+      "stage": "existing",
+      "path": "/motion.html",
+      "editor": "/motion/matriz/index.html"
+    },
+    {
       "id": "typography",
       "label": "Tipografia",
       "path": "/tipografia.html",
@@ -30,17 +37,10 @@
     },
     {
       "id": "laboratory",
-      "label": "Laboratório",
+      "label": "Laboratório de composição",
       "path": "/laboratorio.html",
       "stage": "experimental",
       "editor": "/laboratorio.html?studio=1#laboratorio"
-    },
-    {
-      "id": "motion",
-      "label": "Motion",
-      "stage": "existing",
-      "path": "/motion.html",
-      "editor": "/motion/matriz/index.html"
     },
     {
       "id": "applications",

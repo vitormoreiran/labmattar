@@ -5,7 +5,7 @@ root=Path("design")
 manifest=json.loads((root/"identity-system.json").read_text(encoding="utf-8"))
 assert manifest["schemaVersion"]=="1.0.0"
 assert len(manifest["sections"])==7
-assert [section["id"] for section in manifest["sections"][:5]]==["symbols","typography","color","composition","laboratory"],"Manual must end at 05 / LABORATÓRIO"
+assert [section["id"] for section in manifest["sections"][:6]]==["symbols","motion","typography","color","composition","laboratory"],"Motion follows Symbols; the composition laboratory has its own area"
 assert not any(section["id"]=="image" for section in manifest["sections"]),"Imagem is not an independent chapter"
 assert len(manifest["symbols"]["vessels"])==9
 assert manifest["image"]["textContrast"]["veilColor"]=="#000000"
@@ -17,7 +17,7 @@ for name in ("manual.html","tipografia.html","cores.html","composicao.html","lab
  assert page.exists(),f"Missing page: {page}"
  text=page.read_text(encoding="utf-8")
  assert '<nav class="lm-site-nav"' in text,f"Missing shared navigation in {name}"
- for expected in ("/manual.html","/tipografia.html","/cores.html","/composicao.html","/laboratorio.html"):
+ for expected in ("/manual.html","/motion.html","/tipografia.html","/cores.html","/composicao.html","/laboratorio.html"):
   assert expected in text,f"Missing navigation link {expected} in {name}"
  assert '/imagem.html' not in text,f"Obsolete image chapter link in {name}"
 # The five manual areas use one normative stylesheet, not independent font faces.

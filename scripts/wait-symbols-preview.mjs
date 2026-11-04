@@ -7,7 +7,7 @@ try {
  for(let attempt=0;attempt<18;attempt++){
   const stamp=Date.now();
   const manual=await page.goto(base+'/manual?publication='+stamp,{waitUntil:'networkidle',timeout:30000});
-  const correct=manual.status()===200&&await page.locator('.state-explorer[data-ready="true"][data-symbols-version="20261029-verified"]').count()===1;
+  const correct=manual.status()===200&&await page.locator('.motion-symbol-preview[data-motion-version="20261104-groups"]').count()===1;
   const composition=await page.goto(base+'/composicao.html?publication='+stamp,{waitUntil:'networkidle',timeout:30000});
   const constructionReady=composition.status()===200&&
     await page.locator('#construcao').count()===1&&

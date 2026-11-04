@@ -33,14 +33,19 @@ for(const entry of entries){
   await writeFile(path.join(projectsDirectory,`${entry.id}.json`),JSON.stringify(entry.project,null,2)+'\n');
   catalog.push({id:entry.id,title:entry.title,status:entry.status,group:entry.group,duration:entry.duration,aspect:entry.project.aspect,cut:entry.cut??null,projectHash,video:ready?video:null,poster:ready?poster:null,project:`/motion/projects/${entry.id}.json`,editor:`/motion/matriz/index.html?roteiro=${entry.id}`});
 }
-function cards(group){return catalog.filter(entry=>entry.group===group).map(entry=>{
+function cards(ids){return ids.map(id=>catalog.find(entry=>entry.id===id)).map(entry=>{
   const duration=entry.duration.toLocaleString('pt-BR',{maximumFractionDigits:2});
-  const label=entry.status==='approved'?'Aprovado':'Em avaliação';
   const ratio=entry.aspect.replace(':',' / ');
   const content=entry.video?`<video controls playsinline preload="none" poster="${entry.poster}" aria-label="${esc(entry.title)}"><source src="${entry.video}" type="video/mp4"><a href="${entry.video}">Baixar vídeo</a></video>`:'<p class="detail">Prévia local: exportação pendente.</p>';
-  return `<article class="motion-card" data-motion-id="${entry.id}" data-status="${entry.status}"><p class="motion-status detail">${label}</p><h3>${esc(entry.title)}</h3><div class="motion-meta detail"><span>${duration} s · ${entry.aspect}</span>${entry.cut!==null?`<span>Corte sugerido: ${entry.cut.toLocaleString('pt-BR')} s em 1×</span>`:''}</div><div class="motion-frame" style="aspect-ratio:${ratio}">${content}</div><div class="motion-links detail">${entry.video?`<a href="${entry.video}" download>BAIXAR MP4</a>`:''}<a href="${entry.project}" download>BAIXAR ROTEIRO JSON</a><a href="${entry.editor}">EDITAR NA MATRIZ ↗</a></div></article>`;
+  return `<article class="motion-card" data-motion-id="${entry.id}"><h3>${esc(entry.title)}</h3><div class="motion-meta detail"><span>${duration} s · ${entry.aspect}</span>${entry.cut!==null?`<span>Corte sugerido: ${entry.cut.toLocaleString('pt-BR')} s em 1×</span>`:''}</div><div class="motion-frame" style="aspect-ratio:${ratio}">${content}</div><div class="motion-links detail">${entry.video?`<a href="${entry.video}" download>BAIXAR MP4</a>`:''}<a href="${entry.project}" download>BAIXAR ROTEIRO JSON</a><a href="${entry.editor}">EDITAR NA MATRIZ ↗</a></div></article>`;
 }).join('\n');}
-const gallery=`<section class="chapter lm-manual-section" id="roteiros"><div class="inner"><p class="eyebrow">02 / ASSINATURAS</p><h2 class="lm-manual-section-title">ROTEIROS PRONTOS</h2><p>Os três primeiros percursos estão aprovados. Acervo vira MATTAR e Abertura e fecho são estudos em avaliação. Reprodução, MP4 e projeto editável correspondem à mesma versão.</p><div class="motion-grid">${cards('assinaturas')}</div></div></section><section class="chapter lm-manual-section" id="transicoes"><div class="inner"><p class="eyebrow">03 / TRANSIÇÕES</p><h2 class="lm-manual-section-title">CONECTAR CONTEÚDOS</h2><p>Três testes em avaliação. Os pontos de corte indicam onde experimentar a troca A→B na edição; o ritmo deve ser validado com os conteúdos reais.</p><div class="motion-grid">${cards('transicoes')}</div></div></section>`;
+const groups=[
+  {id:'roteiros',number:'01',label:'SÍMBOLO EM MOVIMENTO',title:'DO M À FORMA',description:'Um gesto concentrado no símbolo: o M gira, encontra um pictograma e retorna. Para marcar uma presença breve ou acompanhar uma assinatura.',ids:['m-form']},
+  {id:'assinaturas',number:'02',label:'ASSINATURAS E ABERTURAS',title:'MATTAR EM SEQUÊNCIA',description:'Das letras aos pictogramas, os percursos apresentam a assinatura com ritmos diferentes. Escolha uma abertura, uma resposta em onda ou uma composição de giros.',ids:['mattar-rhythm','composition','acervo-mattar','abertura-fecho']},
+  {id:'transicoes',number:'03',label:'TRANSIÇÕES',title:'CONECTAR CONTEÚDOS',description:'O gesto prepara a passagem entre duas peças. Os pontos de corte sugerem onde trocar de A para B na edição; confira o encaixe com o conteúdo real.',ids:['perfil-corte','passagem-bastao','forma-intervalo']},
+];
+const gallery=groups.map(group=>`<section class="chapter lm-manual-section" id="${group.id}" data-motion-group="${group.id}"><div class="inner"><p class="eyebrow">${group.number} / ${group.label}</p><h2 class="lm-manual-section-title">${group.title}</h2><p>${group.description}</p><div class="motion-grid">${cards(group.ids)}</div></div></section>`).join('\n');
+
 const template=await readFile(path.join(root,'design/motion.html'),'utf8');
 assert.equal(template.split('<!--MOTION_GALLERY-->').length,2);
 await writeFile(path.join(root,'public/motion.html'),template.replace('<!--MOTION_GALLERY-->',gallery));

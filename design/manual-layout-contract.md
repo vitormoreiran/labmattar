@@ -1,7 +1,7 @@
 # LABMATTAR — contrato de diagramação editorial
 
-**Status:** regra de construção para o manual de identidade (cinco capítulos).
-**Escopo:** 01 Símbolos, 02 Tipografia, 03 Cores, 04 Composição, 05 Laboratório.
+**Status:** regra de construção para o manual de identidade (seis capítulos).
+**Escopo:** 01 Símbolos, 02 Tipografia, 03 Cores, 04 Composição, 05 Laboratório, 06 Redes Sociais.
 **Fontes da verdade:** este documento define a geometria; `public/manual-layout.css` executa a grade; `public/manual-headings.css` é a única fonte para tipografia.
 
 ## 1. Invariantes
@@ -80,3 +80,7 @@ Em 1440×900, 1024×768, 768×1024, 390×844 e 320×640:
 ## 7. Alteração das regras
 
 Qualquer mudança futura de grade, espaçamento, bandas verticais ou breakpoints deve ser alterada primeiro **neste contrato e nos tokens compartilhados**, aplicada aos cinco capítulos juntos e comprovada pelo teste. Correções isoladas em uma página não são permitidas.
+
+## 7. Extensão / Redes Sociais
+
+O capítulo 06 reutiliza a mesma geometria de capas e seções, os únicos três tratamentos Título/Corpo/Detalhe e os SVGs oficiais. As demonstrações internas são superfícies contextuais, não uma nova escala de identidade. O feed é uma simulação editorial; nenhuma assinatura, cor, ícone ou motion é compulsório em cada publicação. Em caso de dúvida, preservar o documento visual original.

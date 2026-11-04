@@ -9,6 +9,7 @@ on:
       - 'design/revise-symbols-hierarchy.py'
       - 'design/motion.html'
       - 'design/laboratorio.html'
+      - 'design/redes.html'
       - 'design/compor.html'
       - 'public/composicao-pages*'
       - 'public/composicao-lab-export.js'
@@ -77,7 +78,7 @@ jobs:
           cp design/EditorialAssembly.tsx app/editor/EditorialAssembly.tsx
           cp design/editorial.css app/editor/editorial.css
           python3 design/patch-editor.py
-          for page in tipografia cores composicao laboratorio compor identidade inicio; do cp "design/$page.html" "public/$page.html"; done
+          for page in tipografia cores composicao laboratorio compor identidade inicio redes; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py
           cp public/manual.html /tmp/manual-once.html

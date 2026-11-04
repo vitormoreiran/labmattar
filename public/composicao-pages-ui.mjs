@@ -1,4 +1,4 @@
-import {createPage,createMotion,motionBox,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog} from './lab-sequence.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog} from './lab-sequence.mjs';
 import {verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs';
 const by=id=>document.getElementById(id),copy=value=>JSON.parse(JSON.stringify(value));
@@ -6,16 +6,16 @@ const board=by('labArtboard'),bridge=()=>window.LabProductionBridge;
 const key='labmattar-pages-v1';
 const uid=prefix=>prefix+'-'+crypto.randomUUID();
 const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by('labPagesStatus').dataset.state=error?'error':'idle';by('labExportStatus').textContent=message;by('labExportStatus').dataset.state=error?'error':busy?'busy':'idle';};
-let pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=false,selectedMotion='';
+let pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=false,selectedMotion='',selectedClip='',clipsPlaying=true;
 const panel=by('labPages');
 if(board&&panel){init().catch(error=>notify(error.message,true));}
-function nativePage(id=uid('page'),pageName='Página 1',motions=[]){
+function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[]){
   const {state,photoCatalog}=bridge().snapshot();
-  return createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions});
+  return createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions,clips});
 }
 function commit(){
   if(switching||busy||!pages.length)return;
-  clearTimeout(timer);const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions);
+  clearTimeout(timer);const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[]);
   try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages),current,enabled}));}
   catch{notify('Salve o projeto JSON para guardar esta sequência.');}
   renderPages();
@@ -117,6 +117,7 @@ function renderMotions(){
     video.addEventListener('loadedmetadata',update,{once:true});layer.append(video);
   }
   placeMotions();requestAnimationFrame(placeMotions);renderMotionControls();
+  renderClips();
 }
 function placeMotions(){
   if(!pages.length)return;
@@ -126,6 +127,7 @@ function placeMotions(){
     const asset=catalog.find(asset=>asset.id===motion.assetId),box=motionBox(motion,asset,board.offsetWidth,board.offsetHeight);
     Object.assign(video.style,{left:box.x+'px',top:box.y+'px',width:box.w+'px',height:box.h+'px'});
   }
+  placeClips();
 }
 function renderMotionControls(){
   const list=by('labMotionInstance');list.replaceChildren();
@@ -170,7 +172,7 @@ async function load(document){
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);
   switching=true;
-  try{registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[]}];current=0;enabled=false;}
+  try{registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[],clips:[]}];current=0;enabled=false;}
   finally{switching=false;}
   await switchPage(0,{capture:false});
 }
@@ -181,6 +183,7 @@ async function captureMotions(width,height){
     items.push({kind:'image',motionId:motion.id,assetName:asset.title,sourceWidth:asset.width,
       source:await motionFrame(asset,motion.frameSeconds),...box});
   }
+  items.push(...await capturePrivateClips(width,height));
   return items;
 }
 async function exportSequence(type){
@@ -198,7 +201,8 @@ async function exportSequence(type){
       registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[index].composition,photoCatalog));
       await settled();renderMotions();
       const scene=await window.LabRenderer.capture({edge:Number(by('labExportSize').value),ask:false});
-      scene.id=pages[index].id;scene.name=pages[index].name;scene.documentName=name;scene.motions=copy(pages[index].motions);scenes.push(scene);
+      scene.id=pages[index].id;scene.name=pages[index].name;scene.documentName=name;
+      scene.motions=copy(pages[index].motions);scene.clips=copy(pages[index].clips||[]);scenes.push(scene);
     }
     const warnings=[...new Set(scenes.flatMap((scene,index)=>scene.warnings.map(warning=>`Página ${index+1}: ${warning}`)))];
     if(warnings.length&&!confirm('LABMATTAR / Qualidade dos originais\n\n'+warnings.join('\n')+'\n\nExportar na dimensão selecionada?')){
@@ -232,7 +236,7 @@ async function init(){
   window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
-    hasSequence:()=>enabled||pages.length>1||pages.some(page=>page.motions.length),
+    hasSequence:()=>enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length),
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');
@@ -258,7 +262,8 @@ async function init(){
   by('labPageDuplicate').addEventListener('click',async()=>{
     if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}
     commit();const duplicate=copy(pages[current]);duplicate.id=uid('page');duplicate.name=(duplicate.name+' / cópia').slice(0,120);
-    duplicate.motions.forEach(motion=>{motion.id=uid('motion');});pages.splice(current+1,0,duplicate);enabled=true;await switchPage(current+1);
+    duplicate.motions.forEach(motion=>{motion.id=uid('motion');});
+     (duplicate.clips||[]).forEach(clip=>{clip.id=uid('clip');});pages.splice(current+1,0,duplicate);enabled=true;await switchPage(current+1);
   });
   for(const [id,delta] of [['labPageEarlier',-1],['labPageLater',1]])by(id).addEventListener('click',()=>{commit();current=movePage(pages,current,delta);enabled=true;renderPages();commit();});
   by('labPageDelete').addEventListener('click',async()=>{

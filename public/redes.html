@@ -94,6 +94,20 @@ main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
 .application .frame.breath .photopart{min-height:0}
 .application .frame.detail-crop>img{transform:scale(1.55);object-position:65% 40%}
 @media(max-width:600px){.case-visual-real{min-height:570px}.case-visual-real .tile.type-tile .poster-title{font-size:clamp(17px,5vw,28px)}.case-visual-real .tile.text-tile .text-quote{font-size:clamp(15px,4vw,24px)}.case-visual-real .tile .poster-footer{font-size:8px}}
+
+/* Revisão de curadoria: um caso, cinco fotografias distintas, uma peça gráfica. */
+.case-visual-real{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));min-height:610px;aspect-ratio:3/2;padding:0;gap:8px;background:transparent}
+.case-visual-real .tile{min-height:0;border-radius:0}
+.case-visual-real .tile.image-tile img{transform:none;object-position:center center}
+.case-visual-real .tile.image-tile>span{margin:0;position:absolute;left:0;bottom:0;z-index:3;padding:8px 12px;background:var(--paper);color:var(--ink)}
+.case-visual-real .tile.type-tile{padding:7%;background:#181818;color:white;min-width:0}
+.case-visual-real .tile.type-tile .poster-title{font-size:clamp(20px,2.35vw,37px);letter-spacing:-.05em;line-height:.96}
+.rule-card .visual.identify .meta{background:#181818;color:#fff}
+.application .frame.photo-title img{object-position:50% 44%}
+.application .frame.breath .photopart img{object-position:44% 48%}
+.application .frame.detail-crop>img{transform:scale(1.12);object-position:center}
+@media(max-width:900px){.case-visual-real{aspect-ratio:auto;min-height:520px}}
+@media(max-width:600px){.case-visual-real{gap:4px;min-height:480px;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,160px)}.case-visual-real .tile.type-tile .poster-title{font-size:clamp(16px,4.5vw,25px)}.case-visual-real .tile.image-tile>span{font-size:8px;padding:5px}}
 </style>
 </head>
 <body>
@@ -110,24 +124,21 @@ main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
 <section class="lm-social" id="temporadas"><div class="inner">
 <div class="section-head"><div><p class="eyebrow">01 / ORGANIZAÇÃO EDITORIAL</p><h2>O FEED<br><em>É TEMPO</em></h2></div><p class="copy">Cada projeto constitui uma temporada. Publicações do mesmo conjunto formam uma narrativa; quando a temporada seguinte começa, a anterior permanece como arquivo. A ordem no perfil é inversa à cronologia de publicação.</p></div>
 <div class="season-sequence"><span>01 / Cada Corpo Abre um Mundo</span><span class="arrow">→</span><span>02 / Poiesis</span><span class="arrow">→</span><span>03 / Aleteia</span><span class="meta">ORDEM DE ENTRADA</span></div>
-<div class="case-stage"><div class="case-visual case-visual-real" aria-label="Estudo editorial com fotografias de Cada Corpo Abre um Mundo">
-<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="Registro fotográfico da gastroperformance Cada Corpo Abre um Mundo"><span>01 / ABERTURA</span></div>
+<div class="case-stage"><div class="case-visual case-visual-real" aria-label="Seis aplicações de uma temporada, com fotografias de Cada Corpo Abre um Mundo">
+<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Visão ampla da gastroperformance, com cena e projeção"><span>01 / SITUAÇÃO</span></div>
+<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Simone Mattar na apresentação ao público"><span>02 / AÇÃO</span></div>
+<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Convidada experimentando um aroma durante a experiência"><span>03 / GESTO</span></div>
+<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Preparação gastronômica sobre prato iluminado"><span>04 / MATÉRIA</span></div>
+<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Cartão e impresso interativo à mesa"><span>05 / DISPOSITIVO</span></div>
 <div class="tile type-tile"><span class="poster-title">CADA<br>CORPO<br>ABRE UM<br><i>MUNDO</i></span><span class="poster-footer">SIMONE MATTAR / GASTROPERFORMANCE</span></div>
-<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Registro fotográfico do Box do Sentir"><span>03 / EXPERIÊNCIA</span></div>
-<div class="tile image-tile detail-view"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Detalhe do registro do projeto"><span>04 / DETALHE</span></div>
-<div class="tile text-tile"><span class="text-quote">AROMAS<br>SABORES<br>IMAGENS<br>SONS</span><span class="poster-footer">05 / CONTEXTO</span></div>
-<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Outro enquadramento da gastroperformance"><span>06 / MATERIALIDADE</span></div>
-<div class="tile image-tile alternate-view"><img src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Recorte vertical de um registro do projeto"><span>07 / RECORTE</span></div>
-<div class="tile identity-tile"><img src="/identidade/M.svg" alt="" aria-hidden="true"><span class="poster-footer">08 / IDENTIDADE</span></div>
-<div class="tile image-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="Registro do projeto usado como continuidade da temporada"><span>09 / CONTINUIDADE</span></div>
-</div><div class="case-notes"><div><p class="meta">CASO PRINCIPAL / CADA CORPO ABRE UM MUNDO</p><h3>Uma temporada.<br>Várias escalas<br>de olhar.</h3><p>Este quadro apresenta funções possíveis de publicação, e não uma quantidade fixa de posts. A sequência final deriva dos materiais e do que há a narrar: apresentação, experiência, processo, aproximação e contexto.</p><p>Não se deve inserir imagens de outros projetos para completar uma grade. Os registros do Box do Sentir integram este estudo. Os quadros tipográficos demonstram quando compor; os registros mostram quando preservar a fotografia.</p></div><p class="small-note">ESTUDO DE APLICAÇÃO COM REGISTROS DO BOX DO SENTIR. A ORDEM E OS RECORTES SÃO PROPOSTAS EDITORIAIS, NÃO UM HISTÓRICO DE PUBLICAÇÃO.</p></div></div>
+</div><div class="case-notes"><div><p class="meta">CASO PRINCIPAL / CADA CORPO ABRE UM MUNDO</p><h3>Uma temporada.<br>Várias escalas<br>de olhar.</h3><p>Cinco registros distintos e uma aplicação tipográfica demonstram como editar um mesmo acervo: situação, ação, gesto, matéria, dispositivo e contexto. A sequência é um estudo de decisões editoriais, não uma quantidade obrigatória de posts.</p><p>Não se deve inserir imagens de outros projetos para completar uma grade. A publicação é definida pelo que acrescenta à leitura do projeto. A fotografia pode permanecer íntegra; a tipografia entra quando existe informação que não pode ficar apenas na legenda.</p></div><p class="small-note">REGISTROS DE CADA CORPO ABRE UM MUNDO / BOX DO SENTIR. EXERCÍCIO DE APLICAÇÃO, NÃO HISTÓRICO DO INSTAGRAM.</p></div></div>
 </div></section>
 <section class="lm-social" id="intensidade"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">02 / GRAU DE INTERVENÇÃO</p><h2>TRÊS FORMAS<br><em>DE PRESENÇA</em></h2></div><p class="copy">A intervenção gráfica é proporcional à necessidade de informação. O padrão é preservar a imagem; a identidade entra quando melhora identificação, leitura ou estrutura narrativa.</p></div>
+<div class="section-head"><div><p class="eyebrow">02 / GRAU DE INTERVENÇÃO</p><h2>TRÊS FORMAS<br><em>DE PRESENÇA</em></h2></div><p class="copy">A intervenção responde à função editorial. Uma imagem pode permanecer autônoma, receber apenas uma identificação ou tornar-se uma composição. A escolha depende da informação necessária, não de um modelo obrigatório.</p></div>
 <div class="rule-grid">
-<article class="rule-card"><span class="meta">01 / PRESERVAR</span><div class="visual"><img class="case-photo" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Fotografia do projeto preservada sem interferência gráfica"></div><h3>A imagem basta.</h3><p>Registro e experiência sem elementos sobrepostos. A legenda identifica o conteúdo. Evita competição entre grafismo e imagem.</p></article>
-<article class="rule-card"><span class="meta">02 / IDENTIFICAR</span><div class="visual identify"><img class="case-photo" src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Imagem do Box do Sentir com identificação editorial"><span class="meta">CADA CORPO ABRE UM MUNDO</span></div><h3>Informação mínima.</h3><p>Texto Detalhe apenas quando a leitura precisar de apoio. Contraste verificável e posição protegida dos elementos principais.</p></article>
-<article class="rule-card"><span class="meta">03 / COMPOR</span><div class="visual compose"><span class="meta">LABMATTAR / PROJETOS</span><span class="big-type">CADA CORPO<br>ABRE UM<br>MUNDO</span><img class="m-symbol" src="/identidade/M.svg" alt="" aria-hidden="true"><span class="meta">TEMPORADA / 01</span></div><h3>Peça editorial.</h3><p>Para abertura, texto curatorial ou informação que não cabe numa legenda. Usar apenas Título, Corpo e Detalhe e os vetores oficiais.</p></article>
+<article class="rule-card"><span class="meta">01 / PRESERVAR</span><div class="visual"><img class="case-photo" src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Fotografia do projeto preservada sem interferência gráfica"></div><h3>Preservar.</h3><p>Registro e experiência sem elementos sobrepostos. A legenda identifica o conteúdo. Evita competição entre grafismo e imagem.</p></article>
+<article class="rule-card"><span class="meta">02 / IDENTIFICAR</span><div class="visual identify"><img class="case-photo" src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Imagem do Box do Sentir com identificação editorial"><span class="meta">CADA CORPO ABRE UM MUNDO</span></div><h3>Identificar.</h3><p>Texto Detalhe apenas quando a leitura precisar de apoio. Contraste verificável e posição protegida dos elementos principais.</p></article>
+<article class="rule-card"><span class="meta">03 / COMPOR</span><div class="visual compose"><span class="meta">LABMATTAR / PROJETOS</span><span class="big-type">CADA CORPO<br>ABRE UM<br>MUNDO</span><img class="m-symbol" src="/identidade/M.svg" alt="" aria-hidden="true"><span class="meta">TEMPORADA / 01</span></div><h3>Compor.</h3><p>Para abertura, texto curatorial ou informação que não cabe numa legenda. Usar apenas Título, Corpo e Detalhe e os vetores oficiais.</p></article>
 </div><p class="footnote">APLICAÇÕES COM FOTOGRAFIAS DO BOX DO SENTIR E COMPOSIÇÃO TIPOGRÁFICA DA IDENTIDADE.</p>
 </div></section>
 <section class="lm-social" id="funcoes"><div class="inner">
@@ -141,12 +152,12 @@ main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
 <article><span class="index">06</span><div><h3>Movimentar</h3><p>Vídeo apresenta ação e temporalidade; a Matriz Vetorial pode marcar transições pontuais, mas não deve virar vinheta obrigatória.</p></div></article>
 </div></div></section>
 <section class="lm-social" id="enquadramentos"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">04 / ENQUADRAMENTOS</p><h2>VARIAR SEM<br><em>PADRONIZAR</em></h2></div><p class="copy">Quatro decisões recorrentes resolvem a maior parte das aplicações. A escolha depende do assunto, da área segura de leitura e do recorte visível na miniatura do perfil.</p></div>
+<div class="section-head"><div><p class="eyebrow">04 / ENQUADRAMENTOS</p><h2>VARIAR SEM<br><em>PADRONIZAR</em></h2></div><p class="copy">Quatro possibilidades de enquadramento mostram como responder às condições da imagem sem impor um modelo único. A escolha depende do assunto, da área segura de leitura e do recorte visível na miniatura do perfil.</p></div>
 <div class="application">
-<article><div class="frame photo-full"><img src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg" alt="Imagem integral do projeto"></div><h3>Imagem plena</h3><p>Registro e imagem autossuficiente. Sem texto sobreposto.</p></article>
-<article><div class="frame photo-title"><img src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="Fotografia com título sobreposto"><b>CADA CORPO<br>ABRE UM MUNDO</b></div><h3>Título sobre imagem</h3><p>Somente quando existe área livre e contraste suficiente.</p></article>
-<article><div class="frame breath"><div class="photopart"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Imagem em campo de respiro"></div><b>CADA CORPO<br>ABRE UM MUNDO</b></div><h3>Campo de respiro</h3><p>Separar imagem e texto quando ambos precisam de autonomia.</p></article>
-<article><div class="frame detail-crop"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Detalhe ampliado da imagem do projeto"></div><h3>Detalhe ampliado</h3><p>Aproximar a matéria sem perder o sentido do registro.</p></article>
+<article><div class="frame photo-full"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Imagem integral do projeto"></div><h3>Imagem plena</h3><p>Registro e imagem autossuficiente. Sem texto sobreposto.</p></article>
+<article><div class="frame photo-title"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Fotografia com título sobreposto"><b>CADA CORPO<br>ABRE UM MUNDO</b></div><h3>Título sobre imagem</h3><p>Somente quando existe área livre e contraste suficiente.</p></article>
+<article><div class="frame breath"><div class="photopart"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Imagem em campo de respiro"></div><b>CADA CORPO<br>ABRE UM MUNDO</b></div><h3>Campo de respiro</h3><p>Separar imagem e texto quando ambos precisam de autonomia.</p></article>
+<article><div class="frame detail-crop"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Detalhe ampliado da imagem do projeto"></div><h3>Detalhe ampliado</h3><p>Aproximar a matéria sem perder o sentido do registro.</p></article>
 </div><p class="footnote">ESTUDOS DE ENQUADRAMENTO COM REGISTROS DO BOX DO SENTIR.</p>
 </div></section>
 <section class="lm-social" id="regras"><div class="inner">

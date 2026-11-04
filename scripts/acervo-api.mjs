@@ -378,46 +378,48 @@ async function publicMediaStream(request,url,env,thumb){
   const catalogue=await publicProject(request,env,projectId);
   const item=catalogue?.get(id);
   if(!item||!FILE_TYPES.has(item.mime))return deny("Arquivo fora da biblioteca 01_Portfolio",404);
-  const isVideo=item.kind==="video";
-  if(!thumb&&!env.LM_GOOGLE_PICKER_API_KEY)
-    return deny("A chave pública de leitura do acervo não está disponível",503);
-  const range=request.headers.get("Range");
+  const isVideo=item.kind==="video",range=request.headers.get("Range");
   if(range&&!/^bytes=\d+-\d*$/.test(range))return deny("Intervalo de vídeo inválido",416);
   const origin=env.LM_ACERVO_ORIGIN||new URL(request.url).origin;
-  let upstream=null;
-  if(thumb){
-    const target="https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w480";
+  const publicThumbnail=width=>"https://drive.google.com/thumbnail?id="+encodeURIComponent(id)+"&sz=w"+width;
+  const googleDownload="https://drive.google.com/uc?export=download&id="+encodeURIComponent(id);
+  async function upstreamResponse(target,headers={},requireImage=false){
     try{
-      const res=await fetch(target,{redirect:"follow"});
-      if(res.ok&&res.headers.get("Content-Type")?.startsWith("image/"))upstream=res;
-      else await res.body?.cancel();
-    }catch{/* Try direct public Drive API below. */}
+      const r=await fetch(target,{headers,redirect:"follow"});
+      const type=r.headers.get("Content-Type")||"";
+      const valid=r.ok&&(r.status===200||r.status===206)&&
+        !type.includes("text/html")&&(!requireImage||type.startsWith("image/"));
+      if(valid)return r;
+      await r.body?.cancel();
+    }catch{/* Try next read-only Google delivery mechanism. */}
+    return null;
   }
-  if(!upstream){
+  let upstream=null;
+  if(thumb)upstream=await upstreamResponse(publicThumbnail(480),{},true);
+  if(!upstream&&!thumb||!upstream&&!isVideo){
     const key=env.LM_GOOGLE_PICKER_API_KEY;
-    if(!key)return deny("Miniatura indisponível",404);
-    const remote="https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(id)+
-      "?alt=media&supportsAllDrives=true&key="+encodeURIComponent(key);
-    const headers={Referer:origin.replace(/\/$/,"")+"/"};
-    if(range&&!thumb&&isVideo)headers.Range=range;
-    const res=await fetch(remote,{headers,redirect:"follow"});
-    if(res.ok&&(res.status===200||res.status===206)&&
-      !res.headers.get("Content-Type")?.includes("text/html"))upstream=res;
-    else{
-      await res.body?.cancel();
-      // Shared-by-link assets can also be streamed through Drive's public
-      // download endpoint. Never forward HTML consent/confirmation pages.
-      const direct="https://drive.google.com/uc?export=download&id="+encodeURIComponent(id);
-      const fallback=await fetch(direct,{headers:range&&isVideo?{Range:range}:{},redirect:"follow"});
-      if(!fallback.ok||fallback.headers.get("Content-Type")?.includes("text/html")){
-        await fallback.body?.cancel();
-        return deny("Google não liberou a mídia para leitura pública; confira o compartilhamento do arquivo",502);
-      }
-      upstream=fallback;
+    if(key){
+      const target="https://www.googleapis.com/drive/v3/files/"+encodeURIComponent(id)+
+        "?alt=media&supportsAllDrives=true&key="+encodeURIComponent(key);
+      const headers={Referer:origin.replace(/\/$/,"")+"/"};
+      if(range&&isVideo&&!thumb)headers.Range=range;
+      upstream=await upstreamResponse(target,headers,thumb);
     }
   }
+  if(!upstream&&!thumb){
+    upstream=await upstreamResponse(googleDownload,range&&isVideo?{Range:range}:{},false);
+    // An original-image thumbnail is the last read-only fallback if Google
+    // refuses the public API key or the download endpoint serves an HTML page.
+    if(!upstream&&!isVideo)upstream=await upstreamResponse(publicThumbnail(4000),{},true);
+  }
+  if(!upstream)return deny("O Google não disponibilizou esta mídia publicamente. Verifique o link ou o formato.",502);
+  const contentType=thumb?
+    (upstream.headers.get("Content-Type")?.startsWith("image/")?
+      upstream.headers.get("Content-Type"):"image/jpeg"):
+    (!isVideo&&upstream.headers.get("Content-Type")?.startsWith("image/")?
+      upstream.headers.get("Content-Type"):item.mime);
   const responseHeaders={
-    "Content-Type":thumb?"image/jpeg":item.mime,
+    "Content-Type":contentType,
     "Content-Disposition":"inline",
     "Cache-Control":"public, max-age=300"
   };

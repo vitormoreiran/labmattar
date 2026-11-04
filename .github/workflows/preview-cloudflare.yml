@@ -205,6 +205,26 @@ jobs:
           test -n "$CLOUDFLARE_ACCOUNT_ID"
           # Preserve Cloudflare dashboard variables and all provider secrets across deploys.
           npx wrangler deploy --config wrangler.preview.jsonc --keep-vars
+      - name: Confirmar entrega de fotografia real do 01_Portfolio
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://labmattar-identidade-previa.vitormoreiran.workers.dev/api/acervo/public-media?project=1_IohLr8kwZIQudxG8lmzJvO6GjB3VAWN&id=177GD8UXcmudDYJ8-UKv5O9Mrdd3oOrAv"
+          for attempt in 1 2 3 4 5 6; do
+            status=$(curl -sS -L --max-time 35 --output /tmp/labmattar-drive-photo --write-out '%{http_code}' "$URL") || status=000
+            mime=$(file -b --mime-type /tmp/labmattar-drive-photo 2>/dev/null || true)
+            bytes=$(wc -c </tmp/labmattar-drive-photo 2>/dev/null || echo 0)
+            if [ "$status" = "200" ] && [ "$bytes" -gt 500 ] &&
+              { [ "$mime" = "image/jpeg" ] || [ "$mime" = "image/png" ] || [ "$mime" = "image/webp" ]; }; then
+              echo "01_Portfolio: imagem real publicada e legivel ($bytes bytes / $mime)."
+              exit 0
+            fi
+            echo "Tentativa $attempt: HTTP $status, mime $mime, bytes $bytes"
+            sleep 4
+          done
+          echo "Falha: Worker nao conseguiu carregar uma fotografia real do acervo."
+          exit 1
       - name: Verificar manual e matriz na URL publicada
         if: github.ref == 'refs/heads/main'
         env:

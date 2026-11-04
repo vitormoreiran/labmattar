@@ -109,6 +109,7 @@ try{
     body:board.querySelector("#labRenderedBody").textContent
   }));
   await tourTrigger.click();
+  await page.screenshot({path:"laboratorio-ajuda-desktop.png"});
   const tour=page.locator("#labHelp-overview");
   const titles=[
     "Como funciona","Superfície e margem","M e geometria",
@@ -577,6 +578,17 @@ try{
     await page.screenshot({path:"laboratorio-regressao-mobile-"+format+".png"});
   }
 
+  // The guide remains usable on compact devices, and the normal manual
+  // exposes the same sequence without entering the focused editor.
+  await page.setViewportSize({width:390,height:720});
+  await page.locator("#labTourStudioHelp").click();
+  assert(await page.locator("#labHelp-overview").isVisible(),
+    "Dúvidas must remain accessible in the compact focused toolbar");
+  await page.screenshot({path:"laboratorio-ajuda-mobile.png"});
+  await page.locator("#labTourClose").click();
+  assert(await page.locator("#labHelp-overview").isHidden(),
+    "Fechar must dismiss compact help");
+
   await page.locator("#labStudioToggle").click();
   assert(await page.locator("body").evaluate(el=>!el.classList.contains("lm-studio-open")),
     "Focused mode did not close");
@@ -584,6 +596,10 @@ try{
          await page.locator("#labPanel-texto").isVisible()&&
          await page.locator("#labPanel-imagem").isVisible(),
     "Closing focused mode must preserve the same unified inspector");
+  await page.locator("#labOverviewHelp").click();
+  assert(await page.locator("#labHelp-overview").isVisible(),
+    "Normal Laboratory page must launch the same guided help");
+  await page.locator("#labTourClose").click();
 
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
   console.log("LABMATTAR unified composition studio OK");

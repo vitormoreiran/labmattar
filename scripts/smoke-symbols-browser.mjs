@@ -34,7 +34,7 @@ try {
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
         const navLinks=await areaPage.locator('.lm-site-nav a').allTextContents();
         assert.deepEqual(navLinks.map(x=>x.trim()),[
-          '01 / SÍMBOLOS','MOTION','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO'
+          '01 / SÍMBOLOS','MOTION','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO','06 / REDES SOCIAIS'
         ],'Motion follows Symbols with a separate composition laboratory: '+area);
         assert.equal(await areaPage.locator('.lm-site-nav a[href="/imagem.html"]').count(),0,
           'Imagem must not reappear as a separate chapter');
@@ -227,6 +227,19 @@ try {
     }
     report.manualHeadings.push({viewportWidth,areas:group});
   }
+  // Chapter 06 is intentionally editorial: verify availability, official symbols,
+  // and the nine-post comparison without replacing the original manual tests.
+  const socialPage=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+  try {
+    const socialResponse=await socialPage.goto(new URL('/redes.html',url).href,{waitUntil:'networkidle',timeout:60000});
+    assert.equal(socialResponse.status(),200,'Redes Sociais HTTP 200');
+    await socialPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
+    assert.equal(await socialPage.locator('main > section.lm-manual-cover').count(),1,'Social page has canonical cover');
+    assert.equal(await socialPage.locator('#lmSocialFeedGrid > .lm-social-tile').count(),9,'Social feed presents nine posts');
+    assert.equal(await socialPage.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1,'Social nav active');
+    await socialPage.locator('[data-feed-mode="agrupado"]').click();
+    assert.equal(await socialPage.locator('#lmSocialFeedGrid').getAttribute('data-mode'),'agrupado','Feed comparison changes sequence');
+  } finally { await socialPage.close(); }
   for (const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]) {
     await page.setViewportSize({width,height});await page.waitForTimeout(120);
     const geometry = await page.evaluate(()=>({width:innerWidth,document:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('h1,h2,.title .line,.symbol-row,.state-explorer,.lm-site-nav,header.top,.state-picker button')].filter(e=>{const r=e.getBoundingClientRect();return r.right>innerWidth+1||r.left< -1;}).map(e=>e.tagName+'.'+e.className)}));

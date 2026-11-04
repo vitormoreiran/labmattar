@@ -179,7 +179,13 @@ jobs:
             "compatibility_date": "2026-10-01",
             "compatibility_flags": ["nodejs_compat"],
             "assets": {"directory": "dist/client", "binding": "ASSETS"},
-            "workers_dev": true
+            "workers_dev": true,
+            "keep_vars": true,
+            "vars": {
+              "LM_ACERVO_ORIGIN": "https://labmattar-identidade-previa.vitormoreiran.workers.dev",
+              "LM_GOOGLE_CLIENT_ID": "805873227008-c9524mq3ld7apu4rpcb4uo4p4acrcjtn.apps.googleusercontent.com",
+              "LM_GOOGLE_APP_ID": "805873227008"
+            }
           }
           JSON
       - name: Publicar apenas Worker de previa
@@ -191,7 +197,8 @@ jobs:
         run: |
           test -n "$CLOUDFLARE_API_TOKEN"
           test -n "$CLOUDFLARE_ACCOUNT_ID"
-          npx wrangler deploy --config wrangler.preview.jsonc
+          # Preserve Cloudflare dashboard variables and all provider secrets across deploys.
+          npx wrangler deploy --config wrangler.preview.jsonc --keep-vars
       - name: Verificar manual e matriz na URL publicada
         if: github.ref == 'refs/heads/main'
         env:

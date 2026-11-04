@@ -99,8 +99,7 @@ try {
   await page.locator('#lmSeasonRole').selectOption('contexto');
   await page.locator('#lmSeasonFrame').selectOption('respiro');
   assert.equal(await page.locator('.lm-season-selected-preview .lm-season-art').getAttribute('data-frame'),'respiro');
-  await page.locator('#lmSeasonPostOlder').click();
-  assert.equal(await page.locator('#lmSeasonPostSelect').inputValue(),await sample().nth(1).getAttribute('data-post-id')===null?'':'post-0');
+  assert.equal(await page.locator('#lmSeasonPostOlder').isDisabled(),true,'A capa permanece na abertura da temporada');
   report.checks.push('season-create-add-role-framing');
 
   const feedReady=page.waitForEvent('download');

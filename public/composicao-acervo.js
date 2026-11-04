@@ -432,13 +432,122 @@
       finally{setBusy(false)}
     });
   }
+
+  function localDb(){
+    return new Promise((resolve,reject)=>{
+      if(!("indexedDB" in window)){reject(Error("Este navegador não oferece armazenamento local de vídeos."));return;}
+      const req=indexedDB.open("labmattar-midia-local",1);
+      req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains("videos"))
+        req.result.createObjectStore("videos");};
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(Error("Não foi possível abrir a biblioteca local deste navegador."));
+    });
+  }
+  async function saveLocalVideo(file,id){
+    const db=await localDb();
+    try{
+      await new Promise((resolve,reject)=>{
+        const tx=db.transaction("videos","readwrite");
+        tx.objectStore("videos").put({blob:file,name:file.name,mime:file.type},id);
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(Error("Sem espaço para salvar o vídeo local. Libere armazenamento ou use outro arquivo."));
+        tx.onabort=()=>reject(Error("Armazenamento do vídeo interrompido."));
+      });
+    }finally{db.close();}
+  }
+  async function localVideoBlob(id){
+    if(!/^local-[a-f0-9-]{36}$/.test(id||""))throw Error("Vídeo local inválido.");
+    const db=await localDb();
+    try{return await new Promise((resolve,reject)=>{
+      const req=db.transaction("videos","readonly").objectStore("videos").get(id);
+      req.onsuccess=()=>req.result?.blob?resolve(req.result.blob):reject(Error("Vídeo não encontrado neste navegador."));
+      req.onerror=()=>reject(Error("Não foi possível ler o vídeo local."));
+    });}finally{db.close();}
+  }
+  async function localVideoUrl(id){
+    if(localVideoUrls.has(id))return localVideoUrls.get(id);
+    const blob=await localVideoBlob(id),url=URL.createObjectURL(blob);
+    localVideoUrls.set(id,url);return url;
+  }
+  async function optimizeImage(file){
+    if(file.size>45*1024*1024)throw Error("Fotografia acima de 45 MB. Use uma versão menor.");
+    const bitmap=await createImageBitmap(file).catch(()=>{
+      throw Error("O navegador não conseguiu abrir esta imagem. Use JPG, PNG ou WebP.");
+    });
+    try{
+      const edge=Math.max(bitmap.width,bitmap.height),scale=Math.min(1,3840/edge);
+      const canvas=document.createElement("canvas");
+      canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);
+      const ctx=canvas.getContext("2d",{alpha:true});
+      if(!ctx)throw Error("Não foi possível preparar a imagem local.");
+      ctx.imageSmoothingQuality="high";ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+      let data="";
+      for(const quality of [.9,.8,.7,.6]){
+        data=canvas.toDataURL("image/webp",quality);
+        if(data.startsWith("data:image/webp;base64,")&&data.length<=4_800_000)break;
+      }
+      if(!/^data:image\/webp;base64,/.test(data)||data.length>4_800_000)
+        throw Error("Imagem grande demais para salvar no projeto. Exporte uma versão reduzida.");
+      return data;
+    }finally{bitmap.close?.();}
+  }
+  async function addLocalFiles(files){
+    let inserted=0,failed=[];
+    for(const file of files){
+      try{
+        if(["image/jpeg","image/png","image/webp","image/gif"].includes(file.type)){
+          const original=await optimizeImage(file);
+          const photoKey="loc-"+crypto.randomUUID().replace(/-/g,"").slice(0,20);
+          const descriptor={provider:"local",id:photoKey,photoKey,name:file.name,
+            kind:"image",mimeType:"image/webp",original,preview:original};
+          pool.set(photoKey,descriptor);selected=descriptor;
+          window.dispatchEvent(new CustomEvent("labmattar:acervo-select",{detail:descriptor}));
+          inserted++;
+        }else if(["video/mp4","video/webm","video/quicktime"].includes(file.type)){
+          const id="local-"+crypto.randomUUID();
+          await saveLocalVideo(file,id);
+          window.dispatchEvent(new CustomEvent("labmattar:acervo-video-select",{detail:{
+            kind:"video",provider:"local",id,name:file.name,mimeType:file.type
+          }}));
+          inserted++;
+        }else throw Error("Formato não suportado: "+file.name);
+      }catch(error){failed.push(file.name+": "+error.message);}
+    }
+    const message=inserted?inserted+" arquivo(s) local(is) adicionados. "+
+      (files.some(file=>file.type.startsWith("image/"))?"Salve o projeto JSON para preservar as fotografias. ":"")+
+      (files.some(file=>file.type.startsWith("video/"))?"Vídeos locais permanecem neste navegador. ":""):
+      "Nenhum arquivo foi adicionado. ";
+    const result=message+failed.join(" ");
+    by("labAcervoCurrent").textContent=result;notify(result);
+  }
+  function chooseLocal(onlyVideos=false){
+    localInput.accept=onlyVideos?"video/mp4,video/webm,video/quicktime":
+      "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime";
+    localInput.value="";
+    localInput.click();
+  }
+  by("labAcervoLocal").addEventListener("click",()=>chooseLocal(false));
+  by("labClipLocal").addEventListener("click",()=>chooseLocal(true));
+  localInput.addEventListener("change",()=>{
+    const files=[...localInput.files];if(files.length)addLocalFiles(files).catch(error=>{
+      by("labAcervoCurrent").textContent=error.message;
+    });
+  });
+  window.addEventListener("pagehide",()=>{
+    for(const url of localVideoUrls.values())URL.revokeObjectURL(url);
+    localVideoUrls.clear();
+  });
+
   window.LabAcervo={
     has:key=>pool.has(key),
     get:key=>pool.get(key)||null,
     reopen:()=>selected?select({...selected}):null,
     open:options=>options?.autoProvider&&providers.includes(options.autoProvider)?
       openDialog(options):openPublic(),
-    openPublic
+    openPublic,
+    chooseLocal,
+    localVideoBlob,
+    localVideoUrl
   };
   // No API requests on editor load. The library is opt-in and never blocks
   // local compositions or static build smoke tests.

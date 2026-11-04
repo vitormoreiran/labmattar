@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {sectionWebDocument} from '../public/lab-section-web.mjs';
+const project={kind:'labmattar.presentation',schemaVersion:2,name:'Texto </script><script>injected=true</script>',sections:[{id:'intro',name:'Introdução',background:{mode:'color',color:'neutral',photo:'64',uri:'/photo.jpg',focusX:50,focusY:50,treatment:'photo'}}],pages:[{id:'p1',name:'Abertura',sectionId:'intro',composition:{pages:[{surface:{marginPercent:7},reading:{widthPercent:65},text:{title:{value:'UM INÍCIO\nEM COMUM',treatment:'alternada',scalePercent:100},body:{visible:true,value:'Conteúdo legível.'}}}]}}]};
+const scene={id:'p1',name:'Abertura',width:1280,height:720,motions:[],items:[{kind:'rect',layer:'background',x:0,y:0,w:1280,h:720,color:'#f7f6f2'},{kind:'text',layer:'reading',text:'UM INÍCIO',color:'#181818',x:80,y:100,size:90,family:'UniversMattar',spacing:0}],sectionBackground:{hasText:true}};
+test('HTML de seções incorpora projeto seguro e scripts válidos sem dependências remotas',async()=>{
+ const html=await sectionWebDocument([scene],project,[],{UniversMattar:new Uint8Array(),PerpetuaMattar:new Uint8Array()},{base64:bytes=>Buffer.from(bytes).toString('base64'),resource:async path=>{assert.equal(path,'/presentation-assets/mattar-published.svg');return new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg"/>');},motionBytes:()=>{throw Error('Não deve buscar vídeo ausente.');}});
+ const payload=html.match(/<script type="application\/json" id="project">([\s\S]*?)<\/script>/)[1];assert.deepEqual(JSON.parse(payload),project);assert.equal(payload.includes('</script>'),false);
+ const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];assert.equal(scripts.length,1);new vm.Script(scripts[0][1]);assert.equal(html.includes('<span data-text-entrance style="font-family:PerpetuaMattar">EM COMUM</span>'),true);assert.equal(html.includes('https://labmattar.com'),true);assert.equal(html.includes('class="presentation-nav"'),false);assert.equal(html.includes('class="presentation-pagination"'),true);assert.ok(html.includes('lm-summary-toggle'));assert.ok(html.includes('lm-menu-toggle'));assert.ok(html.includes('data-nav-title="Introdução"'));assert.equal((html.match(/class="section-backdrop /g)||[]).length,1);
+});

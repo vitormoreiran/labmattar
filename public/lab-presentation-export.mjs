@@ -1,3 +1,4 @@
+import {sectionWebDocument} from './lab-section-web.mjs';
 import {sceneSvg,escapeMarkup as esc} from './lab-scene.mjs';
 const bytesCache=new Map(),frameCache=new Map();
 export async function resource(path){
@@ -94,6 +95,7 @@ async function privateVideoBytes(clip){
 }
 
 export async function webDocument(scenes,project,catalog,fonts){
+  if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes});
   const used=new Set(scenes.flatMap(scene=>scene.motions.map(motion=>motion.assetId))),videos={},videoTypes={};
   for(const id of used){const asset=catalog.find(asset=>asset.id===id);videos[id]=base64(await motionBytes(asset));}
   const privateClips=new Map(scenes.flatMap(scene=>(scene.clips||[]).map(clip=>[clip.id,clip])));

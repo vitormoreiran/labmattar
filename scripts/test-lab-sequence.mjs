@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,readSequence,sequenceDocument,movePage} from '../public/lab-sequence.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,readSequence,sequenceDocument,movePage,createSection,sectionState,hasSectionText} from '../public/lab-sequence.mjs';
 const photos={'64':'/ambiente-editorial/media/BOXDOSENTIR-64.jpg'};
 const state={format:'horizontal',color:'neutral',margin:7,guides:'nenhuma',marker:'none',markerFocus:'blur',
   textWidth:61,titleScale:100,type:'alternada',background:'color',mContent:'off',mPresentation:'elemento',photo:'64',
@@ -76,6 +76,8 @@ test('vídeos de projetos são serializados, validados e não expõem credenciai
   const rogue=clone(document);rogue.pages[0].clips[0].fileId='https://evil.example/video';
   assert.throws(()=>readSequence(rogue,photos,[asset]),/identificador privado do vídeo/);
 });
+test('seções preservam fundo, páginas e conteúdo no JSON v2',()=>{const section=createSection('intro','Introdução',{...state,background:'photo'},photos);const p=createPage({id:'one',name:'Um',state:sectionState(state,section),photoCatalog:photos});p.sectionId=section.id;const doc=sequenceDocument('Seções',[p],[section]),loaded=readSequence(clone(doc),photos,[]);assert.deepEqual(sequenceDocument(loaded.name,loaded.pages,loaded.sections),doc);assert.equal(hasSectionText('intro',loaded.pages),true);const bad=clone(doc);bad.pages[0].sectionId='missing';assert.throws(()=>readSequence(bad,photos,[]),/seção da página/);const mismatch=clone(doc);mismatch.sections[0].background.focusX=20;assert.throws(()=>readSequence(mismatch,photos,[]),/diverge/);const unsafe=clone(doc);unsafe.sections[0].background.uri='https://outside.invalid/photo';assert.throws(()=>readSequence(unsafe,photos,[]));});
+test('recusa grupos intercalados e seções duplicadas sem alterar o original',()=>{const sections=['s1','s2'].map(id=>createSection(id,id,state,photos));const pages=['s1','s2','s1'].map((sectionId,index)=>({...page('p'+index),sectionId}));const doc=sequenceDocument('Ordem',pages,sections);assert.throws(()=>readSequence(doc,photos,[]),/ordem das seções/);const duplicate=sequenceDocument('Duplicado',[pages[0]],[sections[0],sections[0]]);assert.throws(()=>readSequence(duplicate,photos,[]),/seção repetido/);assert.equal(doc.pages[2].sectionId,'s1');});
 
 test('foto pública do portfólio e foto local incorporada reabrem no JSON',()=>{
   const id='177GD8UXcmudDYJ8-UKv5O9Mrdd3oOrAv',provider='public';
@@ -113,3 +115,5 @@ test('vídeos públicos e locais guardam referência sem credenciais',()=>{
   const forged=clone(doc);forged.pages[0].clips[0].projectId='https://evil.test';
   assert.throws(()=>readSequence(forged,photos,[asset]),/projeto do vídeo/);
 });
+
+test('seções conservam os vídeos ao salvar e reabrir',()=>{const section=createSection('s1','Introdução',state,photos),p=page('p1');p.sectionId=section.id;p.clips=[createClip({kind:'video',provider:'google',id:'videoFile1234',name:'Registro.mp4',mimeType:'video/mp4'},'clip-1')];const doc=sequenceDocument('Seções com vídeo',[p],[section]),parsed=readSequence(doc,photos,[asset]);assert.deepEqual(sequenceDocument(parsed.name,parsed.pages,parsed.sections),doc);});

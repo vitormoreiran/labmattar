@@ -32,7 +32,7 @@ if(downloadButton&&importButton&&fileInput&&status&&board){
       const url=URL.createObjectURL(blob);
       const link=document.createElement("a");
       link.href=url;
-      link.download=doc.kind==="labmattar.presentation"?"labmattar-apresentacao-v1.json":"labmattar-"+state.format+"-composicao-v1.json";
+      link.download=doc.kind==="labmattar.presentation"?"labmattar-apresentacao-v"+doc.schemaVersion+".json":"labmattar-"+state.format+"-composicao-v1.json";
       document.body.append(link);
       link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(url),1000);

@@ -1,7 +1,5 @@
-/* LABMATTAR / intercambio v1 do documento de producao.
- * Somente JSON editavel: nao simula PDF, After Effects ou integracao ativa
- * com a timeline da Matriz Vetorial.
- */
+/* LABMATTAR / JSON editável. Preserva composições v1 e delega
+ * sequências ao contrato de páginas, sem substituir o editor atual. */
 import {createProductionDocument,verifyRoundTrip} from "./composicao-document.mjs";
 const by=id=>document.getElementById(id);
 const downloadButton=by("labDownloadDocument");
@@ -26,14 +24,15 @@ if(downloadButton&&importButton&&fileInput&&status&&board){
       ready();
       const {state,photoCatalog}=bridge().snapshot();
       const maxEdge=Number(by("labExportSize")?.value)||3840;
-      const doc=createProductionDocument({state,photoCatalog,maxEdge});
-      verifyRoundTrip(doc,photoCatalog);
+      const single=createProductionDocument({state,photoCatalog,maxEdge});
+      const doc=window.LabPages?.hasSequence()?window.LabPages.create():single;
+      if(doc.kind===single.kind)verifyRoundTrip(doc,photoCatalog);
       const json=JSON.stringify(doc,null,2)+"\n";
       const blob=new Blob([json],{type:"application/json;charset=utf-8"});
       const url=URL.createObjectURL(blob);
       const link=document.createElement("a");
       link.href=url;
-      link.download="labmattar-"+state.format+"-composicao-v1.json";
+      link.download=doc.kind==="labmattar.presentation"?"labmattar-apresentacao-v1.json":"labmattar-"+state.format+"-composicao-v1.json";
       document.body.append(link);
       link.click();link.remove();
       setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -48,18 +47,23 @@ if(downloadButton&&importButton&&fileInput&&status&&board){
     if(!file)return;
     try{
       ready();
-      if(file.size>512000)throw new Error("Arquivo maior do que o limite de 500 KB para este documento.");
+      if(file.size>5*1024*1024)throw new Error("Projeto maior do que o limite de 5 MB.");
       const parsed=JSON.parse(await file.text());
       const {photoCatalog}=bridge().snapshot();
-      const state=verifyRoundTrip(parsed,photoCatalog);
+      const sequence=parsed.kind==="labmattar.presentation";
+      if(sequence){if(!window.LabPages)throw Error("As páginas ainda estão carregando.");window.LabPages.validate(parsed);}
+      else if(window.LabPages)window.LabPages.validateComposition(parsed);
+      else verifyRoundTrip(parsed,photoCatalog);
       // Reject incompatible or tampered documents before touching current work.
       if(!confirm("Abrir esta composição? O documento substituirá o rascunho atual do Laboratório, que pode ser salvo como JSON antes.")){
         notify("Importação cancelada. O rascunho atual foi preservado.","idle");
         return;
       }
-      bridge().restore(state);
-      by("labExportSize").value=String(parsed.output.maxEdge);
-      notify("Documento v1 aberto. Textos, M, composição e assinatura restaurados.","success");
+      if(sequence)await window.LabPages.load(parsed);
+      else if(window.LabPages)await window.LabPages.loadComposition(parsed);
+      else bridge().restore(verifyRoundTrip(parsed,photoCatalog));
+      if(!sequence)by("labExportSize").value=String(parsed.output.maxEdge);
+      notify(sequence?"Sequência aberta / "+parsed.pages.length+" páginas.":"Documento v1 aberto. Textos, M, composição e assinatura restaurados.","success");
     }catch(error){
       notify("DOCUMENTO RECUSADO / "+(error?.message||"JSON inválido"),"error");
     }finally{

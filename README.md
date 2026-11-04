@@ -70,3 +70,7 @@ Os workflows executam essa preparação antes de compilar o manual. O catálogo 
 ## Situação da migração
 
 A versão atual de `main` contém os fontes editáveis e o workflow de prévia não depende mais do ZIP. Os scripts em `design/` ainda transformam arquivos durante a publicação; mantenha essa etapa enquanto os resultados finais não forem convertidos em páginas-fonte definitivas. A entrada `/` continua direcionando para `/manual.html`; a introdução editorial separada encontra-se em `/inicio.html`.
+
+## Páginas e exportação do Laboratório
+
+O Laboratório cria sequências de páginas com projetos reversíveis e motions do acervo da Matriz. PNG, PDF e HTML usam a cena lógica compartilhada; o PDF incorpora fontes e preserva texto e vetores, enquanto o HTML mantém os motions ativos e inclui suas mídias para uso independente. No menu ao lado de PNG, escolha PDF, site HTML ou apresentação. Consulte o marco 1B em [design/LABORATORIO_PRODUCAO_EXPORTACAO.md](design/LABORATORIO_PRODUCAO_EXPORTACAO.md).

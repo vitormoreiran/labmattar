@@ -14,13 +14,16 @@
     "validate:artifact": "bash scripts/validate-artifact.sh",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
-    "validate:media": "node scripts/validate-media.mjs"
+    "validate:media": "node scripts/validate-media.mjs",
+    "prebuild": "node scripts/prepare-lab-pdf.mjs"
   },
   "dependencies": {
+    "buffer": "6.0.3",
     "drizzle-orm": "0.45.2",
     "gsap": "^3.15.0",
     "mp4-muxer": "^5.2.2",
     "next": "16.2.6",
+    "pdfkit": "0.17.2",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
@@ -33,6 +36,7 @@
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
     "drizzle-kit": "0.31.10",
+    "esbuild": "0.28.0",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
     "react-server-dom-webpack": "19.2.6",

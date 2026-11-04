@@ -31,7 +31,7 @@ for(const entry of entries){
   }
   assert.ok(ready||allowPending,`Export ausente ou desatualizado: ${entry.id}; use --allow-pending-exports somente para revisão local.`);
   await writeFile(path.join(projectsDirectory,`${entry.id}.json`),JSON.stringify(entry.project,null,2)+'\n');
-  catalog.push({id:entry.id,title:entry.title,status:entry.status,group:entry.group,duration:entry.duration,aspect:entry.project.aspect,cut:entry.cut??null,projectHash,video:ready?video:null,poster:ready?poster:null,project:`/motion/projects/${entry.id}.json`,editor:`/motion/matriz/index.html?roteiro=${entry.id}`});
+  catalog.push({id:entry.id,title:entry.title,status:entry.status,group:entry.group,duration:entry.duration,aspect:entry.project.aspect,cut:entry.cut??null,projectHash,video:ready?video:null,poster:ready?poster:null,width:record?.width??null,height:record?.height??null,sha256:record?.sha256??null,rendererHash:record?.rendererHash??null,project:`/motion/projects/${entry.id}.json`,editor:`/motion/matriz/index.html?roteiro=${entry.id}`});
 }
 function cards(ids){return ids.map(id=>catalog.find(entry=>entry.id===id)).map(entry=>{
   const duration=entry.duration.toLocaleString('pt-BR',{maximumFractionDigits:2});
@@ -46,6 +46,7 @@ const groups=[
 ];
 const gallery=groups.map(group=>`<section class="chapter lm-manual-section" id="${group.id}" data-motion-group="${group.id}"><div class="inner"><p class="eyebrow">${group.number} / ${group.label}</p><h2 class="lm-manual-section-title">${group.title}</h2><p>${group.description}</p><div class="motion-grid">${cards(group.ids)}</div></div></section>`).join('\n');
 
+await writeFile(path.join(root,'public/motion/catalog.json'),JSON.stringify({schemaVersion:1,items:catalog},null,2)+'\n');
 const template=await readFile(path.join(root,'design/motion.html'),'utf8');
 assert.equal(template.split('<!--MOTION_GALLERY-->').length,2);
 await writeFile(path.join(root,'public/motion.html'),template.replace('<!--MOTION_GALLERY-->',gallery));

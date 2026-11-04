@@ -72,5 +72,49 @@ try{
     "Selected asset shown in the library");
   assert(await page.locator("#labArtboard").isVisible(),"The same composition preview remains active");
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
-  console.log("LABMATTAR acervo UI: icons, missing OAuth, connected source and photo selection OK");
+  // Simulate the browser returning from an authorized Google OAuth callback.
+  // The picker must open by itself, without a second click on Google Drive.
+  const returning=await browser.newPage({viewport:{width:1440,height:900}});
+  const oauthErrors=[];
+  returning.on("pageerror",error=>oauthErrors.push(error.message));
+  await returning.addInitScript(()=>{
+    window.__pickerOpened=false;
+    window.gapi={load:(_module,options)=>options.callback()};
+    class DocsView{
+      setMode(){return this}
+      setMimeTypes(){return this}
+    }
+    class PickerBuilder{
+      addView(){return this}
+      setOAuthToken(){return this}
+      setDeveloperKey(){return this}
+      setAppId(){return this}
+      enableFeature(){return this}
+      setCallback(fn){window.__pickerCallback=fn;return this}
+      build(){return {setVisible(value){window.__pickerOpened=value}}}
+    }
+    window.google={picker:{
+      DocsView,DocsViewMode:{LIST:"list"},ViewId:{DOCS:"docs"},
+      PickerBuilder,Feature:{MULTISELECT_ENABLED:"multi"},
+      Action:{PICKED:"picked",CANCEL:"cancel"}
+    }};
+  });
+  await returning.route("**/api/acervo/status",route=>route.fulfill({
+    status:200,contentType:"application/json",body:JSON.stringify({
+      providers:{google:{configured:true,connected:true},
+        dropbox:{configured:false,connected:false}},
+      picker:{apiKey:"test-key",appId:"12345"}
+    })
+  }));
+  await returning.route("**/api/acervo/picker-token",route=>route.fulfill({
+    status:200,contentType:"application/json",
+    body:JSON.stringify({accessToken:"fake-picker-token",expiresAt:Date.now()+1800000})
+  }));
+  await returning.goto(base+"?studio=1&acervo=google#laboratorio",{waitUntil:"load",timeout:60000});
+  await returning.waitForFunction(()=>window.__pickerOpened===true,null,{timeout:12000});
+  assert(await returning.locator("#labAcervoDialog").isHidden(),
+    "Native Google Picker should not be obscured by the custom modal");
+  assert(oauthErrors.length===0,"OAuth return errors: "+oauthErrors.join(" / "));
+  await returning.close();
+  console.log("LABMATTAR acervo UI: icons, missing OAuth, connected source, photo selection, auto-open Google Picker OK");
 }finally{await browser.close()}

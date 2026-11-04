@@ -4,7 +4,7 @@ import { readFile, copyFile } from "node:fs/promises";
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
 const page=await browser.newPage({viewport:{width:1440,height:900},acceptDownloads:true,deviceScaleFactor:1});
 const assert=(condition,message)=>{if(!condition)throw new Error(message)};
-const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
+const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const errors=[];
 page.on("pageerror",error=>errors.push(error.message));
 page.on("dialog",dialog=>dialog.accept());

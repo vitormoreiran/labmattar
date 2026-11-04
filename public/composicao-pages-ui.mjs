@@ -369,6 +369,45 @@ async function init(){
     try{const photoCatalog=privatePhotoCatalog(pages[current].composition,bridge().snapshot().photoCatalog);registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[current].composition,photoCatalog));await settled();}
     finally{switching=false;enabled=true;renderMotions();commit();}
   });
+  // Each selected video is referenced by provider and file ID, never a token.
+  by('labClipOpen').addEventListener('click',()=>window.LabAcervo?.open?.({autoProvider:'google'}));
+  window.addEventListener('labmattar:acervo-video-select',event=>{
+    if(!pages.length||busy||switching)return;
+    try{
+      if((pages[current].clips||[]).length>=8)throw Error('Máximo de 8 vídeos por página.');
+      const clip=createClip(event.detail,uid('clip'));
+      commit();pages[current].clips=pages[current].clips||[];
+      pages[current].clips.push(clip);
+      selectedClip=clip.id;clipsPlaying=true;enabled=true;
+      setWorkspaceView('motion');renderClips();commit();
+      by('labClipStatus').textContent='Vídeo adicionado à página. Ajuste tamanho e posição.';
+      notify(clip.name+' adicionado à página.');
+    }catch(error){notify(error.message,true);}
+  });
+  by('labClipInstance').addEventListener('change',event=>{selectedClip=event.target.value;renderClipControls();});
+  for(const [input,field] of [['labClipX','x'],['labClipY','y'],['labClipWidth','width'],['labClipFrame','frameSeconds']]){
+    by(input).addEventListener('input',event=>{
+      const clip=(pages[current]?.clips||[]).find(item=>item.id===selectedClip);
+      if(!clip||busy)return;
+      const n=Number(event.target.value);if(!Number.isFinite(n))return;
+      clip[field]=Math.max(field==='width'?5:0,Math.min(field==='frameSeconds'?3600:100,n));
+      placeClips();commit();
+    });
+  }
+  by('labClipRemove').addEventListener('click',()=>{
+    if(busy)return;
+    pages[current].clips=(pages[current].clips||[]).filter(clip=>clip.id!==selectedClip);
+    selectedClip='';enabled=true;renderClips();commit();
+    notify('Vídeo removido da página. O original permanece no acervo.');
+  });
+  by('labClipPlay').addEventListener('click',()=>{
+    clipsPlaying=!clipsPlaying;
+    for(const video of by('labPageVideos').querySelectorAll('video')){
+      if(clipsPlaying)video.play().catch(()=>{});
+      else video.pause();
+    }
+    renderClipControls();
+  });
   by('labMotionOpen').addEventListener('click',openLibrary);by('labMotionClose').addEventListener('click',closeLibrary);
   by('labMotionLibrary').addEventListener('cancel',event=>{event.preventDefault();closeLibrary();});
   by('labMotionInstance').addEventListener('change',event=>{selectedMotion=event.target.value;renderMotionControls();});

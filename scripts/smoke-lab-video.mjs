@@ -62,12 +62,14 @@ try{
   await page.locator('[data-motion-asset="m-form"]').click();await settle();
   const bytes=await(await page.request.get(new URL('/motion/videos/m-form.mp4',page.url()).href)).body();
   await page.route('**/api/acervo/public-media?project=videoproject123&id=videobackdrop123',route=>route.fulfill({body:bytes,contentType:'video/mp4'}));
+  await state({background:'photo'});
   const withMedia=await page.evaluate(()=>window.LabPages.create());
   withMedia.pages[0].backgroundVideo={id:'bg-video',provider:'public',projectId:'videoproject123',fileId:'videobackdrop123',name:'Vídeo de fundo.mp4',mimeType:'video/mp4',frameSeconds:0};
   await page.evaluate(doc=>window.LabPages.load(doc),withMedia);await settle();
   await page.locator('[data-workspace-view=pages]').click();await page.locator('#labPageDuplicate').click();await settle();
   const before=await page.evaluate(()=>window.LabPages.create());
   await review();await page.locator('#labVideoScope').selectOption('all');
+  await page.locator('#labVideoText').uncheck();
   await page.screenshot({path:path.join(output,'video-delivery-desktop.png')});
   await exportVideo('video-sequence-motion-background.mp4',4,1280,720);
   assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),before);

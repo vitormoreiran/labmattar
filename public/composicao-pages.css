@@ -125,3 +125,18 @@ body.lm-studio-open #laboratorio .lm-lab-inspector:is([data-workspace-context=pa
  #laboratorio .lab-delivery-actions{display:grid;grid-template-columns:minmax(0,1fr)}
  #laboratorio .lab-delivery-actions #labDeliveryBack{order:2;border:0;min-height:30px;padding:5px}
 }
+
+/* Mídia de vídeo privada: camada editorial abaixo dos três papéis de texto.
+   Os originais permanecem no Drive/Dropbox e não entram no CSS/DOM persistente. */
+#laboratorio .lab-page-videos{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+#laboratorio .lab-page-videos video{position:absolute;display:block;object-fit:contain;pointer-events:none;
+  max-width:none;max-height:none;background:#000;aspect-ratio:auto}
+#laboratorio .lab-private-video-panel{border-top:1px solid #c9c8c2}
+#laboratorio #labClipSettings{display:grid;gap:9px;min-width:0}
+#laboratorio #labClipSettings[hidden]{display:none!important}
+#laboratorio #labClipSettings label{font-size:11px;line-height:1.35}
+#laboratorio #labClipSettings select,
+#laboratorio #labClipSettings input[type=number]{box-sizing:border-box;width:100%;max-width:100%;
+  min-height:32px;padding:6px 8px;background:#f7f6f2;border:1px solid #b8b5ae;color:#181818;font:inherit}
+#laboratorio #labClipSettings input[type=range]{width:100%;accent-color:#181818}
+#laboratorio #labClipStatus:not(:empty){border-top:1px solid #d7d4cb;padding-top:8px}

@@ -107,6 +107,43 @@ main{overflow:hidden}
 .ig-study-caution{color:var(--muted);border-top:1px solid var(--line);padding-top:15px;margin-top:auto!important}
 @media(max-width:900px){.ig-study{grid-template-columns:1fr;gap:32px}.ig-study-notes{display:grid;grid-template-columns:1fr 1fr;gap:18px}.ig-study-notes>p:first-child{grid-column:1/-1}.ig-study-key{margin:0}.ig-study-caution{grid-column:1/-1}}
 @media(max-width:600px){.ig-feed{gap:3px}.ig-study-notes{display:flex}.ig-study-bar .detail{max-width:49%}.ig-study-notes h3{max-width:15ch}.ig-study-key ol{gap:10px}}
+
+/* 06 / Social profile study. Represent the interface before interpreting it. */
+.social-case-heading{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(230px,.7fr);gap:clamp(30px,6vw,100px);align-items:end;margin-bottom:45px}
+.social-case-heading .copy{max-width:42ch}
+.profile-context{max-width:900px;margin:0 auto 13px!important;color:var(--muted)}
+.profile-preview{max-width:900px;margin:auto;background:#fff;border:1px solid #e7e7e7;color:#171717}
+.profile-top{padding:clamp(24px,4vw,54px) clamp(20px,5vw,70px) 26px}
+.profile-brand{display:grid;grid-template-columns:clamp(76px,13vw,145px) 1fr;gap:clamp(20px,5vw,62px);align-items:center}
+.profile-avatar{aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f7f6f2;border:1px solid #dedbd6;overflow:hidden}
+.profile-avatar img{max-width:68%;max-height:68%;object-fit:contain}
+.profile-intro{min-width:0}
+.profile-intro p{margin:4px 0}
+.profile-intro .profile-handle{display:block;margin-bottom:17px;--lm-type-body-size:clamp(19px,2vw,26px)}
+.profile-seasons{display:flex;gap:clamp(16px,3vw,42px);padding:36px 0 0 0;margin-left:clamp(0px,3vw,10px)}
+.profile-highlight{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:96px;text-align:center}
+.profile-highlight-image{display:block;width:clamp(58px,7vw,82px);aspect-ratio:1;border-radius:50%;padding:3px;border:1px solid #ddd;overflow:hidden}
+.profile-highlight-image img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.profile-tab{height:52px;border-top:1px solid #ddd;display:flex;align-items:center;justify-content:center;gap:9px;position:relative}
+.profile-tab:before{content:"";height:1px;width:126px;background:#171717;position:absolute;top:-1px;left:calc(50% - 63px)}
+.profile-grid-icon{display:grid;grid-template-columns:repeat(2,5px);gap:2px}
+.profile-grid-icon i{height:5px;width:5px;background:currentColor}
+.profile-posts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+.profile-posts figure{margin:0;position:relative;aspect-ratio:4/5;background:#e4e0d8;overflow:hidden}
+.profile-posts img{display:block;width:100%;height:100%;object-fit:cover}
+.profile-posts figure:nth-child(1) img{object-position:50% 50%}
+.profile-posts figure:nth-child(2) img{object-position:50% 45%}
+.profile-posts figure:nth-child(3) img{object-position:50% 45%}
+.profile-posts figure:nth-child(4) img{object-position:50% 45%}
+.profile-posts figure:nth-child(5) img{object-position:50% 45%}
+.profile-posts figure:nth-child(6) img{object-position:50% 45%}
+.profile-reading{max-width:900px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin:21px auto 0;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.profile-reading>div{display:flex;flex-direction:column;gap:5px}
+.profile-reading p{margin:0}
+.profile-reading .detail{color:var(--muted)}
+.profile-foot{max-width:900px;margin:18px auto 0!important;color:var(--muted)}
+@media(max-width:800px){.social-case-heading{grid-template-columns:1fr;gap:18px}}
+@media(max-width:500px){.profile-top{padding:22px 16px 18px}.profile-brand{grid-template-columns:78px 1fr;gap:18px}.profile-intro p{margin:2px 0}.profile-intro .profile-handle{margin-bottom:8px}.profile-seasons{padding-top:24px;gap:15px}.profile-tab{height:44px}.profile-posts{gap:2px}.profile-reading{gap:9px}.profile-reading p{max-width:14ch}}
 </style>
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 </head>
@@ -118,47 +155,44 @@ main{overflow:hidden}
 <div class="intro"><p>Nas redes, a identidade se reconhece pelo modo de apresentar cada projeto. Imagem, texto e movimento não precisam aparecer juntos: cada recurso entra quando contribui para a leitura.</p></div>
 </div></section>
 
-<section class="chapter lm-manual-section" id="caso">
+<section class="chapter lm-manual-section social-case" id="caso">
 <div class="inner">
-<p class="eyebrow">01 / TEMPORADA EM ESTUDO</p>
-<div class="chapter-intro">
-<h2>CADA CORPO<br><span class="perpetua">ABRE UM MUNDO</span></h2>
-<p class="copy">Seis registros da mesma gastroperformance. A seleção alterna situação, presença, gesto, matéria e dispositivo: uma narrativa construída pelas imagens, não por um padrão aplicado sobre elas.</p>
+<p class="eyebrow">01 / O PERFIL COMO ARQUIVO</p>
+<div class="social-case-heading"><h2>UM FEED.<br><span class="perpetua">VÁRIAS TEMPORADAS.</span></h2><p class="copy">Os projetos chegam em sequência. Cada temporada se reconhece pelas imagens que reúne; a identidade aparece na maneira de editar, não como grafismo obrigatório sobre cada publicação.</p></div>
+<p class="detail profile-context">ESTUDO DE PRESENÇA / SIMULAÇÃO EDITORIAL — NÃO É A CONTA PUBLICADA</p>
+<div class="profile-preview" aria-label="Simulação de um perfil Instagram com temporadas acumuladas">
+<header class="profile-top">
+<div class="profile-brand"><div class="profile-avatar"><img src="/identidade/M.svg" alt="M, símbolo oficial do LABMATTAR"></div><div class="profile-intro"><span class="profile-handle body">labmattar</span><p class="body">Simone Mattar · Gastroperformance</p><p class="body">Projetos, experiências e processos.</p></div></div>
+<div class="profile-seasons">
+<div class="profile-highlight"><span class="profile-highlight-image"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt=""></span><span class="detail">Cada Corpo</span></div>
+<div class="profile-highlight"><span class="profile-highlight-image"><img src="/redes-acervo/poiesis-34.jpg" alt=""></span><span class="detail">Poiesis</span></div>
+<div class="profile-highlight"><span class="profile-highlight-image"><img src="/redes-acervo/aleteia-08.jpg" alt=""></span><span class="detail">Aleteia</span></div>
 </div>
-<div class="ig-study">
-<div class="ig-study-main">
-<div class="ig-study-bar"><span class="detail">LABMATTAR / CADA CORPO ABRE UM MUNDO</span><span class="detail">ESTUDO DE FEED</span></div>
-<div class="ig-feed" aria-label="Seis fotografias da mesma temporada em uma grade regular">
-<img src="/redes-cpc/BOXDOSENTIR-179.jpg" alt="Registro de detalhe e atmosfera da gastroperformance" loading="lazy">
-<img src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Dispositivo impresso sobre a mesa" loading="lazy">
-<img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Prato e matéria da experiência gastronômica" loading="lazy">
-<img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Participante em experiência sensorial" loading="lazy">
-<img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Simone Mattar apresentando a gastroperformance" loading="lazy">
-<img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Plano aberto da cena e projeção" loading="lazy">
+</header>
+<div class="profile-tab"><span class="profile-grid-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="detail">PUBLICAÇÕES</span></div>
+<div class="profile-posts" aria-label="Publicações organizadas da mais recente à mais antiga">
+<figure><img src="/redes-acervo/aleteia-18.jpg" alt="Aleteia: detalhe do projeto" loading="lazy"></figure>
+<figure><img src="/redes-acervo/aleteia-14.jpg" alt="Aleteia: segundo registro" loading="lazy"></figure>
+<figure><img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia: registro da temporada" loading="lazy"></figure>
+<figure><img src="/redes-acervo/poiesis-37.jpg" alt="Poiesis: registro da performance" loading="lazy"></figure>
+<figure><img src="/redes-acervo/poiesis-36.jpg" alt="Poiesis: mesa e público" loading="lazy"></figure>
+<figure><img src="/redes-acervo/poiesis-34.jpg" alt="Poiesis: vista da experiência" loading="lazy"></figure>
+<figure><img src="/redes-cpc/BOXDOSENTIR-179.jpg" alt="Cada Corpo Abre um Mundo: detalhe" loading="lazy"></figure>
+<figure><img src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Cada Corpo Abre um Mundo: dispositivo impresso" loading="lazy"></figure>
+<figure><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Cada Corpo Abre um Mundo: matéria" loading="lazy"></figure>
+<figure><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Cada Corpo Abre um Mundo: gesto" loading="lazy"></figure>
+<figure><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Cada Corpo Abre um Mundo: ação" loading="lazy"></figure>
+<figure><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Cada Corpo Abre um Mundo: situação" loading="lazy"></figure>
 </div>
-<p class="detail ig-study-foot">LEITURA DO PERFIL / POSTAGENS MAIS RECENTES NO TOPO</p>
 </div>
-<aside class="ig-study-notes">
-<p class="detail">UM PROJETO / SEIS PUBLICAÇÕES</p>
-<h3 class="title">VARIAR O OLHAR, NÃO A IDENTIDADE.</h3>
-<p>O conjunto se reconhece pela continuidade do projeto e pela edição. Cada fotografia acrescenta uma escala de experiência.</p>
-<div class="ig-study-key">
-<p class="detail">DA PRIMEIRA À ÚLTIMA PUBLICAÇÃO</p>
-<ol>
-<li>Cena geral</li>
-<li>Ação</li>
-<li>Gesto</li>
-<li>Matéria</li>
-<li>Dispositivo</li>
-<li>Atmosfera</li>
-</ol>
+<div class="profile-reading">
+<div><span class="detail">01 / RECENTE</span><p>Aleteia</p></div>
+<div><span class="detail">02 / ANTERIOR</span><p>Poiesis</p></div>
+<div><span class="detail">03 / INÍCIO DO ESTUDO</span><p>Cada Corpo Abre um Mundo</p></div>
 </div>
-<p class="detail ig-study-caution">EXEMPLO DE SEQUÊNCIA, NÃO CALENDÁRIO OU HISTÓRICO REAL. NENHUMA PEÇA GRÁFICA É INSERIDA APENAS PARA COMPLETAR A GRADE.</p>
-</aside>
-</div>
+<p class="detail profile-foot">LEITURA DO PERFIL: DE CIMA PARA BAIXO, DO MAIS RECENTE AO MAIS ANTIGO. A QUANTIDADE DE PUBLICAÇÕES É ILUSTRATIVA, NÃO UMA REGRA DE TEMPORADA.</p>
 </div>
 </section>
-
 <section class="chapter lm-manual-section" id="aplicacoes"><div class="inner">
 <p class="eyebrow">02 / DECIDIR A INTERVENÇÃO</p>
 <div class="chapter-intro"><h2>PRESERVAR.<br><span class="perpetua">IDENTIFICAR. COMPOR.</span></h2><p class="copy">Três graus de intervenção, um único sistema. A decisão não depende de alternar estilos no feed: depende do conteúdo de cada peça.</p></div>

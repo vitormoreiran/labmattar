@@ -2740,7 +2740,6 @@ body.lm-studio-open #laboratorio .lm-lab-m-application-grid .lm-ctrl-choice{
   align-items:center!important;
   justify-content:center!important;
   gap:0!important;
-  font-size:inherit!important;
 }
 body.lm-studio-open #laboratorio .lm-lab-m-application-grid .lm-ctrl-choice::before,
 body.lm-studio-open #laboratorio #labMContentField .lm-ctrl-choice::before{

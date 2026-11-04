@@ -1,4 +1,4 @@
-import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog} from './lab-sequence.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog} from './lab-sequence.mjs';
 import {verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs';
 const by=id=>document.getElementById(id),copy=value=>JSON.parse(JSON.stringify(value));
@@ -9,13 +9,13 @@ const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by
 let pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=false,selectedMotion='',selectedClip='',clipsPlaying=true;
 const panel=by('labPages');
 if(board&&panel){init().catch(error=>notify(error.message,true));}
-function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[]){
+function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],backgroundVideo=null){
   const {state,photoCatalog}=bridge().snapshot();
-  return createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions,clips});
+  return createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions,clips,backgroundVideo});
 }
 function commit(){
   if(switching||busy||!pages.length)return;
-  clearTimeout(timer);const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[]);
+  clearTimeout(timer);const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[],old.backgroundVideo||null);
   try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages),current,enabled}));}
   catch{notify('Salve o projeto JSON para guardar esta sequência.');}
   renderPages();
@@ -102,8 +102,49 @@ async function switchPage(index,{capture=true}={}){
     const photoCatalog=privatePhotoCatalog(pages[current].composition,base);registerPhotos(photoCatalog);
     bridge().restore(verifyRoundTrip(pages[current].composition,photoCatalog));
     by('labExportSize').value=String(pages[current].composition.output.maxEdge);
-    await settled();selectedMotion=pages[current].motions[0]?.id||'';renderMotions();renderPages();
+    await settled();selectedMotion=pages[current].motions[0]?.id||'';renderMotions();renderBackgroundVideo();renderPages();
   }finally{switching=false;commit();}
+}
+function syncBackgroundVideoControls(){
+  const video=pages[current]?.backgroundVideo||null;
+  const label=by('labBackgroundVideoStatus');
+  const remove=by('labBackgroundVideoRemove');
+  if(label)label.textContent=video?'Vídeo de fundo · '+video.name+' · loop sem áudio':'';
+  if(remove)remove.hidden=!video;
+}
+let backgroundRenderRevision=0;
+function renderBackgroundVideo(){
+  const revision=++backgroundRenderRevision;
+  for(const video of board.querySelectorAll('.lm-lab-background-video')){
+    video.pause();video.removeAttribute('src');video.load();video.remove();
+  }
+  const currentPage=pages[current],background=currentPage?.backgroundVideo||null;
+  board.dataset.videoBackground=background?'true':'false';
+  syncBackgroundVideoControls();
+  if(!background)return;
+  const ambient=by('labAmbientPhoto'),mask=by('labMaskPhoto'),marker=by('labMarkerPhoto');
+  const targets=[[ambient,'labAmbientVideo'],[mask,'labMaskVideo'],[marker,'labMarkerVideo']];
+  const players=targets.map(([img,id])=>{
+    const video=document.createElement('video');
+    video.id=id;video.className='lm-lab-background-video';
+    video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
+    video.autoplay=true;video.preload='auto';video.setAttribute('aria-hidden','true');
+    img.insertAdjacentElement('afterend',video);
+    video.addEventListener('error',()=>{
+      if(revision===backgroundRenderRevision)notify('Vídeo de fundo indisponível. Confira o arquivo e o acesso ao acervo.',true);
+    });
+    return video;
+  });
+  const pageId=currentPage.id;
+  const apply=src=>{
+    if(revision!==backgroundRenderRevision||pages[current]?.id!==pageId)return;
+    for(const video of players){video.src=src;video.play().catch(()=>{});}
+  };
+  if(background.provider==='local'){
+    window.LabAcervo?.localVideoUrl?.(background.fileId).then(apply).catch(error=>{
+      if(revision===backgroundRenderRevision)notify('Vídeo de fundo local indisponível: '+error.message,true);
+    });
+  }else apply(backgroundVideoUrl(background));
 }
 function renderMotions(){
   const layer=by('labPageMotions');
@@ -296,8 +337,8 @@ async function captureMotions(width,height){
 }
 async function exportSequence(type){
   if(deliveryBusy())return;
-  if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length)){
-    if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos selecionados e quem receber o arquivo poderá assisti-los, mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
+  if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length||page.backgroundVideo)){
+    if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
   }
   let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
   commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages);
@@ -310,10 +351,12 @@ async function exportSequence(type){
       current=index;notify(`Renderizando página ${index+1} de ${pages.length}…`);
       const photoCatalog=privatePhotoCatalog(pages[index].composition,bridge().snapshot().photoCatalog);
       registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[index].composition,photoCatalog));
-      await settled();renderMotions();
+      await settled();renderMotions();renderBackgroundVideo();
+      await settled();
       const scene=await window.LabRenderer.capture({edge:Number(by('labExportSize').value),ask:false});
       scene.id=pages[index].id;scene.name=pages[index].name;scene.documentName=name;
-      scene.motions=copy(pages[index].motions);scene.clips=copy(pages[index].clips||[]);scenes.push(scene);
+      scene.motions=copy(pages[index].motions);scene.clips=copy(pages[index].clips||[]);
+       scene.backgroundVideo=pages[index].backgroundVideo?copy(pages[index].backgroundVideo):null;scenes.push(scene);
     }
     const warnings=[...new Set(scenes.flatMap((scene,index)=>scene.warnings.map(warning=>`Página ${index+1}: ${warning}`)))];
     if(warnings.length&&!confirm('LABMATTAR / Qualidade dos originais\n\n'+warnings.join('\n')+'\n\nExportar na dimensão selecionada?')){
@@ -332,7 +375,7 @@ async function exportSequence(type){
     notify(`${pages.length} página${pages.length>1?'s':''} / ${type==='pdf'?'PDF':type==='html'?'SITE HTML':'APRESENTAÇÃO'} concluído.`);
   }catch(error){preview?.close();notify('Exportação não concluída: '+error.message,true);}
   finally{
-    current=original;bridge().restore(originalState);await settled();selectedMotion=active.motions[0]?.id||'';renderMotions();renderPages();
+    current=original;bridge().restore(originalState);await settled();selectedMotion=active.motions[0]?.id||'';renderMotions();renderBackgroundVideo();renderPages();
     lab.inert=previousInert;switching=false;busy=false;panel.removeAttribute('aria-busy');commit();
     by('labExportStatus').setAttribute('data-state',by('labExportStatus').dataset.state==='busy'?'idle':by('labExportStatus').dataset.state);
   }
@@ -347,7 +390,7 @@ async function init(){
   window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
-    hasSequence:()=>enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length),
+    hasSequence:()=>enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo),
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');
@@ -359,7 +402,17 @@ async function init(){
   setWorkspaceView('edit');
   for(const button of document.querySelectorAll('button[data-workspace-view]'))button.addEventListener('click',()=>setWorkspaceView(button.dataset.workspaceView));
   by('labEditCurrentPage').addEventListener('click',()=>{setWorkspaceView('edit');by('laboratorio').querySelector('button[data-mobile-module=superficie]').click();});
-  renderPages();renderMotions();
+  renderPages();renderMotions();renderBackgroundVideo();
+  window.addEventListener('labmattar:background-source-change',()=>{
+    if(busy||switching||!pages[current]?.backgroundVideo)return;
+    pages[current].backgroundVideo=null;renderBackgroundVideo();commit();
+    notify('Fundo alterado. O vídeo anterior foi retirado somente desta página.');
+  });
+  by('labBackgroundVideoRemove')?.addEventListener('click',()=>{
+    if(busy||!pages[current]?.backgroundVideo)return;
+    pages[current].backgroundVideo=null;renderBackgroundVideo();commit();
+    notify('Vídeo de fundo removido. Escolha uma fotografia ou outro vídeo.');
+  });
   window.addEventListener('labmattar:composition-change',()=>{if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}});
   by('labPageSelect').addEventListener('change',event=>switchPage(Number(event.target.value)).catch(error=>notify(error.message,true)));
   by('labSequenceName').addEventListener('change',event=>{name=event.target.value.slice(0,120);enabled=true;commit();});
@@ -381,21 +434,23 @@ async function init(){
     if(pages.length<2||!confirm('Excluir esta página da sequência?'))return;
     const index=current;pages.splice(index,1);current=Math.min(index,pages.length-1);switching=true;
     try{const photoCatalog=privatePhotoCatalog(pages[current].composition,bridge().snapshot().photoCatalog);registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[current].composition,photoCatalog));await settled();}
-    finally{switching=false;enabled=true;renderMotions();commit();}
+    finally{switching=false;enabled=true;renderMotions();renderBackgroundVideo();commit();}
   });
-  // Each selected video is referenced by provider and file ID, never a token.
+  // Acervo videos are backgrounds, never movable composition elements.
+  // Legacy clips are still rendered for previously saved projects.
   by('labClipOpen').addEventListener('click',()=>window.LabAcervo?.openPublic?.());
   window.addEventListener('labmattar:acervo-video-select',event=>{
     if(!pages.length||busy||switching)return;
     try{
-      if((pages[current].clips||[]).length>=8)throw Error('Máximo de 8 vídeos por página.');
-      const clip=createClip(event.detail,uid('clip'));
-      commit();pages[current].clips=pages[current].clips||[];
-      pages[current].clips.push(clip);
-      selectedClip=clip.id;clipsPlaying=true;enabled=true;
-      setWorkspaceView('motion');renderClips();commit();
-      by('labClipStatus').textContent='Vídeo adicionado à página. Ajuste tamanho e posição.';
-      notify(clip.name+' adicionado à página.');
+      const backgroundVideo=createBackgroundVideo(event.detail,uid('background'));
+      commit();pages[current].backgroundVideo=backgroundVideo;
+      const state=bridge().snapshot().state;
+      bridge().restore({...state,background:'photo',
+        mContent:state.mContent==='solid'?'photo':state.mContent});
+      enabled=true;renderBackgroundVideo();commit();
+      setWorkspaceView('edit');
+      document.querySelector('button[data-mobile-module="fundo"]')?.click();
+      notify(backgroundVideo.name+' aplicado como vídeo de fundo.');
     }catch(error){notify(error.message,true);}
   });
   by('labClipInstance').addEventListener('change',event=>{selectedClip=event.target.value;renderClipControls();});

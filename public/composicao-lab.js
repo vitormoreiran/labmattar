@@ -865,7 +865,7 @@
       "Edite o parágrafo no painel ou clique nele diretamente na página.",
       "A largura de leitura e os limites da superfície continuam aplicados durante a edição."],
     labBackground:["Fundo",
-      "Define se a superfície usa cor ou fotografia.",
+      "Define se a superfície usa cor ou mídia visual (fotografia ou vídeo).",
       "O fundo é independente do M."],
     labMContent:["Conteúdo do M",
       "Quando o fundo é cor, o M pode receber cor ou fotografia. Sobre fundo fotográfico, o M usa sempre a fotografia.",
@@ -874,7 +874,7 @@
       "Sem M desativa a forma central; Elemento permite ajustar a escala; Completo ocupa 100% da altura da superfície.",
       "O perfil de Elemento mantém sua escala quando você muda de modo."],
     labPhoto:["Fotografia",
-      "Escolha a imagem utilizada pelo fundo, pelo M ou pelos marcadores.",
+      "Escolha a fotografia de fundo. Vídeos do acervo também ocupam esta camada, preservando M e marcadores.",
       "O mesmo enquadramento é usado por todas as camadas da composição."],
     labMarker:["Marcadores do M",
       "Em fotografia, as pontas recortam a versão nítida ou desfocada da mesma imagem. Em cor, permanecem marcadores gráficos.",
@@ -1042,7 +1042,7 @@
     },
     {
       title:"Imagem e contraste",
-      text:"Escolha fotografia ou cor e ajuste o enquadramento. Fundo e M podem usar a mesma fotografia, com regiões nítidas ou desfocadas.",
+      text:"Escolha cor, fotografia ou vídeo de fundo e ajuste o enquadramento. O M e os marcadores usam a mesma mídia, com regiões nítidas ou desfocadas.",
       rule:"Preto 20% somente sobre fotografia com texto. Nenhum fundo sólido é criado atrás dos marcadores fotográficos.",
       module:"fundo",
       target:"#labBackground"
@@ -1268,6 +1268,8 @@
         rememberedMScales.set(state.format,state.mScale);
       }
       if(id==="labMScale")rememberedMScales.set(state.format,state.mScale);
+      if(id==="labBackground"||id==="labPhoto")
+        window.dispatchEvent(new CustomEvent("labmattar:background-source-change",{detail:{kind:state.background==="color"?"color":"image"}}));
       if(id==="labTextWidth"||id==="labBackground"||id==="labMContent")
         rememberedReadingWidths.set(state.format,state.textWidth);
       activePreset="";render();save();

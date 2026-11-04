@@ -115,7 +115,7 @@ function syncBackgroundVideoControls(){
 let backgroundRenderRevision=0;
 function renderBackgroundVideo(){
   const revision=++backgroundRenderRevision;
-  for(const video of board.querySelectorAll('.lm-lab-background-video')){
+  for(const video of document.querySelectorAll('.lm-lab-background-video')){
     video.pause();video.removeAttribute('src');video.load();video.remove();
   }
   const currentPage=pages[current],background=currentPage?.backgroundVideo||null;
@@ -123,13 +123,18 @@ function renderBackgroundVideo(){
   syncBackgroundVideoControls();
   if(!background)return;
   const ambient=by('labAmbientPhoto'),mask=by('labMaskPhoto'),marker=by('labMarkerPhoto');
-  const targets=[[ambient,'labAmbientVideo'],[mask,'labMaskVideo'],[marker,'labMarkerVideo']];
+  const targets=[[ambient,'labAmbientVideo'],[mask,'labMaskVideo'],[marker,'labMarkerVideo'],
+    [by('labFocusImage'),'labFocusVideo']];
   const players=targets.map(([img,id])=>{
     const video=document.createElement('video');
     video.id=id;video.className='lm-lab-background-video';
     video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
     video.autoplay=true;video.preload='auto';video.setAttribute('aria-hidden','true');
-    img.insertAdjacentElement('afterend',video);
+    if(id==='labFocusVideo'){
+      video.classList.add('lm-lab-focus-video');
+      video.style.objectPosition=by('labFocusX').value+'% '+by('labFocusY').value+'%';
+      img.append(video);
+    }else img.insertAdjacentElement('afterend',video);
     video.addEventListener('error',()=>{
       if(revision===backgroundRenderRevision)notify('Vídeo de fundo indisponível. Confira o arquivo e o acesso ao acervo.',true);
     });
@@ -413,7 +418,11 @@ async function init(){
     pages[current].backgroundVideo=null;renderBackgroundVideo();commit();
     notify('Vídeo de fundo removido. Escolha uma fotografia ou outro vídeo.');
   });
-  window.addEventListener('labmattar:composition-change',()=>{if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}});
+  window.addEventListener('labmattar:composition-change',()=>{
+    const focus=by('labFocusVideo');
+    if(focus)focus.style.objectPosition=by('labFocusX').value+'% '+by('labFocusY').value+'%';
+    if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}
+  });
   by('labPageSelect').addEventListener('change',event=>switchPage(Number(event.target.value)).catch(error=>notify(error.message,true)));
   by('labSequenceName').addEventListener('change',event=>{name=event.target.value.slice(0,120);enabled=true;commit();});
   by('labPageName').addEventListener('change',event=>{pages[current].name=event.target.value.slice(0,120);enabled=true;commit();});

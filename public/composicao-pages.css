@@ -160,3 +160,5 @@ body.lm-studio-open #laboratorio .lm-lab-inspector:is([data-workspace-context=pa
 .lab-video-options p,.lab-video-options progress{grid-column:1/-1;margin:0;width:100%}
 .lab-video-options progress{height:10px;accent-color:currentColor}
 @media(max-width:640px){.lab-video-options{grid-template-columns:1fr}}
+
+.lab-delivery-quality[hidden]{display:none}

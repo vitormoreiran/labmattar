@@ -99,10 +99,12 @@
   function loadExternalMedia(){
     try{
       const cached=JSON.parse(sessionStorage.getItem("lm-acervo-selected")||"null");
-      if(cached && /^(google|dropbox)$/.test(cached.provider)&&
+      if(cached && /^(google|dropbox|public)$/.test(cached.provider)&&
         /^ext-[a-z0-9]+$/.test(cached.photoKey)&&
         typeof cached.id==="string"&&cached.id.length<220){
-        const url="/api/acervo/media?provider="+cached.provider+"&id="+encodeURIComponent(cached.id);
+        const url=cached.provider==="public"?
+          "/api/acervo/public-media?project="+encodeURIComponent(cached.projectId)+"&id="+encodeURIComponent(cached.id):
+          "/api/acervo/media?provider="+cached.provider+"&id="+encodeURIComponent(cached.id);
         photos[cached.photoKey]=url;
         externalMedia.set(cached.photoKey,{...cached,original:url});
         const select=by("labPhoto");
@@ -393,8 +395,11 @@
   // and local-draft persistence rather than rewriting the canvas DOM.
   window.addEventListener("labmattar:acervo-select",event=>{
     const data=event.detail;
-    if(!data || !/^(google|dropbox)$/.test(data.provider) ||
-      !/^ext-[a-z0-9]+$/.test(data.photoKey)||!data.original?.startsWith("/api/acervo/media?"))return;
+    if(!data || !/^(google|dropbox|public|local)$/.test(data.provider) ||
+      !/^(ext|loc)-[a-z0-9]+$/.test(data.photoKey) ||
+      !(data.provider==="local"?/^data:image\/(?:webp|png|jpeg);base64,/.test(data.original||""):
+        data.provider==="public"?(data.original||"").startsWith("/api/acervo/public-media?"):
+        (data.original||"").startsWith("/api/acervo/media?")))return;
     photos[data.photoKey]=data.original;
     externalMedia.set(data.photoKey,data);
     const input=by("labPhoto");
@@ -413,11 +418,14 @@
       });
       buttons.append(button);
     }
-    try{sessionStorage.setItem("lm-acervo-selected",JSON.stringify({
-      provider:data.provider,id:data.id,name:data.name,photoKey:data.photoKey
+    if(data.provider!=="local")try{sessionStorage.setItem("lm-acervo-selected",JSON.stringify({
+      provider:data.provider,id:data.id,name:data.name,photoKey:data.photoKey,
+      ...(data.projectId?{projectId:data.projectId}:{})
     }))}catch{}
-    input.value=data.photoKey;
-    input.dispatchEvent(new Event("change",{bubbles:true}));
+    if(!data.restore){
+      input.value=data.photoKey;
+      input.dispatchEvent(new Event("change",{bubbles:true}));
+    }
   });
   window.LabProductionBridge={
     snapshot:()=>({state:JSON.parse(JSON.stringify(state)),photoCatalog:{...photos}}),

@@ -1,0 +1,3 @@
+# The recovered official bundle must retain the exact deployed bytes.
+site-oficial/public/** -text
+site-oficial/worker/index.js -text

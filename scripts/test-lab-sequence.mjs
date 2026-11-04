@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage} from '../public/lab-sequence.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,createSection,sectionState,hasSectionText} from '../public/lab-sequence.mjs';
 const photos={'64':'/ambiente-editorial/media/BOXDOSENTIR-64.jpg'};
 const state={format:'horizontal',color:'neutral',margin:7,guides:'nenhuma',marker:'none',markerFocus:'blur',
   textWidth:61,titleScale:100,type:'alternada',background:'color',mContent:'off',mPresentation:'elemento',photo:'64',
@@ -76,6 +76,8 @@ test('vídeos de projetos são serializados, validados e não expõem credenciai
   const rogue=clone(document);rogue.pages[0].clips[0].fileId='https://evil.example/video';
   assert.throws(()=>readSequence(rogue,photos,[asset]),/identificador privado do vídeo/);
 });
+test('seções preservam fundo, páginas e conteúdo no JSON v2',()=>{const section=createSection('intro','Introdução',{...state,background:'photo'},photos);const p=createPage({id:'one',name:'Um',state:sectionState(state,section),photoCatalog:photos});p.sectionId=section.id;const doc=sequenceDocument('Seções',[p],[section]),loaded=readSequence(clone(doc),photos,[]);assert.deepEqual(sequenceDocument(loaded.name,loaded.pages,loaded.sections),doc);assert.equal(hasSectionText('intro',loaded.pages),true);const bad=clone(doc);bad.pages[0].sectionId='missing';assert.throws(()=>readSequence(bad,photos,[]),/seção da página/);const mismatch=clone(doc);mismatch.sections[0].background.focusX=20;assert.throws(()=>readSequence(mismatch,photos,[]),/diverge/);const unsafe=clone(doc);unsafe.sections[0].background.uri='https://outside.invalid/photo';assert.throws(()=>readSequence(unsafe,photos,[]));});
+test('recusa grupos intercalados e seções duplicadas sem alterar o original',()=>{const sections=['s1','s2'].map(id=>createSection(id,id,state,photos));const pages=['s1','s2','s1'].map((sectionId,index)=>({...page('p'+index),sectionId}));const doc=sequenceDocument('Ordem',pages,sections);assert.throws(()=>readSequence(doc,photos,[]),/ordem das seções/);const duplicate=sequenceDocument('Duplicado',[pages[0]],[sections[0],sections[0]]);assert.throws(()=>readSequence(duplicate,photos,[]),/seção repetido/);assert.equal(doc.pages[2].sectionId,'s1');});
 
 test('foto pública do portfólio e foto local incorporada reabrem no JSON',()=>{
   const id='177GD8UXcmudDYJ8-UKv5O9Mrdd3oOrAv',provider='public';
@@ -114,6 +116,7 @@ test('vídeos públicos e locais guardam referência sem credenciais',()=>{
   assert.throws(()=>readSequence(forged,photos,[asset]),/projeto do vídeo/);
 });
 
+test('seções conservam os vídeos ao salvar e reabrir',()=>{const section=createSection('s1','Introdução',state,photos),p=page('p1');p.sectionId=section.id;p.clips=[createClip({kind:'video',provider:'google',id:'videoFile1234',name:'Registro.mp4',mimeType:'video/mp4'},'clip-1')];const doc=sequenceDocument('Seções com vídeo',[p],[section]),parsed=readSequence(doc,photos,[asset]);assert.deepEqual(sequenceDocument(parsed.name,parsed.pages,parsed.sections),doc);});
 test('vídeo selecionado é fundo da página, não elemento livre',()=>{
   const media={kind:'video',provider:'public',projectId:'11OYn_dAihamP4E0PqmuIUcmo0Uk41rpZ',
     id:'1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn',name:'Fundo da cena.mp4',mimeType:'video/mp4'};
@@ -135,3 +138,7 @@ test('vídeo selecionado é fundo da página, não elemento livre',()=>{
   const broken=clone(document);broken.pages[0].composition.pages[0].surface.background='color';
   assert.throws(()=>readSequence(broken,photos,[asset]),/vídeo de fundo exige superfície de imagem/);
 });
+
+test('o vídeo é único na seção e sobrevive ao JSON v2',()=>{const section=createSection('s-video','Vídeo', {...state,background:'photo'},photos),video=createBackgroundVideo({kind:'video',provider:'google',id:'videoFile1234',name:'Fundo.mp4',mimeType:'video/mp4'},'bg-1');section.background.video=video;const pages=['p1','p2'].map(id=>({...createPage({id,name:id,state:sectionState(state,section),photoCatalog:photos,backgroundVideo:video}),sectionId:section.id}));const doc=sequenceDocument('Vídeo compartilhado',pages,[section]),parsed=readSequence(doc,photos,[asset]);assert.deepEqual(sequenceDocument(parsed.name,parsed.pages,parsed.sections),doc);const bad=clone(doc);delete bad.pages[1].backgroundVideo;assert.throws(()=>readSequence(bad,photos,[asset]),/diverge do fundo compartilhado/);});
+
+test('a ordem dos campos do vídeo não muda a validade nem altera o JSON recebido',()=>{const section=createSection('s-order','Ordem',{...state,background:'photo'},photos),video=createBackgroundVideo({kind:'video',provider:'public',projectId:'sectionproject123',id:'sectionvideo123',name:'Fundo.mp4',mimeType:'video/mp4'},'bg-order');section.background.video={id:video.id,provider:video.provider,projectId:video.projectId,fileId:video.fileId,name:video.name,mimeType:video.mimeType,frameSeconds:0};const page={...createPage({id:'p-order',name:'Ordem',state:sectionState(state,section),photoCatalog:photos,backgroundVideo:video}),sectionId:section.id};const doc=sequenceDocument('Ordem',[page],[section]),before=JSON.stringify(doc);readSequence(doc,photos,[asset]);assert.equal(JSON.stringify(doc),before);});

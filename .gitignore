@@ -34,3 +34,6 @@ content/motion.json
 /public/motion/catalog.json
 
 production-proof/
+
+# Mídias públicas da versão oficial recuperada (originais locais continuam ignorados).
+!site-oficial/public/**/*.mp4

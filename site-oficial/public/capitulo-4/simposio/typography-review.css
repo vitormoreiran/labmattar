@@ -1,0 +1,209 @@
+/* Simpósio: apply the LABMATTAR title, reading and detail roles without
+   changing the established editorial scale or the presentation layout. */
+/* Shared opening for two distinct events, based on the official presentation. */
+body.test-version main .event-opening {
+  position:relative;
+  width:100%;
+  height:clamp(400px,43vw,720px);
+  margin:0 0 clamp(64px,9vh,112px);
+  display:grid;align-items:center;
+}
+body.test-version main .event-opening-image {
+  position:absolute;inset:0;margin:0;overflow:hidden;
+  -webkit-mask-image:url('./event-opening-mask.svg');mask-image:url('./event-opening-mask.svg');
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+}
+body.test-version main .event-opening-image img {
+  display:block;width:100%;height:100%;object-fit:cover;
+  filter:brightness(.44);transform:none!important;
+}
+body.test-version main .event-opening-title {
+  position:relative;z-index:1;width:min(76vw,1100px);margin:auto;
+  color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.3);
+}
+body.test-version main .event-opening-title h2 {
+  margin:0!important;text-align:left;font-size:clamp(38px,5.3vw,84px);
+  line-height:1.06;
+}
+body.test-version main .event-opening-title h2 strong {display:inline-block;margin-bottom:.12em;}
+body.test-version :is(#como-penso,#mostra) > .black-layout {padding-top:0;}
+body.test-version :is(#como-penso,#mostra) > .black-layout > .black-copy:first-child {margin-top:0;}
+body.test-version #mostra .exhibition-format {margin-bottom:0;}
+@media(max-width:760px){
+  body.test-version main .event-opening {height:400px;}
+  body.test-version main .event-opening-title {width:calc(100% - 56px);}
+  body.test-version main .event-opening-title h2 {font-size:clamp(30px,8.5vw,52px);}
+}
+body.test-version main :is(h1,h2,h3,h4) {
+  font-family:var(--type-univers)!important;
+}
+body.test-version main strong {
+  font-family:var(--type-univers)!important;
+  font-weight:300!important;
+}
+body.test-version main :is(h1,h2,h3,h4) strong,
+body.test-version main .guests-intro h2 span {
+  font-family:var(--type-perpetua)!important;
+  font-weight:300!important;
+}
+body.test-version main :is(.field-terms,.artist-carousel-credit,.guests-kicker) {
+  font-family:var(--type-univers)!important;
+  font-size:var(--type-detail-size)!important;
+  line-height:var(--type-detail-leading)!important;
+  font-weight:300!important;
+  letter-spacing:0!important;
+}
+body.test-version main :is(.format-details,.exhibition-details) dd {
+  font-family:var(--type-univers)!important;
+  font-size:var(--type-body-size)!important;
+  line-height:var(--type-body-leading)!important;
+  font-weight:300!important;
+  letter-spacing:0!important;
+}
+body.test-version main .format-stats strong {
+  font-family:var(--type-univers)!important;
+  font-size:clamp(48px,5.2vw,78px)!important;
+  line-height:.88!important;
+  letter-spacing:-.045em!important;
+}
+body.test-version main .exhibition-format-grid {
+  grid-template-columns:minmax(0,1fr);
+}
+body.test-version main .exhibition-stats {
+  width:min(100%,850px);
+}
+/* Revisão editorial de 21/10/2026. */
+body.test-version main .revision-emphasis {text-decoration-thickness:1px;text-underline-offset:.18em;text-decoration-skip-ink:auto;}
+body.test-version main .guests-intro h2 {font-size:clamp(38px,5.3vw,84px);line-height:.95;letter-spacing:-.025em;}
+body.test-version main .overview-part h3 {font-size:clamp(23px,2vw,32px);line-height:1.15;margin:0 0 18px;text-transform:none;}
+body.test-version main .overview-plus {font-size:36px;line-height:1;margin:30px 0;}
+body.test-version main .symposium-overview {margin-bottom:clamp(80px,12vh,150px);}
+body.test-version main .exhibition-details {margin:0 0 36px;display:grid;gap:18px;}
+body.test-version main .exhibition-details > div {padding-bottom:18px;border-bottom:1px solid #ffffff26;}
+body.test-version main .exhibition-details dt {font-size:var(--type-detail-size);text-transform:uppercase;margin-bottom:6px;}
+body.test-version main .exhibition-details dd {margin:0;}
+@media(max-width:760px){body.test-version main .guests-intro h2 {font-size:clamp(30px,8.5vw,52px);line-height:.95;}}
+/* Fotografias de origem substituem os antigos arquivos já diagramados. */
+body.test-version main .field-item.full-bleed > .m-frame:first-of-type img {width:100%!important;height:100%!important;object-fit:cover;filter:brightness(.58);}
+body.test-version main .fields-header .m-frame img[src*="revisao/caique"] {transform:scale(1.18);}
+@media(max-width:760px){body.test-version main .field-item.full-bleed > .m-frame:first-of-type {aspect-ratio:1.3!important;}}
+/* Stable section surfaces and a shared vertical rhythm. */
+body.test-version main > .section {
+  --section-surface:#141811;
+  background:var(--section-surface)!important;
+  padding-block:clamp(112px,12vh,168px);
+  min-height:0;
+  transition:none;
+  scroll-margin-top:0;
+}
+body.test-version main > #instituto {--section-surface:#141811;}
+body.test-version main > #campos {--section-surface:#1b2016;}
+body.test-version main > #como-penso {--section-surface:#10130f;}
+body.test-version main > #organiza {--section-surface:#241a14;}
+body.test-version main > #pratica {--section-surface:#202215;}
+body.test-version main > #funciona {--section-surface:#171c16;}
+body.test-version main > #impacto {--section-surface:#202219;}
+body.test-version main > #mostra {--section-surface:#111510;}
+body.test-version main > #convidados {--section-surface:#1c2018;}
+body.test-version main > .section > .content > :first-child {margin-top:0;}
+body.test-version main > .section > .content > :last-child {margin-bottom:0;}
+body.test-version main .text-block.large-gap,
+body.test-version main .text-block.compact-bottom {margin-top:clamp(88px,10vh,128px);}
+body.test-version main .event-opening {margin-bottom:clamp(72px,8vh,112px);}
+body.test-version main .info-section + .info-section {margin-top:clamp(88px,10vh,128px);}
+body.test-version main .field-item.full-bleed {margin-top:clamp(88px,10vh,128px);margin-bottom:0;}
+@media(max-width:760px){
+ body.test-version main > .section {padding-block:96px;}
+ body.test-version main .text-block.large-gap,
+ body.test-version main .text-block.compact-bottom,
+ body.test-version main .info-section + .info-section,
+ body.test-version main .field-item.full-bleed {margin-top:72px;}
+ body.test-version main .event-opening {margin-bottom:64px;}
+}
+/* O Simpósio continua nos quatro campos, sem divisão visual intermediária. */
+body.test-version main > #instituto {padding-bottom:0!important;}
+body.test-version main > #campos {--section-surface:#141811;padding-top:clamp(56px,7vh,88px)!important;}
+body.test-version main #instituto .compact-bottom > p:last-child {margin-bottom:0;}
+@media(max-width:760px){body.test-version main > #campos {padding-top:48px!important;}}
+/* Três áreas narrativas: imagem e atmosfera constantes em cada percurso. */
+body.test-version main > .section {
+ background-color:#11150f!important;
+ background-image:linear-gradient(rgba(8,12,8,.91),rgba(8,12,8,.91)),var(--area-image)!important;
+ background-size:cover!important;
+ background-position:center!important;
+ background-repeat:no-repeat!important;
+ background-attachment:fixed!important;
+}
+body.test-version main > :is(#instituto,#campos) {--area-image:url('./assets/revisao/caique.jpg');}
+body.test-version main > :is(#como-penso,#organiza,#pratica,#funciona,#impacto) {--area-image:url('./assets/engraving-source.jpg');}
+body.test-version main > :is(#mostra,#convidados) {--area-image:url('./assets/mostra-como-penso-como.png');}
+body.test-version main .symposium-introduction {margin-top:0;margin-bottom:64px;}
+body.test-version main .symposium-introduction h2 {font-size:clamp(26px,2.5vw,40px);margin-bottom:24px;}
+@media(max-width:760px){
+ body.test-version main > .section {background-attachment:fixed!important;}
+ body.test-version main .symposium-introduction {margin-bottom:48px;}
+}
+/* Atmosferas desfocadas contínuas para as três áreas. */
+body.test-version main > .section {background:transparent!important;}
+body.test-version .area-ambient {position:fixed;inset:-40px;pointer-events:none;z-index:0;}
+body.test-version .area-ambient .simposio-ambient-images img {filter:blur(28px) saturate(.82) brightness(.62)!important;transform:scale(1.08)!important;transition:opacity .5s ease!important;}
+body.test-version .area-ambient .simposio-ambient-veil {background:rgba(8,12,8,.32)!important;}
+@media(prefers-reduced-motion:reduce){body.test-version .area-ambient .simposio-ambient-images img {transition:none!important;}}
+body.test-version main .field-overlay .field-image-credit {font-size:11px!important;line-height:1.3!important;margin:12px 0 0!important;width:auto!important;opacity:.8;}
+
+/* Conteúdo legível imediatamente, independente da posição de rolagem. */
+html.motion-ready body.test-version main .page :is(.hero-title,.text-block,.fields-header,.field-item,.center-heading) {opacity:1!important;visibility:visible!important;transform:none!important;transition:none!important;transition-delay:0s!important;}
+
+body.test-version main > #visao-geral{min-height:100svh;padding:90px 0 100px!important;display:flex;align-items:center}body.test-version #visao-geral .symposium-overview{margin:0!important}
+
+/* Panorama final: mesma escala tipográfica do restante da página. */
+body.test-version #visao-geral h2{margin:0 0 32px!important}body.test-version #visao-geral .overview-part h3{margin-bottom:12px}body.test-version #visao-geral .overview-part p{margin:0}body.test-version #visao-geral .overview-plus{margin:20px 0}
+
+/* Recortes específicos das fotografias aprovadas. */
+body.test-version main .fields-header .m-frame img[src*="caique-tomates"]{transform:none!important;object-position:center;}
+body.test-version main #pratica .m-frame img[src*="mesa-enviada"]{transform:scale(1.045)!important;transform-origin:center;object-position:center;}
+
+/* Créditos visíveis fora das máscaras das imagens. */
+body.test-version main .image-reference{font-family:var(--type-univers);font-size:var(--type-detail-size,12px)!important;line-height:1.4!important;text-align:left;margin:12px 0 28px!important;max-width:100%;opacity:.85;}body.test-version main .field-item > .image-reference{width:var(--paragraph-width,60vw);max-width:calc(100% - 56px);margin:12px auto 28px!important;}body.test-version main .event-opening .image-reference-opening{position:absolute;left:0;right:0;top:100%;width:min(76vw,1100px);margin:12px auto 0!important;}
+
+body.test-version main .event-opening .image-reference-opening{left:50%!important;right:auto!important;transform:translateX(-50%);width:min(76vw,1100px)!important;}
+
+/* Cada legenda ocupa a linha imediatamente abaixo de sua imagem. */
+body.test-version main .field-item.full-bleed > .image-reference{grid-column:1;grid-row:2;position:static!important;justify-self:center;width:min(76vw,980px)!important;max-width:calc(100% - 48px)!important;margin:12px auto 0!important;transform:none!important;}
+body.test-version main .field-item.full-bleed > .field-copy{grid-column:1;grid-row:3;}
+@media(max-width:760px){body.test-version main .field-item.full-bleed > .image-reference{width:calc(100% - 48px)!important;}}
+
+html body.test-version main #campos .field-item.full-bleed > p.image-reference{width:min(76vw,980px)!important;max-width:calc(100% - 56px)!important;margin:12px auto 0!important;padding:0!important;}
+@media(max-width:760px){html body.test-version main #campos .field-item.full-bleed > p.image-reference{width:calc(100% - 56px)!important;}}
+
+/* Créditos integrados às imagens, afastados do recorte central. */
+html body.test-version main .image-credit-inset{position:absolute!important;z-index:8;left:8%!important;right:auto!important;bottom:8%!important;top:auto!important;width:auto!important;max-width:40%!important;margin:0!important;padding:5px 8px!important;background:rgba(0,0,0,.65);color:#fff;font-family:var(--type-univers);font-size:var(--type-detail-size,12px)!important;line-height:1.35!important;text-align:left;transform:none!important;pointer-events:none;}
+html body.test-version main .event-opening .opening-credit{left:3%!important;bottom:7%!important;max-width:38%!important;}
+html body.test-version main .artist-carousel{position:relative;}
+html body.test-version main .artist-carousel-credit{position:absolute;left:8%;top:12%;z-index:8;background:rgba(0,0,0,.65);padding:5px 8px;margin:0;max-width:65%;color:white;}
+@media(max-width:760px){html body.test-version main .image-credit-inset{max-width:42%!important;left:5%!important;bottom:5%!important;padding:4px 6px!important;}html body.test-version main .event-opening .opening-credit{bottom:6%!important;}}
+html body.test-version main figcaption.image-credit-inset{display:block!important;visibility:visible!important;opacity:1!important;}
+html body.test-version main figcaption.image-credit-inset{bottom:18%!important;max-width:38%!important;text-transform:none!important;}
+
+/* Dendê: imagem aprimorada e contraste maior para o texto. */
+html body.test-version main .field-item.full-bleed > .m-frame img[src*="dende-enhanced"]{filter:brightness(.43)!important;}
+
+/* Legendas sem caixas; contraste local por sombra de texto. */
+html body.test-version main :is(.image-credit-inset,.artist-carousel-credit){background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.85)!important;}
+
+/* Contraste das duas imagens editoriais: equivalente a 15% de preto. */
+html body.test-version main .m-frame img:is([src*='caique-tomates'],[src*='mesa-enviada']){filter:brightness(.85)!important;}
+
+/* Um único ponto de ancoragem para todos os créditos de imagens. */
+html body.test-version main :is(figcaption.image-credit-inset,.event-opening .opening-credit,.artist-carousel-frame .artist-carousel-credit){display:block!important;position:absolute!important;left:8%!important;right:auto!important;top:auto!important;bottom:18%!important;width:auto!important;max-width:38%!important;margin:0!important;padding:0!important;transform:none!important;font-family:var(--type-univers)!important;font-size:var(--type-detail-size,12px)!important;line-height:1.35!important;text-align:left!important;color:#fff!important;z-index:8;}
+html body.test-version main .artist-carousel-credit strong{font-weight:400!important;}
+html body.test-version main .artist-carousel-credit span::before{content:' · ';}
+html body.test-version main .artist-carousel-credit :is(strong,span){display:inline!important;margin:0!important;}
+
+
+
+/* Crédito preto sobre a fotografia clara de Caique Tizzi. */
+html body.test-version main .fields-header .m-frame:has(img[src*='caique-tomates']) figcaption.image-credit-inset{color:#000!important;text-shadow:none!important;}
+
+html body.test-version main .artist-carousel-credit span:empty{display:none!important;}

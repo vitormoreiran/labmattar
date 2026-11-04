@@ -199,6 +199,7 @@
     drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));ctx.restore();
   }
   async function captureScene({edge=Number(sizeSelect.value),ask=true}={}){
+    window.LabPages?.applySectionVisual?.();
     await document.fonts.ready;
     if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
     await Promise.all([...board.querySelectorAll("img")].filter(isVisible).map(img=>img.decode().catch(()=>{throw Error("Imagem indisponível. Conecte o acervo ou aguarde o carregamento.");})));
@@ -230,11 +231,11 @@
       focusX:parseFloat(board.style.getPropertyValue("--lab-focus-x"))||50,
       focusY:parseFloat(board.style.getPropertyValue("--lab-focus-y"))||50,
       contrast:board.dataset.photoText==="true",mContrast:board.dataset.mText==="true"}:null;
-    items.push({kind:"rect",...(hasVideo?{layer:"video-bg-base"}:{}),
+    items.push({kind:"rect",...(hasVideo?{layer:"video-bg-base"}:{layer:"background"}),
       x:0,y:0,w:frame.width,h:frame.height,color:background});
     if(board.dataset.backdrop!=="color"){
       const image=pixels(frame.width,frame.height,frame,ctx=>drawBackground(ctx,frame));
-      items.push({kind:"image",...(hasVideo?{layer:"video-bg-base"}:{}),source:image,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("imagem e tratamento do fundo");
+      items.push({kind:"image",...(hasVideo?{layer:"video-bg-base"}:{layer:"background"}),source:image,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("imagem e tratamento do fundo");
     }
     const maskNode=board.querySelector("#labMask");
     let maskVector=null;
@@ -284,7 +285,7 @@
       if(motion.w*frame.outputScale>motion.sourceWidth*1.01)warnings.push((motion.privateClipId?"Vídeo ":"Motion ")+motion.assetName+" ampliado além da resolução original.");
     }
     if(motions.length)rasterized.push("quadros estáticos dos motions e vídeos privados");
-    items.push(...words(board.querySelector("#labReading"),frame));
+    items.push(...words(board.querySelector("#labReading"),frame).map(op=>({...op,layer:"reading"})));
     const solid=board.querySelector(".lm-lab-solid-contrast");
     if(maskVector&&board.dataset.mContent==="solid"&&isVisible(solid))
       items.push({kind:"group",clip:maskVector,items:words(solid.querySelector(".lm-lab-reading"),frame)});
@@ -292,11 +293,10 @@
     for(const img of [...signature.querySelectorAll("img"),board.querySelector("#labSignature")].filter(Boolean)){
       if(!isVisible(img))continue;
       const filter=getComputedStyle(img).filter,tone=filter.includes("invert(1)")?"#ffffff":filter.includes("brightness(0)")?"#000000":null;
-      items.push(...await vector(img.currentSrc||img.src,rectangle(img,frame),tone));
+      items.push(...(await vector(img.currentSrc||img.src,rectangle(img,frame),tone)).map(op=>({...op,layer:"signature"})));
     }
-    items.push(...words(signature,frame));
-    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,
-      items,...(videoVisual?{videoVisual}:{}),warnings:[...new Set(warnings)],rasterized};
+    items.push(...words(signature,frame).map(op=>({...op,layer:"detail"})));
+    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(videoVisual?{videoVisual}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
   }
   async function rasterize(){
     const scene=await captureScene();if(!scene)return null;

@@ -1,3 +1,4 @@
+import {sectionWebDocument} from './lab-section-web.mjs';
 import {sceneSvg,escapeMarkup as esc} from './lab-scene.mjs';
 const bytesCache=new Map(),frameCache=new Map();
 export async function resource(path){
@@ -133,7 +134,9 @@ function animatedBackground(scene,video){
   return '<div class="animated-background" aria-hidden="true">'+parts.join('')+'</div>';
 }
 
+const animatedBackgroundCSS=":is(.page-art,.story-art) .animated-background{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}\n:is(.page-art,.story-art) .animated-background video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}\n:is(.page-art,.story-art) .animated-background .is-blurred{inset:-7%;width:114%;height:114%;filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);transform:scale(1.045)}\n:is(.page-art,.story-art) .bg-video-contrast,:is(.page-art,.story-art) .bg-video-m-contrast{position:absolute;inset:0;background:rgba(0,0,0,.20);pointer-events:none}\n:is(.page-art,.story-art) .bg-video-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-m{position:absolute;z-index:2;overflow:hidden;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;filter:drop-shadow(0 2px 10px rgba(0,0,0,.08))}\n:is(.page-art,.story-art) .bg-video-m-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-markers{position:absolute;inset:0;z-index:3;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}";
 export async function webDocument(scenes,project,catalog,fonts){
+  if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes,animatedBackground,animatedBackgroundCSS});
   const used=new Set(scenes.flatMap(scene=>scene.motions.map(motion=>motion.assetId))),videos={},videoTypes={};
   for(const id of used){const asset=catalog.find(asset=>asset.id===id);videos[id]=base64(await motionBytes(asset));}
   const privateClips=new Map(scenes.flatMap(scene=>[...(scene.clips||[]),
@@ -177,14 +180,7 @@ export async function webDocument(scenes,project,catalog,fonts){
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(project.name)}</title><style>${fontCss}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-snap-type:y proximity}body{margin:0;background:#e6e3dc;color:#181818;font-family:UniversMattar,Arial,sans-serif;font-weight:300}.presentation-nav{position:sticky;top:0;z-index:10;display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;padding:12px 20px;background:#f7f6f2;border-bottom:1px solid #c9c8c2;font-size:13px;line-height:1.35;letter-spacing:.04em}.presentation-nav button{font:inherit;color:inherit;background:none;border:0;border-bottom:1px solid;padding:4px;cursor:pointer}.presentation-nav strong{font-weight:300;margin-right:auto}.export-page{scroll-snap-align:start;scroll-margin-top:62px;min-height:calc(100svh - 62px);display:grid;place-items:center;padding:30px 20px}.page-art{width:min(100%,1440px);position:relative;box-shadow:0 12px 40px #0002}.page-art svg{display:block;width:100%;height:auto;overflow:hidden}.page-art video{position:absolute;display:block;object-fit:contain;pointer-events:none}.foreground{position:absolute;inset:0;pointer-events:none}.foreground text{pointer-events:auto;user-select:text}.semantic{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}button:focus-visible{outline:2px solid;outline-offset:4px}@media(max-width:760px){.presentation-nav{font-size:12px}.export-page{padding:20px 10px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}${print}@media print{.presentation-nav{display:none}.export-page{display:block;width:var(--page-width);height:var(--page-height);min-height:0;padding:0;break-after:page}.export-page:last-child{break-after:auto}.page-art{width:100%;height:100%;max-width:none!important;box-shadow:none}.page-art video{display:none}body{background:none}.semantic{display:none}}
 .page-art[data-video-background]{isolation:isolate;overflow:hidden;container-type:inline-size}
-.page-art .animated-background{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.page-art .animated-background video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}
-.page-art .animated-background .is-blurred{inset:-7%;width:114%;height:114%;filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);transform:scale(1.045)}
-.page-art .bg-video-contrast,.page-art .bg-video-m-contrast{position:absolute;inset:0;background:rgba(0,0,0,.20);pointer-events:none}
-.page-art .bg-video-contrast{z-index:1}
-.page-art .bg-video-m{position:absolute;z-index:2;overflow:hidden;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;filter:drop-shadow(0 2px 10px rgba(0,0,0,.08))}
-.page-art .bg-video-m-contrast{z-index:1}
-.page-art .bg-video-markers{position:absolute;inset:0;z-index:3;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+${animatedBackgroundCSS}
 .page-art .screen-scene{position:relative;z-index:1;pointer-events:none}
 .page-art .screen-scene svg{width:100%;height:auto}
 .page-art[data-video-background]>video{z-index:4}

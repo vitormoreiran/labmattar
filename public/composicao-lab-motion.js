@@ -1,3 +1,4 @@
+import {textMotionProfile} from './lab-text-motion.mjs';
 /* LABMATTAR / Entrada dos textos no Laboratorio.
  * Reproduz a unica entrada normativa do capitulo Tipografia:
  * opacidade, deslocamento 22px, blur 10px e transformacao de caracteres.
@@ -11,13 +12,10 @@
   if(!board||!button||!label||!status)return;
 
   const reduced=matchMedia("(prefers-reduced-motion: reduce)");
-  const alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÃÂÉÊÍÓÔÕÚÇ0123456789";
+  const alphabet=textMotionProfile.alphabet;
   const ctx=document.createElement("canvas").getContext("2d");
-  const frames=[
-    {opacity:.08,transform:"translate3d(0,22px,0)",filter:"blur(10px)"},
-    {opacity:1,transform:"translate3d(0,0,0)",filter:"blur(0px)"}
-  ];
-  const timing={duration:1250,easing:"cubic-bezier(.16,1,.3,1)",fill:"both"};
+  const frames=textMotionProfile.frames;
+  const timing=textMotionProfile.timing;
   let frame=0,animations=[],ghosts=[],running=false;
 
   function stop(message=""){

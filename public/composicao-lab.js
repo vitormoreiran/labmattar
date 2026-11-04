@@ -111,6 +111,23 @@
     }catch{}
   }
   loadExternalMedia();
+  // The catalog entry must exist before restoring a saved external photo key.
+  try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
+  const cachedExternal=externalMedia.get(state.photo);
+  if(cachedExternal){
+    const button=document.createElement("button");
+    button.type="button";button.className="lm-ctrl-choice";
+    button.dataset.labChoice="photo";button.dataset.value=cachedExternal.photoKey;
+    const name=document.createElement("span");name.className="lm-ctrl-name";
+    name.textContent=String(cachedExternal.name).slice(0,100);
+    button.append(name);
+    button.addEventListener("click",()=>{
+      const select=by("labPhoto");
+      select.value=cachedExternal.photoKey;
+      select.dispatchEvent(new Event("change",{bubbles:true}));
+    });
+    document.querySelector(".lm-ctrl-photos")?.append(button);
+  }
   const formatNames={
     horizontal:"HORIZONTAL / 16:9",vertical:"VERTICAL / 9:16",
     quadrado:"QUADRADO / 1:1",editorial:"EDITORIAL / √2:1"

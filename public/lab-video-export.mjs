@@ -39,6 +39,7 @@ function easeOut(progress){
 }
 export function textEntrance(time){
   return (ctx,op)=>{
+    if(time>=textMotionProfile.scrambleDuration/1000)return op.text;
     const progress=Math.min(1,Math.max(0,time/(textMotionProfile.timing.duration/1000))),eased=easeOut(progress);
     ctx.globalAlpha=.08+.92*eased;ctx.translate(0,22*(1-eased));
     ctx.filter=`blur(${10*(1-eased)*ctx.getTransform().a}px)`;

@@ -54,7 +54,8 @@ try{
       let delta=0;for(let i=0;i<a.length;i+=4)delta+=Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2]);
       return delta/(width*height*3);
     },{bytes:[...reference],width,height});
-    assert.ok(difference<4,`Native/video final frame differs: ${difference}`);
+    console.log(JSON.stringify({format,meanAbsoluteDifference:difference}));
+    assert.ok(difference<4,`Native/video final frame differs (${format}): ${difference}`);
     await page.locator('#labDeliveryBack').click();
   }
   await page.evaluate(doc=>window.LabPages.load(doc),original);await settle();

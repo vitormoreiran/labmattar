@@ -132,3 +132,24 @@ O login autorizado **retorna à página Compor** (e não ao índice `/laboratori
 6. Revisão de segurança do endpoint de mídia e da retenção de sessão antes de merge/deploy.
 
 **Sem credenciais configuradas e testes de ponta a ponta, não marcar como pronto nem anunciar publicação.**
+
+## Checklist de validação do acervo na prévia (novembro de 2026)
+
+1. Abrir **Compor → Fundo → Acervo 01_Portfolio** e entrar com uma conta
+   que já tenha acesso privado à pasta.
+2. Selecionar uma fotografia via Google Picker. Conferir se a foto aparece
+   no fundo e no M sem violar a mesma regra de enquadramento.
+3. Reabrir a biblioteca, escolher um MP4 e conferir a reprodução na página.
+   Ajustar posição, largura e o segundo usado no quadro estático.
+4. **Salvar projeto JSON**, mudar de página, reabrir o JSON e confirmar que
+   a foto e o vídeo permanecem na página original.
+5. Conferir PDF/PNG com quadro estático. Para HTML offline, confirmar
+   explicitamente a inclusão de clipes privados e respeitar os limites
+   32 MB/arquivo e 64 MB/projeto.
+6. Verificar que nenhum cookie, token ou chave foi inserido no JSON
+   exportado. Para outro usuário, a conta precisa ter permissão própria
+   sobre a pasta; a conexão de uma pessoa não dá acesso a outras.
+
+CI tem testes sem contas reais. A execução dessa conferência com uma
+conta autorizada é necessária antes de declarar o Drive integralmente
+validado no ambiente público.

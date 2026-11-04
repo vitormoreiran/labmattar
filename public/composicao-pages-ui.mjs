@@ -214,10 +214,11 @@ async function capturePrivateClips(width,height){
       video.addEventListener('loadeddata',done,{once:true});
       video.addEventListener('error',fail,{once:true});
     });
+    if(video.error)throw Error('Vídeo indisponível: '+clip.name);
     video.pause();
     const target=Math.max(0,Math.min(clip.frameSeconds,Number.isFinite(video.duration)?
       Math.max(0,video.duration-.05):clip.frameSeconds));
-    if(target>0&&Math.abs(video.currentTime-target)>.08)await new Promise((resolve,reject)=>{
+    if(Math.abs(video.currentTime-target)>.08)await new Promise((resolve,reject)=>{
       const timeout=setTimeout(()=>{cleanup();reject(Error('Quadro de vídeo não carregou: '+clip.name));},15000);
       const done=()=>{cleanup();resolve();};
       const fail=()=>{cleanup();reject(Error('Vídeo indisponível: '+clip.name));};

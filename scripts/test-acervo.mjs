@@ -16,7 +16,8 @@ for(const provider of ["google","dropbox"]){
 assert.equal((await handleAcervoRequest(request("media?provider=google&id=../../bad"))).status,400);
 assert.equal((await handleAcervoRequest(request("media?provider=dropbox&id=foo"))).status,400);
 assert.equal((await handleAcervoRequest(request("thumb?provider=google&id=123456"))).status,401);
-assert.equal((await handleAcervoRequest(request("picker-token"))).status,401);
+assert.equal((await handleAcervoRequest(request("picker-token",{method:"POST",headers:{"Origin":"https://preview.example.test"}}))).status,401);
+assert.equal((await handleAcervoRequest(request("picker-token",{method:"POST",headers:{"Origin":"https://attacker.test"}}))).status,403);
 assert.equal((await handleAcervoRequest(request("dropbox/list"))).status,401);
 assert.equal((await handleAcervoRequest(request("google/inspect",{
   method:"POST",headers:{"Origin":"https://attacker.test","Content-Type":"application/json"},

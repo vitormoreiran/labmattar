@@ -9,7 +9,7 @@ const errors=[];
 page.on("pageerror",error=>errors.push(error.message));
 page.on("dialog",dialog=>dialog.accept());
 async function choose(group,value){
-  const module={format:"superficie",background:"fundo",mContent:"m",photo:"m",bodyMode:"texto"}[group];
+  const module={format:"superficie",background:"fundo",mContent:"m",marker:"m",photo:"m",bodyMode:"texto"}[group];
   if(module)await page.locator('button[data-mobile-module="'+module+'"]').click();
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
 }
@@ -54,7 +54,8 @@ try{
   assert(await page.locator("#labExportStatus").count()===1,"Accessible status is required");
   await choose("format","horizontal");
   await choose("background","photo");
-  await choose("mContent","solid");
+  await choose("mContent","photo");
+  await choose("marker","both");
   await choose("bodyMode","visivel");
   await page.waitForTimeout(300);
   const state=await page.locator("#labArtboard").getAttribute("data-state");
@@ -125,6 +126,7 @@ try{
   assert(JSON.stringify(await page.evaluate(()=>window.LabProductionBridge.snapshot().state))===
     JSON.stringify(authored),"Rejected document must not modify the existing composition");
 
+  await choose("marker","none");
   await choose("format","vertical");
   await choose("mContent","off");
   await choose("background","color");

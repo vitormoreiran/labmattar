@@ -3,233 +3,152 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="Manual LABMATTAR — critérios de aplicação editorial nas redes sociais.">
-<title>LABMATTAR — 06 / Redes Sociais</title>
+<meta name="description" content="LABMATTAR / aplicações editoriais da identidade em redes sociais.">
+<title>LABMATTAR — Redes Sociais</title>
 <link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19">
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
 <style>
-:root{--paper:#f7f6f2;--ink:#181818;--line:#cac8c0;--muted:#6d6b65;--red:#ce211a}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{background:var(--paper);color:var(--ink);margin:0}
-main{overflow:hidden}.lm-social{border-bottom:1px solid var(--line)}
-.lm-social>.inner{width:min(100% - 8vw,1460px);margin:auto;padding:clamp(84px,10vw,162px) 0}
-.lm-social .eyebrow,.meta,.index{}
-.lm-social .eyebrow{margin:0 0 24px}.lm-social h1,.lm-social h2{margin:0}
-.lm-social h1{}.lm-social h2{}.lm-social h1 em,.lm-social h2 em{}
-.lm-social .lead{max-width:37ch;margin:30px 0 0}
-.lm-social p{}.copy{max-width:55ch}
-.meta,.index{color:var(--muted)}.section-head{display:grid;grid-template-columns:1fr minmax(240px,440px);gap:clamp(24px,7vw,120px);align-items:end;margin-bottom:clamp(36px,6vw,90px)}
-.section-head .copy{margin:0}.divider{border:0;border-top:1px solid var(--line);margin:0}
-.thesis{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:80px}
-.thesis article{border-top:1px solid var(--ink);padding-top:14px}.thesis strong{display:block;margin:20px 0}
-.thesis p{max-width:30ch;}
-.season-sequence{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-block:1px solid var(--line);padding:22px 0;margin:42px 0 48px}
-.season-sequence span{}
-.season-sequence .arrow{color:var(--muted)}
-.case-stage{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:clamp(20px,4vw,64px)}
-.case-visual{min-height:550px;background:#e9e7e1;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px}
-.case-visual .tile{background:#ddd9d2;display:flex;align-items:flex-end;min-height:150px;padding:16px;position:relative;overflow:hidden}
-.case-visual .tile:nth-child(2),.case-visual .tile:nth-child(5){background:#d1cdc5}
-.case-visual .tile:nth-child(3){background:#ebe8e2}
-.case-visual .tile span{max-width:12ch}
-.case-visual .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.case-visual .tile img+span{position:relative;background:rgba(247,246,242,.92);padding:4px}
-.case-notes{display:flex;flex-direction:column;justify-content:space-between}
-.case-notes h3{margin:0 0 30px}
-.case-notes p{}
-.case-notes .small-note{border-top:1px solid var(--line);padding-top:16px;color:var(--muted)}
-.rule-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.rule-card{border-top:1px solid var(--ink);padding-top:14px}
-.rule-card h3{margin:20px 0}
-.rule-card .visual{height:clamp(230px,26vw,390px);background:#e6e3dc;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.rule-card .visual .photo{height:100%;width:100%;background:linear-gradient(130deg,#ccc6b9 0 40%,#e6dfd5 40% 75%,#b7b0a4 75%);filter:grayscale(1);opacity:.9}
-.rule-card .visual.identify .photo{position:absolute;inset:0}
-.rule-card .visual.identify .meta{position:absolute;left:7%;bottom:7%;color:#fff;z-index:2;background:#181818a8;padding:4px 6px}
-.rule-card .visual.compose{display:block;background:var(--paper);border:1px solid var(--line);padding:8%}
-.rule-card .visual.compose .big-type{position:absolute;top:26%;left:8%}
-.rule-card .visual.compose .meta{position:absolute;bottom:8%;left:8%}
-.rule-card .visual.compose .m-symbol{position:absolute;right:6%;bottom:8%;width:27%;opacity:.13}
-.rule-card p{max-width:37ch}
-.footnote{color:var(--muted);margin-top:24px}
-.method{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.method article{border-top:1px solid var(--line);display:grid;grid-template-columns:105px 1fr;gap:20px;padding:24px 0}
-.method h3{margin:0 0 12px}
-.method p{max-width:46ch;margin:0}
-.application{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.application article{min-width:0}.application .frame{aspect-ratio:3/4;background:#e2dfd8;position:relative;padding:9%;overflow:hidden}
-.application .frame.photo-full{background:linear-gradient(120deg,#bab4ac 0 35%,#ded7ca 35% 72%,#aaa39b 72%)}
-.application .frame.photo-title{background:linear-gradient(140deg,#c9c3b8 0 45%,#e5ded4 45%)}
-.application .frame.photo-title b{position:absolute;bottom:9%;left:9%;}
-.application .frame.breath{display:grid;grid-template-rows:68% 32%;padding:0}.application .frame.breath .photopart{background:linear-gradient(150deg,#ccc7be,#e2ded6)}.application .frame.breath b{padding:10%;}
-.application .frame.detail-crop{background:radial-gradient(ellipse at 65% 35%,#c9c1b4 0 18%,#e4ddd1 19% 32%,#b6aea2 33% 60%,#d5cec2 61%)}
-.application h3{margin:18px 0 8px}.application p{}
-.guide-table{width:100%;border-collapse:collapse}.guide-table td,.guide-table th{border-top:1px solid var(--line);text-align:left;vertical-align:top;padding:21px 14px 21px 0;}
-.guide-table th{width:25%;}.guide-table td:nth-child(2){width:40%}.guide-table td:nth-child(3){color:var(--muted)}
-.last-principle{max-width:19ch;margin:60px 0 0}
-@media(max-width:900px){.section-head,.case-stage{grid-template-columns:1fr}.case-notes{gap:30px}.rule-grid{grid-template-columns:1fr 1fr}.application{grid-template-columns:1fr 1fr}.thesis{margin-top:40px}.lm-social>.inner{width:calc(100% - 40px)}}
-@media(max-width:600px){.lm-social>.inner{padding:80px 0}.thesis,.rule-grid,.method{grid-template-columns:1fr}.method article{grid-template-columns:64px 1fr}.case-visual{min-height:420px}.rule-card .visual{height:340px}.guide-table th{width:30%}.guide-table td{padding:14px 8px 14px 0}.application .frame.photo-title b{}}
-
-/* Aplicações reais / Box do Sentir / Cada Corpo Abre um Mundo */
-.case-visual-real{grid-auto-rows:1fr;min-height:760px}
-.case-visual-real .tile{min-height:0;padding:0;background:#e6e3dc}
-.case-visual-real .tile.image-tile img{display:block;width:100%;height:100%;object-fit:cover}
-.case-visual-real .tile.image-tile>span{z-index:2;background:rgba(247,246,242,.93);padding:6px 8px;margin:12px}
-.case-visual-real .tile.detail-view img{object-position:70% 42%;transform:scale(1.4)}
-.case-visual-real .tile.alternate-view img{object-position:20% 50%;transform:scale(1.25)}
-.case-visual-real .tile.type-tile,.case-visual-real .tile.text-tile{display:flex;flex-direction:column;justify-content:space-between;padding:clamp(12px,2vw,28px);background:var(--paper)}
-.case-visual-real .tile.type-tile{background:#181818;color:#f7f6f2}
-.case-visual-real .tile.type-tile .poster-title{max-width:none}
-.case-visual-real .tile.type-tile .poster-title i{}
-.case-visual-real .tile .poster-footer{max-width:100%;background:transparent;padding:0}
-.case-visual-real .tile.text-tile .text-quote{max-width:none}
-.case-visual-real .tile.identity-tile{display:flex;align-items:center;justify-content:center;background:#ce211a;padding:18px}
-.case-visual-real .tile.identity-tile>img{width:65%;height:65%;object-fit:contain;filter:brightness(0) invert(1)}
-.case-visual-real .tile.identity-tile .poster-footer{position:absolute;bottom:14px;left:12px;color:white}
-.rule-card .visual .case-photo{width:100%;height:100%;object-fit:cover;display:block}
-.rule-card .visual.identify .case-photo{position:absolute;inset:0}
-.rule-card .visual.identify .meta{}
-.application .frame>img,.application .frame .photopart>img{height:100%;width:100%;object-fit:cover;display:block}
-.application .frame.photo-full,.application .frame.photo-title,.application .frame.detail-crop{padding:0;background:none}
-.application .frame.photo-title:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.53))}
-.application .frame.photo-title b{z-index:2;color:white;left:8%;bottom:8%;max-width:88%}
-.application .frame.breath .photopart{min-height:0}
-.application .frame.detail-crop>img{transform:scale(1.55);object-position:65% 40%}
-@media(max-width:600px){.case-visual-real{min-height:570px}.case-visual-real .tile.type-tile .poster-title{}.case-visual-real .tile.text-tile .text-quote{}.case-visual-real .tile .poster-footer{}}
-
-/* Revisão de curadoria: um caso, cinco fotografias distintas, uma peça gráfica. */
-.case-visual-real{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));min-height:610px;aspect-ratio:3/2;padding:0;gap:8px;background:transparent}
-.case-visual-real .tile{min-height:0;border-radius:0}
-.case-visual-real .tile.image-tile img{transform:none;object-position:center center}
-.case-visual-real .tile.image-tile>span{margin:0;position:absolute;left:0;bottom:0;z-index:3;padding:8px 12px;background:var(--paper);color:var(--ink)}
-.case-visual-real .tile.type-tile{padding:7%;background:#181818;color:white;min-width:0}
-.case-visual-real .tile.type-tile .poster-title{}
-.rule-card .visual.identify .meta{background:#181818;color:#fff}
-.application .frame.photo-title img{object-position:50% 44%}
-.application .frame.breath .photopart img{object-position:44% 48%}
-.application .frame.detail-crop>img{transform:scale(1.12);object-position:center}
-@media(max-width:900px){.case-visual-real{aspect-ratio:auto;min-height:520px}}
-@media(max-width:600px){.case-visual-real{gap:4px;min-height:480px;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,160px)}.case-visual-real .tile.type-tile .poster-title{}.case-visual-real .tile.image-tile>span{padding:5px}}
-
-.season-journey{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 15px}
-.season-journey article{display:grid;grid-template-rows:auto auto auto;gap:10px;min-width:0}
-.season-journey .season-thumb{width:100%;height:clamp(160px,18vw,270px);overflow:hidden;background:#d8d5cd}
-.season-journey img{display:block;width:100%;height:100%;object-fit:cover}
-.season-journey strong{max-width:20ch}
-.support-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,44px)}
-.support-panel{border-top:1px solid var(--ink);padding-top:14px;min-width:0}
-.support-panel figure{margin:16px 0 20px;background:#e5e1db;overflow:hidden}
-.support-post{width:100%;aspect-ratio:4/5}
-.support-post img,.support-story img{width:100%;height:100%;object-fit:cover;display:block}
-.support-carousel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:16px 0 20px;aspect-ratio:4/5}
-.support-carousel img{display:block;width:100%;height:100%;min-width:0;object-fit:cover}
-.support-story{width:71%;max-width:260px;aspect-ratio:9/16;position:relative;margin-left:auto!important;margin-right:auto!important}
-.support-safe{position:absolute;left:0;right:0;height:13%;background:#1818188a;color:white;display:flex;align-items:center;justify-content:center;}
-.support-safe.top{top:0}.support-safe.bottom{bottom:0;height:18%}
-.support-panel h3{margin:0 0 12px}
-.support-panel>p:not(.meta){margin:0;max-width:37ch}
-@media(max-width:800px){.support-grid{grid-template-columns:1fr}.support-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px}.support-panel>.meta{grid-column:1/-1}.support-panel figure,.support-panel .support-carousel{grid-row:2/4;margin:0}.support-panel h3{align-self:end}.support-story{margin:0 auto!important}}
-@media(max-width:600px){.season-journey{gap:8px}.season-journey .season-thumb{height:125px}.season-journey strong{}.support-panel{grid-template-columns:1fr}.support-panel figure,.support-panel .support-carousel{grid-row:auto}.support-story{width:70%}}
-
-/* Three canonical type roles: local page scale tokens, no extra font treatment. */
-.case-visual-real{container-type:inline-size;--lm-type-title-size:clamp(18px,3.2cqw,38px)}
-.case-visual-real .tile.type-tile .poster-title{display:block;max-width:100%;overflow-wrap:normal}
-.rule-card .visual.compose{container-type:inline-size;--lm-type-title-size:clamp(23px,9cqw,58px)}
-.rule-card .visual.compose .big-type{display:block;max-width:87%}
-.application .frame{container-type:inline-size}
-.application .frame.photo-title{--lm-type-title-size:clamp(18px,8.5cqw,40px)}
-.application .frame.breath{--lm-type-title-size:clamp(18px,8.5cqw,40px)}
-.case-notes{--lm-type-title-size:clamp(32px,4.2vw,64px)}
-.rule-card{--lm-type-title-size:clamp(27px,2.7vw,44px)}
-.method article{--lm-type-title-size:clamp(24px,2.4vw,40px)}
-.application article{--lm-type-title-size:clamp(22px,2vw,34px)}
-.support-panel{--lm-type-title-size:clamp(24px,2.1vw,36px)}
-.season-journey article{--lm-type-title-size:clamp(21px,2vw,32px)}
-/* An image stays an image: avoid pseudo-photo treatments and overlays on documentation examples. */
-.rule-card .visual .case-photo,.application .frame>img,.support-post img{filter:none}
-
-/* The chapter cover respects the twelve-column manual grid; no independent typography. */
-html body main .lm-social-cover>.inner>.lead{grid-column:1 / 8;grid-row:3;min-width:0;max-width:40ch}
-html body main .lm-social-cover>.inner>.thesis{grid-column:1 / -1;grid-row:4;width:100%;min-width:0}
-@media(max-width:800px){html body main .lm-social-cover>.inner>.lead{grid-column:1 / -1}}
+:root{--paper:#f7f6f2;--ink:#181818;--line:#c9c8c2;--muted:#77756e}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);margin:0}
+main{overflow:hidden}
+.chapter{border-bottom:1px solid var(--line)}
+.chapter>.inner{width:min(100% - 8vw,1350px);margin:0 auto;padding:clamp(72px,9vw,128px) 0}
+.chapter h2{max-width:100%;margin:0}
+.chapter p{margin:0}
+.eyebrow{margin-bottom:26px!important}
+.chapter-intro{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:end;gap:clamp(30px,5vw,100px);margin-bottom:48px}
+.chapter-intro>.copy{max-width:45ch}
+.captionline{border-top:1px solid var(--line);padding-top:13px;margin-top:12px!important;color:var(--muted)}
+.chapter-cover .intro{margin-top:50px}
+.chapter-cover .intro p{max-width:55ch}
+.hero-photo{position:relative;aspect-ratio:16/9;background:#d8d4d0;overflow:hidden}
+.hero-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 44%}
+.hero-photo .corner{position:absolute;left:22px;bottom:22px;background:var(--paper);color:var(--ink);padding:7px 10px}
+.curation-head{display:flex;justify-content:space-between;gap:20px;align-items:baseline;border-bottom:1px solid var(--ink);padding-bottom:16px;margin-bottom:20px}
+.curation-head p{max-width:41ch}
+.feed-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.feed-tile{margin:0;position:relative;aspect-ratio:4/5;overflow:hidden;background:#dbd7cf}
+.feed-tile img{display:block;width:100%;height:100%;object-fit:cover}
+.feed-tile figcaption{position:absolute;left:0;bottom:0;background:var(--paper);padding:9px 12px;max-width:88%}
+.feed-note{display:flex;justify-content:space-between;gap:25px;padding-top:17px;border-top:1px solid var(--line);margin-top:16px}
+.feed-note p{max-width:50ch}
+.edition-rows{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,44px)}
+.edition-rows article{border-top:1px solid var(--ink);padding-top:13px}
+.edition-rows figure{margin:20px 0 18px;aspect-ratio:4/5;position:relative;overflow:hidden;background:#ddd}
+.edition-rows figure img{width:100%;height:100%;display:block;object-fit:cover}
+.edition-rows h3{margin:0 0 14px}
+.edition-rows article>p:last-child{max-width:36ch}
+.edition-rows figure .photo-label{position:absolute;left:0;bottom:0;padding:8px 10px;background:var(--paper)}
+.edition-rows .graphic-only{background:#1b1b1b;color:#f7f6f2;display:flex;flex-direction:column;justify-content:space-between;padding:9%}
+.edition-rows .graphic-only .type-mark{display:block;max-width:10ch;overflow-wrap:break-word;--lm-type-title-size:clamp(29px,5vw,65px)}
+.edition-rows .graphic-only .type-mark em{display:block}
+.edition-rows .graphic-only .detail{color:#f7f6f2}
+.formats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(16px,3vw,40px)}
+.formats article{min-width:0;border-top:1px solid var(--ink);padding-top:12px}
+.formats figure{margin:18px 0;background:#ddd;position:relative;overflow:hidden;width:100%}
+.formats figure img{display:block;width:100%;height:100%;object-fit:cover}
+.formats .format-feed{aspect-ratio:4/5}
+.formats .format-sequence{aspect-ratio:4/5;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;background:var(--paper)}
+.formats .format-sequence img{min-width:0}
+.formats .format-story{aspect-ratio:9/16;max-width:280px;margin-left:auto;margin-right:auto}
+.formats .format-story::before,.formats .format-story::after{content:"";position:absolute;inset:0 0 auto;height:14%;background:linear-gradient(#18181888,transparent)}
+.formats .format-story::after{inset:auto 0 0;height:20%;background:linear-gradient(transparent,#18181888)}
+.formats article>p:last-child{max-width:35ch}
+.principles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(25px,5vw,100px);margin-top:38px}
+.principles article{border-top:1px solid var(--line);padding:20px 0 24px;display:grid;grid-template-columns:90px 1fr;gap:20px}
+.principles article h3{margin:0 0 10px}
+.principles article p{max-width:48ch}
+.timeline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:40px}
+.timeline figure{margin:0}.timeline img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.timeline figcaption{padding-top:12px}
+.timeline small{display:block;color:var(--muted);margin-bottom:6px}
+.outro{border-top:1px solid var(--ink);padding-top:22px;margin-top:64px;max-width:65ch}
+@media(max-width:800px){
+.chapter-intro{grid-template-columns:1fr;gap:22px}
+.chapter>.inner{width:calc(100% - 40px)}
+.edition-rows,.formats{grid-template-columns:1fr 1fr}
+.principles{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+.feed-grid{gap:4px}
+.feed-tile figcaption{padding:4px 6px}
+.edition-rows,.formats{grid-template-columns:1fr}
+.edition-rows figure{max-width:440px}
+.formats .format-story{margin-left:0}
+.timeline{gap:5px}
+.timeline img{aspect-ratio:3/4}
+.principles article{grid-template-columns:60px 1fr;gap:12px}
+.feed-note{flex-direction:column}
+.hero-photo{aspect-ratio:4/5}
+}
 </style>
+<script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 </head>
 <body>
-<main id="conteudo">
-<section class="lm-social lm-social-cover lm-manual-cover" id="abertura"><div class="inner">
+<main>
+<section class="chapter chapter-cover lm-manual-cover" id="abertura"><div class="inner">
 <p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 06 — REDES SOCIAIS</p>
-<h1>REDES<br><em>SOCIAIS</em></h1>
-<p class="lead">Uma presença reconhecível não depende de repetir a marca. Depende de editar com os mesmos critérios.</p>
-<div class="thesis">
-<article><span class="index">01 / CONTEÚDO</span><strong>O projeto vem primeiro.</strong><p>As imagens, os gestos, a materialidade e os processos preservam sua singularidade.</p></article>
-<article><span class="index">02 / SISTEMA</span><strong>A identidade orienta.</strong><p>Tipografia, enquadramento, cor e vetor são utilizados conforme a função de cada publicação.</p></article>
-<article><span class="index">03 / TEMPO</span><strong>O perfil acumula temporadas.</strong><p>O feed registra a sequência dos projetos, sem depender de mosaicos ou alternâncias artificiais.</p></article>
-</div></div></section>
-<section class="lm-social" id="temporadas"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">01 / ORGANIZAÇÃO EDITORIAL</p><h2>O FEED<br><em>É TEMPO</em></h2></div><p class="copy">Cada projeto constitui uma temporada. Publicações do mesmo conjunto formam uma narrativa; quando a temporada seguinte começa, a anterior permanece como arquivo. A ordem no perfil é inversa à cronologia de publicação.</p></div>
-<div class="season-sequence"><span>01 / Cada Corpo Abre um Mundo</span><span class="arrow">→</span><span>02 / Poiesis</span><span class="arrow">→</span><span>03 / Aleteia</span><span class="meta">ORDEM DE ENTRADA</span></div>
-<div class="season-journey" aria-label="Entrada das temporadas em ordem cronológica">
-<article><div class="season-thumb"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Cada Corpo Abre um Mundo, primeira temporada no estudo"></div><span class="meta">01 / TEMPORADA</span><strong>Cada Corpo Abre um Mundo</strong></article>
-<article><div class="season-thumb"><img src="/redes-acervo/poiesis-34.jpg" alt="Poiesis, segunda temporada no estudo"></div><span class="meta">02 / TEMPORADA</span><strong>Poiesis</strong></article>
-<article><div class="season-thumb"><img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia, terceira temporada no estudo"></div><span class="meta">03 / TEMPORADA</span><strong>Aleteia</strong></article>
-</div><p class="footnote">ORDEM DE ENTRADA DAS TEMPORADAS, DA ESQUERDA PARA A DIREITA. NO PERFIL, O CONTEÚDO MAIS RECENTE APARECE PRIMEIRO.</p>
-<div class="case-stage"><div class="case-visual case-visual-real" aria-label="Seis aplicações de uma temporada, com fotografias de Cada Corpo Abre um Mundo">
-<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Visão ampla da gastroperformance, com cena e projeção"><span>01 / SITUAÇÃO</span></div>
-<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Simone Mattar na apresentação ao público"><span>02 / AÇÃO</span></div>
-<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Convidada experimentando um aroma durante a experiência"><span>03 / GESTO</span></div>
-<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Preparação gastronômica sobre prato iluminado"><span>04 / MATÉRIA</span></div>
-<div class="tile image-tile"><img src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Cartão e impresso interativo à mesa"><span>05 / DISPOSITIVO</span></div>
-<div class="tile type-tile"><span class="poster-title title">CADA<br>CORPO<br>ABRE UM<br><em>MUNDO</em></span><span class="poster-footer">SIMONE MATTAR / GASTROPERFORMANCE</span></div>
-</div><div class="case-notes"><div><p class="meta">CASO PRINCIPAL / CADA CORPO ABRE UM MUNDO</p><h3 class="title">Uma temporada.<br>Várias escalas<br>de olhar.</h3><p>Cinco registros distintos e uma aplicação tipográfica demonstram como editar um mesmo acervo: situação, ação, gesto, matéria, dispositivo e contexto. A sequência é um estudo de decisões editoriais, não uma quantidade obrigatória de posts.</p><p>Não se deve inserir imagens de outros projetos para completar uma grade. A publicação é definida pelo que acrescenta à leitura do projeto. A fotografia pode permanecer íntegra; a tipografia entra quando existe informação que não pode ficar apenas na legenda.</p></div><p class="small-note">REGISTROS DE CADA CORPO ABRE UM MUNDO / BOX DO SENTIR. EXERCÍCIO DE APLICAÇÃO, NÃO HISTÓRICO DO INSTAGRAM.</p></div></div>
+<h1 class="big"><span class="lm-cover-title-content">REDES<br><span class="perpetua">SOCIAIS</span></span></h1>
+<div class="intro"><p>Nas redes, a identidade se reconhece pelo modo de apresentar cada projeto. Imagem, texto e movimento não precisam aparecer juntos: cada recurso entra quando contribui para a leitura.</p></div>
 </div></section>
-<section class="lm-social" id="intensidade"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">02 / GRAU DE INTERVENÇÃO</p><h2>TRÊS FORMAS<br><em>DE PRESENÇA</em></h2></div><p class="copy">A intervenção responde à função editorial. Uma imagem pode permanecer autônoma, receber apenas uma identificação ou tornar-se uma composição. A escolha depende da informação necessária, não de um modelo obrigatório.</p></div>
-<div class="rule-grid">
-<article class="rule-card"><span class="meta">01 / PRESERVAR</span><div class="visual"><img class="case-photo" src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Fotografia do projeto preservada sem interferência gráfica"></div><h3 class="title">Preservar.</h3><p>Registro e experiência sem elementos sobrepostos. A legenda identifica o conteúdo. Evita competição entre grafismo e imagem.</p></article>
-<article class="rule-card"><span class="meta">02 / IDENTIFICAR</span><div class="visual identify"><img class="case-photo" src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Imagem do Box do Sentir com identificação editorial"><span class="meta">CADA CORPO ABRE UM MUNDO</span></div><h3 class="title">Identificar.</h3><p>Texto Detalhe apenas quando a leitura precisar de apoio. Contraste verificável e posição protegida dos elementos principais.</p></article>
-<article class="rule-card"><span class="meta">03 / COMPOR</span><div class="visual compose"><span class="meta">LABMATTAR / PROJETOS</span><span class="big-type title">CADA CORPO<br>ABRE UM<br>MUNDO</span><img class="m-symbol" src="/identidade/M.svg" alt="" aria-hidden="true"><span class="meta">TEMPORADA / 01</span></div><h3 class="title">Compor.</h3><p>Para abertura, texto curatorial ou informação que não cabe numa legenda. Usar apenas Título, Corpo e Detalhe e os vetores oficiais.</p></article>
-</div><p class="footnote">APLICAÇÕES COM FOTOGRAFIAS DO BOX DO SENTIR E COMPOSIÇÃO TIPOGRÁFICA DA IDENTIDADE.</p>
-</div></section>
-<section class="lm-social" id="funcoes"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">03 / FUNÇÃO ANTES DO FORMATO</p><h2>O QUE CADA<br><em>PEÇA FAZ</em></h2></div><p class="copy">O tipo de publicação é definido por sua função na narrativa. A escolha do formato vem depois. Um carrossel pode reunir funções diferentes sem converter cada imagem em template.</p></div>
-<div class="method">
-<article><span class="index">01</span><div><h3 class="title">Abrir</h3><p>Situar o projeto com uma imagem forte ou título. A capa não precisa carregar logotipo, descrição e créditos ao mesmo tempo.</p></div></article>
-<article><span class="index">02</span><div><h3 class="title">Mostrar</h3><p>Publicar registros em que escala, ação, espaço ou corpo sejam legíveis, sem sobreposição gráfica desnecessária.</p></div></article>
-<article><span class="index">03</span><div><h3 class="title">Aproximar</h3><p>Usar detalhes para revelar matéria, gesto ou textura; o recorte deve acrescentar informação, não apenas variar esteticamente.</p></div></article>
-<article><span class="index">04</span><div><h3 class="title">Contextualizar</h3><p>Trazer notas, créditos, textos e processo. Preferir legenda; usar composição textual quando a informação precisar existir na própria imagem.</p></div></article>
-<article><span class="index">05</span><div><h3 class="title">Sequenciar</h3><p>Carrosséis organizam relações entre imagens. Cada quadro deve ampliar ou deslocar a leitura, sem repetição gratuita.</p></div></article>
-<article><span class="index">06</span><div><h3 class="title">Movimentar</h3><p>Vídeo apresenta ação e temporalidade; a Matriz Vetorial pode marcar transições pontuais, mas não deve virar vinheta obrigatória.</p></div></article>
-</div></div></section>
-<section class="lm-social" id="enquadramentos"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">04 / ENQUADRAMENTOS</p><h2>VARIAR SEM<br><em>PADRONIZAR</em></h2></div><p class="copy">Quatro possibilidades de enquadramento mostram como responder às condições da imagem sem impor um modelo único. A escolha depende do assunto, da área segura de leitura e do recorte visível na miniatura do perfil.</p></div>
-<div class="application">
-<article><div class="frame photo-full"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Imagem integral do projeto"></div><h3 class="title">Imagem plena</h3><p>Registro e imagem autossuficiente. Sem texto sobreposto.</p></article>
-<article><div class="frame photo-title"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Fotografia com título sobreposto"><b class="title">CADA CORPO<br>ABRE UM MUNDO</b></div><h3 class="title">Título sobre imagem</h3><p>Somente quando existe área livre e contraste suficiente.</p></article>
-<article><div class="frame breath"><div class="photopart"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Imagem em campo de respiro"></div><b class="title">CADA CORPO<br>ABRE UM MUNDO</b></div><h3 class="title">Campo de respiro</h3><p>Separar imagem e texto quando ambos precisam de autonomia.</p></article>
-<article><div class="frame detail-crop"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Detalhe ampliado da imagem do projeto"></div><h3 class="title">Detalhe ampliado</h3><p>Aproximar a matéria sem perder o sentido do registro.</p></article>
-</div><p class="footnote">ESTUDOS DE ENQUADRAMENTO COM REGISTROS DO BOX DO SENTIR.</p>
-</div></section>
-<section class="lm-social" id="suportes"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">05 / DA PEÇA À PLATAFORMA</p><h2>FEED,<br><em>SEQUÊNCIA, VÍDEO</em></h2></div><p class="copy">A mesma gramática editorial responde a suportes diferentes. Defina primeiro a função da imagem; depois confira proporção, ordem de leitura e elementos encobertos pela interface.</p></div>
-<div class="support-grid">
-<article class="support-panel"><p class="meta">01 / POST NO FEED</p><figure class="support-post"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Registro vertical sem sobreposição de textos"></figure><h3 class="title">Registro integral</h3><p>A fotografia já apresenta a cena. A autoria e os créditos podem ficar na legenda. Conferir o recorte da miniatura antes de publicar.</p></article>
-<article class="support-panel"><p class="meta">02 / CARROSSEL</p><div class="support-carousel"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Abertura com situação da gastroperformance"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Quadro de gesto e experiência"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Quadro de detalhe matérico"></div><h3 class="title">Uma progressão, não um template</h3><p>Começar pela situação, aproximar o gesto e terminar na matéria é uma possibilidade de leitura. Não repetir capa ou assinatura em todos os quadros.</p></article>
-<article class="support-panel"><p class="meta">03 / STORY E REEL</p><figure class="support-story"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Estudo de enquadramento vertical para vídeo ou story"><span class="support-safe top">ÁREA DE INTERFACE</span><span class="support-safe bottom">ÁREA DE INTERFACE</span></figure><h3 class="title">A imagem precisa sobreviver à interface</h3><p>Em 9:16, manter rostos, gestos e informações essenciais fora das faixas cobertas por nome do perfil, comandos e legendas. Em vídeo, usar movimento gráfico somente com função narrativa.</p></article>
+
+<section class="chapter lm-manual-section" id="caso">
+<div class="inner">
+<p class="eyebrow">01 / UM PROJETO, MUITAS FORMAS DE MOSTRAR</p>
+<div class="chapter-intro"><h2>CADA CORPO<br><span class="perpetua">ABRE UM MUNDO</span></h2><p class="copy">A gastroperformance de Simone Mattar é o caso de aplicação. Seu acervo reúne cena, ação, matéria e dispositivos. A edição dá ritmo a esses registros sem uniformizá-los.</p></div>
+<figure class="hero-photo"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Vista da gastroperformance com projeção e participantes"><figcaption class="corner detail">CADA CORPO ABRE UM MUNDO / REGISTRO</figcaption></figure>
+<p class="detail captionline">ABERTURA / A IMAGEM APRESENTA O PROJETO. TÍTULO E CRÉDITOS PODEM PERMANECER NA LEGENDA.</p>
+<div class="curation-head" style="margin-top:60px"><p class="detail">ESTUDO DE CURADORIA / UM ÚNICO PROJETO</p><p class="detail">NÃO É UMA GRADE DE NOVE POSTS OBRIGATÓRIOS</p></div>
+<div class="feed-grid">
+<figure class="feed-tile"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Visão geral da experiência"><figcaption class="detail">01 / SITUAÇÃO</figcaption></figure>
+<figure class="feed-tile"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Ação em cena"><figcaption class="detail">02 / AÇÃO</figcaption></figure>
+<figure class="feed-tile"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Gesto e experimentação sensorial"><figcaption class="detail">03 / GESTO</figcaption></figure>
+<figure class="feed-tile"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Preparação e materialidade"><figcaption class="detail">04 / MATÉRIA</figcaption></figure>
+<figure class="feed-tile"><img src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Impresso interativo da experiência"><figcaption class="detail">05 / DISPOSITIVO</figcaption></figure>
+<figure class="feed-tile"><img src="/ambiente-editorial/media/BOXDOSENTIR-179.jpg" alt="Outro registro da experiência"><figcaption class="detail">06 / CONTINUIDADE</figcaption></figure>
 </div>
-<p class="footnote">REFERÊNCIAS DE PRODUÇÃO: POST 4:5 (1080 × 1350) OU 3:4 (1080 × 1440), QUANDO SUPORTADO; STORIES/REELS 9:16 (1080 × 1920). A ÁREA EXATA DE INTERFACE VARIA: CONFERIR PRÉVIA NO APLICATIVO.</p>
+<div class="feed-note"><p>O conjunto tem coerência porque pertence à mesma experiência, não porque compartilha um filtro, moldura ou cor.</p><p class="detail">A ORDEM ACIMA É UM ESTUDO DE LEITURA, NÃO UMA PROGRAMAÇÃO DE PUBLICAÇÃO.</p></div>
 </div></section>
-<section class="lm-social" id="regras"><div class="inner">
-<div class="section-head"><div><p class="eyebrow">06 / REGRAS DE APLICAÇÃO</p><h2>UMA MESMA<br><em>GRAMÁTICA</em></h2></div><p class="copy">Não há uma identidade paralela para redes sociais. O sistema do manual continua válido; a aplicação adapta as proporções, o recorte e a leitura ao suporte.</p></div>
-<table class="guide-table"><thead><tr><th>Elemento</th><th>Aplicar</th><th>Evitar</th></tr></thead><tbody>
-<tr><th>Tipografia</th><td>Univers e Perpetua; exclusivamente Título, Corpo e Detalhe, com hierarquia e margens do manual.</td><td>Novas classes, slogans decorativos, redução do texto até perder legibilidade.</td></tr>
-<tr><th>Imagem</th><td>Preservar composição e autoria; verificar corte do perfil e das interfaces.</td><td>Cortar gestos relevantes para completar uma grade ou cobrir áreas essenciais com texto.</td></tr>
-<tr><th>Cor</th><td>Usar apenas a paleta oficial, preto e branco; estabelecer contraste entre informação e fundo.</td><td>Cores de ocasião, filtros arbitrários e efeitos que descaracterizem registros.</td></tr>
-<tr><th>M / Vetores</th><td>Avatar, peças compostas e transições pontuais conforme o comportamento vetorial aprovado.</td><td>Marca d'água em todas as fotografias; M sólido sobre imagem; distorções e novos tratamentos.</td></tr>
-<tr><th>Movimento</th><td>Usar vídeos do acervo e a Matriz Vetorial quando houver função narrativa.</td><td>Vinheta automática ou transição sem relação com o conteúdo.</td></tr>
-<tr><th>Feed / Temporadas</th><td>Publicar em sequência; conferir a leitura do conjunto na ordem inversa do perfil.</td><td>Mosaicos dependentes de posições fixas ou mistura artificial entre projetos.</td></tr>
-<tr><th>Carrossel</th><td>Ordenar abertura, desenvolvimento e informações complementares segundo o material.</td><td>Obrigar todas as sequências ao mesmo número de quadros.</td></tr>
-<tr><th>Formato</th><td>Escolher proporção conforme fotografia, vídeo e leitura; revisar em tela móvel antes de publicar.</td><td>Tratar dimensões da plataforma como uma nova regra estética da marca.</td></tr>
-</tbody></table>
-<p class="last-principle">A consistência vem das decisões, não da repetição de uma aparência.</p>
+
+<section class="chapter lm-manual-section" id="aplicacoes"><div class="inner">
+<p class="eyebrow">02 / DECIDIR A INTERVENÇÃO</p>
+<div class="chapter-intro"><h2>PRESERVAR.<br><span class="perpetua">IDENTIFICAR. COMPOR.</span></h2><p class="copy">Três graus de intervenção, um único sistema. A decisão não depende de alternar estilos no feed: depende do conteúdo de cada peça.</p></div>
+<div class="edition-rows">
+<article><p class="detail">01 / PRESERVAR</p><figure><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Registro fotográfico sem interferência gráfica"></figure><h3>Quando a imagem basta</h3><p>Publicar sem grafismo. A legenda oferece título, crédito e contexto, deixando a fotografia íntegra.</p></article>
+<article><p class="detail">02 / IDENTIFICAR</p><figure><img src="/redes-cpc/BOXDOSENTIR-99.jpg" alt="Imagem com identificação mínima"><span class="photo-label detail">CADA CORPO ABRE UM MUNDO</span></figure><h3>Quando nomear ajuda</h3><p>Identificação breve em área de leitura. Conferir contraste, margens e o que será recortado na miniatura.</p></article>
+<article><p class="detail">03 / COMPOR</p><figure class="graphic-only"><span class="detail">SIMONE MATTAR / GASTROPERFORMANCE</span><span class="type-mark title">CADA CORPO<br>ABRE UM <em>MUNDO</em></span><span class="detail">LABMATTAR / ACERVO</span></figure><h3>Quando o texto é a peça</h3><p>Para abertura, contextualização ou crédito. Usar Título, Corpo e Detalhe, sem criar outra linguagem tipográfica.</p></article>
+</div>
+</div></section>
+
+<section class="chapter lm-manual-section" id="formatos"><div class="inner">
+<p class="eyebrow">03 / APLICAÇÃO POR SUPORTE</p>
+<div class="chapter-intro"><h2>UMA LINGUAGEM.<br><span class="perpetua">TRÊS LEITURAS.</span></h2><p class="copy">O formato não define a identidade. Ele determina a área disponível, a ordem de leitura e o recorte. O conteúdo decide como ocupá-lo.</p></div>
+<div class="formats">
+<article><p class="detail">PUBLICAÇÃO / 4:5</p><figure class="format-feed"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Fotografia vertical em publicação"></figure><h3>Uma imagem</h3><p>Priorizar o enquadramento que sustenta o gesto. A miniatura do perfil também precisa funcionar.</p></article>
+<article><p class="detail">CARROSSEL / SEQUÊNCIA</p><figure class="format-sequence"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Situação"><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Ação"><img src="/redes-cpc/BOXDOSENTIR-181.jpg" alt="Matéria"></figure><h3>Uma progressão</h3><p>Cada quadro acrescenta uma escala de informação: situação, ação, aproximação. Sem capa repetida em todos os slides.</p></article>
+<article><p class="detail">STORY / REEL / 9:16</p><figure class="format-story"><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Proposta de recorte vertical sem texto sobreposto"></figure><h3>Um campo móvel</h3><p>Preservar rostos, gestos e leitura fora das interfaces. O movimento gráfico só entra quando participa da narrativa.</p></article>
+</div></div></section>
+
+<section class="chapter lm-manual-section" id="criterios"><div class="inner">
+<p class="eyebrow">04 / CRITÉRIOS DE PRODUÇÃO</p>
+<div class="chapter-intro"><h2>O QUE<br><span class="perpetua">PERMANECE.</span></h2><p class="copy">As regras de redes derivam do manual. O reconhecimento nasce da consistência dessas decisões, e não da repetição de uma marca sobre toda fotografia.</p></div>
+<div class="principles">
+<article><p class="detail">01 / IMAGEM</p><div><h3>Preservar a obra</h3><p>Não aplicar filtros para igualar projetos. Escolher recortes que preservem corpos, ações e materiais. Conferir as miniaturas antes da publicação.</p></div></article>
+<article><p class="detail">02 / TEXTO</p><div><h3>Três tratamentos</h3><p>Somente Título, Corpo e Detalhe, com Univers e Perpetua nas funções previstas. Dar preferência à legenda quando o texto não precisa ocupar a imagem.</p></div></article>
+<article><p class="detail">03 / SÍMBOLO</p><div><h3>Uso com função</h3><p>O M e seus vetores não são marcas d'água. Podem aparecer no avatar, em composições ou passagens de movimento, preservando sua geometria oficial.</p></div></article>
+<article><p class="detail">04 / COR</p><div><h3>Paleta existente</h3><p>Usar somente a paleta aprovada, preto e branco. Não impor cor sobre fotografias para fabricar unidade. Garantir contraste suficiente para qualquer texto aplicado.</p></div></article>
+<article><p class="detail">05 / MOTION</p><div><h3>Ritmo do conteúdo</h3><p>Vídeos mantêm o tempo próprio do registro. A Matriz Vetorial pode marcar transições, mas não exige vinheta de abertura ou encerramento.</p></div></article>
+<article><p class="detail">06 / ACESSO</p><div><h3>Legibilidade real</h3><p>Verificar no celular e com a interface da plataforma. Para texto sobre fundo, adotar contraste mínimo WCAG de 4,5:1 em texto comum e 3:1 em texto grande.</p></div></article>
+</div>
+<p class="detail" style="margin-top:35px">FORMATOS DE REFERÊNCIA / 4:5 — 1080 × 1350 PX · 9:16 — 1080 × 1920 PX. VERIFICAR REGRAS ATUAIS DA PLATAFORMA ANTES DE EXPORTAR.</p>
+<div class="timeline">
+<figure><img src="/redes-cpc/BOXDOSENTIR-61.jpg" alt="Cada Corpo Abre um Mundo"><figcaption><small class="detail">01 / TEMPORADA</small>Cada Corpo Abre um Mundo</figcaption></figure>
+<figure><img src="/redes-acervo/poiesis-34.jpg" alt="Poiesis"><figcaption><small class="detail">02 / TEMPORADA</small>Poiesis</figcaption></figure>
+<figure><img src="/redes-acervo/aleteia-08.jpg" alt="Aleteia"><figcaption><small class="detail">03 / TEMPORADA</small>Aleteia</figcaption></figure>
+</div>
+<div class="outro"><p>Uma temporada reúne publicações de um mesmo projeto. As temporadas se acumulam no histórico; no perfil, as publicações mais recentes aparecem primeiro. Não misturar projetos apenas para compor um mosaico.</p></div>
 </div></section>
 </main>
-<script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 </body></html>

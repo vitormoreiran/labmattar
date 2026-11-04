@@ -30,7 +30,7 @@ async function reference(index){
 }
 try{
   await page.goto(url+'?studio=1#laboratorio',{waitUntil:'networkidle'});
-  await page.waitForSelector('#labPages[data-ready="true"]');
+  await page.waitForSelector('#labPages[data-ready="true"]',{state:'attached'});
   if(!await page.locator('body').evaluate(body=>body.classList.contains('lm-studio-open')))await page.locator('#labStudioToggle').click();
   await surface();assert.equal(await page.locator('#labPageSelect option').count(),1);
   await page.locator('.lab-project-settings>summary').click();
@@ -83,7 +83,7 @@ try{
   const corrupted=structuredClone(authored);corrupted.pages[1].composition.assets[0].uri='/identidade/vaso_03.svg';
   const refused=await page.evaluate(async document=>{try{await window.LabPages.load(document);return false;}catch{return true;}},corrupted);
   assert.ok(refused);assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),authored);
-  await page.reload({waitUntil:'networkidle'});await page.waitForSelector('#labPages[data-ready="true"]');
+  await page.reload({waitUntil:'networkidle'});await page.waitForSelector('#labPages[data-ready="true"]',{state:'attached'});
   assert.equal(await page.locator('#labPageSelect option').count(),4,'Local sequence survives reload');
   await surface();
   for(let index=0;index<4;index++){

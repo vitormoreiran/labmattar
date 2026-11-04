@@ -56,7 +56,8 @@ try {
             // routes address the same separated editor. Verify its actual
             // functional canvas rather than insisting on a file extension.
             const isCompor=next=>/^[/]compor(?:[.]html)?[/]?$/.test(new URL(next).pathname);
-            await oldImagePage.waitForURL(isCompor,{timeout:15000});
+            try{await oldImagePage.waitForURL(isCompor,{timeout:15000});}
+            catch(error){throw new Error('Legacy image redirect ended at '+oldImagePage.url()+': '+error.message);}
             assert.ok(isCompor(oldImagePage.url()),
               'Legacy image URL must redirect into Compor: '+oldImagePage.url());
             assert.equal(await oldImagePage.locator('#labArtboard').count(),1,

@@ -14,7 +14,8 @@ try{
     await page.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await page.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1);
     assert.equal(await page.locator('main>section').count(),5,'Cover plus four editorial sections');
-    assert.equal(await page.locator('.feed-grid .feed-tile').count(),6,'Six curated views');
+    assert.equal(await page.locator('.ig-feed img').count(),6,'Six equally sized photographs');
+    assert.equal(await page.locator('.ig-feed figcaption').count(),0,'No captions over photographs');
     assert.equal(await page.locator('.edition-rows article').count(),3,'Three intervention decisions');
     assert.equal(await page.locator('.formats article').count(),3,'Three platform applications');
     assert.equal(await page.locator('.principles article').count(),6,'Six normative criteria');
@@ -25,7 +26,7 @@ try{
     assert.ok(!body.includes('Fome Come'));
     const media=await page.locator('img').evaluateAll(list=>list.map(i=>({src:i.getAttribute('src'),loaded:i.complete&&i.naturalWidth>0})));
     assert.ok(media.every(x=>x.loaded),'All project photographs loaded');
-    assert.equal(new Set((await page.locator('.feed-grid img').evaluateAll(list=>list.map(x=>x.src)))).size,6,'Six distinct project photographs');
+    assert.equal(new Set((await page.locator('.ig-feed img').evaluateAll(list=>list.map(x=>x.src)))).size,6,'Six distinct project photographs');
     assert.equal(await page.locator('.graphic-only .type-mark').getAttribute('data-lm-text-role'),'title');
     const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+2);
     assert.equal(overflow,false,'No horizontal overflow');

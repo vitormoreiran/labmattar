@@ -126,22 +126,61 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           <button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="151" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-151.jpg"></span></span><span class="lm-ctrl-name">Imagem 03</span><span class="lm-ctrl-meta">Detalhe</span></button></div></div>
                   
         <div id="labAcervo" class="lm-acervo">
-          <div class="lm-acervo-heading"><span>ACERVO CONECTADO</span><small id="labAcervoCurrent">Fotografias do laboratório</small></div>
-          <div class="lm-acervo-connections">
-            <div class="lm-acervo-account"><div><strong>Google Drive</strong><small id="labAcervoConnection-google">Conectar ou abrir conta</small></div><button id="labAcervoConnect-google" data-acervo-provider="google" type="button">Conectar</button><button id="labAcervoDisconnect-google" type="button" hidden aria-label="Desconectar Google Drive">×</button></div>
-            <div class="lm-acervo-account"><div><strong>Dropbox</strong><small id="labAcervoConnection-dropbox">Conectar ou abrir conta</small></div><button id="labAcervoConnect-dropbox" data-acervo-provider="dropbox" type="button">Conectar</button><button id="labAcervoDisconnect-dropbox" type="button" hidden aria-label="Desconectar Dropbox">×</button></div>
-          </div>
-          <small class="lm-ctrl-helper">Arquivos privados, acesso autorizado pela conta. A seleção não publica o acervo.</small>
+          <div class="lm-acervo-heading"><span>BIBLIOTECA DE MÍDIA</span></div>
+          <button type="button" id="labAcervoLaunch" class="lm-acervo-launch" data-acervo-open aria-haspopup="dialog" aria-controls="labAcervoDialog">
+            <span class="lm-acervo-launch-logos"><svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#00875A" d="M10.5 3h8.2L7.1 23.1H.2z"/><path fill="#4285F4" d="M7.1 23.1h24.6l-4.1 6.9H3z"/><path fill="#FFBA00" d="M18.7 3 31.7 23h-8.2L10.5 3z"/></svg><svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><g fill="#0061FF"><path d="M8 2 1 7l7 5.1L15 7zM24 2l-7 5 7 5.1L31 7zM8 13.6l-7 5 7 5.1 7-5.1zM24 13.6l-7 5 7 5.1 7-5.1zM16 20.9l-8 5.2 8 4.9 8-4.9z"/></g></svg></span>
+            <span class="lm-acervo-launch-text"><strong>Adicionar da nuvem</strong><small>Google Drive ou Dropbox</small></span>
+            <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+          </button>
+          <small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
         </div>
         <div id="labAcervoDialog" class="lm-acervo-overlay" hidden>
-          <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-label="Selecionar mídia do acervo">
-            <header><div><small>LABMATTAR / MÍDIA</small><h3 id="labAcervoPath">Acervo conectado</h3></div><button id="labAcervoClose" type="button" aria-label="Fechar acervo">×</button></header>
-            <div class="lm-acervo-toolbar"><button id="labAcervoBack" type="button" hidden>Voltar</button><button id="labAcervoMore" type="button" hidden>Carregar mais</button></div>
-            <p id="labAcervoStatus" role="status" aria-live="polite"></p>
-            <div id="labAcervoItems" class="lm-acervo-items"></div>
+          <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">
+            <header class="lm-acervo-dialog-heading">
+              <div><span class="lm-acervo-kicker">BIBLIOTECA DE MÍDIA</span><h3 id="labAcervoTitle">Adicionar arquivos</h3><p id="labAcervoDescription">Escolha onde estão suas fotografias.</p></div>
+              <button id="labAcervoClose" class="lm-acervo-close" type="button" aria-label="Fechar seletor de arquivos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg></button>
+            </header>
+            <div id="labAcervoProviders" class="lm-acervo-sources" aria-label="Escolha o serviço de armazenamento">
+              <div class="lm-acervo-source-row">
+                <button id="labAcervoConnect-google" class="lm-acervo-source" data-acervo-provider="google" type="button">
+                  <svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#00875A" d="M10.5 3h8.2L7.1 23.1H.2z"/><path fill="#4285F4" d="M7.1 23.1h24.6l-4.1 6.9H3z"/><path fill="#FFBA00" d="M18.7 3 31.7 23h-8.2L10.5 3z"/></svg>
+                  <span class="lm-acervo-source-text"><strong>Google Drive</strong><small id="labAcervoConnection-google">Selecionar arquivos da conta</small></span>
+                  <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+                </button>
+                <button id="labAcervoDisconnect-google" class="lm-acervo-disconnect" type="button" hidden title="Desconectar Google Drive" aria-label="Desconectar Google Drive">Desconectar</button>
+              </div>
+              <div class="lm-acervo-source-row">
+                <button id="labAcervoConnect-dropbox" class="lm-acervo-source" data-acervo-provider="dropbox" type="button">
+                  <svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><g fill="#0061FF"><path d="M8 2 1 7l7 5.1L15 7zM24 2l-7 5 7 5.1L31 7zM8 13.6l-7 5 7 5.1 7-5.1zM24 13.6l-7 5 7 5.1 7-5.1zM16 20.9l-8 5.2 8 4.9 8-4.9z"/></g></svg>
+                  <span class="lm-acervo-source-text"><strong>Dropbox</strong><small id="labAcervoConnection-dropbox">Selecionar arquivos da conta</small></span>
+                  <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+                </button>
+                <button id="labAcervoDisconnect-dropbox" class="lm-acervo-disconnect" type="button" hidden title="Desconectar Dropbox" aria-label="Desconectar Dropbox">Desconectar</button>
+              </div>
+            </div>
+            <div id="labAcervoSetup" class="lm-acervo-setup" role="region" aria-labelledby="labAcervoSetupTitle" hidden>
+              <div class="lm-acervo-setup-icon" aria-hidden="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+              <div><strong id="labAcervoSetupTitle">Conexão ainda não ativada</strong>
+                <p id="labAcervoSetupText">Para conectar uma conta, é necessário habilitar o aplicativo no servidor.</p>
+                <a id="labAcervoSetupDocs" href="https://github.com/vitormoreiran/labmattar/blob/main/design/ACERVO_CONECTADO.md" target="_blank" rel="noopener noreferrer">Ver instruções de ativação <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+            <section id="labAcervoBrowser" class="lm-acervo-browser" aria-label="Arquivos disponíveis" hidden>
+              <div class="lm-acervo-browser-heading">
+                <button id="labAcervoProvidersBack" type="button">‹ Fontes</button>
+                <strong id="labAcervoPath">Arquivos disponíveis</strong>
+              </div>
+              <div class="lm-acervo-toolbar">
+                <button id="labAcervoBack" type="button" hidden>Voltar à pasta anterior</button>
+                <button id="labAcervoMore" type="button" hidden>Carregar mais</button>
+              </div>
+              <div id="labAcervoItems" class="lm-acervo-items"></div>
+            </section>
+            <p id="labAcervoStatus" class="lm-acervo-status" role="status" aria-live="polite"></p>
+            <footer class="lm-acervo-footer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>O acesso é privado e você pode desconectar sua conta.</span></footer>
           </section>
         </div>
-                  <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>
+        <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>
         </div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labColorTitle" class="lm-lab-field-title">Cor do fundo</div><select id="labColor" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
           <option value="neutral">Neutro / papel</option><option value="green">Verde / acento</option><option value="red">Vermelho / acento</option><option value="beige">Bege / neutro</option><option value="blue">Azul / em avaliação</option><option value="brown">Marrom / em avaliação</option>

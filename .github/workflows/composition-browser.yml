@@ -34,6 +34,11 @@ on:
       - 'public/composicao-studio.css'
       - 'public/composicao-editor-clean.css'
       - 'public/composicao-studio.js'
+      - 'public/composicao-acervo.js'
+      - 'public/composicao-acervo.css'
+      - 'scripts/acervo-api.mjs'
+      - 'scripts/test-acervo.mjs'
+      - 'scripts/smoke-acervo-ui.mjs'
       - 'scripts/smoke-composition-studio.mjs'
       - 'scripts/smoke-composition-browser.mjs'
       - '.github/workflows/composition-browser.yml'
@@ -85,6 +90,7 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
           mkdir -p public/vendor

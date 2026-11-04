@@ -66,6 +66,28 @@ for(const provider of ["google","dropbox"]){
       headers:{Cookie:cookie.split(";")[0]}
     }),configured);
   assert.equal(unmatched.status,403,"Callback must reject invalid state");
+  const originalFetch=globalThis.fetch;
+  try{
+    globalThis.fetch=async target=>{
+      assert.equal(new URL(target).hostname,
+        provider==="google"?"oauth2.googleapis.com":"api.dropboxapi.com");
+      return new Response(JSON.stringify({
+        access_token:"fake-test-token",refresh_token:"fake-refresh-token",expires_in:3600
+      }),{status:200,headers:{"Content-Type":"application/json"}});
+    };
+    const callback=await handleAcervoRequest(
+      request("callback/"+provider+"?code=valid-code&state="+
+        encodeURIComponent(location.searchParams.get("state")),{
+        headers:{Cookie:cookie.split(";")[0]}
+      }),configured);
+    assert.equal(callback.status,302,"Valid OAuth callback must redirect");
+    const destination=new URL(callback.headers.get("location"));
+    assert.equal(destination.pathname,"/compor.html","OAuth must return to composition editor");
+    assert.equal(destination.searchParams.get("studio"),"1");
+    assert.equal(destination.searchParams.get("acervo"),provider);
+    assert.equal(destination.hash,"#laboratorio");
+    assert.match(callback.headers.get("set-cookie"),/HttpOnly/,"Callback session must be private");
+  }finally{globalThis.fetch=originalFetch}
 }
 
 console.log("Acervo: controles de origem, tipos, conexões e isolamento de sessão conferidos.");

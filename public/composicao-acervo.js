@@ -1,95 +1,147 @@
-/* LABMATTAR / seleção de mídia conectada.
- * Integra somente catálogo no painel IMAGEM / M, reutilizando o compositor
- * existente (fotografia, foco, M, blur, exportação). Sem alterar tokens.
- * Arquivos externos nunca são serializados como credenciais ou URLs públicas.
+/* LABMATTAR / Biblioteca de mídia — conexão individual e leitura privada.
+ * Este módulo integra o seletor de fotografia existente. Nenhum token é
+ * persistido no cliente. A composição segue funcional sem OAuth configurado.
  */
 (()=>{
   "use strict";
   const by=id=>document.getElementById(id);
   const root=by("labAcervo"),overlay=by("labAcervoDialog");
+  const dialog=overlay?.querySelector('[role="dialog"]');
   const list=by("labAcervoItems"),notice=by("labAcervoStatus");
-  if(!root||!overlay||!list)return;
+  if(!root||!overlay||!dialog||!list||!notice)return;
   const BASE="/api/acervo/";
   const providers=["google","dropbox"];
-  let statusData=null,folder="",cursor="",entries=[],activeProvider="google";
-  let selected=null,busy=false;
+  const serviceNames={google:"Google Drive",dropbox:"Dropbox"};
+  const setup=by("labAcervoSetup"),browser=by("labAcervoBrowser");
+  const launch=by("labAcervoLaunch"),sources=by("labAcervoProviders");
   const pool=new Map();
-  function notify(message){notice.textContent=message}
-  function escapeName(name){return String(name||"Arquivo").slice(0,180)}
+  let statusData=null,activeProvider=null,folder="",cursor="",entries=[];
+  let selected=null,busy=false,previousFocus=null;
+
+  const notify=message=>{notice.textContent=message||""};
+  const escapeName=name=>String(name||"Arquivo").slice(0,180);
+  function setBusy(flag){
+    busy=Boolean(flag);
+    root.dataset.busy=String(busy);
+    for(const provider of providers)by("labAcervoConnect-"+provider).disabled=busy;
+    by("labAcervoBack").disabled=busy;
+    by("labAcervoMore").disabled=busy;
+  }
   async function api(path,options){
     const response=await fetch(BASE+path,{credentials:"same-origin",cache:"no-store",...options});
     if(!response.ok){
-      let error;try{error=(await response.json()).error}catch{}
-      throw Error(error||"Não foi possível acessar este acervo.");
+      let message="";
+      try{message=(await response.json())?.error||""}catch{}
+      throw Error(message||"Não foi possível acessar o acervo. Verifique sua conexão.");
     }
     return response.json();
   }
   function valid(item){
-    return item && providers.includes(item.provider)&&
+    return item && providers.includes(item.provider) &&
       typeof item.id==="string" && item.id.length<220 &&
-      ["image","video"].includes(item.kind)&&typeof item.original==="string" &&
-      item.original.startsWith(BASE+"media?")&&typeof item.name==="string";
+      ["image","video"].includes(item.kind) &&
+      typeof item.original==="string" &&
+      item.original.startsWith(BASE+"media?") &&
+      typeof item.name==="string";
   }
-  function setBusy(value){busy=Boolean(value);root.dataset.busy=String(busy)}
+  function displayProviders(){
+    sources.hidden=false;
+    setup.hidden=true;
+    browser.hidden=true;
+    activeProvider=null;
+    for(const provider of providers)
+      by("labAcervoConnect-"+provider).removeAttribute("aria-current");
+  }
+  function chooseVisual(provider){
+    for(const name of providers)
+      by("labAcervoConnect-"+name).setAttribute("aria-current",String(name===provider));
+  }
+  function setConnectionState(provider,state){
+    const label=by("labAcervoConnection-"+provider);
+    label.textContent=state.connected?"Conectado · Abrir arquivos":
+      state.configured?"Conectar sua conta":"Ativação pendente";
+    by("labAcervoDisconnect-"+provider).hidden=!state.connected;
+  }
   async function refresh(){
     statusData=await api("status");
     for(const provider of providers){
-      const state=statusData.providers[provider];
-      const button=by("labAcervoConnect-"+provider);
-      if(!button)continue;
-      button.disabled=busy||!state.configured;
-      button.textContent=!state.configured?"Configuração necessária":
-        state.connected?"Abrir acervo":"Conectar conta";
-      const label=by("labAcervoConnection-"+provider);
-      if(label)label.textContent=!state.configured?"Indisponível":
-        state.connected?"Conta conectada":"Não conectado";
-      by("labAcervoDisconnect-"+provider).hidden=!state.connected;
+      const state=statusData.providers?.[provider];
+      if(!state)throw Error("O servidor não retornou o estado das contas.");
+      setConnectionState(provider,state);
     }
+    return statusData;
+  }
+  function showSetup(provider){
+    chooseVisual(provider);
+    const name=serviceNames[provider];
+    by("labAcervoSetupTitle").textContent=name+" ainda não está habilitado";
+    by("labAcervoSetupText").textContent=
+      "Para conectar sua conta, o administrador precisa registrar o aplicativo "+name+
+      " e configurar suas credenciais OAuth no Cloudflare. Isso é feito uma única vez e não requer sua senha no Laboratório.";
+    browser.hidden=true;
+    setup.hidden=false;
+    notify("O seletor de arquivos locais continua disponível.");
+  }
+  function openDialog(){
+    if(!overlay.hidden)return;
+    previousFocus=document.activeElement;
+    overlay.hidden=false;
+    displayProviders();
+    notify("Selecione a origem das fotografias.");
+    dialog.focus({preventScroll:true});
+    refresh().then(()=>notify("Selecione a origem das fotografias."))
+      .catch(()=>notify("Não foi possível verificar as conexões. Tente selecionar uma origem novamente."));
+  }
+  function closeDialog(){
+    overlay.hidden=true;
+    displayProviders();
+    notify("");
+    if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});
+    else launch.focus({preventScroll:true});
   }
   function heading(){
     by("labAcervoPath").textContent=activeProvider==="dropbox"?
-      (folder||"Dropbox / Arquivos"):"Google Drive / Seleção";
-    const up=by("labAcervoBack");if(up)up.hidden=activeProvider!=="dropbox"||!folder;
+      (folder||"Dropbox / Seus arquivos"):"Google Drive / Arquivos selecionados";
+    by("labAcervoBack").hidden=activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
   }
-  function show(entriesToShow,append=false){
+  function show(items,append=false){
     if(!append)list.replaceChildren();
-    if(!append&&!entriesToShow.length){
+    if(!append&&!items.length){
       const empty=document.createElement("p");
       empty.className="lm-acervo-empty";
-      empty.textContent="Nenhuma mídia disponível nesta seleção.";
+      empty.textContent="Nenhuma imagem encontrada nesta pasta.";
       list.append(empty);
     }
-    for(const item of entriesToShow){
+    for(const item of items){
       const button=document.createElement("button");
-      button.type="button";button.className="lm-acervo-item";
+      button.type="button";
+      button.className="lm-acervo-item";
       if(item.kind==="folder"){
         button.classList.add("lm-acervo-folder");
-        const icon=document.createElement("span");icon.textContent="▣";icon.setAttribute("aria-hidden","true");
-        const name=document.createElement("span");name.textContent=escapeName(item.name);
-        button.append(icon,name);
+        const glyph=document.createElement("span");
+        glyph.textContent="▱";glyph.setAttribute("aria-hidden","true");
+        const name=document.createElement("span");
+        name.textContent=escapeName(item.name);
+        button.append(glyph,name);
         button.addEventListener("click",()=>openDropbox(item.path));
       }else if(valid(item)){
         const thumb=document.createElement("span");thumb.className="lm-acervo-thumb";
         if(item.kind==="image"){
           const image=document.createElement("img");
-          image.loading="lazy";image.alt="";
-          image.src=item.preview;
+          image.loading="lazy";image.alt="";image.src=item.preview;
           image.addEventListener("error",()=>{image.hidden=true;thumb.textContent="IMAGEM"});
           thumb.append(image);
-        }else{
-          thumb.textContent="VÍDEO";
-        }
+        }else thumb.textContent="VÍDEO";
         const meta=document.createElement("span");meta.className="lm-acervo-item-meta";
         const name=document.createElement("strong");name.textContent=escapeName(item.name);
         const kind=document.createElement("small");
-        kind.textContent=item.kind==="video"?"Vídeo / inserção não disponível":"Fotografia";
+        kind.textContent=item.kind==="video"?"Vídeo · inserção em preparação":"Fotografia";
         meta.append(name,kind);button.append(thumb,meta);
         if(item.kind==="video"){
-          button.disabled=true;button.title="Vídeos estão no catálogo, mas ainda não podem ser usados em composições estáticas.";
-        }else{
-          button.addEventListener("click",()=>select(item));
-        }
+          button.disabled=true;
+          button.title="A inserção de vídeo no compositor está prevista para outra etapa.";
+        }else button.addEventListener("click",()=>select(item));
       }else continue;
       list.append(button);
     }
@@ -99,132 +151,177 @@
     setBusy(true);activeProvider="dropbox";
     try{
       if(!append){folder=path;cursor="";entries=[]}
-      const params=new URLSearchParams({path:folder});
-      if(append&&cursor)params.set("cursor",cursor);
-      const result=await api("dropbox/list?"+params.toString());
-      entries.push(...result.entries);cursor=result.cursor||"";
-      heading();show(result.entries,append);
-      notify(entries.length+" itens carregados. Selecione uma fotografia.");
+      const qs=new URLSearchParams({path:folder});
+      if(append&&cursor)qs.set("cursor",cursor);
+      const data=await api("dropbox/list?"+qs.toString());
+      entries.push(...(data.entries||[]));
+      cursor=data.cursor||"";
+      heading();show(data.entries||[],append);
+      notify(entries.length+" itens encontrados. Selecione uma fotografia.");
     }catch(error){notify(error.message)}
     finally{setBusy(false)}
   }
   async function openGoogle(){
+    if(busy)return;
     activeProvider="google";folder="";cursor="";
-    list.replaceChildren();heading();
-    const cfg=statusData?.picker;
-    if(!cfg?.apiKey||!cfg?.appId){notify("O Google Picker ainda não foi configurado.");return}
     setBusy(true);
     try{
-      const token=await api("picker-token",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});
+      const config=statusData?.picker;
+      if(!config?.apiKey||!config?.appId)
+        throw Error("A seleção do Drive ainda não está configurada no servidor.");
+      const token=await api("picker-token",{
+        method:"POST",headers:{"Content-Type":"application/json"},body:"{}"
+      });
       if(!window.gapi){
         await new Promise((resolve,reject)=>{
           const script=document.createElement("script");
-          script.src="https://apis.google.com/js/api.js";
-          script.async=true;script.onload=resolve;script.onerror=()=>reject(Error("Google Picker indisponível"));
+          script.src="https://apis.google.com/js/api.js";script.async=true;
+          script.onload=resolve;script.onerror=()=>reject(Error("Não foi possível abrir o Google Picker."));
           document.head.append(script);
         });
       }
       await new Promise((resolve,reject)=>{
-        window.gapi.load("picker",{callback:resolve,onerror:()=>reject(Error("Falha ao carregar Google Picker"))});
+        window.gapi.load("picker",{
+          callback:resolve,onerror:()=>reject(Error("Falha ao carregar o Google Picker."))
+        });
       });
       if(!window.google?.picker)throw Error("Google Picker indisponível.");
       const picker=window.google.picker;
       const view=new picker.DocsView(picker.ViewId.DOCS);
       view.setMimeTypes("image/jpeg,image/png,image/webp,image/gif,image/avif,video/mp4,video/webm,video/quicktime");
-      const builder=new picker.PickerBuilder()
-        .addView(view).setOAuthToken(token.accessToken).setDeveloperKey(cfg.apiKey)
-        .setAppId(cfg.appId).enableFeature(picker.Feature.MULTISELECT_ENABLED)
+      const instance=new picker.PickerBuilder()
+        .addView(view).setOAuthToken(token.accessToken).setDeveloperKey(config.apiKey)
+        .setAppId(config.appId).enableFeature(picker.Feature.MULTISELECT_ENABLED)
         .setCallback(async data=>{
+          if(data.action===picker.Action.CANCEL){
+            overlay.hidden=false;displayProviders();notify("Seleção cancelada.");
+            dialog.focus({preventScroll:true});return;
+          }
           if(data.action!==picker.Action.PICKED)return;
           const ids=(data.docs||[]).map(d=>d.id).filter(Boolean).slice(0,40);
+          overlay.hidden=false;sources.hidden=true;browser.hidden=false;
+          chooseVisual("google");
+          heading();
           setBusy(true);
           try{
             const result=await api("google/inspect",{
-              method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ids})
+              method:"POST",headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({ids})
             });
-            entries=result.entries;show(entries);
+            entries=result.entries||[];show(entries);
             notify(entries.length+" arquivos autorizados. Selecione uma fotografia.");
-          }catch(error){notify(error.message)}finally{setBusy(false)}
+          }catch(error){displayProviders();notify(error.message)}
+          finally{setBusy(false)}
+          dialog.focus({preventScroll:true});
         }).build();
-      picker.setVisible(true);
-      notify("Selecione arquivos no Google Drive. O acesso é limitado aos arquivos autorizados.");
-    }catch(error){notify(error.message)}
-    finally{setBusy(false)}
+      // Avoid stacking our own modal over the native Google Picker.
+      overlay.hidden=true;
+      instance.setVisible(true);
+    }catch(error){
+      overlay.hidden=false;displayProviders();notify(error.message);
+    }finally{setBusy(false)}
   }
   function select(item){
     if(!valid(item)||item.kind!=="image")return;
     const key=item.provider+":"+item.id;
-    const photoKey="ext-"+Array.from(new TextEncoder().encode(key)).reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
-    // Same-origin proxy URL, not a provider token and not a public share link.
-    const descriptor={provider:item.provider,id:item.id,name:item.name,mimeType:item.mimeType,
-      original:item.original,preview:item.preview,photoKey};
+    const photoKey="ext-"+Array.from(new TextEncoder().encode(key))
+      .reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
+    const descriptor={provider:item.provider,id:item.id,name:item.name,
+      mimeType:item.mimeType,original:item.original,preview:item.preview,photoKey};
     pool.set(photoKey,descriptor);
     selected=descriptor;
-    const event=new CustomEvent("labmattar:acervo-select",{detail:descriptor});
-    window.dispatchEvent(event);
-    overlay.hidden=true;
-    notify("Imagem selecionada: "+item.name);
-    by("labAcervoCurrent").textContent=item.name+" / "+item.provider;
+    window.dispatchEvent(new CustomEvent("labmattar:acervo-select",{detail:descriptor}));
+    by("labAcervoCurrent").textContent=item.name+" · "+serviceNames[item.provider];
+    closeDialog();
   }
-  async function open(provider){
+  async function openProvider(provider){
     if(!providers.includes(provider)||busy)return;
+    activeProvider=provider;
+    chooseVisual(provider);
+    setup.hidden=true;
+    notify("Verificando conexão com "+serviceNames[provider]+"…");
     try{
       await refresh();
-      if(!statusData.providers[provider].configured){
-        notify("A integração precisa ser configurada no servidor antes de conectar.");
-        overlay.hidden=false;return;
-      }
-      if(!statusData.providers[provider].connected){
-        // OAuth redirects in the same tab, bound to this browser through state+PKCE.
+      const state=statusData.providers[provider];
+      if(!state.configured){showSetup(provider);return}
+      if(!state.connected){
         window.location.assign(BASE+"connect/"+provider);
         return;
       }
-      overlay.hidden=false;
+      sources.hidden=true;browser.hidden=false;setup.hidden=true;
+      heading();
+      notify("");
       if(provider==="google")await openGoogle();
       else await openDropbox();
-    }catch(error){notify(error.message);overlay.hidden=false}
+    }catch(error){displayProviders();notify(error.message)}
   }
-  root.addEventListener("click",async event=>{
-    const target=event.target.closest("[data-acervo-provider]");
-    if(target){await open(target.dataset.acervoProvider);return}
-    if(event.target.closest("[data-acervo-open]")){
-      overlay.hidden=false;heading();show(entries);
+  root.addEventListener("click",event=>{
+    if(event.target.closest("[data-acervo-open]"))openDialog();
+  });
+  overlay.addEventListener("click",event=>{
+    if(event.target===overlay){closeDialog();return}
+    const button=event.target.closest("[data-acervo-provider]");
+    if(button)openProvider(button.dataset.acervoProvider);
+  });
+  by("labAcervoClose").addEventListener("click",closeDialog);
+  by("labAcervoProvidersBack").addEventListener("click",()=>{
+    const previous=activeProvider;
+    displayProviders();notify("Selecione a origem das fotografias.");
+    by("labAcervoConnect-"+(previous||"google")).focus({preventScroll:true});
+  });
+  by("labAcervoBack").addEventListener("click",()=>{
+    const parent=folder.split("/").filter(Boolean).slice(0,-1);
+    openDropbox(parent.length?"/"+parent.join("/"):"");
+  });
+  by("labAcervoMore").addEventListener("click",()=>openDropbox(folder,true));
+  document.addEventListener("keydown",event=>{
+    if(overlay.hidden)return;
+    if(event.key==="Escape"){event.preventDefault();closeDialog();return}
+    if(event.key!=="Tab")return;
+    const focusables=[...dialog.querySelectorAll('button:not(:disabled):not([hidden]),a[href]')]
+      .filter(el=>el.getClientRects().length>0);
+    if(!focusables.length)return;
+    const first=focusables[0],last=focusables[focusables.length-1];
+    if(event.shiftKey && (document.activeElement===first||document.activeElement===dialog)){
+      event.preventDefault();last.focus();
+    }else if(!event.shiftKey && document.activeElement===last){
+      event.preventDefault();first.focus();
     }
   });
   for(const provider of providers){
     by("labAcervoDisconnect-"+provider).addEventListener("click",async()=>{
-      if(!confirm("Desconectar "+(provider==="google"?"Google Drive":"Dropbox")+" deste navegador?"))return;
+      if(!confirm("Desconectar "+serviceNames[provider]+" deste navegador?"))return;
+      setBusy(true);
       try{
         await api("disconnect",{method:"POST",headers:{"Content-Type":"application/json"},
           body:JSON.stringify({provider})});
-        pool.forEach((item,key)=>{if(item.provider===provider)pool.delete(key)});
-        if(selected?.provider===provider){selected=null;by("labAcervoCurrent").textContent="Imagem conectada indisponível";}
-        await refresh();notify("Conta desconectada.");
+        for(const [key,item] of pool)if(item.provider===provider)pool.delete(key);
+        if(selected?.provider===provider){
+          selected=null;by("labAcervoCurrent").textContent="Fonte desconectada. Selecione outra fotografia.";
+        }
+        await refresh();
+        displayProviders();
+        notify("Conta desconectada. A autorização pode ser revogada também nas configurações do provedor.");
       }catch(error){notify(error.message)}
+      finally{setBusy(false)}
     });
   }
-  by("labAcervoClose").addEventListener("click",()=>{overlay.hidden=true});
-  overlay.addEventListener("click",event=>{if(event.target===overlay)overlay.hidden=true});
-  document.addEventListener("keydown",event=>{if(event.key==="Escape"&&!overlay.hidden)overlay.hidden=true});
-  by("labAcervoBack").addEventListener("click",()=>{
-    const previous=folder.split("/").filter(Boolean).slice(0,-1);
-    openDropbox(previous.length?"/"+previous.join("/"):"");
-  });
-  by("labAcervoMore").addEventListener("click",()=>openDropbox(folder,true));
-  // Restore only stable asset IDs, not OAuth data, credentials or token URLs.
   window.LabAcervo={
     has:key=>pool.has(key),
     get:key=>pool.get(key)||null,
     reopen:()=>selected?select({...selected}):null
   };
-  // Acervo is optional: do not contact private APIs during the initial render.
-  // In static previews and offline use, the composition must remain functional.
+  // No API requests on editor load. The library is opt-in and never blocks
+  // local compositions or static build smoke tests.
   const result=new URL(location.href).searchParams.get("acervo");
   if(result){
-    notify(result==="erro"?"Não foi possível concluir a autorização.":
-      result==="cancelado"?"Autorização cancelada.":"Conta autorizada. Abra o acervo para selecionar arquivos.");
     const url=new URL(location.href);url.searchParams.delete("acervo");
     history.replaceState(null,"",url.pathname+url.search+url.hash);
-    refresh().catch(()=>{});
+    openDialog();
+    const message=result==="erro"?"A autorização não foi concluída. Tente conectar novamente.":
+      result==="cancelado"?"Autorização cancelada. Nenhuma conta foi conectada.":
+      "Conta autorizada. Escolha o serviço para selecionar suas fotografias.";
+    notify(message);
+    refresh().then(()=>notify(message)).catch(()=>{});
   }
 })();

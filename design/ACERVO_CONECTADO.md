@@ -1,10 +1,10 @@
 # LABMATTAR / Acervo conectado (Google Drive e Dropbox)
 
-**Status:** implementação em branch para revisão; não publicada nem autorizada para produção. Não altera a Matriz Vetorial ou o domínio `labmattar.com`.
+**Status:** interface e API integradas à prévia. A autenticação real só fica disponível depois do registro de aplicativos OAuth e da inclusão das credenciais no Cloudflare. Não altera a Matriz Vetorial nem `labmattar.com`.
 
 ## Interface
 
-O painel **Imagem / M** em `/laboratorio.html` oferece conexão às duas contas. Drive usa Google Picker com `drive.file`, exigindo seleção explícita, e Dropbox permite navegar em diretórios com `files.metadata.read` + `files.content.read`. Fotos escolhidas alimentam os mesmos campos de fotografia, foco, M e blur existentes. O seletor também reconhece arquivos de vídeo, mas **não os insere na composição estática**: a reprodução/composição de vídeo depende de etapa posterior.
+O painel **Fundo + M** em `/compor.html?studio=1#laboratorio` oferece **Adicionar da nuvem**, com ícones e escolhas separadas para Google Drive e Dropbox. Quando o OAuth ainda não está configurado, mostra uma explicação acionável no próprio seletor, sem abrir diálogo vazio. A conexão às duas contas Drive usa Google Picker com `drive.file`, exigindo seleção explícita, e Dropbox permite navegar em diretórios com `files.metadata.read` + `files.content.read`. Fotos escolhidas alimentam os mesmos campos de fotografia, foco, M e blur existentes. O seletor também reconhece arquivos de vídeo, mas **não os insere na composição estática**: a reprodução/composição de vídeo depende de etapa posterior.
 
 A imagem é servida pelo backend em `/api/acervo/media` com autenticação. URLs nos JSONs contêm identificadores, não credenciais. Os JSONs salvos exigem acesso à conta original para reabertura. Miniaturas não são masters.
 
@@ -45,7 +45,11 @@ Secrets/bindings Cloudflare Workers (via `wrangler secret put <NAME> --name labm
 
 Gerar chave localmente: `node -e 'console.log(require("node:crypto").randomBytes(32).toString("base64url"))'`. Nunca colar os valores no chat, logs, Markdown, GitHub ou código da aplicação. Conectar as credenciais apenas no gerenciador de segredos do Cloudflare.
 
-Se credenciais estiverem ausentes, a interface informa **Configuração necessária** e a API recusa iniciar OAuth; nenhum link inseguro é apresentado.
+Se as credenciais estiverem ausentes, o diálogo mostra **Conexão ainda não ativada** e remete a este guia. Nenhum login falso ou link público é usado. A API recusa iniciar OAuth antes da configuração.
+
+O login autorizado **retorna à página Compor** (e não ao índice `/laboratorio.html`) e informa o estado da conexão. Após habilitar as credenciais no servidor, abrir o seletor novamente recarrega os estados sem novo deploy.
+
+**Verificação UI:** `COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs` (teste com API simulada, sem senhas reais).
 
 ## Verificação necessária
 

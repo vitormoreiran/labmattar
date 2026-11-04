@@ -18,6 +18,13 @@ try{
    assert.equal(await page.locator('main section.lm-manual-cover').count(),1);
    assert.equal(await page.locator('main section.lm-manual-section').count(),5,'Cinco seções editoriais');
    assert.equal(await page.locator('.ss-feed-post').count(),9,'Nove publicações únicas');
+   assert.equal(await page.locator('.ss-feed-post.is-editorial .ss-post-hotspot').count(),1,'Peça editorial selecionável');
+   const editorialFont=await page.locator('.ss-feed-post.is-editorial .ss-post-title').evaluate(el=>({
+     role:el.getAttribute('data-lm-text-role'),size:parseFloat(getComputedStyle(el).fontSize)
+   }));
+   assert.equal(editorialFont.role,'title','Tipografia de feed respeita Título oficial');
+   assert.ok(editorialFont.size>=22,'Título editorial deve ser legível na miniatura: '+JSON.stringify(editorialFont));
+
    assert.equal(await page.locator('.ss-symbol-choice').count(),5,'Símbolos oficiais');
    assert.equal(await page.locator('.lm-site-nav [data-area="redes"][aria-current="page"]').count(),1);
    const photos=await page.locator('.ss-feed-post img').evaluateAll(imgs=>imgs.map(img=>img.getAttribute('src')));

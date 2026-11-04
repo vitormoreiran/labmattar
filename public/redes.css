@@ -56,7 +56,7 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 }
 .lm-social-case-identify figcaption>span{max-width:95%}
 .lm-social-case-compose{
-  --lm-type-title-size:clamp(27px,8.2cqw,97px);
+  --lm-type-title-size:clamp(35px,12cqw,86px);
   --lm-type-body-size:clamp(12px,3cqw,19px);
   --lm-type-detail-size:clamp(9px,2cqw,13px);
   padding:7%;background:var(--social-paper);
@@ -66,7 +66,7 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 }
 .lm-social-case-compose>p{margin:0}
 .lm-social-case-compose-title{max-width:100%;overflow-wrap:anywhere}
-.lm-social-case-compose>img{display:block;position:absolute;width:33%;height:auto;right:7%;bottom:16%}
+.lm-social-case-compose>img{display:block;position:absolute;width:24%;height:auto;right:7%;bottom:16%}
 .lm-social-case-copy{
   display:grid;grid-template-columns:1fr;gap:12px;
   border-top:1px solid var(--social-line);

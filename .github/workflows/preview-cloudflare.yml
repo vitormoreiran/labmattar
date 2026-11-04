@@ -139,7 +139,7 @@ jobs:
               }
               // Keep old Imagem links functional without republishing a sixth chapter.
               if (url.pathname === '/imagem.html' || url.pathname === '/imagem') {
-                url.pathname = '/laboratorio.html';
+                url.pathname = '/compor.html';
                 url.hash = '#laboratorio';
                 return Response.redirect(url.toString(), 308);
               }

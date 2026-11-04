@@ -164,10 +164,18 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <button type="button" class="lm-ctrl-choice" data-lab-choice="marker" data-value="bottom" aria-pressed="false"><span class="lm-ctrl-visual"><span class="lm-marker-mini" data-marker="bottom"><i></i></span></span><span class="lm-ctrl-name">Inferior</span></button>
             <button type="button" class="lm-ctrl-choice" data-lab-choice="marker" data-value="both" aria-pressed="false"><span class="lm-ctrl-visual"><span class="lm-marker-mini" data-marker="both"><i></i><b></b></span></span><span class="lm-ctrl-name">Ambos</span></button>
           </div>
-          
+          <div class="lm-lab-marker-focus-field" id="labMarkerFocusField" hidden>
+            <div id="labMarkerFocusTitle" class="lm-lab-field-title">Marcadores / tratamento da imagem</div>
+            <select id="labMarkerFocus" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
+              <option value="blur">Marcadores desfocados / restante nítido</option>
+              <option value="sharp">Marcadores nítidos / restante desfocado</option>
+            </select>
+            <div class="lm-ctrl-choice-grid lm-ctrl-columns-2 lm-lab-marker-focus-options" role="group" aria-labelledby="labMarkerFocusTitle">
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="markerFocus" data-value="blur" aria-pressed="true"><span class="lm-ctrl-name">Blur nos marcadores</span><span class="lm-ctrl-meta">Resto nítido</span></button>
+              <button type="button" class="lm-ctrl-choice" data-lab-choice="markerFocus" data-value="sharp" aria-pressed="false"><span class="lm-ctrl-name">Nítido nos marcadores</span><span class="lm-ctrl-meta">Resto com blur</span></button>
+            </div>
+          </div>
         </div>
-        
-        
         <div class="lm-lab-field lm-m-scale-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"></div>
         
         <div class="lm-lab-field lm-ctrl-choice-field lm-photo-library-field"><div id="labPhotoTitle" class="lm-lab-field-title">Fotografia</div><select id="labPhoto" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="64">Abertura / BOXDOSENTIR 64</option><option value="179">Projeto / BOXDOSENTIR 179</option><option value="151">Detalhe / BOXDOSENTIR 151</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3 lm-ctrl-photos" role="group" aria-labelledby="labPhotoTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photo" data-value="64" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-photo"><img alt="" loading="lazy" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg"></span></span><span class="lm-ctrl-name">Imagem 01</span><span class="lm-ctrl-meta">Abertura</span></button>
@@ -236,6 +244,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <img class="lm-lab-photo-ambient" id="labAmbientPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
             <div class="lm-lab-photo-contrast"></div>
             <div class="lm-lab-m-photo" id="labMask"><img id="labMaskPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
+            <div class="lm-lab-marker-photo" id="labMarkerPhotoLayer"><img class="lm-lab-marker-image" id="labMarkerPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
           </div>
           <div class="lm-lab-m-markers" id="labMMarkers" data-marker="none" aria-hidden="true">
             <svg class="lm-lab-m-marker lm-lab-m-marker-top" viewBox="0 0 200.33 164.82" preserveAspectRatio="none"><path d="M0 0H200.33L115.22 140.05C106.94 153.67 93.39 153.67 85.11 140.05Z"/></svg>

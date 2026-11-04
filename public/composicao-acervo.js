@@ -15,9 +15,12 @@
   const PORTFOLIO_FOLDER_ID="13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW";
   const PORTFOLIO_URL="https://drive.google.com/drive/folders/"+PORTFOLIO_FOLDER_ID;
   const providers=["google","dropbox"];
-  const serviceNames={google:"Google Drive",dropbox:"Dropbox"};
+  const serviceNames={google:"Google Drive",dropbox:"Dropbox",public:"01_Portfolio",local:"Computador"};
   const setup=by("labAcervoSetup"),browser=by("labAcervoBrowser");
   const launch=by("labAcervoLaunch"),sources=by("labAcervoProviders");
+  const localInput=by("labAcervoLocalInput"),search=by("labAcervoSearch");
+  let publicIndex=null,publicTrail=[],publicCurrent=null;
+  const publicProjects=new Map(),localVideoUrls=new Map();
   const pool=new Map();
   let statusData=null,activeProvider=null,folder="",cursor="",entries=[];
   let selected=null,busy=false,previousFocus=null;
@@ -41,11 +44,11 @@
     return response.json();
   }
   function valid(item){
-    return item && providers.includes(item.provider) &&
+    return item && [...providers,"public"].includes(item.provider) &&
       typeof item.id==="string" && item.id.length<220 &&
       ["image","video"].includes(item.kind) &&
       typeof item.original==="string" &&
-      item.original.startsWith(BASE+"media?") &&
+      item.original.startsWith(BASE+(item.provider==="public"?"public-media?":"media?")) &&
       typeof item.name==="string";
   }
   function displayProviders(){
@@ -117,10 +120,13 @@
     else launch.focus({preventScroll:true});
   }
   function heading(){
-    by("labAcervoPath").textContent=activeProvider==="dropbox"?
-      (folder||"Dropbox / Seus arquivos"):"Google Drive / 01_Portfolio";
-    by("labAcervoBack").hidden=activeProvider!=="dropbox"||!folder;
+    by("labAcervoPath").textContent=activeProvider==="public"?
+      "01_Portfolio"+(publicTrail.length?" / "+publicTrail.map(x=>x.name).join(" / "):""):
+      activeProvider==="dropbox"?(folder||"Dropbox / Seus arquivos"):"Google Drive / 01_Portfolio";
+    by("labAcervoBack").hidden=activeProvider==="public"?!publicTrail.length:activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
+    if(search)search.hidden=activeProvider!=="public";
+    by("labAcervoProvidersBack").hidden=activeProvider==="public";
   }
   function show(items,append=false){
     if(!append)list.replaceChildren();
@@ -141,7 +147,10 @@
         const name=document.createElement("span");
         name.textContent=escapeName(item.name);
         button.append(glyph,name);
-        button.addEventListener("click",()=>openDropbox(item.path));
+        button.addEventListener("click",()=>{
+          if(activeProvider==="public")openPublicFolder(item);
+          else openDropbox(item.path);
+        });
       }else if(valid(item)){
         const thumb=document.createElement("span");thumb.className="lm-acervo-thumb";
         if(item.kind==="image"){
@@ -160,6 +169,78 @@
       list.append(button);
     }
   }
+
+  async function publicJson(path){
+    const res=await fetch("/acervo/"+path,{cache:"no-store",credentials:"omit"});
+    if(!res.ok)throw Error("Não foi possível carregar o índice de 01_Portfolio.");
+    return res.json();
+  }
+  function publicItem(entry,projectId){
+    if(entry.kind==="folder")return {...entry,projectId};
+    const query="project="+encodeURIComponent(projectId)+"&id="+encodeURIComponent(entry.id);
+    return {provider:"public",projectId,id:entry.id,name:entry.name,kind:entry.kind,
+      mimeType:entry.mime,original:BASE+"public-media?"+query,
+      preview:BASE+"public-thumb?"+query,size:entry.size||0};
+  }
+  async function renderPublic(){
+    if(activeProvider!=="public")return;
+    setBusy(true);sources.hidden=true;setup.hidden=true;browser.hidden=false;
+    try{
+      if(!publicIndex){
+        const data=await publicJson("index.json");
+        if(data.rootId!==PORTFOLIO_FOLDER_ID||!Array.isArray(data.projects))
+          throw Error("Índice do acervo incompatível.");
+        publicIndex=data;
+      }
+      const query=(search?.value||"").trim().toLocaleLowerCase("pt-BR");
+      let items=[];
+      if(!publicTrail.length){
+        items=publicIndex.projects.map(p=>({kind:"folder",projectId:p.id,
+          id:p.id,name:p.name}));
+      }else{
+        const projectId=publicTrail[0].projectId,folderId=publicTrail[publicTrail.length-1].id;
+        let project=publicProjects.get(projectId);
+        if(!project){
+          project=await publicJson("projects/"+encodeURIComponent(projectId)+".json");
+          if(project.projectId!==projectId||!Array.isArray(project.entries))
+            throw Error("Pasta do projeto incompatível.");
+          publicProjects.set(projectId,project);
+        }
+        const choices=project.entries.filter(x=>query?
+          x.name.toLocaleLowerCase("pt-BR").includes(query):x.parent===folderId);
+        items=choices.sort((a,b)=>(a.kind==="folder"?0:1)-(b.kind==="folder"?0:1)||
+          a.name.localeCompare(b.name,"pt-BR",{numeric:true}))
+          .map(x=>publicItem(x,projectId));
+      }
+      if(query&&!publicTrail.length)items=items.filter(x=>x.name.toLocaleLowerCase("pt-BR").includes(query));
+      heading();show(items);
+      notify(items.length+" itens · "+(publicTrail.length?"Selecione uma fotografia ou vídeo.":"Selecione um projeto.")+
+        " Não é necessário login.");
+    }catch(error){
+      list.replaceChildren();notify(error.message);
+    }finally{setBusy(false);}
+  }
+  function openPublicFolder(item){
+    if(!item?.id)return;
+    const projectId=item.projectId||publicTrail[0]?.projectId;
+    publicTrail.push({id:item.id,name:item.name,projectId});
+    if(search)search.value="";
+    renderPublic().catch(error=>notify(error.message));
+  }
+  function openPublic(){
+    if(!overlay.hidden){if(activeProvider==="public")return;displayProviders();}
+    else{
+      previousFocus=document.activeElement;
+      overlay.hidden=false;
+      dialog.focus({preventScroll:true});
+    }
+    activeProvider="public";publicTrail=[];
+    if(search)search.value="";
+    sources.hidden=true;setup.hidden=true;browser.hidden=false;
+    notify("Carregando 01_Portfolio…");
+    renderPublic().catch(error=>notify(error.message));
+  }
+
   async function openDropbox(path="",append=false){
     if(busy)return;
     setBusy(true);activeProvider="dropbox";
@@ -253,6 +334,7 @@
     if(!valid(item))return;
     if(item.kind==="video"){
       const descriptor={kind:"video",provider:item.provider,id:item.id,name:item.name,
+        ...(item.projectId?{projectId:item.projectId}:{}),
         mimeType:item.mimeType,original:item.original,preview:item.preview};
       window.dispatchEvent(new CustomEvent("labmattar:acervo-video-select",{detail:descriptor}));
       by("labAcervoCurrent").textContent="Vídeo · "+item.name;
@@ -263,6 +345,7 @@
     const photoKey="ext-"+Array.from(new TextEncoder().encode(key))
       .reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
     const descriptor={provider:item.provider,id:item.id,name:item.name,
+      ...(item.projectId?{projectId:item.projectId}:{}),
       mimeType:item.mimeType,original:item.original,preview:item.preview,photoKey};
     pool.set(photoKey,descriptor);
     selected=descriptor;
@@ -292,8 +375,7 @@
     }catch(error){displayProviders();notify(error.message)}
   }
   root.addEventListener("click",event=>{
-    if(event.target.closest("[data-acervo-open]"))
-      openDialog({autoProvider:"google"});
+    if(event.target.closest("[data-acervo-open]"))openPublic();
   });
   overlay.addEventListener("click",event=>{
     if(event.target===overlay){closeDialog();return}
@@ -302,13 +384,21 @@
   });
   by("labAcervoClose").addEventListener("click",closeDialog);
   by("labAcervoProvidersBack").addEventListener("click",()=>{
+    if(activeProvider==="public"){publicTrail=[];renderPublic();return;}
     const previous=activeProvider;
     displayProviders();notify("Selecione a origem das fotografias.");
     by("labAcervoConnect-"+(previous||"google")).focus({preventScroll:true});
   });
   by("labAcervoBack").addEventListener("click",()=>{
+    if(activeProvider==="public"){
+      publicTrail.pop();if(search)search.value="";
+      renderPublic().catch(error=>notify(error.message));return;
+    }
     const parent=folder.split("/").filter(Boolean).slice(0,-1);
     openDropbox(parent.length?"/"+parent.join("/"):"");
+  });
+  search?.addEventListener("input",()=>{
+    if(activeProvider==="public")renderPublic().catch(error=>notify(error.message));
   });
   by("labAcervoMore").addEventListener("click",()=>openDropbox(folder,true));
   document.addEventListener("keydown",event=>{
@@ -343,11 +433,122 @@
       finally{setBusy(false)}
     });
   }
+
+  function localDb(){
+    return new Promise((resolve,reject)=>{
+      if(!("indexedDB" in window)){reject(Error("Este navegador não oferece armazenamento local de vídeos."));return;}
+      const req=indexedDB.open("labmattar-midia-local",1);
+      req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains("videos"))
+        req.result.createObjectStore("videos");};
+      req.onsuccess=()=>resolve(req.result);
+      req.onerror=()=>reject(Error("Não foi possível abrir a biblioteca local deste navegador."));
+    });
+  }
+  async function saveLocalVideo(file,id){
+    const db=await localDb();
+    try{
+      await new Promise((resolve,reject)=>{
+        const tx=db.transaction("videos","readwrite");
+        tx.objectStore("videos").put({blob:file,name:file.name,mime:file.type},id);
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(Error("Sem espaço para salvar o vídeo local. Libere armazenamento ou use outro arquivo."));
+        tx.onabort=()=>reject(Error("Armazenamento do vídeo interrompido."));
+      });
+    }finally{db.close();}
+  }
+  async function localVideoBlob(id){
+    if(!/^local-[a-f0-9-]{36}$/.test(id||""))throw Error("Vídeo local inválido.");
+    const db=await localDb();
+    try{return await new Promise((resolve,reject)=>{
+      const req=db.transaction("videos","readonly").objectStore("videos").get(id);
+      req.onsuccess=()=>req.result?.blob?resolve(req.result.blob):reject(Error("Vídeo não encontrado neste navegador."));
+      req.onerror=()=>reject(Error("Não foi possível ler o vídeo local."));
+    });}finally{db.close();}
+  }
+  async function localVideoUrl(id){
+    if(localVideoUrls.has(id))return localVideoUrls.get(id);
+    const blob=await localVideoBlob(id),url=URL.createObjectURL(blob);
+    localVideoUrls.set(id,url);return url;
+  }
+  async function optimizeImage(file){
+    if(file.size>45*1024*1024)throw Error("Fotografia acima de 45 MB. Use uma versão menor.");
+    const bitmap=await createImageBitmap(file).catch(()=>{
+      throw Error("O navegador não conseguiu abrir esta imagem. Use JPG, PNG ou WebP.");
+    });
+    try{
+      const edge=Math.max(bitmap.width,bitmap.height),scale=Math.min(1,3840/edge);
+      const canvas=document.createElement("canvas");
+      canvas.width=Math.round(bitmap.width*scale);canvas.height=Math.round(bitmap.height*scale);
+      const ctx=canvas.getContext("2d",{alpha:true});
+      if(!ctx)throw Error("Não foi possível preparar a imagem local.");
+      ctx.imageSmoothingQuality="high";ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
+      let data="";
+      for(const quality of [.9,.8,.7,.6]){
+        data=canvas.toDataURL("image/webp",quality);
+        if(data.startsWith("data:image/webp;base64,")&&data.length<=4_800_000)break;
+      }
+      if(!/^data:image\/webp;base64,/.test(data)||data.length>4_800_000)
+        throw Error("Imagem grande demais para salvar no projeto. Exporte uma versão reduzida.");
+      return data;
+    }finally{bitmap.close?.();}
+  }
+  async function addLocalFiles(files){
+    let inserted=0,failed=[];
+    for(const file of files){
+      try{
+        if(["image/jpeg","image/png","image/webp","image/gif"].includes(file.type)){
+          const original=await optimizeImage(file);
+          const photoKey="loc-"+crypto.randomUUID().replace(/-/g,"").slice(0,20);
+          const descriptor={provider:"local",id:photoKey,photoKey,name:file.name,
+            kind:"image",mimeType:"image/webp",original,preview:original};
+          pool.set(photoKey,descriptor);selected=descriptor;
+          window.dispatchEvent(new CustomEvent("labmattar:acervo-select",{detail:descriptor}));
+          inserted++;
+        }else if(["video/mp4","video/webm","video/quicktime"].includes(file.type)){
+          const id="local-"+crypto.randomUUID();
+          await saveLocalVideo(file,id);
+          window.dispatchEvent(new CustomEvent("labmattar:acervo-video-select",{detail:{
+            kind:"video",provider:"local",id,name:file.name,mimeType:file.type
+          }}));
+          inserted++;
+        }else throw Error("Formato não suportado: "+file.name);
+      }catch(error){failed.push(file.name+": "+error.message);}
+    }
+    const message=inserted?inserted+" arquivo(s) local(is) adicionados. "+
+      (files.some(file=>file.type.startsWith("image/"))?"Salve o projeto JSON para preservar as fotografias. ":"")+
+      (files.some(file=>file.type.startsWith("video/"))?"Vídeos locais permanecem neste navegador. ":""):
+      "Nenhum arquivo foi adicionado. ";
+    const result=message+failed.join(" ");
+    by("labAcervoCurrent").textContent=result;notify(result);
+  }
+  function chooseLocal(onlyVideos=false){
+    localInput.accept=onlyVideos?"video/mp4,video/webm,video/quicktime":
+      "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime";
+    localInput.value="";
+    localInput.click();
+  }
+  by("labAcervoLocal").addEventListener("click",()=>chooseLocal(false));
+  by("labClipLocal").addEventListener("click",()=>chooseLocal(true));
+  localInput.addEventListener("change",()=>{
+    const files=[...localInput.files];if(files.length)addLocalFiles(files).catch(error=>{
+      by("labAcervoCurrent").textContent=error.message;
+    });
+  });
+  window.addEventListener("pagehide",()=>{
+    for(const url of localVideoUrls.values())URL.revokeObjectURL(url);
+    localVideoUrls.clear();
+  });
+
   window.LabAcervo={
     has:key=>pool.has(key),
     get:key=>pool.get(key)||null,
     reopen:()=>selected?select({...selected}):null,
-    open:options=>openDialog(options||{})
+    open:options=>options?.autoProvider&&providers.includes(options.autoProvider)?
+      openDialog(options):openPublic(),
+    openPublic,
+    chooseLocal,
+    localVideoBlob,
+    localVideoUrl
   };
   // No API requests on editor load. The library is opt-in and never blocks
   // local compositions or static build smoke tests.

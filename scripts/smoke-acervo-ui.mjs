@@ -1,167 +1,90 @@
-/* Teste do fluxo de interface de mídia, sem acessar contas ou tokens reais. */
+/* LABMATTAR / Biblioteca pública + upload local (sem OAuth, fixtures). */
 import {chromium} from "playwright";
-const assert=(value,message)=>{if(!value)throw Error(message)};
+import {readFileSync} from "node:fs";
+const assert=(condition,message)=>{if(!condition)throw Error(message)};
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
-const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
-const errors=[];
-page.on("pageerror",err=>errors.push(err.message));
-page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
+const page=await browser.newPage({viewport:{width:1440,height:900}});
+const errors=[];page.on("pageerror",error=>errors.push(error.message));
 const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
-let configured=false;
-await page.route("**/api/acervo/status",route=>route.fulfill({
-  status:200,contentType:"application/json",body:JSON.stringify({
-    providers:{
-      google:{configured:false,connected:false},
-      dropbox:{configured,connected:configured}
-    },
-    picker:{apiKey:null,appId:null}
-  })
-}));
-const dot="iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+sH+EAAAAASUVORK5CYII=";
-await page.route("**/api/acervo/dropbox/list?*",route=>route.fulfill({
-  status:200,contentType:"application/json",body:JSON.stringify({
-    entries:[{kind:"image",provider:"dropbox",id:"id:abcdefghij",
-      name:"Fotografia de teste.jpg",mimeType:"image/jpeg",
-      original:"/api/acervo/media?provider=dropbox&id=id%3Aabcdefghij",
-      preview:"/api/acervo/thumb?provider=dropbox&id=id%3Aabcdefghij"},
-      {kind:"video",provider:"dropbox",id:"id:video12345",
-        name:"Vídeo do projeto.mp4",mimeType:"video/mp4",
-        original:"/api/acervo/media?provider=dropbox&id=id%3Avideo12345",
-        preview:"/api/acervo/thumb?provider=dropbox&id=id%3Avideo12345"}],
-    hasMore:false,cursor:null
-  })
-}));
-const manifestResponse=await page.request.get(new URL('/motion/catalog.json',base).href);
-assert(manifestResponse.ok(),"Motion media fixture must exist");
-const motionCatalog=await manifestResponse.json();
-const movieFixture=new URL(motionCatalog.items[0].video,base).href;
-await page.route("**/api/acervo/media?*",async route=>{
-  if(route.request().url().includes("id%3Avideo12345")){
-    const media=await page.request.get(movieFixture);
-    assert(media.ok(),"Video fixture must load");
-    await route.fulfill({status:200,contentType:"video/mp4",body:await media.body()});
-  }else{
-    await route.fulfill({status:200,contentType:"image/png",body:Buffer.from(dot,"base64")});
-  }
+const projectId="11OYn_dAihamP4E0PqmuIUcmo0Uk41rpZ",folderId="1TEST_FOLDER_ID";
+const imageId="1aJPoakDL6XiESCJyEsAbZtm8_lDzyt2H",videoId="1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn";
+const dot=Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+sH+EAAAAASUVORK5CYII=","base64");
+const movieManifest=await page.request.get(new URL("/motion/catalog.json",base).href);
+assert(movieManifest.ok(),"Missing motion catalog for MP4 fixture");
+const movieData=await movieManifest.json();
+const videoResponse=await page.request.get(new URL(movieData.items[0].video,base).href);
+assert(videoResponse.ok(),"Missing MP4 fixture");
+const mp4=await videoResponse.body();
+await page.route("**/acervo/index.json",route=>route.fulfill({status:200,contentType:"application/json",
+  body:JSON.stringify({schemaVersion:1,rootId:"13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW",
+    projects:[{id:projectId,name:"Aleteia"}]})}));
+await page.route("**/acervo/projects/*.json",route=>route.fulfill({status:200,contentType:"application/json",
+  body:JSON.stringify({schemaVersion:1,projectId,entries:[
+    {id:folderId,parent:projectId,kind:"folder",name:"Ato 1"},
+    {id:imageId,parent:folderId,kind:"image",name:"Fotografia de Aleteia.jpg",mime:"image/jpeg"},
+    {id:videoId,parent:folderId,kind:"video",name:"Aleteia Evento horizontal.mp4",mime:"video/mp4"}
+  ]})}));
+await page.route("**/api/acervo/public-thumb?*",route=>route.fulfill({
+  status:200,contentType:"image/png",body:dot}));
+await page.route("**/api/acervo/public-media?*",route=>{
+  const video=route.request().url().includes(videoId);
+  return route.fulfill({status:200,contentType:video?"video/mp4":"image/png",body:video?mp4:dot});
 });
-await page.route("**/api/acervo/thumb?*",route=>route.fulfill({
-  status:200,contentType:"image/png",body:Buffer.from(dot,"base64")
-}));
 try{
   await page.goto(base,{waitUntil:"load",timeout:60000});
   await page.locator('button[data-mobile-module="fundo"]').click();
-  assert(await page.locator("#labAcervoDialog").isHidden(),"Dialog should never be forced on editor load");
-  assert(await page.locator("#labAcervoLaunch").isVisible(),"One clear media library entry");
-  assert(await page.locator("#labAcervoLaunch .lm-acervo-provider-icon").count()===1,
-    "The fixed portfolio shortcut displays only the Google Drive icon");
-  await page.locator("#labAcervoLaunch").click();
-  await page.locator("#labAcervoConnect-google").waitFor({state:"visible"});
-  assert(await page.locator("#labAcervoConnect-google .lm-acervo-provider-icon").count()===1,
-    "Google Drive icon displayed in modal");
-  assert(await page.locator("#labAcervoConnect-dropbox .lm-acervo-provider-icon").count()===1,
-    "Dropbox icon displayed in modal");
-  await page.locator("#labAcervoConnect-google").click();
-  await page.locator("#labAcervoSetup").waitFor({state:"visible"});
-  await page.waitForFunction(()=>document.getElementById("labAcervoSetupTitle")?.textContent?.includes("Google Drive"));
-  assert((await page.locator("#labAcervoSetupTitle").textContent()).includes("Google Drive"),
-    "Missing OAuth setup shows an actionable inline explanation");
-  assert((await page.locator("#labAcervoSetupText").textContent()).includes("Cloudflare"),
-    "Missing OAuth must clearly identify what configuration is needed");
-  assert(await page.locator("#labAcervoSetupDocs").isVisible(),"Help link available");
-  await page.screenshot({path:"laboratorio-acervo-ativacao.png"});
-  await page.locator("#labAcervoClose").click();
-  assert(await page.locator("#labAcervoDialog").isHidden(),"Dialog closes without affecting the canvas");
-  assert(await page.evaluate(()=>document.activeElement?.id==="labAcervoLaunch"),
-    "Focus returns to the library button");
-  configured=true;
-  await page.locator("#labAcervoLaunch").click();
-  await page.locator("#labAcervoConnect-dropbox").waitFor({state:"visible"});
-  await page.waitForFunction(()=>document.getElementById("labAcervoConnection-dropbox")?.textContent?.includes("Conectado"));
-  await page.locator("#labAcervoConnect-dropbox").click();
-  await page.locator("#labAcervoBrowser").waitFor({state:"visible"});
-  await page.locator(".lm-acervo-item").first().click();
-  assert(await page.locator("#labAcervoDialog").isHidden(),"Selecting a photo closes the modal");
-  const selection=await page.locator("#labPhoto").inputValue();
-  assert(selection.startsWith("ext-"),"Existing photo input receives the authorized media key");
-  assert((await page.locator("#labAcervoCurrent").textContent()).includes("Fotografia de teste"),
-    "Selected asset shown in the library");
-  assert(await page.locator("#labArtboard").isVisible(),"The same composition preview remains active");
-  await page.locator("#labAcervoLaunch").click();
-  await page.locator("#labAcervoConnect-dropbox").click();
-  await page.locator(".lm-acervo-item").nth(1).click();
+  assert(await page.locator("#labAcervoLaunch").isVisible(),"Library entry missing");
+  assert(await page.locator("#labAcervoLocal").isVisible(),"Local upload entry missing");
+  const choose=async()=>{
+    await page.locator("#labAcervoLaunch").click();
+    await page.locator("#labAcervoBrowser").waitFor({state:"visible"});
+    assert(await page.locator("#labAcervoProviders").isHidden(),
+      "Public library must not show Google OAuth first");
+    await page.locator(".lm-acervo-folder").filter({hasText:"Aleteia"}).click();
+    await page.locator(".lm-acervo-folder").filter({hasText:"Ato 1"}).click();
+  };
+  await choose();
+  assert((await page.locator("#labAcervoPath").textContent()).includes("Ato 1"),
+    "Nested project navigation failed");
+  await page.locator(".lm-acervo-item").filter({hasText:"Fotografia de Aleteia.jpg"}).click();
+  assert(await page.locator("#labAcervoDialog").isHidden(),"Picking photo closes library");
+  assert((await page.locator("#labPhoto").inputValue()).startsWith("ext-"),
+    "Photo was not applied to the editor");
+  await choose();
+  await page.locator(".lm-acervo-item").filter({hasText:"Aleteia Evento horizontal.mp4"}).click();
   await page.locator("#labClipSettings").waitFor({state:"visible"});
-  assert(await page.locator("#labPageVideos video").count()===1,
-    "Selecting a private video must create a video overlay on the active page");
-  const project=await page.evaluate(()=>window.LabPages.create());
-  assert(project.kind==="labmattar.presentation","Video pages must save as presentation JSON");
-  assert(project.pages[0].clips.length===1,"Video belongs to the active project page");
-  assert(project.pages[0].clips[0].fileId==="id:video12345","Project retains the private video reference");
-  assert(!JSON.stringify(project).includes("access_token"),"Video project must not contain OAuth tokens");
-  await page.evaluate(async document=>window.LabPages.load(document),project);
-  assert(await page.locator("#labPageVideos video").count()===1,
-    "Reopening a saved project must restore the video on the page");
+  assert(await page.locator("#labPageVideos video").count()===1,"Public video not added to page");
+  const remote=await page.evaluate(()=>window.LabPages.create());
+  assert(remote.pages[0].clips[0].provider==="public","Video must retain public-link origin");
+  assert(remote.pages[0].clips[0].projectId===projectId,"Video project scoping lost");
+  const localImageResponse=await page.request.get(new URL("/ambiente-editorial/media/BOXDOSENTIR-64.jpg",base).href);
+  assert(localImageResponse.ok(),"Missing local JPG test fixture");
+  await page.locator("#labAcervoLocalInput").setInputFiles({
+    name:"imagem-local.jpg",mimeType:"image/jpeg",buffer:await localImageResponse.body()});
+  try{
+    await page.waitForFunction(()=>document.getElementById("labPhoto").value.startsWith("loc-"),
+      null,{timeout:12000});
+  }catch(error){
+    const debug=await page.evaluate(()=>({
+      current:document.getElementById("labAcervoCurrent").textContent,
+      value:document.getElementById("labPhoto").value,
+      file:document.getElementById("labAcervoLocalInput").files?.[0]?.name
+    }));
+    throw Error("Local image upload did not reach composition: "+JSON.stringify(debug)+" / "+error.message);
+  }
+  const embedded=await page.evaluate(()=>window.LabPages.create());
+  assert(embedded.pages[0].composition.assets.some(a=>a.id.startsWith("photo:loc-")&&
+    a.uri.startsWith("data:image/webp;base64,")),"Local image must be included in JSON");
+  await page.evaluate(async doc=>window.LabPages.load(doc),embedded);
+  assert((await page.locator("#labPhoto").inputValue()).startsWith("loc-"),
+    "Local image missing after opening saved project");
+  await page.locator("#labAcervoLocalInput").setInputFiles({
+    name:"video-local.mp4",mimeType:"video/mp4",buffer:mp4});
+  await page.waitForFunction(()=>window.LabPages?.create?.().pages[0].clips?.some(c=>c.provider==="local"),
+    null,{timeout:25000});
+  const mixed=await page.evaluate(()=>window.LabPages.create());
+  assert(mixed.pages[0].clips.length===2,"Both public and local videos should be on the same page");
+  assert(!JSON.stringify(mixed).includes("access_token"),"Project must not persist OAuth tokens");
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
-  // Simulate the browser returning from an authorized Google OAuth callback.
-  // The picker must open by itself, without a second click on Google Drive.
-  const returning=await browser.newPage({viewport:{width:1440,height:900}});
-  const oauthErrors=[];
-  returning.on("pageerror",error=>oauthErrors.push(error.message));
-  await returning.addInitScript(()=>{
-    window.__pickerOpened=false;
-    window.__portfolioFolder=null;
-    window.__includeSubfolders=false;
-    window.__folderSelectable=true;
-    window.gapi={load:(_module,options)=>options.callback()};
-    class DocsView{
-      setMode(){return this}
-      setMimeTypes(){return this}
-      setParent(id){window.__portfolioFolder=id;return this}
-      setIncludeFolders(value){window.__includeSubfolders=value;return this}
-      setSelectFolderEnabled(value){window.__folderSelectable=value;return this}
-    }
-    class PickerBuilder{
-      addView(){return this}
-      setOAuthToken(){return this}
-      setDeveloperKey(){return this}
-      setAppId(){return this}
-      setOrigin(){return this}
-      setLocale(){return this}
-      setTitle(){return this}
-      enableFeature(){return this}
-      setCallback(fn){window.__pickerCallback=fn;return this}
-      build(){return {setVisible(value){window.__pickerOpened=value}}}
-    }
-    window.google={picker:{
-      DocsView,DocsViewMode:{LIST:"list"},ViewId:{DOCS:"docs"},
-      PickerBuilder,Feature:{MULTISELECT_ENABLED:"multi"},
-      Action:{PICKED:"picked",CANCEL:"cancel"}
-    }};
-  });
-  await returning.route("**/api/acervo/status",route=>route.fulfill({
-    status:200,contentType:"application/json",body:JSON.stringify({
-      providers:{google:{configured:true,connected:true},
-        dropbox:{configured:false,connected:false}},
-      picker:{apiKey:"test-key",appId:"12345"}
-    })
-  }));
-  await returning.route("**/api/acervo/picker-token",route=>route.fulfill({
-    status:200,contentType:"application/json",
-    body:JSON.stringify({accessToken:"fake-picker-token",expiresAt:Date.now()+1800000})
-  }));
-  await returning.goto(base+"?studio=1&acervo=google#laboratorio",{waitUntil:"load",timeout:60000});
-  await returning.waitForFunction(()=>window.__pickerOpened===true,null,{timeout:12000});
-  assert(await returning.evaluate(()=>window.__portfolioFolder)==="13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW",
-    "Picker must open in the user-specified 01_Portfolio folder, not the general Drive");
-  assert(await returning.evaluate(()=>window.__includeSubfolders)===true,
-    "Portfolio project subfolders must be visible in the picker");
-  assert(await returning.evaluate(()=>window.__folderSelectable)===false,
-    "Folder selection must not replace choosing an image");
-  assert(await returning.locator("#labAcervoPortfolioLink").getAttribute("href")===
-    "https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW",
-    "A direct, private portfolio fallback must exist");
-  assert(await returning.locator("#labAcervoDialog").isHidden(),
-    "Native Google Picker should not be obscured by the custom modal");
-  assert(oauthErrors.length===0,"OAuth return errors: "+oauthErrors.join(" / "));
-  await returning.close();
-  console.log("LABMATTAR acervo UI: icons, missing OAuth, connected source, photo and video selection, JSON roundtrip, auto-open Google Picker OK");
-}finally{await browser.close()}
+  console.log("LABMATTAR: public folder gallery without OAuth, nested project photos/videos, local image JSON and local IndexedDB video OK");
+}finally{await browser.close();}

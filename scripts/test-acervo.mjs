@@ -91,6 +91,48 @@ for(const provider of ["google","dropbox"]){
   }finally{globalThis.fetch=originalFetch}
 }
 
+
+// Public-link gallery: only indexed 01_Portfolio IDs may pass to Google.
+{
+  const rootId='13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW';
+  const projectId='1_IohLr8kwZIQudxG8lmzJvO6GjB3VAWN';
+  const imageId='177GD8UXcmudDYJ8-UKv5O9Mrdd3oOrAv';
+  const assets={fetch:async req=>{
+    const path=new URL(req.url).pathname;
+    if(path==='/acervo/index.json')return Response.json({schemaVersion:1,rootId,
+      projects:[{id:projectId,name:'Concreto Efêmero'}]});
+    if(path==='/acervo/projects/'+projectId+'.json')return Response.json({
+      schemaVersion:1,projectId,entries:[{id:imageId,name:'Fotografia.jpg',
+        kind:'image',mime:'image/jpeg'}]});
+    return new Response('Not found',{status:404});
+  }};
+  let upstreamCalls=0;const originalFetch=globalThis.fetch;
+  try{
+    globalThis.fetch=async target=>{
+      upstreamCalls++;
+      assert.ok(String(target).includes('googleapis.com/drive/v3/files/'));
+      return new Response(new Uint8Array([255,216,255,217]),{
+        status:200,headers:{'Content-Type':'image/jpeg'}
+      });
+    };
+    const env={ASSETS:assets,LM_GOOGLE_PICKER_API_KEY:'restricted-test-key',
+      LM_ACERVO_ORIGIN:'https://preview.example.test'};
+    const valid=await handleAcervoRequest(request(
+      'public-media?project='+projectId+'&id='+imageId),env);
+    assert.equal(valid.status,200);
+    assert.equal(valid.headers.get('Content-Type'),'image/jpeg');
+    assert.deepEqual([...new Uint8Array(await valid.arrayBuffer())],[255,216,255,217]);
+    const before=upstreamCalls;
+    const forbidden=await handleAcervoRequest(request(
+      'public-media?project='+projectId+'&id=1OUTSIDEFOLDER123'),env);
+    assert.equal(forbidden.status,404);
+    assert.equal(upstreamCalls,before,'Unindexed files may not be fetched');
+    const wrongProject=await handleAcervoRequest(request(
+      'public-media?project=1OTHERPROJECT123&id='+imageId),env);
+    assert.equal(wrongProject.status,404);
+  }finally{globalThis.fetch=originalFetch;}
+}
+
 // Regression test: a CI deploy must not remove Dashboard OAuth variables.
 const previewWorkflow=readFileSync(new URL("../.github/workflows/preview-cloudflare.yml",import.meta.url),"utf8");
 assert.match(previewWorkflow,/"keep_vars": true/,"Wrangler must preserve dashboard variables");

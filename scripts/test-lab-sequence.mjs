@@ -76,3 +76,40 @@ test('vídeos de projetos são serializados, validados e não expõem credenciai
   const rogue=clone(document);rogue.pages[0].clips[0].fileId='https://evil.example/video';
   assert.throws(()=>readSequence(rogue,photos,[asset]),/identificador privado do vídeo/);
 });
+
+test('foto pública do portfólio e foto local incorporada reabrem no JSON',()=>{
+  const id='177GD8UXcmudDYJ8-UKv5O9Mrdd3oOrAv',provider='public';
+  const hash=Array.from(new TextEncoder().encode(provider+':'+id)).
+    reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
+  const photoKey='ext-'+hash;
+  const url='/api/acervo/public-media?project=1_IohLr8kwZIQudxG8lmzJvO6GjB3VAWN&id='+id;
+  const localKey='loc-0123456789abcdefabcd';
+  const embedded='data:image/webp;base64,'+'AAECAwQ=';
+  for(const [key,uri] of [[photoKey,url],[localKey,embedded]]){
+    const catalogue={...photos,[key]:uri};
+    const p=createPage({id:'page-1',name:'Foto',state:{...state,photo:key},photoCatalog:catalogue});
+    const doc=sequenceDocument('Projeto com foto',[p]);
+    const restored=readSequence(doc,photos,[asset]);
+    assert.equal(restored.photoCatalog[key],uri);
+    assert.deepEqual(sequenceDocument(restored.name,restored.pages),doc);
+  }
+  const invalid='/api/acervo/public-media?project=1_IohLr8kwZIQudxG8lmzJvO6GjB3VAWN&id='+id+'&token=abc';
+  assert.throws(()=>createPage({id:'page-1',name:'Invalido',state:{...state,photo:photoKey},
+    photoCatalog:{...photos,[photoKey]:invalid}}),/fotografia do catálogo local/);
+});
+test('vídeos públicos e locais guardam referência sem credenciais',()=>{
+  const publicClip=createClip({kind:'video',provider:'public',
+    projectId:'11OYn_dAihamP4E0PqmuIUcmo0Uk41rpZ',
+    id:'1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn',name:'Aleteia.mp4',mimeType:'video/mp4'},'clip-public');
+  const localClip=createClip({kind:'video',provider:'local',
+    id:'local-123e4567-e89b-12d3-a456-426614174000',
+    name:'Vídeo local.mp4',mimeType:'video/mp4'},'clip-local');
+  const p=page('page-1');p.clips.push(publicClip,localClip);
+  const doc=sequenceDocument('Vídeos',[p]),read=readSequence(doc,photos,[asset]);
+  assert.deepEqual(sequenceDocument(read.name,read.pages),doc);
+  assert.equal(privateClipUrl(publicClip),
+    '/api/acervo/public-media?project=11OYn_dAihamP4E0PqmuIUcmo0Uk41rpZ&id=1RrVnSrK2_RZCwzhGx8senNWlu4GIYvhn');
+  assert.ok(!JSON.stringify(doc).includes('Bearer'));
+  const forged=clone(doc);forged.pages[0].clips[0].projectId='https://evil.test';
+  assert.throws(()=>readSequence(forged,photos,[asset]),/projeto do vídeo/);
+});

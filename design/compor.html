@@ -88,8 +88,8 @@
         </div>
         <div class="lab-motion-assets lab-private-video-panel">
           <div class="lm-lab-field-title">VÍDEOS DO ACERVO</div>
-          <button type="button" id="labClipOpen">+ ADICIONAR VÍDEO DO DRIVE</button>
-          <p id="labClipEmpty" class="lab-workflow-helper">Selecione um vídeo de 01_Portfolio para esta página. O original permanece na conta autorizada.</p>
+          <button type="button" id="labClipOpen">+ VÍDEO DO ACERVO 01_PORTFOLIO</button><button type="button" id="labClipLocal">+ VÍDEO DO COMPUTADOR</button>
+          <p id="labClipEmpty" class="lab-workflow-helper">Use um vídeo do acervo compartilhado ou do computador nesta página.</p>
           <div id="labClipSettings" hidden>
             <label for="labClipInstance">Vídeo da página</label><select id="labClipInstance"></select>
             <label for="labClipX">Posição horizontal</label><input id="labClipX" type="range" min="0" max="100" step="1">
@@ -175,15 +175,15 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           <div class="lm-acervo-heading"><span>BIBLIOTECA DE MÍDIA</span></div>
           <button type="button" id="labAcervoLaunch" class="lm-acervo-launch" data-acervo-open aria-haspopup="dialog" aria-controls="labAcervoDialog">
             <span class="lm-acervo-launch-logos"><svg class="lm-acervo-provider-icon" viewBox="0 0 32 32" width="26" height="26" aria-hidden="true" focusable="false"><path fill="#00875A" d="M10.5 3h8.2L7.1 23.1H.2z"/><path fill="#4285F4" d="M7.1 23.1h24.6l-4.1 6.9H3z"/><path fill="#FFBA00" d="M18.7 3 31.7 23h-8.2L10.5 3z"/></svg></span>
-            <span class="lm-acervo-launch-text"><strong>Acervo 01_Portfolio</strong><small>Fotografias por projeto · Google Drive</small></span>
+            <span class="lm-acervo-launch-text"><strong>Acervo 01_Portfolio</strong><small>19 projetos · fotos e vídeos · sem login</small></span>
             <svg class="lm-acervo-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
           </button>
-          <small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
+          <button id="labAcervoLocal" type="button" class="lm-acervo-local">+ ADICIONAR DO COMPUTADOR</button><input id="labAcervoLocalInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple hidden aria-label="Escolher fotografias ou vídeos do computador"><small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
         </div>
         <div id="labAcervoDialog" class="lm-acervo-overlay" hidden>
           <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">
             <header class="lm-acervo-dialog-heading">
-              <div><span class="lm-acervo-kicker">BIBLIOTECA DE MÍDIA / LABMATTAR</span><h3 id="labAcervoTitle">01_Portfolio</h3><p id="labAcervoDescription">Fotografias organizadas nas pastas de projetos.</p></div>
+              <div><span class="lm-acervo-kicker">BIBLIOTECA DE MÍDIA / LABMATTAR</span><h3 id="labAcervoTitle">01_Portfolio</h3><p id="labAcervoDescription">Fotografias e vídeos das pastas de projetos, sem login.</p></div>
               <button id="labAcervoClose" class="lm-acervo-close" type="button" aria-label="Fechar seletor de arquivos"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M5 5 19 19M19 5 5 19"/></svg></button>
             </header>
             <div id="labAcervoProviders" class="lm-acervo-sources" aria-label="Escolha o serviço de armazenamento">
@@ -220,11 +220,11 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
                 <button id="labAcervoBack" type="button" hidden>Voltar à pasta anterior</button>
                 <button id="labAcervoMore" type="button" hidden>Carregar mais</button>
               </div>
-              <div id="labAcervoItems" class="lm-acervo-items"></div>
+              <label class="lm-acervo-search-label" for="labAcervoSearch">Buscar nesta pasta</label><input id="labAcervoSearch" class="lm-acervo-search" type="search" placeholder="Buscar fotografias e vídeos" autocomplete="off"><div id="labAcervoItems" class="lm-acervo-items"></div>
             </section>
             <p id="labAcervoStatus" class="lm-acervo-status" role="status" aria-live="polite"></p>
             <a id="labAcervoPortfolioLink" class="lm-acervo-portfolio-link" href="https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW" target="_blank" rel="noopener noreferrer">Conferir 01_Portfolio diretamente no Google Drive ↗</a>
-            <footer class="lm-acervo-footer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>O acesso é privado e você pode desconectar sua conta.</span></footer>
+            <footer class="lm-acervo-footer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>Acervo compartilhado por link. Arquivos locais só são adicionados quando você escolhe.</span></footer>
           </section>
         </div>
         <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>

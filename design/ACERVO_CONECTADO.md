@@ -1,3 +1,43 @@
+
+## Fluxo atual do Compor — biblioteca por projetos e arquivos locais
+
+Desde esta implementação, o botão principal **Acervo 01_Portfolio** abre uma
+biblioteca própria com o índice de [19 projetos do Drive](https://drive.google.com/drive/folders/13SMGPjdZF3jxEmM4OmWi0T1OoBPCNJqW),
+subpastas, pesquisa, fotografias e vídeos. **Não solicita OAuth Google.**
+A pasta e os arquivos foram compartilhados pelo responsável como
+"qualquer pessoa com o link / leitor". A leitura em público usa o proxy de
+mesma origem \`/api/acervo/public-media\`, que só aceita IDs presentes no
+índice dos 19 projetos. Os índices ficam em \`public/acervo/index.json\` e
+\`public/acervo/projects/*.json\`; são um retrato da pasta, e novos uploads
+no Drive exigem **atualização do índice** para aparecerem.
+
+O endpoint serve somente imagens JPG/PNG/WebP/GIF/AVIF e vídeos
+MP4/WebM/MOV compatíveis. A chave de API continua fora do GitHub,
+armazenada como \`LM_GOOGLE_PICKER_API_KEY\` no Cloudflare, restrita ao
+domínio e às APIs do Google. Arquivos fora da lista não podem ser buscados
+por IDs arbitrários. Não se deve dar acesso público a outras pastas sem
+autorização.
+
+O botão **Adicionar do computador** aceita fotografias e vídeos:
+- Fotografias locais são otimizadas para até 3840 px e incorporadas como
+  WebP no JSON, de modo que o projeto possa ser transferido para outro
+  computador com a imagem incluída.
+- Vídeos locais permanecem como blobs no IndexedDB do navegador;
+  o projeto JSON salva apenas ID, nome e controles de posição. **Não são
+  portáteis sozinhos:** em outro computador deve-se levar o original e
+  inseri-lo novamente, ou exportar HTML offline com o vídeo incorporado
+  (limitado a 32 MB por clipe e 64 MB no total, após confirmação).
+- O vídeo no editor roda sem som em loop e ocupa uma camada própria;
+  PDF/PNG mostram o quadro escolhido.
+- O acervo remoto público não depende da sessão OAuth. O fluxo OAuth
+  permanece apenas como legado para Drive pessoal/Dropbox.
+
+A verificação final precisa cobrir: catálogo abre sem login, fotos da pasta
+são exibidas e aplicadas ao M/fundo, vídeo reproduz, foto local aparece
+e fica no projeto JSON, vídeo local permanece disponível após recarregar
+o mesmo navegador, PDF/PNG capturam um quadro, e URLs fora do
+catálogo são recusadas.
+
 # LABMATTAR / Acervo conectado (Google Drive e Dropbox)
 
 **Status:** interface e API integradas à prévia. A autenticação real só fica disponível depois do registro de aplicativos OAuth e da inclusão das credenciais no Cloudflare. Não altera a Matriz Vetorial nem `labmattar.com`.

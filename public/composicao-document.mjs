@@ -28,10 +28,23 @@ function enumValue(v,options,name){check(typeof v==="string"&&options.includes(v
 function bounded(v,min,max,name){check(typeof v==="number"&&Number.isFinite(v)&&v>=min&&v<=max,name);return v}
 function text(v,max,name){check(typeof v==="string"&&v.length<=max,name);return v}
 function safeImagePath(v){
+  // A compressed local image is embedded in the project JSON, allowing it
+  // to reopen on a different computer without hidden browser storage.
+  if(typeof v==="string"&&v.length<=5_000_000&&
+    /^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/.test(v))return true;
   if(typeof v!=="string"||!v.startsWith("/")||v.startsWith("//")||v.includes(".."))return false;
   if(!/[?#]/.test(v))return true;
   // External images must pass through our same-origin auth proxy. Never allow
   // public share links, arbitrary hosts, token parameters or path traversal.
+  if(v.startsWith("/api/acervo/public-media?")){
+    try{
+      const u=new URL(v,"https://acervo.local"),p=u.searchParams;
+      return u.origin==="https://acervo.local"&&u.pathname==="/api/acervo/public-media"&&
+        [...p.keys()].sort().join(",")==="id,project"&&
+        /^[A-Za-z0-9_-]{5,200}$/.test(p.get("id")||"")&&
+        /^[A-Za-z0-9_-]{5,200}$/.test(p.get("project")||"");
+    }catch{return false;}
+  }
   if(!v.startsWith("/api/acervo/media?"))return false;
   try{
     const u=new URL(v,"https://acervo.local");
@@ -104,7 +117,7 @@ function captureState(state,photoCatalog){
 function assetList(state,photoCatalog){
   const result=[
     {id:"identity:m-mask",type:"vector",uri:OFFICIAL_M_MASK,source:"identidade-oficial"},
-    {id:"photo:"+state.photo,type:"image",uri:photoCatalog[state.photo],source:state.photo.startsWith("ext-")?"acervo-privado":"prévia-local",masterVerified:false}
+    {id:"photo:"+state.photo,type:"image",uri:photoCatalog[state.photo],source:state.photo.startsWith("loc-")?"arquivo-local":state.photo.startsWith("ext-")?"acervo-privado":"prévia-local",masterVerified:false}
   ];
   const refs=new Set();
   if(state.symbol!=="none")refs.add(state.symbol);

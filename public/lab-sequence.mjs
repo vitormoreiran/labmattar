@@ -9,16 +9,28 @@ const title=value=>{check(typeof value==='string'&&value.length<=120,'nome da p�
 export function privatePhotoCatalog(document,base){
   const catalog={...base};
   for(const asset of document.assets||[]){
-    if(asset.type!=='image'||!asset.id?.startsWith('photo:ext-'))continue;
+    if(asset.type!=='image'||!/^photo:(ext|loc)-/.test(asset.id||''))continue;
     const key=asset.id.slice(6),uri=asset.uri;
-    check(/^ext-[a-z0-9]+$/.test(key)&&typeof uri==='string','fotografia privada');
-    const url=new URL(uri,'https://assets.local');
-    const provider=url.searchParams.get('provider'),id=url.searchParams.get('id');
-    check(uri.startsWith('/api/acervo/media?')&&!url.hash&&url.origin==='https://assets.local'&&url.pathname==='/api/acervo/media'&&
-      [...url.searchParams.keys()].sort().join(',')==='id,provider','origem da fotografia privada');
-    check(provider==='google'?/^[A-Za-z0-9_-]{5,200}$/.test(id||''):
-      provider==='dropbox'&&/^id:[A-Za-z0-9_=-]{5,200}$/.test(id||''),'identificador da fotografia');
-    const hash=Array.from(new TextEncoder().encode(provider+':'+id)).reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
+    check(typeof uri==='string','referência da fotografia');
+    if(key.startsWith('loc-')){
+      check(/^loc-[a-z0-9]{10,25}$/.test(key)&&uri.length<=5_000_000&&
+        /^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/.test(uri),
+        'arquivo local da fotografia');
+      catalog[key]=uri;continue;
+    }
+    check(/^ext-[a-z0-9]+$/.test(key),'fotografia de catálogo');
+    const url=new URL(uri,'https://assets.local'),provider=url.searchParams.get('provider'),id=url.searchParams.get('id');
+    check(uri.startsWith('/api/acervo/')&&!url.hash&&url.origin==='https://assets.local','origem da fotografia privada');
+    const isPublic=url.pathname==='/api/acervo/public-media';
+    check(isPublic?
+      [...url.searchParams.keys()].sort().join(',')==='id,project'&&
+        /^[A-Za-z0-9_-]{5,200}$/.test(url.searchParams.get('project')||''):
+      url.pathname==='/api/acervo/media'&&[...url.searchParams.keys()].sort().join(',')==='id,provider',
+      'origem da fotografia privada');
+    const source=isPublic?'public':provider;
+    check(source==='public'||source==='google'?/^[A-Za-z0-9_-]{5,200}$/.test(id||''):
+      source==='dropbox'&&/^id:[A-Za-z0-9_=-]{5,200}$/.test(id||''),'identificador da fotografia');
+    const hash=Array.from(new TextEncoder().encode(source+':'+id)).reduce((n,v)=>(n*33+v)>>>0,5381).toString(36);
     check(key==='ext-'+hash,'referência da fotografia privada');
     catalog[key]=uri;
   }
@@ -49,12 +61,16 @@ export function motionBox(motion,asset,width,height){
  // They never contain bearer tokens, Google share URLs or arbitrary remote hosts.
 export function normalizeClip(value){
   check(value&&identifier(value.id),'identificador do vídeo');
-  check(value.provider==='google'||value.provider==='dropbox','provedor do vídeo');
+  check(['google','dropbox','public','local'].includes(value.provider),'provedor do vídeo');
   check(typeof value.fileId==='string'&&(
-    value.provider==='google'?/^[A-Za-z0-9_-]{5,200}$/.test(value.fileId):
-      /^id:[A-Za-z0-9_=-]{5,200}$/.test(value.fileId)),'identificador privado do vídeo');
+    value.provider==='local'?/^local-[a-f0-9-]{36}$/.test(value.fileId):
+    value.provider==='dropbox'?/^id:[A-Za-z0-9_=-]{5,200}$/.test(value.fileId):
+      /^[A-Za-z0-9_-]{5,200}$/.test(value.fileId)),'identificador privado do vídeo');
+  if(value.provider==='public')
+    check(/^[A-Za-z0-9_-]{5,200}$/.test(value.projectId||''),'projeto do vídeo');
   check(['video/mp4','video/webm','video/quicktime'].includes(value.mimeType),'formato do vídeo');
   const normalized={id:value.id,provider:value.provider,fileId:value.fileId,
+    ...(value.provider==='public'?{projectId:value.projectId}:{}),
     name:title(value.name),mimeType:value.mimeType,
     x:number(value.x,0,100,'posição horizontal do vídeo'),
     y:number(value.y,0,100,'posição vertical do vídeo'),
@@ -67,6 +83,7 @@ export function normalizeClip(value){
 export function createClip(media,id){
   check(media?.kind==='video','somente vídeos podem ser adicionados');
   return normalizeClip({id,provider:media.provider,fileId:media.id,
+    ...(media.provider==='public'?{projectId:media.projectId}:{}),
     name:String(media.name||'Vídeo').slice(0,120),mimeType:media.mimeType,
     x:20,y:15,width:60,aspect:16/9,frameSeconds:0});
 }
@@ -78,7 +95,10 @@ export function clipBox(clip,width,height){
 }
 export function privateClipUrl(clip){
   const safe=normalizeClip(clip);
-  return '/api/acervo/media?provider='+safe.provider+'&id='+encodeURIComponent(safe.fileId);
+  return safe.provider==='public'?
+    '/api/acervo/public-media?project='+encodeURIComponent(safe.projectId)+'&id='+encodeURIComponent(safe.fileId):
+    safe.provider==='local'?'/api/acervo/local-placeholder?id='+encodeURIComponent(safe.fileId):
+    '/api/acervo/media?provider='+safe.provider+'&id='+encodeURIComponent(safe.fileId);
 }
 export function createPage({id,name,state,photoCatalog,maxEdge=3840,motions=[],clips=[]}){
   return {id,name,composition:createProductionDocument({state,photoCatalog,maxEdge}),

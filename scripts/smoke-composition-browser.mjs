@@ -185,8 +185,8 @@ try{
     "Completo must fit the full page height and bleed symmetrically beyond the sides: "+JSON.stringify(fullM));
   assert(Math.abs(fullM.mask.width/fullM.mask.height-990.08/743.18)<.005,
     "Completo must preserve the published M vector aspect: "+JSON.stringify(fullM));
-  assert((await constructionPage.locator("#caseStepBody").textContent()).includes("M completo"),
-    "Sidebar must describe the complete vertical behavior");
+  assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="completo",
+    "The vertical demo must retain the complete M without a redundant sidebar");
   await constructionPage.locator("#caseFrame").screenshot({path:"composition-vertical-m-completo.png"});
   await constructionPage.locator('[data-case-format="desktop"]').click();
   const horizontalFull=await measureM();

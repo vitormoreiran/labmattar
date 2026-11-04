@@ -10,9 +10,23 @@ page.on("console",m=>{if(m.type()==="error")errors.push(m.text())});
 const assert=(v,m)=>{if(!v)throw Error(m)};
 
 async function choose(group,value){
-  const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",marker:"m",mPresentation:"m",photo:"m",type:"texto",bodyMode:"texto"}[group];
-  if(module && await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
+  const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
+    marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
+  if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
     await page.locator('button[data-mobile-module="'+module+'"]').click();
+  if(group==="mContent"&&value!=="off"){
+    const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
+    if(mode==="off"){
+      await page.locator('[data-lab-choice="mPresentation"][data-value="elemento"]').click();
+    }
+    // On photographic backgrounds the material is necessarily photography
+    // and is not offered as a redundant second decision.
+    if(value==="photo"&&await page.locator("#labBackground").inputValue()==="photo"){
+      assert(await page.locator("#labArtboard").getAttribute("data-m-content")==="photo",
+        "Photo background must activate a photo M");
+      return;
+    }
+  }
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
 }
@@ -41,6 +55,44 @@ try{
       group+" choices must show function labels, not editorial filler");
   }
   await page.screenshot({path:"laboratorio-interface-desktop.png"});
+  // One decision for placement; contextual options never become dead cards.
+  await page.locator('button[data-mobile-module="m"]').click();
+  assert(await page.locator(".lm-lab-m-application-grid .lm-ctrl-choice").count()===3,
+    "M must offer exactly Sem M, Elemento and Completo as primary applications");
+  await choose("mContent","off");
+  assert(await page.locator("#labMContentField").isHidden()&&
+         await page.locator(".lm-m-scale-field").isHidden()&&
+         await page.locator(".lm-marker-field").isVisible(),
+    "Sem M keeps optional end markers but hides material and scale");
+  await choose("mPresentation","elemento");
+  assert(await page.locator("#labMContentField").isVisible()&&
+         await page.locator(".lm-m-scale-field").isVisible(),
+    "Elemento reveals exactly material and scale on a color surface");
+  await choose("marker","top");
+  await choose("mPresentation","completo");
+  assert(await page.locator(".lm-m-scale-field").isHidden()&&
+         await page.locator(".lm-marker-field").isHidden(),
+    "Completo must not display unavailable marker and scale controls");
+  await choose("mPresentation","elemento");
+  assert(await page.locator(".lm-marker-field").isVisible()&&
+         await page.locator("#labMarker").inputValue()==="top",
+    "Element profile must preserve the author's previous marker choice");
+  await choose("mContent","photo");
+  assert(await page.locator("#labOpenPhotoFromM").isVisible()&&
+         await page.locator(".lm-photo-library-field").isHidden(),
+    "Photograph library belongs to Fundo, not the M properties");
+  await page.locator("#labOpenPhotoFromM").click();
+  assert(await page.locator('.lm-lab-inspector[data-mobile-module="fundo"]').count()===1&&
+         await page.locator(".lm-photo-library-field").isVisible()&&
+         await page.locator("#labFocalPreview").isVisible(),
+    "Edit image must open the only photograph library in Fundo");
+  await choose("background","photo");
+  await page.locator('button[data-mobile-module="m"]').click();
+  assert(await page.locator("#labMContentField").isHidden(),
+    "Photographic background determines the M material automatically");
+  await choose("marker","none");
+  await choose("mContent","off");
+  await choose("background","color");
   // Reproduce the exact text entrance used in the normative Typography chapter.
   // Playback must be reversible and must never mutate authored or editable text.
   const playButton=page.locator("#labMotionPlay");
@@ -479,6 +531,7 @@ try{
     // A photographic M must be turned off before the color-only solid option
     // is available. This is a deliberate product rule, not a visual failure.
     await choose("mContent","off");
+    await choose("mPresentation","elemento");
     const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
     await mButton.scrollIntoViewIfNeeded();
     await mButton.click();

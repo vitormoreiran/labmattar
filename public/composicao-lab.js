@@ -161,6 +161,9 @@
   }
   let state=copy(presets.tipografia);
   try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
+  // M's material survives a temporary "Sem M"; the visible application
+  // controls do not create another data model or change the document schema.
+  let lastMContent=state.mContent==="off"?(state.background==="photo"?"photo":"solid"):state.mContent;
   // Format-specific reading widths are genuine layout decisions, not zoom.
   // Switching aspect ratios recomposes the text and restores an author's
   // previous column width when they return to that format.
@@ -201,27 +204,34 @@
     for(const key of ["photo","focusX","focusY"])by(fields[key]).disabled=!activeImage;
     const fullM=mActive&&state.mPresentation==="completo";
     by("labMPresentationField").hidden=false;
-    by("labMPresentation").disabled=!mActive;
+    // Choosing Elemento or Completo also enables the M from "Sem M".
+    by("labMPresentation").disabled=false;
     by("labMScale").disabled=!mActive||fullM;
     by("labMPresentationHint").textContent=!mActive?
-      "Ative o M para escolher sua aparição.":
+      "Selecione Elemento ou Completo para aplicar o M.":
       fullM?
       "Completo: M com 100% da altura do canvas, com proporção preservada. A escala anterior fica salva para Elemento.":
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=state.background==="photo";
     by("labMarker").disabled=fullM;
+    by("labMContentField").hidden=!mActive||state.background==="photo";
+    by("labOpenPhotoFromM").hidden=!(mActive&&backgroundPhoto);
     // A solid M is a color-only treatment. Do not offer or restore it
     // on photographic surfaces, including legacy saved projects.
     const solidChoice=document.querySelector('[data-lab-choice="mContent"][data-value="solid"]');
-    const solidAllowed=state.background==="color"&&state.mContent!=="photo";
+    const solidAllowed=state.background==="color";
     if(solidChoice)solidChoice.hidden=!solidAllowed;
     by("labMContent").querySelector('option[value="solid"]').disabled=!solidAllowed;
     const focusField=by("labMarkerFocusField");
     if(focusField)focusField.hidden=!(markerActive&&backgroundPhoto);
     by("labMarkerFocus").disabled=!(markerActive&&backgroundPhoto);
-    for(const id of ["labColor","labPhoto","labFocalPreview","labFocusX","labFocusY","labMScale","labMarker"])
-      setFieldVisible(id,true);
+    // Progressive disclosure: only relevant controls occupy inspector space.
+    // Markers are independent of the central M, except in Completo.
+    setFieldVisible("labColor",state.background==="color");
+    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY"])setFieldVisible(id,activeImage);
+    setFieldVisible("labMScale",mActive&&!fullM);
+    setFieldVisible("labMarker",!fullM);
     for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
@@ -236,7 +246,9 @@
     document.querySelectorAll("[data-lab-choice]").forEach(button=>{
       const key=button.dataset.labChoice;
       const select=by(fields[key]);
-      button.setAttribute("aria-pressed",String(state[key]===button.dataset.value));
+      button.setAttribute("aria-pressed",String(key==="mPresentation"
+        ? mActive&&state.mPresentation===button.dataset.value
+        : state[key]===button.dataset.value));
       button.disabled=Boolean(select&&select.disabled);
     });
     for(const [key,id] of Object.entries(fields)){
@@ -749,11 +761,26 @@
   // One action model for the graphic controls and the original select fields.
   document.querySelectorAll("[data-lab-choice]").forEach(button=>{
     button.addEventListener("click",()=>{
-      const select=by(fields[button.dataset.labChoice]);
+      const key=button.dataset.labChoice;
+      const select=by(fields[key]);
       if(!select||select.disabled)return;
+      if(key==="mContent"){
+        if(state.mContent!=="off")lastMContent=state.mContent;
+        if(button.dataset.value!=="off")lastMContent=button.dataset.value;
+      }
+      // The three M applications are a single decision. Reuse the two
+      // existing native fields to preserve export, tests and saved projects.
+      if(key==="mPresentation"&&state.mContent==="off"){
+        by("labMContent").value=state.background==="photo"?"photo":lastMContent;
+      }
       select.value=button.dataset.value;
       select.dispatchEvent(new Event("change",{bubbles:true}));
     });
+  });
+  by("labOpenPhotoFromM")?.addEventListener("click",()=>{
+    const tab=document.querySelector('[data-mobile-module="fundo"]');
+    if(document.body.classList.contains("lm-studio-open"))tab?.click();
+    else by("labPhoto")?.closest(".lm-photo-library-field")?.scrollIntoView({block:"nearest",behavior:"smooth"});
   });
   // Keep the original sliders as the source of truth, but allow exact integer
   // percentages in a compact numeric input. This makes one-percent edits
@@ -831,15 +858,15 @@
     labBackground:["Fundo",
       "Define se a superfície usa cor ou fotografia.",
       "O fundo é independente do M."],
-    labMContent:["M",
-      "Em superfícies fotográficas, o M nunca recebe cor sólida. O preenchimento sólido só existe nas composições de cor.",
-      "O M permanece central e sua geometria não muda."],
-    labMPresentation:["Aparição do M",
-      "Elemento mantém o M inteiro e permite ajustar sua escala; Completo ocupa 100% da altura da superfície.",
-      "A escala configurada para Elemento é preservada ao alternar entre os modos."],
+    labMContent:["Conteúdo do M",
+      "Quando o fundo é cor, o M pode receber cor ou fotografia. Sobre fundo fotográfico, o M usa sempre a fotografia.",
+      "Os perfis de aplicação não alteram a geometria do vetor."],
+    labMPresentation:["Aplicação do M",
+      "Sem M desativa a forma central; Elemento permite ajustar a escala; Completo ocupa 100% da altura da superfície.",
+      "O perfil de Elemento mantém sua escala quando você muda de modo."],
     labPhoto:["Fotografia",
-      "Escolha a imagem.",
-      "O enquadramento pode ser ajustado separadamente."],
+      "Escolha a imagem utilizada pelo fundo, pelo M ou pelos marcadores.",
+      "O mesmo enquadramento é usado por todas as camadas da composição."],
     labMarker:["Marcadores do M",
       "Em fotografia, as pontas recortam a versão nítida ou desfocada da mesma imagem. Em cor, permanecem marcadores gráficos.",
       "Os recortes usam a mesma geometria vetorial do M, sem blocos de cor sobre fotografia."],

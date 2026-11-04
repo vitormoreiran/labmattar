@@ -57,7 +57,16 @@ export function download(blob,name){
 }
 const MAX_PRIVATE_VIDEO_BYTES=32*1024*1024;
 async function privateVideoBytes(clip){
-  const path='/api/acervo/media?provider='+clip.provider+'&id='+encodeURIComponent(clip.fileId);
+  if(clip.provider==='local'){
+    const blob=await window.LabAcervo?.localVideoBlob?.(clip.fileId);
+    if(!blob)throw Error('Vídeo local não encontrado neste navegador: '+clip.name);
+    if(blob.size>MAX_PRIVATE_VIDEO_BYTES)
+      throw Error('O vídeo '+clip.name+' é maior que 32 MB. Exporte uma versão otimizada para HTML offline.');
+    return new Uint8Array(await blob.arrayBuffer());
+  }
+  const path=clip.provider==='public'?
+    '/api/acervo/public-media?project='+encodeURIComponent(clip.projectId)+'&id='+encodeURIComponent(clip.fileId):
+    '/api/acervo/media?provider='+clip.provider+'&id='+encodeURIComponent(clip.fileId);
   const response=await fetch(path,{credentials:'same-origin',cache:'no-store'});
   if(!response.ok)throw Error('Vídeo privado indisponível: '+clip.name+'. Reconecte o acervo.');
   const size=Number(response.headers.get('content-length')||0);

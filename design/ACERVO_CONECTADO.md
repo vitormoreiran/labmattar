@@ -19,6 +19,31 @@ A imagem é servida pelo backend em `/api/acervo/media` com autenticação. URLs
 - IDs e nomes de mídias selecionadas podem permanecer no `sessionStorage` do navegador para restaurar a seleção. Não são credenciais, mas devem ser tratados como metadados privados.
 - **Limite atual**: cookies de sessão criptografados, sem banco de usuários; sessões persistentes até 7 dias. Não atende compartilhamento multiusuário ou políticas corporativas de governança. Requer auditoria antes de ser considerado produção.
 
+## Atualizações automáticas / Cloudflare
+
+O GitHub publica o Worker de prévia com `npx wrangler deploy --keep-vars` e `keep_vars: true`.
+**Nunca remover essa opção:** sem ela, um deploy automático apaga as variáveis simples
+criadas pelo painel Cloudflare (mas não os Secrets), fazendo o Laboratório voltar
+ao estado **Ativação pendente**.
+
+Os identificadores públicos `LM_ACERVO_ORIGIN`, `LM_GOOGLE_CLIENT_ID` e
+`LM_GOOGLE_APP_ID` estão declarados no arquivo temporário de deploy
+`wrangler.preview.jsonc` gerado pelo workflow. Eles não são senhas.
+**Não adicionar Client Secret, chaves de sessão ou chaves de API ao GitHub.**
+
+Para recuperar a conexão depois de um deploy antigo que apagou as variáveis,
+confirme no Cloudflare que `LM_GOOGLE_PICKER_API_KEY` ainda existe. Se tiver
+desaparecido, adicione novamente via **Settings → Variables and Secrets**,
+preferencialmente com tipo **Secret**; use o valor existente no Google Cloud
+em *APIs & Services → Credentials → LABMATTAR Picker*. Não o compartilhe no chat.
+Essa API key é utilizada no browser pelo Google Picker e, portanto, deve
+permanecer restrita ao domínio do Worker e às APIs necessárias.
+
+A inclusão de um Secret via painel cria uma nova versão do Worker. Depois,
+reabra a biblioteca de mídia e confirme **Conectar conta** ou **Conectado**
+em vez de **Ativação pendente**. O campo `LM_ACERVO_ENCRYPTION_KEY` deve ser
+mantido com o mesmo valor para preservar sessões já autorizadas.
+
 ## Configuração obrigatória na prévia Cloudflare
 
 Criar aplicações OAuth oficiais e definir URL de retorno exata:

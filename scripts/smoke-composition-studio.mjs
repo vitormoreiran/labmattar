@@ -338,6 +338,22 @@ try{
     });
     assert(legible.preview>150&&legible.tokens.every(token=>parseFloat(token)>0),
       "Preview must keep all three page-relative typography roles: "+JSON.stringify(legible));
+    const official=await page.locator("#labArtboard").evaluate(board=>{
+      const read=selector=>parseFloat(getComputedStyle(board.querySelector(selector)).fontSize);
+      const caption=board.querySelector(".lm-lab-signature-caption");
+      return {
+        body:read("#labRenderedBody"),
+        detail:read("#labKicker"),
+        footer:read("#labFooterRight"),
+        composedDetail:caption?parseFloat(getComputedStyle(caption).fontSize):null,
+        logicalBody:getComputedStyle(board).getPropertyValue("--lm-type-body-size").trim(),
+        logicalDetail:getComputedStyle(board).getPropertyValue("--lm-type-detail-size").trim()
+      };
+    });
+    assert(official.body===18&&official.detail===13&&official.footer===13&&
+      official.composedDetail===13&&official.logicalBody==="18px"&&official.logicalDetail==="13px",
+      "Corpo/Detalhe must use the manual's exact logical-page sizes, never a per-format override: "+
+        format+" "+JSON.stringify(official));
     await page.setViewportSize({width:1440,height:900});
     await page.waitForTimeout(120);
     const desktopTokens=await page.locator("#labArtboard").evaluate(el=>

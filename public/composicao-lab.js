@@ -1040,10 +1040,10 @@
       target:"#labBackground"
     },
     {
-      title:"Verificar e exportar",
-      text:"Confira a composição e o aviso abaixo da prévia. Margens, legibilidade e elementos da página precisam estar resolvidos antes da exportação.",
-      rule:"A saída preserva as proporções, os tratamentos tipográficos e o vetor da composição.",
-      target:"#labExportPng"
+      title:"Revisar e exportar",
+      text:"Organize a apresentação em Páginas e use Revisar e exportar. Confira as páginas incluídas, escolha PDF, site HTML ou imagem PNG e ajuste a qualidade antes de baixar.",
+      rule:"PDF e site incluem a sequência. PNG inclui somente a página em edição. O formato de cada página é definido na montagem.",
+      target:"#labOpenDelivery"
     }
   ];
   let tourIndex=-1;

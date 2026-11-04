@@ -97,7 +97,11 @@
   function currentIndex(){return order.indexOf(selectedId);}
   function paint(){
    order.forEach(id=>feedGrid.appendChild(byId.get(id)));
-   $$('.ss-feed-post',feedGrid).forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.id===selectedId)));
+   $('.ss-feed-post',feedGrid).forEach(el=>{
+    const selected=String(el.dataset.id===selectedId);
+    el.dataset.selected=selected;
+    (el.querySelector('.ss-post-hotspot')||el).setAttribute('aria-pressed',selected);
+   });
    const chosen=byId.get(selectedId);
    const index=currentIndex();
    $('#ssFeedIndex').textContent=number(index+1)+' / '+number(order.length);
@@ -124,7 +128,7 @@
       ev.preventDefault();
       select(el.dataset.id);
       move(currentIndex(),currentIndex()+(ev.key==='ArrowLeft'?-1:1));
-      el.focus();
+      (el.querySelector('.ss-post-hotspot')||el).focus();
     }
    });
    el.addEventListener('dragstart',ev=>{

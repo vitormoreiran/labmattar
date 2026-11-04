@@ -152,7 +152,7 @@ async function authorized(request,provider,env){
 }
 function safeId(provider,id){
   return typeof id==="string" && (provider==="google"?
-    /^[A-Za-z0-9_-]{5,200}$/.test(id):/^id:[A-Za-z0-9_-]{5,200}$/.test(id));
+    /^[A-Za-z0-9_-]{5,200}$/.test(id):/^id:[A-Za-z0-9_=-]{5,200}$/.test(id));
 }
 function mimeForDropbox(name){
   const ext=(name||"").split(".").pop().toLowerCase();

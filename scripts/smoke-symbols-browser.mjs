@@ -52,9 +52,14 @@ try {
           const oldImagePage=await browser.newPage();
           try {
             await oldImagePage.goto(new URL('/imagem.html',url).href,{waitUntil:'load',timeout:60000});
-            await oldImagePage.waitForURL(next=>new URL(next).pathname==='/compor.html',{timeout:15000});
-            assert.equal(new URL(oldImagePage.url()).pathname,'/compor.html',
-              'Legacy image URL must redirect into the separate composition editor');
+            // The Worker may canonicalize /compor.html as /compor; both
+            // routes address the same separated editor. Verify its actual
+            // functional canvas rather than insisting on a file extension.
+            const isCompor=next=>/^[/]compor(?:[.]html)?[/]?$/.test(new URL(next).pathname);
+            try{await oldImagePage.waitForURL(isCompor,{timeout:15000});}
+            catch(error){throw new Error('Legacy image redirect ended at '+oldImagePage.url()+': '+error.message);}
+            assert.ok(isCompor(oldImagePage.url()),
+              'Legacy image URL must redirect into Compor: '+oldImagePage.url());
             assert.equal(await oldImagePage.locator('#labArtboard').count(),1,
               'Legacy image link must preserve access to the functional Compor tool');
           } finally { await oldImagePage.close(); }

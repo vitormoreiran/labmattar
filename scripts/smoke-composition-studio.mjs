@@ -164,7 +164,7 @@ try{
   const tour=page.locator("#labHelp-overview");
   const titles=[
     "Como funciona","Superfície e margem","M e geometria",
-    "Área de leitura","Título, Corpo e Detalhe","Imagem e contraste","Verificar e exportar"
+    "Área de leitura","Título, Corpo e Detalhe","Imagem e contraste","Revisar e exportar"
   ];
   assert(await tour.isVisible()&&await tour.getAttribute("role")==="dialog"&&
          await tourTrigger.getAttribute("aria-expanded")==="true",

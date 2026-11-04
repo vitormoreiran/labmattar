@@ -1,7 +1,7 @@
 import {chromium,webkit} from "playwright";
 
 const engine=process.env.COMPOSITION_BROWSER==="webkit"?webkit:chromium;
-const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/laboratorio.html";
+const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const browser=await engine.launch({headless:true,...(engine===chromium?{args:["--no-sandbox"]}:{})});
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];

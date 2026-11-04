@@ -34,7 +34,7 @@ try {
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
         const navLinks=await areaPage.locator('.lm-site-nav a').allTextContents();
         assert.deepEqual(navLinks.map(x=>x.trim()),[
-          '01 / SÍMBOLOS','MOTION','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO DE COMPOSIÇÃO'
+          '01 / SÍMBOLOS','MOTION','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO'
         ],'Motion follows Symbols with a separate composition laboratory: '+area);
         assert.equal(await areaPage.locator('.lm-site-nav a[href="/imagem.html"]').count(),0,
           'Imagem must not reappear as a separate chapter');
@@ -43,8 +43,8 @@ try {
             'Composição must not contain the interactive laboratory');
           assert.equal(await areaPage.locator('main a[href="/laboratorio.html"]').count(),1,
             'Composição must link to chapter 05');
-          assert.equal(await areaPage.locator('#construcao .lm-case-facts article').count(),4,
-            'Construction must show four clear assembly decisions');
+          assert.equal(await areaPage.locator('#construcao .lm-case-facts article').count(),0,
+            'Construction guidance belongs in Compor, not in a fixed explanatory grid');
           assert.equal(await areaPage.locator('#regras-de-composicao .lm-m-guide-grid article').count(),6,
             'Six identity composition rules remain available');
         }
@@ -52,18 +52,22 @@ try {
           const oldImagePage=await browser.newPage();
           try {
             await oldImagePage.goto(new URL('/imagem.html',url).href,{waitUntil:'load',timeout:60000});
-            await oldImagePage.waitForURL(next=>['/laboratorio.html','/laboratorio'].includes(new URL(next).pathname),{timeout:15000});
-            assert.ok(['/laboratorio.html','/laboratorio'].includes(new URL(oldImagePage.url()).pathname),
-              'Legacy image URL must redirect into the laboratory: '+oldImagePage.url());
+            await oldImagePage.waitForURL(next=>new URL(next).pathname==='/compor.html',{timeout:15000});
+            assert.equal(new URL(oldImagePage.url()).pathname,'/compor.html',
+              'Legacy image URL must redirect into the separate composition editor');
             assert.equal(await oldImagePage.locator('#labArtboard').count(),1,
-              'Legacy image link must open the functional Laboratory instead of an image chapter');
+              'Legacy image link must preserve access to the functional Compor tool');
           } finally { await oldImagePage.close(); }
         }
         if(area==='laboratorio.html'){
-          assert.equal(await areaPage.locator('#labArtboard').count(),1,
-            'Laboratory retains one functional artboard');
-          assert.equal(await areaPage.locator('#labStudioToggle').count(),1,
-            'Laboratory retains the focused editor');
+          assert.equal(await areaPage.locator('#labArtboard, #labStudioToggle').count(),0,
+            'The Laboratory index must not embed Compor');
+          assert.equal(await areaPage.locator('.lm-lab-tool').count(),2,
+            'The Laboratory index must show both original tools');
+          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/editor/"]').count(),1,
+            'Matrix preview must open the original vector editor');
+          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/compor.html?studio=1#laboratorio"]').count(),1,
+            'Compor preview must open the separate composition editor');
         }
         await areaPage.evaluate(()=>document.fonts.ready);
         await areaPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
@@ -107,7 +111,7 @@ try {
           'tipografia.html':'#titulo h2',
           'cores.html':'#paleta .section-head > p:first-child',
           'composicao.html':'#construcao .lm-case-intro h2',
-          'laboratorio.html':'#laboratorio .lm-lab-heading h2'
+          'laboratorio.html':'#ferramentas .inner > p.eyebrow'
         };
         const internal=areaPage.locator(internalSelectors[area]);
         assert.equal(await internal.count(),1,'One representative internal chapter heading: '+area);

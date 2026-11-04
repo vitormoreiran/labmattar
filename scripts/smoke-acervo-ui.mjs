@@ -37,8 +37,8 @@ try{
   await page.locator('button[data-mobile-module="fundo"]').click();
   assert(await page.locator("#labAcervoDialog").isHidden(),"Dialog should never be forced on editor load");
   assert(await page.locator("#labAcervoLaunch").isVisible(),"One clear media library entry");
-  assert(await page.locator("#labAcervoLaunch .lm-acervo-provider-icon").count()===2,
-    "Both provider icons appear in the compact entry");
+  assert(await page.locator("#labAcervoLaunch .lm-acervo-provider-icon").count()===1,
+    "The fixed portfolio shortcut displays only the Google Drive icon");
   await page.locator("#labAcervoLaunch").click();
   await page.locator("#labAcervoConnect-google").waitFor({state:"visible"});
   assert(await page.locator("#labAcervoConnect-google .lm-acervo-provider-icon").count()===1,

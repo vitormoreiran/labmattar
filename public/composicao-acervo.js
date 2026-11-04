@@ -19,7 +19,9 @@
   const setup=by("labAcervoSetup"),browser=by("labAcervoBrowser");
   const launch=by("labAcervoLaunch"),sources=by("labAcervoProviders");
   const localInput=by("labAcervoLocalInput"),search=by("labAcervoSearch");
-  let publicIndex=null,publicTrail=[],publicCurrent=null;
+  const filterBar=by("labAcervoFilters"),localDialog=by("labAcervoLocalDialog");
+  let publicIndex=null,publicTrail=[],publicCurrent=null,mediaFilter="all",currentPublicItems=[];
+  let publicRenderRevision=0;
   const publicProjects=new Map(),localVideoUrls=new Map();
   const pool=new Map();
   let statusData=null,activeProvider=null,folder="",cursor="",entries=[];
@@ -93,6 +95,7 @@
     if(!overlay.hidden)return;
     previousFocus=document.activeElement;
     overlay.hidden=false;
+    document.body.classList.add("lm-acervo-open");
     displayProviders();
     notify(autoProvider?"Verificando a conexão. Abrindo seus arquivos…":"Selecione a origem das fotografias.");
     dialog.focus({preventScroll:true});
@@ -114,6 +117,7 @@
   }
   function closeDialog(){
     overlay.hidden=true;
+    document.body.classList.remove("lm-acervo-open");
     displayProviders();
     notify("");
     if(previousFocus?.isConnected)previousFocus.focus({preventScroll:true});
@@ -126,6 +130,7 @@
     by("labAcervoBack").hidden=activeProvider==="public"?!publicTrail.length:activeProvider!=="dropbox"||!folder;
     by("labAcervoMore").hidden=activeProvider!=="dropbox"||!cursor;
     if(search)search.parentElement.hidden=activeProvider!=="public";
+    if(filterBar)filterBar.hidden=activeProvider!=="public";
     by("labAcervoProvidersBack").hidden=activeProvider==="public";
   }
   function groupFor(kind){
@@ -154,7 +159,7 @@
     if(!append&&!items.length){
       const empty=document.createElement("p");
       empty.className="lm-acervo-empty";
-      empty.textContent="Nenhuma fotografia ou vídeo encontrado nesta pasta.";
+      empty.textContent="Nenhum resultado nesta pasta. Ajuste a busca ou volte à pasta anterior."
       list.append(empty);return;
     }
     for(const item of items){
@@ -229,8 +234,31 @@
       mimeType:entry.mime,original:BASE+"public-media?"+query,
       preview:BASE+"public-thumb?"+query,size:entry.size||0};
   }
+  function paintPublicItems(){
+    const folders=currentPublicItems.filter(x=>x.kind==="folder").length;
+    const photos=currentPublicItems.filter(x=>x.kind==="image").length;
+    const videos=currentPublicItems.filter(x=>x.kind==="video").length;
+    if(filterBar){
+      filterBar.hidden=activeProvider!=="public"||photos+videos===0;
+      for(const button of filterBar.querySelectorAll("[data-acervo-filter]")){
+        const mode=button.dataset.acervoFilter;
+        const count=mode==="all"?photos+videos:mode==="image"?photos:videos;
+        button.setAttribute("aria-pressed",String(mediaFilter===mode));
+        const counter=button.querySelector(".lm-acervo-filter-count");
+        if(counter)counter.textContent=String(count);
+      }
+    }
+    const visible=currentPublicItems.filter(x=>x.kind==="folder"||mediaFilter==="all"||x.kind===mediaFilter);
+    show(visible);
+    const parts=[];
+    if(folders)parts.push(folders+(folders===1?" pasta":" pastas"));
+    if(photos||videos)parts.push(photos+videos+(photos+videos===1?" arquivo":" arquivos"));
+    notify((parts.join(" · ")||"Nenhum item")+" · "+
+      (publicTrail.length?"Clique em uma fotografia ou vídeo para inserir.":"Abra uma pasta para explorar os projetos."));
+  }
   async function renderPublic(){
     if(activeProvider!=="public")return;
+    const revision=++publicRenderRevision;
     setBusy(true);sources.hidden=true;setup.hidden=true;browser.hidden=false;
     try{
       if(!publicIndex){
@@ -253,23 +281,23 @@
             throw Error("Pasta do projeto incompatível.");
           publicProjects.set(projectId,project);
         }
-        const choices=project.entries.filter(x=>query?
-          x.name.toLocaleLowerCase("pt-BR").includes(query):x.parent===folderId);
+        const choices=project.entries.filter(x=>x.parent===folderId&&
+          (!query||x.name.toLocaleLowerCase("pt-BR").includes(query)));
         items=choices.sort((a,b)=>(a.kind==="folder"?0:1)-(b.kind==="folder"?0:1)||
           a.name.localeCompare(b.name,"pt-BR",{numeric:true}))
           .map(x=>publicItem(x,projectId));
       }
       if(query&&!publicTrail.length)items=items.filter(x=>x.name.toLocaleLowerCase("pt-BR").includes(query));
-      heading();show(items);
-      notify(items.length+" itens · "+(publicTrail.length?"Escolha uma fotografia ou vídeo para inserir.":"Escolha uma pasta de projeto."));
+      if(revision!==publicRenderRevision)return;
+      heading();currentPublicItems=items;paintPublicItems();
     }catch(error){
-      list.replaceChildren();notify(error.message);
-    }finally{setBusy(false);}
+      if(revision===publicRenderRevision){list.replaceChildren();notify(error.message);}
+    }finally{if(revision===publicRenderRevision)setBusy(false);}
   }
   function openPublicFolder(item){
     if(!item?.id)return;
     const projectId=item.projectId||publicTrail[0]?.projectId;
-    publicTrail.push({id:item.id,name:item.name,projectId});
+    mediaFilter="all";publicTrail.push({id:item.id,name:item.name,projectId});
     if(search)search.value="";
     renderPublic().catch(error=>notify(error.message));
   }
@@ -278,9 +306,10 @@
     else{
       previousFocus=document.activeElement;
       overlay.hidden=false;
+      document.body.classList.add("lm-acervo-open");
       dialog.focus({preventScroll:true});
     }
-    activeProvider="public";publicTrail=[];
+    activeProvider="public";publicTrail=[];mediaFilter="all";
     if(search)search.value="";
     sources.hidden=true;setup.hidden=true;browser.hidden=false;
     notify("Carregando 01_Portfolio…");
@@ -344,12 +373,12 @@
         .enableFeature(picker.Feature.MULTISELECT_ENABLED)
         .setCallback(async data=>{
           if(data.action===picker.Action.CANCEL){
-            overlay.hidden=false;displayProviders();notify("Seleção cancelada.");
+            overlay.hidden=false;document.body.classList.add("lm-acervo-open");displayProviders();notify("Seleção cancelada.");
             dialog.focus({preventScroll:true});return;
           }
           if(data.action!==picker.Action.PICKED)return;
           const ids=(data.docs||[]).map(d=>d.id).filter(Boolean).slice(0,40);
-          overlay.hidden=false;sources.hidden=true;browser.hidden=false;
+          overlay.hidden=false;document.body.classList.add("lm-acervo-open");sources.hidden=true;browser.hidden=false;
           chooseVisual("google");
           heading();
           setBusy(true);
@@ -368,8 +397,10 @@
       // Hiding it *before* setVisible caused a blank screen on Picker failures.
       instance.setVisible(true);
       overlay.hidden=true;
+      document.body.classList.remove("lm-acervo-open");
     }catch(error){
       overlay.hidden=false;
+      document.body.classList.add("lm-acervo-open");
       displayProviders();
       notify("Não foi possível abrir o seletor Google: "+error.message+
         ". Você pode conferir a pasta 01_Portfolio no link abaixo.");
@@ -437,7 +468,7 @@
   });
   by("labAcervoBack").addEventListener("click",()=>{
     if(activeProvider==="public"){
-      publicTrail.pop();if(search)search.value="";
+      publicTrail.pop();mediaFilter="all";if(search)search.value="";
       renderPublic().catch(error=>notify(error.message));return;
     }
     const parent=folder.split("/").filter(Boolean).slice(0,-1);
@@ -445,6 +476,13 @@
   });
   search?.addEventListener("input",()=>{
     if(activeProvider==="public")renderPublic().catch(error=>notify(error.message));
+  });
+  filterBar?.addEventListener("click",event=>{
+    const button=event.target.closest("[data-acervo-filter]");
+    if(!button||activeProvider!=="public")return;
+    const mode=button.dataset.acervoFilter;
+    if(!["all","image","video"].includes(mode))return;
+    mediaFilter=mode;paintPublicItems();
   });
   by("labAcervoMore").addEventListener("click",()=>openDropbox(folder,true));
   document.addEventListener("keydown",event=>{
@@ -566,6 +604,7 @@
       "Nenhum arquivo foi adicionado. ";
     const result=message+failed.join(" ");
     by("labAcervoCurrent").textContent=result;notify(result);
+    if(inserted&&!overlay.hidden)closeDialog();
   }
   function chooseLocal(onlyVideos=false){
     localInput.accept=onlyVideos?"video/mp4,video/webm,video/quicktime":
@@ -574,6 +613,7 @@
     localInput.click();
   }
   by("labAcervoLocal").addEventListener("click",()=>chooseLocal(false));
+  localDialog?.addEventListener("click",()=>chooseLocal(false));
   by("labClipLocal").addEventListener("click",()=>chooseLocal(true));
   localInput.addEventListener("change",()=>{
     const files=[...localInput.files];if(files.length)addLocalFiles(files).catch(error=>{

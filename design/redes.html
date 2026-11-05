@@ -144,6 +144,42 @@ main{overflow:hidden}
 .profile-foot{max-width:900px;margin:18px auto 0!important;color:var(--muted)}
 @media(max-width:800px){.social-case-heading{grid-template-columns:1fr;gap:18px}}
 @media(max-width:500px){.profile-top{padding:22px 16px 18px}.profile-brand{grid-template-columns:78px 1fr;gap:18px}.profile-intro p{margin:2px 0}.profile-intro .profile-handle{margin-bottom:8px}.profile-seasons{padding-top:24px;gap:15px}.profile-tab{height:44px}.profile-posts{gap:2px}.profile-reading{gap:9px}.profile-reading p{max-width:14ch}}
+
+/* Editorial justification and concrete identity applications share official three text roles. */
+.rationale-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,42px);margin-top:32px}
+.rationale-grid article{border-top:1px solid var(--ink);padding:18px 0 0;display:flex;flex-direction:column;gap:17px}
+.rationale-grid h3{margin:0;max-width:20ch}
+.rationale-grid article>p:not(.detail){max-width:39ch}
+.rationale-grid .rationale-implication{margin-top:auto!important;padding-top:22px;border-top:1px solid var(--line);color:var(--muted)}
+.rationale-foot{border-top:1px solid var(--line);padding-top:20px;margin-top:48px!important;color:var(--muted)}
+.identity-studies{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,4vw,60px)}
+.identity-studies article{border-top:1px solid var(--ink);padding-top:16px}
+.identity-studies article>p:last-child{max-width:45ch}
+.identity-studies h3{margin:18px 0 10px}
+.identity-stage{height:clamp(230px,30vw,365px);margin-top:15px;background:#e8e5de;display:flex;align-items:center;justify-content:center;position:relative;padding:9%;overflow:hidden}
+.identity-stage-avatar{gap:26px;background:#eeece7;justify-content:flex-start}
+.identity-avatar{flex:0 0 clamp(94px,11vw,155px);aspect-ratio:1;border-radius:50%;background:#f8f7f3;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.identity-avatar img{width:70%;height:70%;object-fit:contain}
+.identity-stage-avatar .body{display:block;margin-bottom:12px}
+.identity-stage-avatar .detail{max-width:24ch}
+.identity-stage-signature{background:#f2f0eb;flex-direction:column;justify-content:space-around}
+.identity-stage-signature img{display:block;width:min(80%,350px);max-height:55%;object-fit:contain}
+.identity-stage-signature .detail{align-self:flex-start;color:var(--muted)}
+.motion-head{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,75px);border-top:1px solid var(--ink);margin-top:clamp(75px,9vw,125px);padding:20px 0 32px;align-items:end}
+.motion-head h3{--lm-type-title-size:clamp(29px,4vw,64px);max-width:14ch;margin:16px 0 0}
+.motion-head>p{max-width:42ch}
+.motion-examples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,42px)}
+.motion-examples article{min-width:0}
+.motion-frame{aspect-ratio:16/9;background:#1d1d1d;overflow:hidden}
+.motion-frame video{display:block;width:100%;height:100%;object-fit:contain}
+.motion-description{border-top:1px solid var(--line);margin-top:14px;padding-top:14px;display:grid;grid-template-columns:1fr 1.4fr;gap:10px 18px}
+.motion-description h3{margin:0}
+.motion-description p{grid-column:2;max-width:37ch}
+.motion-rule{display:grid;grid-template-columns:1.5fr 1fr;align-items:start;gap:25px;border-top:1px solid var(--ink);margin-top:45px;padding-top:20px}
+.motion-rule p{max-width:65ch}
+.motion-rule a{color:inherit;text-underline-offset:4px;justify-self:end}
+@media(max-width:850px){.rationale-grid{grid-template-columns:1fr 1fr}.motion-head{grid-template-columns:1fr}.motion-rule{grid-template-columns:1fr}.motion-rule a{justify-self:start}}
+@media(max-width:600px){.rationale-grid,.identity-studies,.motion-examples{grid-template-columns:1fr}.identity-stage{height:285px}.motion-description{grid-template-columns:1fr}.motion-description p{grid-column:1}.motion-head h3{max-width:100%}}
 </style>
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 </head>
@@ -155,9 +191,22 @@ main{overflow:hidden}
 <div class="intro"><p>Nas redes, a identidade se reconhece pelo modo de apresentar cada projeto. Imagem, texto e movimento não precisam aparecer juntos: cada recurso entra quando contribui para a leitura.</p></div>
 </div></section>
 
+<section class="chapter lm-manual-section social-rationale" id="fundamento">
+<div class="inner">
+<p class="eyebrow">01 / DIREÇÃO EDITORIAL</p>
+<div class="chapter-intro"><h2>IDENTIDADE<br><span class="perpetua">EM CONTINUIDADE.</span></h2><p class="copy">As obras do LABMATTAR têm visualidades próprias. A presença nas redes deve preservá-las e, ao mesmo tempo, tornar reconhecível a autoria que as reúne. Por isso, a identidade não é uma camada aplicada automaticamente: é um sistema de decisões sobre imagem, informação, assinatura e movimento.</p></div>
+<div class="rationale-grid">
+<article><p class="detail">01 / O TEMPO ORGANIZA</p><h3>Temporadas, não mosaicos.</h3><p>O Instagram apresenta publicações recentes antes das antigas. Reunir conteúdos de um projeto em uma temporada facilita a leitura de sua trajetória e preserva sua unidade quando novos projetos entram no perfil.</p><p class="rationale-implication detail">APLICAR / AGRUPAR O PROJETO SEM IMPOR UMA QUANTIDADE FIXA DE POSTS</p></article>
+<article><p class="detail">02 / A OBRA CONDUZ</p><h3>Edição, não uniformização.</h3><p>Registro, gesto, matéria e processo cumprem funções diferentes. Variar a escala do olhar acrescenta informação; repetir filtros, molduras e símbolos sobre todas as fotografias apagaria essas diferenças.</p><p class="rationale-implication detail">APLICAR / SELECIONAR IMAGENS POR FUNÇÃO E NÃO POR COR</p></article>
+<article><p class="detail">03 / A IDENTIDADE ARTICULA</p><h3>Reconhecimento, sem excesso.</h3><p>O M, a assinatura, os três tratamentos de texto e a matriz de movimento criam pontos de reconhecimento. Entram quando há algo a identificar, apresentar, contextualizar ou conectar.</p><p class="rationale-implication detail">APLICAR / ESCOLHER A INTERVENÇÃO A PARTIR DA NECESSIDADE</p></article>
+</div>
+<p class="detail rationale-foot">PRINCÍPIO / A CONTINUIDADE DO PERFIL É EDITORIAL. A CONSISTÊNCIA DA IDENTIDADE É FORMAL. UMA NÃO SUBSTITUI A OUTRA.</p>
+</div>
+</section>
+
 <section class="chapter lm-manual-section social-case" id="caso">
 <div class="inner">
-<p class="eyebrow">01 / O PERFIL COMO ARQUIVO</p>
+<p class="eyebrow">02 / O PERFIL COMO ARQUIVO</p>
 <div class="social-case-heading"><h2>UM FEED.<br><span class="perpetua">VÁRIAS TEMPORADAS.</span></h2><p class="copy">Os projetos chegam em sequência. Cada temporada se reconhece pelas imagens que reúne; a identidade aparece na maneira de editar, não como grafismo obrigatório sobre cada publicação.</p></div>
 <p class="detail profile-context">ESTUDO DE PRESENÇA / SIMULAÇÃO EDITORIAL — NÃO É A CONTA PUBLICADA</p>
 <div class="profile-preview" aria-label="Simulação de um perfil Instagram com temporadas acumuladas">
@@ -194,7 +243,7 @@ main{overflow:hidden}
 </div>
 </section>
 <section class="chapter lm-manual-section" id="aplicacoes"><div class="inner">
-<p class="eyebrow">02 / DECIDIR A INTERVENÇÃO</p>
+<p class="eyebrow">03 / DECIDIR A INTERVENÇÃO</p>
 <div class="chapter-intro"><h2>PRESERVAR.<br><span class="perpetua">IDENTIFICAR. COMPOR.</span></h2><p class="copy">Três graus de intervenção, um único sistema. A decisão não depende de alternar estilos no feed: depende do conteúdo de cada peça.</p></div>
 <div class="edition-rows">
 <article><p class="detail">01 / PRESERVAR</p><figure><img src="/redes-cpc/BOXDOSENTIR-147.jpg" alt="Registro fotográfico sem interferência gráfica"></figure><h3>Quando a imagem basta</h3><p>Publicar sem grafismo. A legenda oferece título, crédito e contexto, deixando a fotografia íntegra.</p></article>
@@ -203,8 +252,25 @@ main{overflow:hidden}
 </div>
 </div></section>
 
+<section class="chapter lm-manual-section social-identity" id="presenca">
+<div class="inner">
+<p class="eyebrow">04 / PRESENÇA DA IDENTIDADE</p>
+<div class="chapter-intro"><h2>ASSINATURA.<br><span class="perpetua">SÍMBOLO. MOTION.</span></h2><p class="copy">O LABMATTAR não precisa assinar toda fotografia. A presença gráfica se distribui conforme o suporte: o perfil identifica a origem, a assinatura qualifica peças editoriais e o movimento estabelece transições entre conteúdos.</p></div>
+<div class="identity-studies">
+<article><p class="detail">01 / IDENTIFICAÇÃO CONTÍNUA</p><div class="identity-stage identity-stage-avatar"><div class="identity-avatar"><img src="/identidade/M.svg" alt="Símbolo M oficial"></div><div><span class="body">LABMATTAR</span><p class="detail">FOTO DE PERFIL / RECONHECIMENTO EM ESCALA REDUZIDA</p></div></div><h3>O símbolo já está no perfil.</h3><p>Priorizar o M no avatar. O nome, a descrição e as legendas oferecem contexto: repetir a marca em cada imagem não é necessário.</p></article>
+<article><p class="detail">02 / ASSINATURA EXPLÍCITA</p><div class="identity-stage identity-stage-signature"><img src="/identidade/mattar.svg" alt="Assinatura vetorial oficial Mattar"><span class="detail">EXEMPLO / PEÇA EDITORIAL</span></div><h3>Assinar quando a peça pede.</h3><p>Aplicar a assinatura original em créditos, encerramentos ou composições institucionais pontuais. Não usar como marca-d’água constante; preservar proporção, respiro e contraste.</p></article>
+</div>
+<div class="motion-head"><div><p class="detail">03 / MATRIZ VETORIAL</p><h3 class="title">MOVIMENTO COMO PASSAGEM.</h3></div><p>Os movimentos pertencem ao mesmo sistema do M e dos demais vetores. Nos vídeos, devem conectar momentos ou concluir uma sequência, não interromper automaticamente o registro artístico.</p></div>
+<div class="motion-examples">
+<article><div class="motion-frame"><video controls muted loop playsinline preload="metadata" poster="/motion/posters/m-form.png" aria-label="M em transformação no sistema vetorial"><source src="/motion/videos/m-form.mp4" type="video/mp4">Prévia de transformação do M.</video></div><div class="motion-description"><span class="detail">A / TRANSFORMAÇÃO</span><h3>Do M à forma</h3><p>Uma assinatura em movimento, útil para abertura ou fechamento pontual de peça editorial.</p></div></article>
+<article><div class="motion-frame"><video controls muted loop playsinline preload="metadata" poster="/motion/posters/perfil-corte.png" aria-label="Transição da matriz vetorial"><source src="/motion/videos/perfil-corte.mp4" type="video/mp4">Prévia de transição vetorial.</video></div><div class="motion-description"><span class="detail">B / TRANSIÇÃO</span><h3>Conectar conteúdos</h3><p>Uma passagem entre registros, episódios ou núcleos de uma mesma temporada; o ritmo deve responder à edição.</p></div></article>
+</div>
+<div class="motion-rule"><p>O M não é uma vinheta obrigatória. Uma fotografia pode permanecer sem grafismo, um carrossel pode ser inteiramente imagético, e um reel pode utilizar a matriz apenas na passagem ou assinatura final.</p><a class="detail" href="/motion.html">CONSULTAR O SISTEMA DE MOTION ↗</a></div>
+</div>
+</section>
+
 <section class="chapter lm-manual-section" id="formatos"><div class="inner">
-<p class="eyebrow">03 / APLICAÇÃO POR SUPORTE</p>
+<p class="eyebrow">05 / APLICAÇÃO POR SUPORTE</p>
 <div class="chapter-intro"><h2>UMA LINGUAGEM.<br><span class="perpetua">TRÊS LEITURAS.</span></h2><p class="copy">O formato não define a identidade. Ele determina a área disponível, a ordem de leitura e o recorte. O conteúdo decide como ocupá-lo.</p></div>
 <div class="formats">
 <article><p class="detail">PUBLICAÇÃO / 4:5</p><figure class="format-feed"><img src="/redes-cpc/BOXDOSENTIR-174.jpg" alt="Fotografia vertical em publicação"></figure><h3>Uma imagem</h3><p>Priorizar o enquadramento que sustenta o gesto. A miniatura do perfil também precisa funcionar.</p></article>
@@ -213,7 +279,7 @@ main{overflow:hidden}
 </div></div></section>
 
 <section class="chapter lm-manual-section" id="criterios"><div class="inner">
-<p class="eyebrow">04 / CRITÉRIOS DE PRODUÇÃO</p>
+<p class="eyebrow">06 / CRITÉRIOS DE PRODUÇÃO</p>
 <div class="chapter-intro"><h2>O QUE<br><span class="perpetua">PERMANECE.</span></h2><p class="copy">As regras de redes derivam do manual. O reconhecimento nasce da consistência dessas decisões, e não da repetição de uma marca sobre toda fotografia.</p></div>
 <div class="principles">
 <article><p class="detail">01 / IMAGEM</p><div><h3>Preservar a obra</h3><p>Não aplicar filtros para igualar projetos. Escolher recortes que preservem corpos, ações e materiais. Conferir as miniaturas antes da publicação.</p></div></article>

@@ -633,8 +633,11 @@
     const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;
-    const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];
-    if(!body.hidden)textNodes.push(body);
+    const candidates=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span,.lm-lab-signature-caption")];
+    if(!body.hidden)candidates.push(body);
+    // Metadata hidden by the current signature is not visible copy.
+    const textNodes=candidates.filter(node=>node.textContent.trim()&&
+      getComputedStyle(node).visibility!=="hidden"&&node.getClientRects().length>0);
     board.dataset.photoText=String(backgroundPhoto&&textNodes.some(n=>n.textContent.trim()));
     const mask=by("labMask");
     const overlap=mPhoto&&

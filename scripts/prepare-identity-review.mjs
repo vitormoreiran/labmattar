@@ -8,7 +8,7 @@ const read=p=>readFile(path.join(root,p));
 const data=JSON.parse(await read('content/application-review.json'));
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uri=async(p,mime)=>!standalone&&p.startsWith('public/')&&!p.endsWith('.zip')?'/'+p.slice(7):'data:'+mime+';base64,'+(await read(p)).toString('base64');
-const picture=await Promise.all(['aleteia-08.jpg','poiesis-34.jpg','concreto-efemero-04.jpg'].map(name=>uri('public/redes-acervo/'+name,'image/jpeg')));
+const picture=await Promise.all(['concreto-efemero-04.jpg','poiesis-34.jpg','aleteia-08.jpg'].map(name=>uri('public/redes-acervo/'+name,'image/jpeg')));
 const symbols={};for(const name of ['M.svg','mattar.svg',...Array.from({length:9},(_,i)=>'vaso_'+String(i+1).padStart(2,'0')+'.svg')])symbols[name]=await uri('public/identidade/'+name,'image/svg+xml');
 const mask=await uri('public/ambiente-editorial/media/m-publicado.svg','image/svg+xml');
 const img=(name,style='',alt=name)=>'<img src="'+symbols[name]+'" alt="'+esc(alt)+'" style="'+style+'">';

@@ -36,7 +36,7 @@ try{
   const landing=await page.request.get(new URL("/laboratorio.html",url).href);
   const landingHtml=await landing.text();
   assert(landing.status()===200 &&
-    landingHtml.includes('href="/editor/"') &&
+    landingHtml.includes('href="/motion/matriz/index.html"') &&
     landingHtml.includes('href="/compor.html?studio=1#laboratorio"') &&
     !landingHtml.includes('id="labArtboard"'),
     "Laboratory must show two instrument previews without embedding Compor");
@@ -47,7 +47,7 @@ try{
   const manual=await page.request.get(new URL("/composicao.html",url).href);
   assert(manual.status()===200,"Construction chapter must be available");
   const manualHtml=await manual.text();
-  assert(manualHtml.includes('id="construcao"')&&manualHtml.includes('href="/laboratorio.html"'),"Composition must teach construction and link to 05");
+  assert(manualHtml.includes('id="construcao"')&&manualHtml.includes('href="/laboratorio.html"'),"Composition must teach construction and link to the Laboratory");
   assert(!manualHtml.includes('id="labArtboard"'),"Laboratory controls must not be embedded in Composition");
 
   assert(await page.locator("[data-lab-preset]").count()===0,

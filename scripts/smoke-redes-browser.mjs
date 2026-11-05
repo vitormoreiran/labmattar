@@ -13,10 +13,17 @@ try{
     assert.equal(response.status(),200);
     await page.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await page.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1);
-    assert.equal(await page.locator('main>section').count(),5,'Cover plus four editorial sections');
+    assert.equal(await page.locator('main>section').count(),7,'Cover plus six editorial sections');
     assert.equal(await page.locator('.profile-posts img').count(),12,'Twelve thumbnails forming a single continuous profile');
     assert.equal(await page.locator('.profile-posts figcaption').count(),0,'No labels over the photographs');
     assert.equal(await page.locator('.profile-highlight').count(),3,'Three project highlights');
+    assert.equal(await page.locator('.rationale-grid article').count(),3,'Three defended editorial decisions');
+    assert.equal(await page.locator('.identity-studies article').count(),2,'Official symbol and signature applications');
+    assert.equal(await page.locator('.motion-examples video').count(),2,'Two official motion examples');
+    assert.equal(await page.locator('a[href="/motion.html"]').count(),1,'Connection to canonical motion system');
+    const motionSources=await page.locator('.motion-examples video source').evaluateAll(items=>items.map(x=>x.getAttribute('src')));
+    assert.deepEqual(motionSources,['/motion/videos/m-form.mp4','/motion/videos/perfil-corte.mp4'],'Canonical motion videos');
+
     assert.equal(await page.locator('.edition-rows article').count(),3,'Three intervention decisions');
     assert.equal(await page.locator('.formats article').count(),3,'Three platform applications');
     assert.equal(await page.locator('.principles article').count(),6,'Six normative criteria');

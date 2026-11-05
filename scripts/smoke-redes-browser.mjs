@@ -32,6 +32,13 @@ try{
     assert.ok(body.includes('cada corpo abre um mundo'));
     assert.ok(body.includes('poiesis')&&body.includes('aleteia'));
     assert.ok(!body.includes('fome come'));
+    // Decode offscreen thumbnails too before auditing the complete image archive.
+    await page.locator('img').evaluateAll(async images=>{
+      await Promise.all(images.map(async image=>{
+        image.loading='eager';
+        try{await image.decode();}catch{throw Error('Imagem indisponível: '+image.getAttribute('src'));}
+      }));
+    });
     const media=await page.locator('img').evaluateAll(list=>list.map(i=>({src:i.getAttribute('src'),loaded:i.complete&&i.naturalWidth>0})));
     assert.ok(media.every(x=>x.loaded),'All project photographs loaded');
     assert.equal(new Set((await page.locator('.profile-posts img').evaluateAll(list=>list.map(x=>x.src)))).size,12,'Twelve distinct photographs in the timeline');

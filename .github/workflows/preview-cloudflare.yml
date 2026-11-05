@@ -227,6 +227,25 @@ jobs:
           path: dist/client
           retention-days: 7
           if-no-files-found: error
+      - name: Confirmar Redes Sociais na URL publicada
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://labmattar-identidade-previa.vitormoreiran.workers.dev/redes.html?commit=${{ github.sha }}"
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --silent --show-error --location --max-time 30 "$URL" -o /tmp/redes-publicadas.html &&
+              grep -q 'profile-preview' /tmp/redes-publicadas.html &&
+              grep -q 'redes-acervo/poiesis-36.jpg' /tmp/redes-publicadas.html &&
+              ! grep -q 'lmSeasonPlanner' /tmp/redes-publicadas.html; then
+              echo "Redes Sociais: nova versao publicada e confirmada."
+              exit 0
+            fi
+            echo "Pagina antiga ou incompleta; tentativa $attempt."
+            sleep 5
+          done
+          echo "Redes Sociais: deploy nao confirmado. Consultar passos anteriores."
+          exit 1
       - name: Confirmar entrega de fotografia real do 01_Portfolio
         if: github.ref == 'refs/heads/main'
         shell: bash

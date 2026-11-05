@@ -4,12 +4,13 @@ import json
 root=Path("design")
 manifest=json.loads((root/"identity-system.json").read_text(encoding="utf-8"))
 assert manifest["schemaVersion"]=="1.0.0"
-assert len(manifest["sections"])==7
-assert [section["id"] for section in manifest["sections"][:6]]==["symbols","motion","typography","color","composition","laboratory"],"Motion follows Symbols; the composition laboratory has its own area"
+assert len(manifest["sections"])==8
+assert [section["id"] for section in manifest["sections"]]==["introduction","symbols","motion","typography","color","composition","laboratory","social"],"Motion follows Symbols; the composition laboratory has its own area"
 assert not any(section["id"]=="image" for section in manifest["sections"]),"Imagem is not an independent chapter"
 assert len(manifest["symbols"]["vessels"])==9
 assert manifest["image"]["textContrast"]["veilColor"]=="#000000"
-assert manifest["image"]["textContrast"]["veilOpacity"]==0.2
+assert manifest["image"]["textContrast"]["legacyDefaultOpacity"]==0.2
+assert manifest["image"]["textContrast"]["presetsPercent"]==[0,20,40,60]
 assert manifest["image"]["textContrast"]["otherwise"]=="no automatic veil"
 assert len(set(manifest["colors"]["palette"].values()))==5
 for name in ("manual.html","tipografia.html","cores.html","composicao.html","laboratorio.html","compor.html"):
@@ -33,9 +34,9 @@ for page in ("manual.html","tipografia.html","cores.html","composicao.html","lab
 construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
 laboratory_index=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
 composition=(Path("public")/"compor.html").read_text(encoding="utf-8")
-assert 'href="/editor/"' in laboratory_index and 'href="/compor.html?studio=1#laboratorio"' in laboratory_index, "Laboratory index must present both official instruments"
+assert 'href="/motion/matriz/index.html"' in laboratory_index and 'href="/compor.html?studio=1#laboratorio"' in laboratory_index, "Laboratory index must present both official instruments"
 assert 'id="labArtboard"' not in laboratory_index, "The composition editor must not be embedded in the Laboratory index"
-assert 'id="contraste"' in construction and "PRETO" in construction and "20%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
+assert 'id="contraste"' in construction and "AJUSTÁVEL" in construction and "40%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in construction and 'id="laboratorio"' in composition
 assert 'href="/composicao-lab.css"' in composition
@@ -74,7 +75,7 @@ assert 'id="regras-de-composicao"' in construction, "Composition rules section m
 for rule in ("Régua","Margem","Eixo","M central","Marcadores","Adaptação"):
  assert rule in construction,f"Missing composition rule: {rule}"
 assert 'data-lab-choice="mMode"' not in composition, "Invented M usage modes must not be exposed"
-assert ".20" in lab_css, "Fixed 20% must be preserved"
+assert "--lab-photo-contrast" in lab_css, "The selected intensity must reach the image layer"
 assert "state.mMode" not in lab_js and "dataset.image" not in lab_js, "Deprecated M and image mode states must not survive"
 assert "lm-composition-module" in clean_css and "lm-composition-submodule" in clean_css
 
@@ -119,7 +120,7 @@ assert ".lm-lab>.lm-lab-legend" in controls
 assert "labHelp-overview" in lab_js
 
 assert "const inlineEditors=" in lab_js
-assert "rgba(0,0,0,.20)" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
+assert "var(--lab-photo-contrast,.2)" in (Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 
 for deprecated in ("labPlacement","labMPosition","labImage","labMMode","labRelation","labGap"):
  assert 'id="'+deprecated+'"' not in composition,f"Inactive legacy field remains: {deprecated}"
@@ -158,8 +159,8 @@ assert "UMA COMPOSIÇÃO" not in composition, "Static slogan must not occupy ins
 assert "lm-composition-module-index" in composition
 assert "data-lab-preset" not in composition, "Presets must not define composition types"
 assert "lm-inspector-tabs" not in composition, "Contextual tabs must not divide the single composition"
-assert "rgba(0,0,0,.20)" in lab_css, "Photo contrast must remain at 20 percent"
-assert "labContrast" not in composition, "Approved veil opacity must not be an uncontrolled experiment"
+assert "var(--lab-photo-contrast,.2)" in lab_css, "Selected photo contrast must remain shared"
+assert 'id="labPhotoContrast"' in composition, "Photo contrast control must be explicit"
 
 print("LABMATTAR system foundations validated")
 

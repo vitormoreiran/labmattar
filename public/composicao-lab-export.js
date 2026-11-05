@@ -230,7 +230,7 @@
     const videoVisual=hasVideo?{backdrop:board.dataset.backdrop,markerFocus:board.dataset.markerFocus,
       focusX:parseFloat(board.style.getPropertyValue("--lab-focus-x"))||50,
       focusY:parseFloat(board.style.getPropertyValue("--lab-focus-y"))||50,
-      contrast:board.dataset.photoText==="true",mContrast:board.dataset.mText==="true"}:null;
+      contrast:board.dataset.photoText==="true",mContrast:board.dataset.mText==="true",contrastOpacity:Number(getComputedStyle(board).getPropertyValue("--lab-photo-contrast"))}:null;
     items.push({kind:"rect",...(hasVideo?{layer:"video-bg-base"}:{layer:"background"}),
       x:0,y:0,w:frame.width,h:frame.height,color:background});
     if(board.dataset.backdrop!=="color"){
@@ -256,7 +256,7 @@
         const source=pixels(box.w,box.h,frame,ctx=>{
           const img=maskNode.querySelector(hasVideo?"video":"img");
           drawCover(ctx,img,0,0,box.w,box.h,focal(img));
-          if(board.dataset.mText==="true"){ctx.fillStyle="rgba(0,0,0,.2)";ctx.fillRect(0,0,box.w,box.h);}
+          if(board.dataset.mText==="true"){ctx.fillStyle="rgba(0,0,0,"+Number(getComputedStyle(board).getPropertyValue("--lab-photo-contrast"))+")";ctx.fillRect(0,0,box.w,box.h);}
         });
         items.push({kind:"group",...(hasVideo?{layer:"video-bg-m"}:{}),
           clip:maskVector,items:[{kind:"image",source,x:box.x,y:box.y,w:box.w,h:box.h}]});rasterized.push("imagem do M");
@@ -310,7 +310,7 @@
         if(op.kind==='group'&&op.layer==='video-bg-m'){
           const image=op.items[0],video=maskNode.querySelector('video');
           image.paint=painter(ctx=>{drawCover(ctx,video,0,0,image.w,image.h,focal(video));
-            if(board.dataset.mText==='true'){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(0,0,image.w,image.h);}},image.x,image.y);
+            if(board.dataset.mText==='true'){ctx.fillStyle='rgba(0,0,0,'+Number(getComputedStyle(board).getPropertyValue('--lab-photo-contrast'))+')';ctx.fillRect(0,0,image.w,image.h);}},image.x,image.y);
         }
         if(op.kind==='group'&&op.layer==='video-bg-marker')op.items[0].paint=painter(ctx=>imageLayer(ctx,markerPhoto.querySelector('video'),frame));
         if(op.motionId||op.privateClipId){

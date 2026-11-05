@@ -183,11 +183,11 @@ export function movePage(pages,index,delta){
 // Seções v2 reutilizam as composições v1 como páginas materializadas.
 export function createSection(id,name,state,photoCatalog){
   const mode=state.background==='photo'||state.mContent==='photo'?'photo':'color';
-  return {id,name,background:{mode,color:state.color,photo:state.photo,uri:photoCatalog[state.photo],focusX:state.focusX,focusY:state.focusY,treatment:state.mContent==='photo'?'blur':'photo'}};
+  return {id,name,background:{mode,color:state.color,photo:state.photo,uri:photoCatalog[state.photo],contrastPercent:state.photoContrast??20,focusX:state.focusX,focusY:state.focusY,treatment:state.mContent==='photo'?'blur':'photo'}};
 }
 export function sectionState(state,section){
   const b=section.background;
-  return {...clone(state),background:b.mode,color:b.color,photo:b.photo,focusX:b.focusX,focusY:b.focusY,
+  return {...clone(state),background:b.mode,color:b.color,photo:b.photo,photoContrast:b.contrastPercent??20,focusX:b.focusX,focusY:b.focusY,
     mContent:b.mode==='photo'&&state.mContent==='solid'?'photo':b.mode==='color'&&state.mContent==='photo'?'solid':state.mContent};
 }
 export function hasSectionText(sectionId,pages){
@@ -207,7 +207,7 @@ function readSectionSequence(value,photoCatalog,motionCatalog){
     check(section&&identifier(section.id)&&!ids.has(section.id),'identificador de seção repetido');ids.add(section.id);title(section.name);
     check(Object.keys(section).sort().join(',')==='background,id,name','campos da seção');
     const b=section.background;
-    check(b&&['color,focusX,focusY,mode,photo,treatment,uri','color,focusX,focusY,mode,photo,treatment,uri,video'].includes(Object.keys(b).sort().join(',')),'campos do fundo da seção');
+    check(b&&['color,focusX,focusY,mode,photo,treatment,uri','color,focusX,focusY,mode,photo,treatment,uri,video','color,contrastPercent,focusX,focusY,mode,photo,treatment,uri','color,contrastPercent,focusX,focusY,mode,photo,treatment,uri,video'].includes(Object.keys(b).sort().join(',')),'campos do fundo da seção');
     if(b.video){normalizeBackgroundVideo(b.video);check(b.mode==='photo','vídeo de seção exige superfície de imagem');}
     check(['photo','blur'].includes(b.treatment),'tratamento do fundo');
     check(['color','photo'].includes(b.mode)&&typeof b.photo==='string'&&typeof b.uri==='string','tipo do fundo');
@@ -223,7 +223,7 @@ function readSectionSequence(value,photoCatalog,motionCatalog){
     check(identifier(sectionId)&&order>=0,'seção da página não encontrada');
     check(order>=previous,'as páginas devem seguir a ordem das seções');previous=order;
     const expected=sectionState(page.state,sections[order]);
-    check(['background','color','photo','focusX','focusY','mContent'].every(key=>expected[key]===page.state[key]),'página diverge do fundo compartilhado');
+    check(['background','color','photo','focusX','focusY','mContent','photoContrast'].every(key=>expected[key]===page.state[key]),'página diverge do fundo compartilhado');
     check(JSON.stringify(page.backgroundVideo||null)===JSON.stringify(sections[order].background.video||null),'vídeo da página diverge do fundo compartilhado');
     return {...page,sectionId};
   });

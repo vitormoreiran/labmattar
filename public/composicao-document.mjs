@@ -88,6 +88,8 @@ function captureState(state,photoCatalog){
     format:enumValue(state.format,Object.keys(FORMATS),"formato"),
     color:enumValue(state.color,CHOICES.color,"cor"),
     inkColor:enumValue(state.inkColor??"auto",CHOICES.inkColor,"cor do texto"),
+    autoInkVersion:bounded(state.autoInkVersion??1,1,2,"perfil de cor automática"),
+    photoContrast:bounded(state.photoContrast??20,0,80,"tratamento de leitura"),
     margin:bounded(state.margin,4,16,"margem"),
     guides:enumValue(state.guides,CHOICES.guides,"guias"),
     marker:text(state.marker,40,"marcadores"),
@@ -111,6 +113,7 @@ function captureState(state,photoCatalog){
     footerRight:text(state.footerRight,100,"identificação inferior direita"),
     signature:signatureOf(state.signature)
   };
+  check(Number.isInteger(clean.autoInkVersion),"perfil de cor automática");
   check(CHOICES.marker.includes(clean.marker),"marcadores do M");
   check(!(clean.background==="photo"&&clean.mContent==="solid"),"M sólido não existe sobre fotografia");
   check(Object.hasOwn(photoCatalog,clean.photo)&&safeImagePath(photoCatalog[clean.photo]),"fotografia do catálogo local");
@@ -144,12 +147,12 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
       surface:{format:s.format,color:s.color,background:s.background,guides:s.guides,marginPercent:s.margin},
       reading:{widthPercent:s.textWidth},
       text:{
-        inkColor:s.inkColor,
+        inkColor:s.inkColor,autoInkVersion:s.autoInkVersion,
         title:{role:"title",value:s.title,treatment:s.type,scalePercent:s.titleScale},
         body:{role:"body",value:s.body,visible:s.bodyMode==="visivel"},
         detail:{role:"detail",metadata:{kicker:s.kicker,footerLeft:s.footerLeft,footerRight:s.footerRight},signature:s.signature}
       },
-      media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,focalPoint:{x:s.focusX,y:s.focusY}},
+      media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,photoContrastPercent:s.photoContrast,focalPoint:{x:s.focusX,y:s.focusY}},
       m:{maskAssetId:"identity:m-mask",content:s.mContent,presentation:s.mPresentation,
         scalePercent:s.mScale,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
     }],
@@ -174,7 +177,7 @@ export function readProductionDocument(doc,photoCatalog){
   const expected=dimensionsFor(page.surface?.format,doc.output.maxEdge);
   check(doc.output.width===expected.width&&doc.output.height===expected.height,"dimensões da página");
   const state={
-    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",margin:page.surface.marginPercent,
+    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",autoInkVersion:t.autoInkVersion??1,photoContrast:media.photoContrastPercent??20,margin:page.surface.marginPercent,
     guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,
     titleScale:t.title?.scalePercent,type:t.title?.treatment,background:page.surface.background,
     mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,
@@ -192,6 +195,9 @@ export function verifyRoundTrip(doc,photoCatalog){
   // Earlier v1 documents have no markerFocus. Keep them readable without
   // inventing a new schema version; a missing value means blur in markers.
   if(doc.pages[0].m.markerFocus===undefined)delete normalized.pages[0].m.markerFocus;
+  // Legacy documents preserve their 20% treatment and original automatic red ink.
+  if(doc.pages[0].media.photoContrastPercent===undefined)delete normalized.pages[0].media.photoContrastPercent;
+  if(doc.pages[0].text.autoInkVersion===undefined)delete normalized.pages[0].text.autoInkVersion;
   // Legacy v1 documents remain readable without a color field.
   if(doc.pages[0].text.inkColor===undefined)delete normalized.pages[0].text.inkColor;
   check(JSON.stringify(doc)===JSON.stringify(normalized),"documento alterado ou campos não reconhecidos");

@@ -34,7 +34,11 @@ jobs:
       - name: Validar contrato funcional do Ambiente Editorial
         run: node scripts/validate-editorial.mjs
       - name: Validar páginas de apresentação
-        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs
+        run: node --test scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs
+      - name: Preparar fontes vigentes e validação de aplicações
+        run: |
+          python3 scripts/prepare-identity-kit.py
+          node scripts/prepare-identity-review.mjs
       - name: Preparar Motion e Matriz atual
         run: |
           npm ci --prefix tools/matriz-vetorial

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "status": "current",
+  "fonts": [
+    {
+      "file": "univers-lt-std-45-light.otf",
+      "name": "Univers LT Std 45 Light",
+      "source": "site-oficial/public/fonts/univers-lt-std-45-light.otf",
+      "bytes": 32832,
+      "sha256": "a882a1d3c7979254081fd3f618c1f370ab6f35197a9f4e8101d739e48d7f68be"
+    },
+    {
+      "file": "perpetua-titling-light.ttf",
+      "name": "Perpetua Titling MT Light",
+      "source": "site-oficial/public/fonts/perpetua-titling-light.ttf",
+      "bytes": 43800,
+      "sha256": "5b90d215f586c91cbaceee9e96d8840431e6b4713909dd47ab70084a067d0b10"
+    }
+  ]
+}

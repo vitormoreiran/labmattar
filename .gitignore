@@ -37,3 +37,10 @@ production-proof/
 
 # Mídias públicas da versão oficial recuperada (originais locais continuam ignorados).
 !site-oficial/public/**/*.mp4
+
+# Pacote de fontes e caderno gerados dos arquivos e modelos vigentes.
+/public/identidade-kit/
+/public/revisao-assets/
+/public/validacao-identidade.html
+
+identity-proof/

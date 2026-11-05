@@ -1,76 +1,42 @@
-# LABMATTAR — plataforma de identidade visual
+# LABMATTAR — identidade, Motion e Laboratório
 
-Repositório de desenvolvimento da prévia independente da identidade LABMATTAR. **Este projeto não deve publicar alterações em `labmattar.com`**.
+Este repositório mantém o manual de identidade e as ferramentas do LABMATTAR. O GitHub prepara e valida a prévia; o workflow oficial promove o mesmo artefato para labmattar.com, preservando os projetos existentes. As instruções de publicação estão em [site-oficial/README.md](site-oficial/README.md).
 
-## Para trabalhar com Codex local
+## Referências vigentes
 
-1. Faça checkout da branch `main` atualizada. Os diretórios `app/` e `public/` já estão versionados. A branch `refactor/source-files` é histórica; não é necessária para iniciar o trabalho.
-2. Abra a pasta raiz do repositório no VS Code / Codex.
-3. Utilize Node.js 22.13+ e um terminal Unix compatível (WSL no Windows, pois os scripts atuais são Bash).
-4. Execute `npm ci` e `npm run dev` para iniciar o aplicativo.
-5. Antes de publicar, execute `npm run build`.
+- Manual: capítulos 00 Introdução, 01 Símbolos, 02 Motion, 03 Tipografia, 04 Cores, 05 Composição, 06 Laboratório e 07 Redes Sociais. A ordem vem de [design/identity-system.json](design/identity-system.json).
+- Matriz atual: /motion/matriz/index.html; código em tools/matriz-vetorial/. Os oito roteiros aprovados e suas geometrias são a referência. A interface não é reconstruída pelo Laboratório.
+- /editor/ e o editor de contornos são legados preservados para abrir trabalhos anteriores. Não são o acesso principal à Matriz atual.
+- Compor: /compor.html?studio=1. Cria páginas e seções com fundo compartilhado e usa os motions registrados.
+- Fontes vigentes: Univers LT Std 45 Light e Perpetua Titling MT Light. O manifesto content/identity-fonts.json registra os arquivos exatos; scripts/prepare-identity-kit.py verifica e prepara /identidade-kit/fontes-vigentes.zip.
+- Tipografia: Título, Corpo e Detalhe, definidos em public/manual-headings.css. A Introdução e o índice preservam as aberturas autorais; suas exceções são explicitadas no contrato de layout.
 
-## Estrutura
+## Regras e escolhas em validação
 
-- `app/`: aplicativo React/Next com Vinext e editor vetorial.
-- `public/`: assets estáticos, SVGs oficiais e manual.
-- `design/`: páginas de identidade, componentes editoriais e scripts de integração.
-- `scripts/`: instalação, compilação e validação.
-- `.github/workflows/build.yml`: verificação de compilação.
-- `.github/workflows/preview-cloudflare.yml`: publicação exclusiva da prévia `labmattar-identidade-previa`.
-- `tools/matriz-vetorial/`: Matriz atual de Motion, isolada do editor anterior.
-- `design/motion.html` e `scripts/prepare-motion.mjs`: galeria de oito roteiros, vídeos e projetos correspondentes.
+O manifesto registra as referências e os estados do sistema; o CSS executa a tipografia e a grade. As verificações devem detectar divergências entre esses arquivos. Recursos disponíveis não tornam uma aplicação aprovada.
 
-## Contrato de produção e exportação do Laboratório
+O tratamento preto de leitura é ajustável de 0% a 80%, com atalhos 0%, 20%, 40% e 60%. Projetos anteriores mantêm 20%. A intensidade acompanha a fotografia e seu recorte; não substitui a conferência de leitura no tamanho real. Novas composições recomendam branco puro sobre vermelho; projetos anteriores conservam seu perfil de cor até o usuário escolher novamente a cor do fundo ou Padrão.
 
-A direção aprovada para a próxima etapa do Laboratório está documentada em **[design/LABORATORIO_PRODUCAO_EXPORTACAO.md](design/LABORATORIO_PRODUCAO_EXPORTACAO.md)**: renderização de alta qualidade, acervo e sequências, PDF/PPTX/web e intercâmbio editável com After Effects.
+O material /validacao-identidade.html reúne comparativos e escolhas do bloco 3. Azul e marrom, limites de redução e proteção, usos compositivos do M, assinaturas e exceções editoriais continuam sujeitos à validação do autor. Oito motions aprovados permanecem aprovados.
 
-A **Matriz Vetorial atual** já integra o manual em `/motion/matriz/index.html`. Seus controles de timeline, roteiros e saídas PNG/MP4/JSON são uma referência real para o desenvolvimento, **não** uma funcionalidade a reconstruir. A Matriz segue sendo atualizada em paralelo; conferir a versão corrente de `tools/matriz-vetorial/` antes de qualquer integração. O contrato distingue explicitamente recursos existentes, metas e critérios de aceite e **não publica recursos novos por si só**.
+## Produção e publicação
 
-O pacote `LABMATTAR_CODIGO_PARA_GITHUB (1).zip` permanece como legado. Os fluxos atuais de compilação e publicação usam os arquivos editáveis, sem extrair o pacote. **Não editar o ZIP**; o código-fonte deve ser alterado nos diretórios acima.
+PNG, PDF, HTML e MP4 usam a cena lógica do Laboratório. PDF incorpora fontes e preserva texto e vetores; PNG/PDF capturam o quadro escolhido do motion. HTML conserva os movimentos. MP4 usa H.264, 30 fps e não contém áudio. A exportação não publica o projeto.
 
-### Observação sobre a prévia
+Para o capítulo 4, exporte HTML, prepare um pacote com scripts/prepare-chapter4-publication.mjs, revise as mídias, marque o manifesto como published e envie por PR. Consulte as instruções completas em site-oficial/README.md.
 
-O workflow ainda aplica scripts de `design/` para montar páginas e integrar o editor antes de compilar. A migração do ZIP **não implica** que esses scripts estejam eliminados; simplificá-los será uma etapa posterior, depois de verificar equivalência visual e funcional.
+Projetos ficam no navegador e podem ser transferidos por JSON. Fotografias locais são incorporadas ao JSON; vídeos locais dependem do original ou do HTML com mídia incorporada. O acervo público usa um índice de 19 projetos; atualizar arquivos no Drive exige atualizar o índice. PPTX, intercâmbio After Effects, perfis de gráfica e o formato 4:5 são desenvolvimento futuro.
 
-## Próxima etapa: vídeos locais
+## Desenvolvimento
 
-Os arquivos de vídeo originais permanecem no computador do autor. Não colocar arquivos `.mp4`/`.mov` grandes no Git.
+Use Node 22.13+ e terminal Bash/WSL para a compilação principal. Execute npm ci. A preparação das páginas está descrita em .github/workflows/preview-cloudflare.yml; os scripts de design/ continuam necessários. Não editar saídas compiladas para corrigir o conteúdo.
 
-Estrutura preparada:
-- `content/media.json`: catálogo vazio inicial, com validação em `npm run validate:media` e esquema em `content/media.schema.json`.
-- `public/media/posters/`: capas otimizadas, se tiverem dimensão apropriada.
-- Cloudflare R2 ou outro storage: vídeos publicados, servidos por URL.
-- Interface de acervo: player com poster, controles, legendas opcionais, loading e suporte mobile.
+Na Matriz: npm ci --prefix tools/matriz-vetorial, npm test --prefix tools/matriz-vetorial e npm run build --prefix tools/matriz-vetorial. Depois execute node scripts/prepare-motion.mjs. O catálogo, os JSONs e a galeria são gerados dos mesmos projetos; vídeos divergentes bloqueiam a preparação.
 
-Não criar URLs fictícias nem considerar qualquer material aprovado sem validação do autor.
+## Preservação
 
-Os exports web de Motion são uma exceção aos originais grandes: somente MP4 otimizados, menores que 20 MiB, entram em `public/motion/videos/`. A correspondência entre vídeo e projeto é verificada no build. As instruções estão em [design/motion-matriz.md](design/motion-matriz.md).
-
-## Motion e Matriz atual
-
-O manual aponta para `/motion.html` e para `/motion/matriz/index.html`. `/editor/` permanece disponível como versão anterior. Motion tem acesso próprio após Símbolos; o Laboratório de composição mantém seu próprio acesso. A galeria organiza os oito roteiros aprovados por função, sem rótulos de status, preservando as regras visuais do manual.
-
-```sh
-npm ci --prefix tools/matriz-vetorial
-npm test --prefix tools/matriz-vetorial
-npm run build --prefix tools/matriz-vetorial
-node scripts/prepare-motion.mjs
-python3 design/integrate-areas.py motion.html
-```
-
-Os workflows executam essa preparação antes de compilar o manual. O catálogo e os downloads JSON são gerados dos mesmos projetos que alimentam a Matriz. Vídeos desatualizados ou ausentes bloqueiam a publicação; `--allow-pending-exports` serve apenas para prévia local.
-
-## Proteções
-
-- Nunca publicar na conta ou domínio de produção; usar somente o Worker de prévia.
-- Preservar os SVGs oficiais e a lógica de transformação vetorial enquanto não houver instrução específica.
-- Validar em ambiente local e CI antes de integrar mudanças em `main`.
-
-## Situação da migração
-
-A versão atual de `main` contém os fontes editáveis e o workflow de prévia não depende mais do ZIP. Os scripts em `design/` ainda transformam arquivos durante a publicação; mantenha essa etapa enquanto os resultados finais não forem convertidos em páginas-fonte definitivas. A entrada `/` continua direcionando para `/manual.html`; a introdução editorial separada encontra-se em `/inicio.html`.
-
-## Páginas e exportação do Laboratório
-
-O Laboratório cria sequências de páginas com projetos reversíveis e motions do acervo da Matriz. PNG, PDF e HTML usam a cena lógica compartilhada; o PDF incorpora fontes e preserva texto e vetores, enquanto o HTML mantém os motions ativos e inclui suas mídias para uso independente. No menu ao lado de PNG, escolha PDF, site HTML ou apresentação. Consulte o marco 1B em [design/LABORATORIO_PRODUCAO_EXPORTACAO.md](design/LABORATORIO_PRODUCAO_EXPORTACAO.md).
+- Preservar os SVGs, modelos, roteiros e interface aprovados da Matriz.
+- Preservar site-oficial/: é a base congelada de recuperação, protegida por hashes.
+- Validar em prévia antes de integrar ao main. A publicação oficial ocorre pelo workflow autorizado, sem substituir rotas existentes.
+- O ZIP antigo e as branches anteriores são históricos. O build usa os fontes versionados.
+- Original, estudo, export e cache têm funções diferentes. Limpeza do acervo exige conferência de dependências e não faz parte dos blocos 1–3.

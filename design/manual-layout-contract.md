@@ -1,12 +1,14 @@
 # LABMATTAR — contrato de diagramação editorial
 
-**Status:** regra de construção para o manual de identidade (seis capítulos).
-**Escopo:** 01 Símbolos, 02 Tipografia, 03 Cores, 04 Composição, 05 Laboratório, 06 Redes Sociais.
+**Status:** regra de construção para o manual de identidade (capítulos 00 a 07).
+**Escopo:** 00 Introdução, 01 Símbolos, 02 Motion, 03 Tipografia, 04 Cores, 05 Composição, 06 Laboratório, 07 Redes Sociais.
+
+A Introdução preserva a abertura autoral aprovada e compartilha a navegação. O índice `/identidade.html` é uma página de recursos, não uma capa de capítulo. A convergência dessas exceções está apresentada para validação; não aplicar uma nova diagramação silenciosamente.
 **Fontes da verdade:** este documento define a geometria; `public/manual-layout.css` executa a grade; `public/manual-headings.css` é a única fonte para tipografia.
 
 ## 1. Invariantes
 
-- Não existem cinco layouts independentes. Todas as capas usam o mesmo mapa de posição; todas as seções partem da mesma régua.
+- Não existem layouts de capítulos independentes. Todas as capas usam o mesmo mapa de posição; todas as seções partem da mesma régua.
 - Os únicos tratamentos tipográficos são **Título, Corpo e Detalhe**. Nunca criar um quarto peso, tamanho ou entrelinha para resolver uma quebra ou uma composição.
 - O título pode quebrar linhas, mas **não diminui** para caber. Sua banda é reservada e o conteúdo é centralizado verticalmente dentro dela: um título curto não cria uma lacuna exagerada antes do Corpo.
 - A cor e o formato mudam o conteúdo visual, não as coordenadas do texto do manual.
@@ -36,7 +38,7 @@ As colunas são contadas de 1 a 12, com fim exclusivo no CSS Grid: `1 / 10`, `1 
 ## 3. Contrato vertical da capa
 
 1. A capa ocupa, no mínimo, a altura disponível depois da navegação. **A composição inteira — identificação, título, Corpo e Detalhe — é centralizada verticalmente na área útil**, sem uma coordenada fixa para a identificação.
-2. Navegação global: **54 px**; navegação local, quando houver: **48 px**. A compensação óptica de **−24 px** nas páginas com menu local mantém os mesmos campos verticais nas cinco capas, independentemente de haver uma segunda barra.
+2. Navegação global: **54 px**; navegação local, quando houver: **48 px**. A compensação óptica de **−24 px** nas páginas com menu local mantém os mesmos campos verticais nas capas normativas, independentemente de haver uma segunda barra.
 3. Respiro mínimo externo no desktop: topo `clamp(36px,5svh,56px)` e base `clamp(44px,6svh,70px)`. A base ligeiramente mais ampla favorece o equilíbrio visual.
 4. Distância entre Identificação e banda do Título: **44 px** no desktop. O bloco do título conserva **214 px** de altura mínima, com o conteúdo centrado verticalmente; não se altera escala, peso ou entrelinha para compensar títulos curtos.
 5. Distância entre a banda do Título e a leitura: **30 px** no desktop. Corpo e Detalhe começam na mesma linha, em suas colunas fixas.
@@ -68,7 +70,7 @@ O título tem banda vertical reservada no desktop/tablet e conteúdo centralizad
 ## 6. Controle de qualidade obrigatório
 
 Em 1440×900, 1024×768, 768×1024, 390×844 e 320×640:
-- Medir `left` e `top` de Identificação, Título, Corpo e Detalhe nas cinco capas. Os campos estruturais devem apresentar desvio máximo de **2 px** entre capítulos na mesma viewport (o Detalhe empilhado no celular segue naturalmente a altura do Corpo).
+- Medir `left` e `top` de Identificação, Título, Corpo e Detalhe nas capas normativas. Os campos estruturais devem apresentar desvio máximo de **2 px** entre capítulos na mesma viewport (o Detalhe empilhado no celular segue naturalmente a altura do Corpo).
 - Conferir que o centro vertical da composição acompanha o centro da área útil da tela, com compensação óptica de no máximo **26 px**, e que o conteúdo do título fica centralizado na banda reservada.
 - Conferir nav global 54 px, local 48 px quando existir, sem sobreposição.
 - Garantir que todo título cabe horizontalmente por quebra natural, sem redução de fonte.
@@ -79,7 +81,7 @@ Em 1440×900, 1024×768, 768×1024, 390×844 e 320×640:
 
 ## 7. Alteração das regras
 
-Qualquer mudança futura de grade, espaçamento, bandas verticais ou breakpoints deve ser alterada primeiro **neste contrato e nos tokens compartilhados**, aplicada aos cinco capítulos juntos e comprovada pelo teste. Correções isoladas em uma página não são permitidas.
+Qualquer mudança futura de grade, espaçamento, bandas verticais ou breakpoints deve ser alterada primeiro **neste contrato e nos tokens compartilhados**, aplicada aos capítulos normativos juntos e comprovada pelo teste. Correções isoladas em uma página não são permitidas.
 
 ## 7. Extensão / Redes Sociais
 

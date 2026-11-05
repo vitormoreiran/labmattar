@@ -36,10 +36,10 @@ O inspetor é uma ferramenta de edição, não uma repetição do manual.
 - Os únicos tratamentos de texto são **Título**, **Corpo** e **Detalhe** com Univers e Perpetua; a escala proporcional à superfície é aplicada por `manual-headings.css`, não por fontes adicionais.
 - A origem horizontal, o alinhamento e a margem de leitura são únicos em toda a página.
 - O M conserva vetor, proporções e eixo central. A fotografia pode ser reenquadrada, nunca o vetor.
-- O preto de 20% pertence à fotografia sob o texto e acompanha o recorte do M; o modo 0% existe só para comparação, jamais como nova norma.
+- O tratamento de leitura pertence à fotografia sob o texto e acompanha o recorte do M. A intensidade é ajustável de 0% a 80%, com atalhos 0%, 20%, 40% e 60%. Projetos anteriores mantêm 20%. A escolha deve ser conferida no tamanho final; os atalhos não certificam legibilidade.
 - **Relação entre camadas:** sempre que um M ou qualquer marcador estiver ativo, a camada de fundo exibe **a mesma imagem selecionada, ampliada e desfocada (blur)**. O conteúdo interior do M pode ser fotográfico ou sólido; em ambos os casos, a camada inferior não fica como cor plana nem vazia. A geometria não muda.
 - A opção de fundo (Cor ou Fotografia) continua como preferência salva. Ela só determina a superfície quando M e marcadores estiverem desligados. Desligar o último elemento restaura a escolha original, sem perda de foto, foco ou escala.
-- O blur do fundo e o véu preto de 20% são recursos diferentes: o blur define a camada inferior; o véu depende da sobreposição de texto à fotografia.
+- O blur do fundo e o tratamento preto ajustável são recursos diferentes: o blur define a camada inferior; o véu depende da sobreposição de texto à fotografia.
 
 ## Horizontal e vertical — uma estrutura comum
 
@@ -67,7 +67,7 @@ No modo Completo, em qualquer formato, o controle de escala e os marcadores adic
 - **Camadas:** Campo → Máscara → Página. As duas primeiras fases mostram a imagem sem tipografia.
 - **Formato:** Horizontal (16:9) / Vertical (9:16). Recompõe os campos; não estica um cartão existente.
 - **Leitura:** Resultado / Estrutura. No Resultado o estudo está completo. Estrutura retira a fotografia e contorna os próprios elementos de texto, revelando quatro campos reais (identificação; título; corpo; créditos). Não se usa um retângulo verde de segurança.
-- **Contraste:** 0% / 20%. Comparação disponível na Página em modo Resultado, sem modificar disposição dos elementos.
+- **Contraste:** 0% / 20% / 40% / 60%. Comparação disponível na Página em modo Resultado, sem modificar disposição dos elementos.
 
 A lateral da demonstração explica o estado escolhido, sem comentários redundantes. Os contornos do modo Estrutura correspondem a elementos reais no DOM, portanto se adaptam ao formato.
 

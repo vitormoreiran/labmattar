@@ -61,7 +61,7 @@ O registro verifica H.264, formato, duração e correspondência do projeto com 
 
 Somente os exports web otimizados, menores que 20 MiB cada, são versionados em `public/motion/videos/`. Os vídeos originais do acervo e os arquivos de produção grandes continuam fora do Git. Não subir `node_modules/`, saídas compiladas, dados pessoais de navegador ou identidade de outro Site.
 
-Os workflows preparam Motion antes de compilar o manual. Testar também importação e edição pelos oito links, reprodução automática silenciosa em loop, download dos arquivos e leitura em desktop e celular. A publicação continua limitada ao Worker de prévia; não alterar `labmattar.com`.
+Os workflows preparam Motion antes de compilar o manual. Testar também importação e edição pelos oito links, reprodução automática silenciosa em loop, download dos arquivos e leitura em desktop e celular. A publicação validada segue pelo GitHub para a prévia e para o domínio oficial, conforme `site-oficial/README.md`. A Matriz atual é a referência; `/editor/` permanece identificado como legado.
 
 ## Exportação reproduzível em CI
 

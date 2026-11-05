@@ -4,36 +4,48 @@
   "status": "working-system",
   "sections": [
     {
+      "id": "introduction",
+      "label": "Introdução",
+      "path": "/inicio.html",
+      "stage": "existing",
+      "number": "00"
+    },
+    {
       "id": "symbols",
       "label": "Símbolos",
       "path": "/manual.html",
       "stage": "existing",
-      "editor": "/motion/matriz/index.html"
+      "editor": "/motion/matriz/index.html",
+      "number": "01"
     },
     {
       "id": "motion",
       "label": "Motion",
       "stage": "existing",
       "path": "/motion.html",
-      "editor": "/motion/matriz/index.html"
+      "editor": "/motion/matriz/index.html",
+      "number": "02"
     },
     {
       "id": "typography",
       "label": "Tipografia",
       "path": "/tipografia.html",
-      "stage": "existing"
+      "stage": "existing",
+      "number": "03"
     },
     {
       "id": "color",
       "label": "Cores",
       "path": "/cores.html",
-      "stage": "draft"
+      "stage": "draft",
+      "number": "04"
     },
     {
       "id": "composition",
       "label": "Composição",
       "stage": "experimental",
-      "path": "/composicao.html"
+      "path": "/composicao.html",
+      "number": "05"
     },
     {
       "id": "laboratory",
@@ -41,13 +53,16 @@
       "path": "/laboratorio.html",
       "stage": "experimental",
       "editor": "/compor.html?studio=1#laboratorio",
-      "matrixEditor": "/editor/"
+      "matrixEditor": "/motion/matriz/index.html",
+      "number": "06",
+      "legacyEditor": "/editor/"
     },
     {
       "id": "social",
       "label": "Redes Sociais",
       "path": "/redes.html",
-      "stage": "experimental"
+      "stage": "experimental",
+      "number": "07"
     }
   ],
   "typography": {
@@ -69,17 +84,28 @@
   },
   "image": {
     "textContrast": {
-      "status": "approved",
+      "status": "adjustable-implementation",
       "trigger": "visible text overlaps photographic area",
       "veilColor": "#000000",
-      "veilOpacity": 0.2,
+      "legacyDefaultOpacity": 0.2,
+      "rangePercent": [
+        0,
+        80
+      ],
+      "presetsPercent": [
+        0,
+        20,
+        40,
+        60
+      ],
       "targets": [
         "photographic background",
         "image clipped by M",
         "unmasked image"
       ],
       "otherwise": "no automatic veil",
-      "notes": "The 20% black veil belongs to the photo layer and follows its clipping; it is separate from atmospheric blur and tonal treatments."
+      "approval": "Evaluate legibility at final size; preset values are not automatic approval.",
+      "notes": "Intensity belongs to the image, follows clipping, survives project round trips and is shared by pages in a section. Existing projects retain 20%."
     }
   },
   "colors": {
@@ -125,13 +151,20 @@
       "experimental"
     ],
     "sourceOfTruth": "design/identity-system.json",
-    "rule": "Experiments cannot silently overwrite approved identity parameters."
+    "rule": "Experiments cannot silently overwrite approved identity parameters.",
+    "applicationReview": {
+      "status": "pending-author-validation",
+      "path": "/validacao-identidade.html",
+      "scope": "Application decisions remain proposals until recorded author approval."
+    }
   },
   "layout": {
     "contract": "design/manual-layout-contract.md",
     "stylesheet": "/manual-layout.css",
     "chapters": [
+      "introduction",
       "symbols",
+      "motion",
       "typography",
       "color",
       "composition",
@@ -139,6 +172,10 @@
       "social"
     ],
     "typography": "/manual-headings.css",
-    "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides."
+    "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides.",
+    "exceptions": {
+      "introduction": "Authored opening retained; shared chapter navigation; application choices pending review.",
+      "identityIndex": "Resource index retained; not a chapter cover."
+    }
   }
 }

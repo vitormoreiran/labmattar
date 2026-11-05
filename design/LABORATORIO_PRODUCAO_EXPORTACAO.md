@@ -155,7 +155,7 @@ O `.aep` resulta da abertura/montagem no After Effects; não fingir que um PNG, 
 - **CI visual:** composição comparativa nos quatro formatos atuais (e 4:5 após implementação), navegadores desktop/mobile, fontes carregadas, textos sem colisão, vetores e máscaras preservados.
 - **Regressão:** imagens de referência aprovadas para foto, M sólido/fotográfico, blur, título, corpo, detalhe e quatro variantes de assinatura, incluindo **Sem assinatura**.
 - **CI Motion:** conservar testes, fingerprint dos roteiros, verificação do primeiro e último quadro, duração/FPS e H.264; não misturar parâmetros de render de Motion com resoluções do editor editorial.
-- **Release:** mudança do código da Matriz exige revisão de seus próprios testes e contrato de interoperabilidade, sem substituir automaticamente um motor pelo outro. Testes e deploy apenas na prévia autorizada.
+- **Release:** mudança do código da Matriz exige revisão de seus próprios testes e contrato de interoperabilidade, sem substituir automaticamente um motor pelo outro. Conferir a prévia e seguir o workflow oficial descrito em `site-oficial/README.md`. As regras de aplicação em avaliação não se tornam aprovadas por serem implementadas.
 - **Documentação de limites:** toda opção informa se é **implementada**, **experimental** ou **planejada**. Nenhum formato de exportação aparece como disponível antes de funcionar.
 
 ## 9. Decisão operacional

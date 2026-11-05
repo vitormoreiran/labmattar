@@ -56,7 +56,7 @@
 .lm-lab-photo-ambient{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y);display:block}
 /* Photograph treatment comes exclusively from data-backdrop below.
  * There is no extra mask mode, and no separate blur rule per application. */
-.lm-lab-photo-contrast{position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
+.lm-lab-photo-contrast{position:absolute;inset:0;background:rgba(0,0,0,var(--lab-photo-contrast,.2));opacity:0;pointer-events:none;z-index:1}
 .lm-lab-board[data-photo-text=true] .lm-lab-photo-contrast{opacity:1}
 .lm-lab-m-photo{
   position:absolute;
@@ -68,7 +68,7 @@
   mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;
 }
 .lm-lab-m-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y)}
-.lm-lab-m-photo::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;z-index:1;pointer-events:none}
+.lm-lab-m-photo::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--lab-photo-contrast,.2));opacity:0;z-index:1;pointer-events:none}
 .lm-lab-board[data-m-text=true] .lm-lab-m-photo::after{opacity:1}
 .lm-lab-mark{position:absolute;z-index:4;top:var(--lab-pad);right:var(--lab-pad);width:clamp(30px,9cqw,110px);max-height:22cqh;object-fit:contain;pointer-events:none}
 .lm-lab-mark[data-position=esquerda]{right:auto;left:var(--lab-pad)}

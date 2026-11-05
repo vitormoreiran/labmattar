@@ -29,7 +29,7 @@
 .lm-case-symbol{position:absolute;inset:0;display:grid;place-items:center;z-index:2;pointer-events:none}
 .lm-case-symbol .lm-case-image{position:relative;width:min(100%,133.2cqh);height:auto;aspect-ratio:990.08 / 743.18;overflow:hidden;-webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat}
 .lm-case-symbol .lm-case-image img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
-.lm-case-symbol .lm-case-image::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
+.lm-case-symbol .lm-case-image::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--case-contrast-opacity,.2));opacity:0;pointer-events:none;z-index:1}
 .lm-case-frame[data-step="completa"][data-contrast="on"] .lm-case-image::after{opacity:1}
 /* Content is composed with the same reading structure as 05 / Laboratorio. */
 .lm-case-frame[data-step=campo] .lm-case-symbol,.lm-case-frame[data-step=campo] .lm-case-content{opacity:0}
@@ -61,7 +61,7 @@
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
 </head><body>
 
-<main><section class="chapter lm-manual-cover"><div class="inner"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 04 — COMPOSIÇÃO</p><h1 class="big"><span class="lm-cover-title-content">SISTEMA DE<br><span class="perpetua">COMPOSIÇÃO</span></span></h1><div class="intro"><p>A composição parte de uma régua: primeiro definem-se superfície e margens; depois o M ocupa o eixo central. Título, Corpo e Detalhe organizam a leitura. Fotografia e cor entram sem alterar essa estrutura.</p><p class="detail">SUPERFÍCIE / M / LEITURA / IMAGEM</p></div></div></section>
+<main><section class="chapter lm-manual-cover"><div class="inner"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 05 — COMPOSIÇÃO</p><h1 class="big"><span class="lm-cover-title-content">SISTEMA DE<br><span class="perpetua">COMPOSIÇÃO</span></span></h1><div class="intro"><p>A composição parte de uma régua: primeiro definem-se superfície e margens; depois o M ocupa o eixo central. Título, Corpo e Detalhe organizam a leitura. Fotografia e cor entram sem alterar essa estrutura.</p><p class="detail">SUPERFÍCIE / M / LEITURA / IMAGEM</p></div></div></section>
 
 <section class="chapter lm-case lm-manual-section" id="construcao">
   <div class="lm-case-intro">
@@ -88,10 +88,12 @@
       <button type="button" data-case-m-presentation="elemento" aria-pressed="true">Elemento</button>
       <button type="button" data-case-m-presentation="completo" aria-pressed="false">Completo</button>
     </div>
-    <div class="lm-case-control" role="group" aria-label="Comparar 0% e 20% de preto com a mesma imagem e texto">
+    <div class="lm-case-control" role="group" aria-label="Comparar intensidades de tratamento com a mesma imagem e texto">
       <span>CONTRASTE / COMPARAR</span>
       <button type="button" data-case-contrast="off" aria-pressed="false">0%</button>
       <button type="button" data-case-contrast="on" aria-pressed="true">20%</button>
+      <button type="button" data-case-contrast="40" aria-pressed="false">40%</button>
+      <button type="button" data-case-contrast="60" aria-pressed="false">60%</button>
     </div>
     <div class="lm-case-control" role="group" aria-label="Como visualizar a leitura">
       <span>LEITURA</span>
@@ -128,10 +130,10 @@
   </div>
 
   <div class="lm-case-contrast" id="contraste">
-    <div><p class="eyebrow">REGRA / TEXTO SOBRE FOTOGRAFIA</p><h3>PRETO<br><span class="perpetua">20%</span></h3></div>
+    <div><p class="eyebrow">EM VALIDAÇÃO / TEXTO SOBRE FOTOGRAFIA</p><h3>CONTRASTE<br><span class="perpetua">AJUSTÁVEL</span></h3></div>
     <div>
-      <p>Quando o texto se sobrepõe à fotografia, aplica-se um véu preto de 20% à área fotográfica sob ele, inclusive quando a imagem está recortada no M.</p>
-      <p>Sem sobreposição de texto, não se aplica esse véu. O recurso preserva a leitura sem alterar a geometria do símbolo.</p>
+      <p>O tratamento preto pode variar conforme a fotografia, o enquadramento e a cor do texto, inclusive dentro do M. Compare as intensidades e confira a leitura no tamanho final.</p>
+      <p>Sem sobreposição de texto, esse tratamento não é acrescentado. Os percentuais são opções de composição; o fechamento das aplicações depende da validação do autor.</p>
     </div>
   </div>
   <div class="lm-case-validation">
@@ -180,8 +182,8 @@
 <section class="chapter lm-composition-next lm-manual-section">
   <div class="inner">
   <p class="eyebrow">EM AVALIAÇÃO</p>
-  <p>Os limites de escala, o ritmo dos marcadores e alguns campos cromáticos ainda dependem de estudos aplicados. O eixo central e o tratamento fotográfico de 20% permanecem como regras.</p>
-  <div class="lm-composition-next-link"><p class="eyebrow">PRÓXIMA ÁREA / 05</p><a href="/laboratorio.html">ABRIR LABORATÓRIO <span aria-hidden="true">↗</span></a></div>
+  <p>Os limites de escala, o ritmo dos marcadores e alguns campos cromáticos ainda dependem de estudos aplicados. O eixo central compositivo é preservado. O tratamento fotográfico passou a ser ajustável; as escolhas de aplicação aguardam validação.</p>
+  <div class="lm-composition-next-link"><p class="eyebrow">PRÓXIMA ÁREA / 06</p><a href="/laboratorio.html">ABRIR LABORATÓRIO <span aria-hidden="true">↗</span></a></div>
   </div>
 </section></main>
 
@@ -197,7 +199,8 @@
     frame.dataset.step=state.step;
     frame.dataset.format=vertical?"vertical":"horizontal";
     frame.dataset.view=state.view;
-    frame.dataset.contrast=state.contrast;
+    frame.dataset.contrast=state.contrast==="off"?"off":"on";
+    frame.style.setProperty("--case-contrast-opacity",String(state.contrast==="off"?0:state.contrast==="on"?.2:Number(state.contrast)/100));
     frame.dataset.mPresentation=state.mPresentation;
     frame.classList.toggle("is-mobile",vertical);
     const modeControls=document.querySelector(".lm-case-m-presentation");

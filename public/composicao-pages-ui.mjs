@@ -116,7 +116,7 @@ function syncSectionBackground(){
   if(candidate.mode==='photo'&&(snapshot.state.mContent==='photo'||pages.some((page,index)=>index!==current&&page.sectionId===section.id&&page.composition.pages[0].m.content==='photo')))candidate.treatment='blur';
   const changed=JSON.stringify(candidate)!==JSON.stringify(section.background);section.background=candidate;
   const expected=sectionState(snapshot.state,section);
-  if(['background','color','photo','focusX','focusY','mContent'].some(key=>snapshot.state[key]!==expected[key])){
+  if(['background','color','photo','focusX','focusY','mContent','photoContrast'].some(key=>snapshot.state[key]!==expected[key])){
     const previous=switching;switching=true;try{bridge().restore(expected);}finally{switching=previous;}
   }
   if(changed)for(let index=0;index<pages.length;index++){

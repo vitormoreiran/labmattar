@@ -41,6 +41,7 @@
     return result;
   }
   const defaultMetadata={
+    photoContrast:20,autoInkVersion:2,
     kicker:"LABMATTAR / 2026",
     footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
     footerRight:"LABMATTAR / IDENTIDADE VISUAL",
@@ -73,24 +74,24 @@
     }
   };
   const fields={
-    format:"labFormat",color:"labColor",inkColor:"labInkColor",margin:"labMargin",guides:"labGuides",
+    format:"labFormat",color:"labColor",inkColor:"labInkColor",photoContrast:"labPhotoContrast",margin:"labMargin",guides:"labGuides",
     marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
     mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast"]);
   // Approved digital colors from design/identity-system.json (no free-picker).
   const palette=Object.freeze({
     neutral:"#F7F6F2",white:"#FFFFFF",black:"#181818",
     beige:"#E6DBCF",green:"#8FD81B",red:"#E22E24",
     blue:"#1F3554",brown:"#5B463E"
   });
-  // The existing automatic contrast remains the initial recommendation.
+  // New compositions use a readable default; saved projects retain their original profile.
   const automaticInk=Object.freeze({
     neutral:"black",white:"black",black:"white",beige:"black",
-    green:"black",red:"black",blue:"white",brown:"white"
+    green:"black",red:"white",blue:"white",brown:"white"
   });
   function contrastRatio(foreground,background){
     const light=hex=>{
@@ -182,6 +183,7 @@
       if(typeof data[key]==="string")result[key]=data[key].replace(/[\r\n]+/g," ").slice(0,max);
     }
     result.signature=sanitizeSignature(data.signature,data);
+    result.autoInkVersion=data.autoInkVersion===2?2:1;
     // Saved projects made before this rule may contain a solid M on a photo.
     // Normalize that impossible combination before rendering or exporting.
     if(result.background==="photo"&&result.mContent==="solid")result.mContent="photo";
@@ -258,10 +260,10 @@
     // Progressive disclosure: only relevant controls occupy inspector space.
     // Markers are independent of the central M, except in Completo.
     setFieldVisible("labColor",state.background==="color");
-    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY"])setFieldVisible(id,activeImage);
+    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY","labPhotoContrast"])setFieldVisible(id,activeImage);
     setFieldVisible("labMScale",mActive&&!fullM);
     setFieldVisible("labMarker",!fullM);
-    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
+    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -277,7 +279,7 @@
       const select=by(fields[key]);
       button.setAttribute("aria-pressed",String(key==="mPresentation"
         ? mActive&&state.mPresentation===button.dataset.value
-        : state[key]===button.dataset.value));
+        : String(state[key])===button.dataset.value));
       button.disabled=Boolean(select&&select.disabled);
     });
     for(const [key,id] of Object.entries(fields)){
@@ -385,12 +387,13 @@
     board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
+    board.style.setProperty("--lab-photo-contrast",String(state.photoContrast/100));
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
     by("labMMarkers").dataset.marker=markerActive?state.marker:"none";
     const bg=palette[state.color];
     const automatic=effectiveBackground==="color"?
-      palette[automaticInk[state.color]]:palette.neutral;
+      palette[state.autoInkVersion===1&&state.color==="red"?"black":automaticInk[state.color]]:palette.neutral;
     const ink=state.inkColor==="auto"?automatic:palette[state.inkColor];
     board.dataset.textColor=state.inkColor;
     board.style.setProperty("--lab-bg",bg);
@@ -637,7 +640,7 @@
     const overlap=mPhoto&&
       textNodes.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
     // Footer and kicker are metadata, not the primary editorial column. They
-    // still receive the 20% photographic treatment, but do not create a false
+    // still receive the selected photographic treatment, but do not create a false
     // "separate image/text" conflict beside an otherwise intact title.
     const editorialText=[...board.querySelectorAll(".lm-lab-title-line")];
     if(!body.hidden)editorialText.push(body);
@@ -668,9 +671,9 @@
     status.dataset.state=invalid?"overflow":collision?"collision":titleFit.lowLegibility?"review":"ok";
     const treatment=by("labPhotoStatus");
     treatment.textContent=!hasPhoto?"SEM VÉU FOTOGRÁFICO":
-      backgroundPhoto&&mPhoto?"PRETO 20% / FUNDO + M":
-      mPhoto?"PRETO 20% / M":
-      "PRETO 20% / FUNDO";
+      backgroundPhoto&&mPhoto?"PRETO "+state.photoContrast+"% / FUNDO + M":
+      mPhoto?"PRETO "+state.photoContrast+"% / M":
+      "PRETO "+state.photoContrast+"% / FUNDO";
   }
   function applyPreset(key){
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
@@ -817,7 +820,7 @@
         by("labMContent").value=state.background==="photo"?"photo":lastMContent;
       }
       select.value=button.dataset.value;
-      select.dispatchEvent(new Event("change",{bubbles:true}));
+      select.dispatchEvent(new Event(select.type==="range"?"input":"change",{bubbles:true}));
     });
   });
   by("labOpenPhotoFromM")?.addEventListener("click",()=>{
@@ -904,6 +907,9 @@
     labInkColor:["Cor do texto",
       "Aplica a mesma cor a Título, Corpo e Detalhe, sem criar novos tratamentos tipográficos.",
       "Padrão mantém o contraste recomendado. A interface avisa se outra combinação prejudicar a leitura."],
+    labPhotoContrast:["Tratamento de leitura",
+      "Ajusta a camada preta sobre a fotografia ou o vídeo quando há texto sobre a imagem.",
+      "Escolha a intensidade no enquadramento final. Os percentuais são opções de composição; confirme a leitura no tamanho real."],
     labBackground:["Fundo",
       "Define se a superfície usa cor ou mídia visual (fotografia ou vídeo).",
       "O fundo é independente do M."],
@@ -1083,7 +1089,7 @@
     {
       title:"Imagem e contraste",
       text:"Escolha cor, fotografia ou vídeo de fundo e ajuste o enquadramento. O M e os marcadores usam a mesma mídia, com regiões nítidas ou desfocadas.",
-      rule:"Preto 20% somente sobre fotografia com texto. Nenhum fundo sólido é criado atrás dos marcadores fotográficos.",
+      rule:"Tratamento preto ajustável sobre fotografia com texto. Nenhum fundo sólido é criado atrás dos marcadores fotográficos.",
       module:"fundo",
       target:"#labBackground"
     },
@@ -1297,6 +1303,7 @@
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
       const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale;
       readInputs();
+      if(id==="labColor"||id==="labInkColor")state.autoInkVersion=2;
       if(id==="labFormat"&&state.format!==previousFormat){
         rememberedReadingWidths.set(previousFormat,previousWidth);
         rememberedMScales.set(previousFormat,previousMScale);

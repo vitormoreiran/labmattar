@@ -2,23 +2,74 @@ from pathlib import Path
 import re
 import sys
 
-NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
-<a href="/manual.html" data-area="simbolos">01 / SÍMBOLOS</a>
-<a href="/motion.html" data-area="motion">02 / MOTION</a>
-<a href="/tipografia.html" data-area="tipografia">03 / TIPOGRAFIA</a>
-<a href="/cores.html" data-area="cores">04 / CORES</a>
-<a href="/composicao.html" data-area="composicao">05 / COMPOSIÇÃO</a>
-<a href="/laboratorio.html" data-area="laboratorio">06 / LABORATÓRIO</a>
-<a href="/redes.html" data-area="redes">07 / REDES SOCIAIS</a>
+NAV='''<nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR">
+<a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — início"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a>
+<div class="lm-nav-list" role="group" aria-label="Capítulos">
+<a href="/manual.html" data-area="simbolos"><span class="lm-nav-index">01</span><span>Símbolos</span></a>
+<a href="/motion.html" data-area="motion"><span class="lm-nav-index">02</span><span>Motion</span></a>
+<a href="/tipografia.html" data-area="tipografia"><span class="lm-nav-index">03</span><span>Tipografia</span></a>
+<a href="/cores.html" data-area="cores"><span class="lm-nav-index">04</span><span>Cores</span></a>
+<a href="/composicao.html" data-area="composicao"><span class="lm-nav-index">05</span><span>Composição</span></a>
+<a href="/laboratorio.html" data-area="laboratorio"><span class="lm-nav-index">06</span><span>Laboratório</span></a>
+<a href="/redes.html" data-area="redes"><span class="lm-nav-index">07</span><span>Redes sociais</span></a>
+</div>
 </nav>'''
-STYLE='''<style>
-.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(20px,2.3vw,34px);min-height:54px;padding:13px clamp(20px,3vw,48px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
-.lm-site-nav a{color:inherit;text-decoration:none;flex-shrink:0;padding:4px 0;border-bottom:2px solid transparent;white-space:nowrap;opacity:.66;transition:opacity .18s ease}
-.lm-site-nav::-webkit-scrollbar{display:none}
-.lm-site-nav a[aria-current=page]{border-color:currentColor;opacity:1}
-.lm-site-nav a:hover{opacity:1;text-decoration:none}
-.lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
-@media(max-width:600px){.lm-site-nav{justify-content:flex-start;gap:18px;padding:10px 16px;min-height:48px}}
+STYLE='''<style id="lm-site-navigation-style">
+/* Editorial navigation: single canonical source for all chapters. */
+html body > nav.lm-site-nav {
+  box-sizing:border-box; display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:nowrap; gap:clamp(18px,2vw,32px); position:sticky; top:0; z-index:100;
+  height:54px; min-height:54px; padding:0 clamp(20px,3vw,48px);
+  background:rgba(247,246,242,.97); color:#181818; border-bottom:1px solid #c9c8c2;
+  overflow:visible; font-family:UniversMattar,Arial,sans-serif;
+  font-size:11px; font-weight:400; line-height:1; letter-spacing:.01em;
+}
+html body > nav.lm-site-nav a { color:inherit; text-decoration:none; }
+html body > nav.lm-site-nav .lm-nav-home {
+  display:flex; align-items:center; gap:12px; flex:none; padding:0;
+  height:100%; white-space:nowrap; border:0;
+}
+html body > nav.lm-site-nav .lm-nav-monogram {
+  font-family:PerpetuaMattar,Georgia,serif; font-size:25px; line-height:1;
+  font-weight:400; letter-spacing:-.08em;
+}
+html body > nav.lm-site-nav .lm-nav-home-label {
+  font-size:9px; letter-spacing:.085em; opacity:.7; white-space:nowrap;
+}
+html body > nav.lm-site-nav .lm-nav-list {
+  min-width:0; display:flex; gap:clamp(12px,1.35vw,24px); align-items:stretch;
+  height:100%; overflow-x:auto; overflow-y:hidden;
+  scrollbar-width:none; overscroll-behavior-x:contain;
+}
+html body > nav.lm-site-nav .lm-nav-list::-webkit-scrollbar { display:none; }
+html body > nav.lm-site-nav .lm-nav-list a {
+  display:inline-flex; position:relative; align-items:center; gap:5px;
+  flex:none; height:100%; white-space:nowrap;
+  color:inherit; opacity:.58; transition:opacity .18s ease;
+}
+html body > nav.lm-site-nav .lm-nav-list a:hover,
+html body > nav.lm-site-nav .lm-nav-list a[aria-current="page"] { opacity:1; }
+html body > nav.lm-site-nav .lm-nav-list a[aria-current="page"]::after {
+  content:""; position:absolute; bottom:0; left:0; right:0;
+  height:2px; background:currentColor;
+}
+html body > nav.lm-site-nav .lm-nav-index {
+  opacity:.72; font-size:9px; font-variant-numeric:tabular-nums;
+  letter-spacing:0; margin-right:2px;
+}
+html body > nav.lm-site-nav a:focus-visible { outline:1px solid currentColor; outline-offset:-4px; }
+@media(max-width:1250px) {
+  html body > nav.lm-site-nav { gap:18px; padding-inline:20px; }
+  html body > nav.lm-site-nav .lm-nav-home-label { display:none; }
+  html body > nav.lm-site-nav .lm-nav-list { gap:20px; }
+}
+@media(max-width:700px) {
+  html body > nav.lm-site-nav { gap:15px; padding-inline:16px; }
+  html body > nav.lm-site-nav .lm-nav-list { gap:19px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  html body > nav.lm-site-nav .lm-nav-list a { transition:none; }
+}
 </style>'''
 areas={"manual.html":"simbolos","tipografia.html":"tipografia","cores.html":"cores","composicao.html":"composicao","laboratorio.html":"laboratorio","compor.html":"laboratorio","redes.html":"redes"}
 if Path("public/motion.html").exists():
@@ -33,6 +84,7 @@ for filename,area in areas.items():
  s=p.read_text(encoding="utf-8")
  # Replace any source-local menu by the one unified menu.
  s=re.sub(r'<nav class="lm-site-nav"[^>]*>.*?</nav>',"",s,flags=re.S)
+ s=re.sub(r'<style id="lm-site-navigation-style">.*?</style>',"",s,flags=re.S)
  # Remove the earlier exploratory cross-navigation and its styling.
  s=re.sub(r'<nav class="lm-crossnav"[^>]*>.*?</nav>',"",s,flags=re.S)
  s=re.sub(r'<style>\.lm-crossnav\{.*?</style>',"",s,flags=re.S)

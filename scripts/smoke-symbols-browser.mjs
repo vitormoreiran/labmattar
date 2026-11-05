@@ -51,7 +51,7 @@ try {
           assert.equal(await areaPage.locator('#laboratorio, #labArtboard, #labStudioToggle').count(),0,
             'Composição must not contain the interactive laboratory');
           assert.equal(await areaPage.locator('main a[href="/laboratorio.html"]').count(),1,
-            'Composição must link to chapter 05');
+            'Composição must link to the Laboratory');
           assert.equal(await areaPage.locator('#construcao .lm-case-facts article').count(),0,
             'Construction guidance belongs in Compor, not in a fixed explanatory grid');
           assert.equal(await areaPage.locator('#regras-de-composicao .lm-m-guide-grid article').count(),6,
@@ -77,9 +77,9 @@ try {
           assert.equal(await areaPage.locator('#labArtboard, #labStudioToggle').count(),0,
             'The Laboratory index must not embed Compor');
           assert.equal(await areaPage.locator('.lm-lab-tool').count(),2,
-            'The Laboratory index must show both original tools');
-          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/editor/"]').count(),1,
-            'Matrix preview must open the original vector editor');
+            'The Laboratory index must show the current Matrix and Compor');
+          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/motion/matriz/index.html"]').count(),1,
+            'Matrix preview must open the current spatial Matrix');
           assert.equal(await areaPage.locator('a.lm-lab-tool[href="/compor.html?studio=1#laboratorio"]').count(),1,
             'Compor preview must open the separate composition editor');
         }

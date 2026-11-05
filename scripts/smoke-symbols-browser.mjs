@@ -32,10 +32,19 @@ try {
       try {
         const response=await areaPage.goto(new URL('/'+area,url).href,{waitUntil:'networkidle',timeout:60000});
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
-        const navLinks=await areaPage.locator('.lm-site-nav a').allTextContents();
-        assert.deepEqual(navLinks.map(x=>x.trim()),[
-          '01 / SÍMBOLOS','MOTION','02 / TIPOGRAFIA','03 / CORES','04 / COMPOSIÇÃO','05 / LABORATÓRIO','06 / REDES SOCIAIS'
-        ],'Motion follows Symbols with a separate composition laboratory: '+area);
+        const navLinks=await areaPage.locator('.lm-nav-list a').evaluateAll(links=>links.map(link=>({
+          index:link.querySelector('.lm-nav-index').textContent.trim(),area:link.dataset.area,href:link.getAttribute('href')
+        })));
+        assert.deepEqual(navLinks,[
+          {index:'00',area:'introducao',href:'/inicio.html'},
+          {index:'01',area:'simbolos',href:'/manual.html'},
+          {index:'02',area:'motion',href:'/motion.html'},
+          {index:'03',area:'tipografia',href:'/tipografia.html'},
+          {index:'04',area:'cores',href:'/cores.html'},
+          {index:'05',area:'composicao',href:'/composicao.html'},
+          {index:'06',area:'laboratorio',href:'/laboratorio.html'},
+          {index:'07',area:'redes',href:'/redes.html'}
+        ],'Introduction precedes all seven manual chapters: '+area);
         assert.equal(await areaPage.locator('.lm-site-nav a[href="/imagem.html"]').count(),0,
           'Imagem must not reappear as a separate chapter');
         if(area==='composicao.html'){
@@ -227,7 +236,24 @@ try {
     }
     report.manualHeadings.push({viewportWidth,areas:group});
   }
-  // Chapter 06: the feed is a temporal archive of project seasons.
+  // All anchors in the authored introduction belong to chapter 00.
+  for(const width of [1440,390]){
+    const introPage=await browser.newPage({viewport:{width,height:900},reducedMotion:'reduce'});
+    try{
+      const response=await introPage.goto(new URL('/inicio.html#sistemas',url).href,{waitUntil:'networkidle',timeout:60000});
+      assert.equal(response.status(),200,'Introduction HTTP 200');
+      assert.equal(await introPage.locator('.lm-site-nav').count(),1,'One shared chapter menu');
+      assert.equal(await introPage.locator('.lm-site-nav [data-area="introducao"][aria-current="page"]').count(),1,'Entire introduction is chapter 00');
+      assert.equal(await introPage.locator('.lm-site-nav [aria-current="page"]').count(),1);
+      assert.deepEqual(await introPage.locator('#sistemas .entry>span:first-child').allTextContents(),['01','02','03','04','05','06','07'],'Introduction index follows the chapter menu');
+      assert.equal(await introPage.locator('main>.section>.eyebrow').filter({hasText:/^0[1-9] \/ /}).count(),0,'Introduction sections do not start new chapters');
+      await introPage.locator('header a[href="#arquivo"]').click();
+      assert.equal(new URL(introPage.url()).hash,'#arquivo');
+      assert.equal(await introPage.locator('.lm-site-nav [data-area="introducao"][aria-current="page"]').count(),1,'Acervo remains inside introduction');
+      await introPage.evaluate(()=>scrollTo(0,0));await introPage.screenshot({path:'symbols-proof/'+phase+'-introduction-'+width+'.png'});
+    }finally{await introPage.close();}
+  }
+  // Chapter 07: the feed is a temporal archive of project seasons.
   // The dedicated social test also checks the real photographs and mobile layout.
   const socialPage=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
   try {

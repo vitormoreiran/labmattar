@@ -262,10 +262,10 @@ try {
     await socialPage.waitForFunction(()=>document.body.dataset.lmTypographyReady==='true',{timeout:15000});
     assert.equal(await socialPage.locator('main > section.lm-manual-cover').count(),1,'Social page has canonical cover');
     assert.equal(await socialPage.locator('.lm-site-nav a[data-area="redes"][aria-current="page"]').count(),1,'Social nav active');
-    assert.equal(await socialPage.locator('main>.lm-social').count(),7,'Cover and six editorial sections');
-    assert.equal(await socialPage.locator('.rule-card').count(),3,'Three degrees of graphic intervention');
-    assert.equal(await socialPage.locator('.application article').count(),4,'Four official framing applications');
-    assert.equal(await socialPage.locator('.method article').count(),6,'Six editorial functions');
+    assert.equal(await socialPage.locator('main>section.chapter').count(),7,'Cover and six editorial sections');
+    assert.equal(await socialPage.locator('.profile-posts img').count(),12,'Continuous profile has twelve photographs');
+    assert.equal(await socialPage.locator('.motion-examples video').count(),2,'Two examples from the motion system');
+    assert.equal(await socialPage.locator('main a[href="/motion.html"]').count(),1,'Editorial link to the motion chapter');
     assert.equal(await socialPage.locator('#lmSeasonPlanner').count(),0,'Retired planner stays absent');
     const content=(await socialPage.locator('main').textContent()).toLocaleLowerCase('pt-BR');
     for(const project of ['Cada Corpo Abre um Mundo','Poiesis','Aleteia'])assert.ok(content.includes(project.toLocaleLowerCase('pt-BR')),'Current editorial seasons: '+project);

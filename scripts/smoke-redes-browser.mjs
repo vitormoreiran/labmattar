@@ -20,7 +20,7 @@ try{
     assert.equal(await page.locator('.rationale-grid article').count(),3,'Three defended editorial decisions');
     assert.equal(await page.locator('.identity-studies article').count(),2,'Official symbol and signature applications');
     assert.equal(await page.locator('.motion-examples video').count(),2,'Two official motion examples');
-    assert.equal(await page.locator('a[href="/motion.html"]').count(),1,'Connection to canonical motion system');
+    assert.equal(await page.locator('main a[href="/motion.html"]').count(),1,'Connection to canonical motion system');
     const motionSources=await page.locator('.motion-examples video source').evaluateAll(items=>items.map(x=>x.getAttribute('src')));
     assert.deepEqual(motionSources,['/motion/videos/m-form.mp4','/motion/videos/perfil-corte.mp4'],'Canonical motion videos');
 
@@ -28,10 +28,10 @@ try{
     assert.equal(await page.locator('.formats article').count(),3,'Three platform applications');
     assert.equal(await page.locator('.principles article').count(),6,'Six normative criteria');
     assert.equal(await page.locator('#lmSeasonPlanner').count(),0);
-    const body=await page.locator('main').innerText();
-    assert.ok(body.includes('Cada Corpo Abre um Mundo'));
-    assert.ok(body.includes('Poiesis')&&body.includes('Aleteia'));
-    assert.ok(!body.includes('Fome Come'));
+    const body=(await page.locator('main').textContent()).toLocaleLowerCase('pt-BR');
+    assert.ok(body.includes('cada corpo abre um mundo'));
+    assert.ok(body.includes('poiesis')&&body.includes('aleteia'));
+    assert.ok(!body.includes('fome come'));
     const media=await page.locator('img').evaluateAll(list=>list.map(i=>({src:i.getAttribute('src'),loaded:i.complete&&i.naturalWidth>0})));
     assert.ok(media.every(x=>x.loaded),'All project photographs loaded');
     assert.equal(new Set((await page.locator('.profile-posts img').evaluateAll(list=>list.map(x=>x.src)))).size,12,'Twelve distinct photographs in the timeline');

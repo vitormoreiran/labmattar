@@ -4,19 +4,19 @@ import sys
 
 NAV='''<nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
 <a href="/manual.html" data-area="simbolos">01 / SÍMBOLOS</a>
-<a href="/motion.html" data-area="motion">MOTION</a>
-<a href="/tipografia.html" data-area="tipografia">02 / TIPOGRAFIA</a>
-<a href="/cores.html" data-area="cores">03 / CORES</a>
-<a href="/composicao.html" data-area="composicao">04 / COMPOSIÇÃO</a>
-<a href="/laboratorio.html" data-area="laboratorio">05 / LABORATÓRIO</a>
-<a href="/redes.html" data-area="redes">06 / REDES SOCIAIS</a>
+<a href="/motion.html" data-area="motion">02 / MOTION</a>
+<a href="/tipografia.html" data-area="tipografia">03 / TIPOGRAFIA</a>
+<a href="/cores.html" data-area="cores">04 / CORES</a>
+<a href="/composicao.html" data-area="composicao">05 / COMPOSIÇÃO</a>
+<a href="/laboratorio.html" data-area="laboratorio">06 / LABORATÓRIO</a>
+<a href="/redes.html" data-area="redes">07 / REDES SOCIAIS</a>
 </nav>'''
 STYLE='''<style>
-.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:safe flex-end;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(16px,2vw,32px);min-height:54px;padding:13px clamp(22px,4vw,62px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
-.lm-site-nav a{color:inherit;text-decoration:none;flex-shrink:0;padding:4px 0;border-bottom:1px solid transparent;white-space:nowrap}
+.lm-site-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;gap:clamp(20px,2.3vw,34px);min-height:54px;padding:13px clamp(20px,3vw,48px);background:#f7f6f2;color:#181818;border-bottom:1px solid #c9c8c2;}
+.lm-site-nav a{color:inherit;text-decoration:none;flex-shrink:0;padding:4px 0;border-bottom:2px solid transparent;white-space:nowrap;opacity:.66;transition:opacity .18s ease}
 .lm-site-nav::-webkit-scrollbar{display:none}
-.lm-site-nav a[aria-current=page]{border-color:currentColor}
-.lm-site-nav a:hover{text-decoration:underline;text-underline-offset:4px}
+.lm-site-nav a[aria-current=page]{border-color:currentColor;opacity:1}
+.lm-site-nav a:hover{opacity:1;text-decoration:none}
 .lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 @media(max-width:600px){.lm-site-nav{justify-content:flex-start;gap:18px;padding:10px 16px;min-height:48px}}
 </style>'''

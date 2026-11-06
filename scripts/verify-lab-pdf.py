@@ -10,7 +10,7 @@ root = Path(sys.argv[1])
 reader = PdfReader(root / 'labmattar-apresentacao.pdf')
 assert len(reader.pages) == 4, 'Expected the complete four-page sequence'
 sizes = [(1280, 720), (720, 1280), (900, 900), (1000, 707)]
-titles = ['PÁGINA UM', 'PÁGINA DOIS', 'PÁGINA TRÊS', 'PÁGINA QUATRO']
+titles = ['PÁGINA UM', 'PÁGINA DOIS', 'VETOR OFICIAL', 'PÁGINA QUATRO']
 report = {'pages': [], 'embeddedFonts': []}
 for index, page in enumerate(reader.pages):
     width, height = sizes[index]

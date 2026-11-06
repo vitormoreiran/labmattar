@@ -17,7 +17,7 @@ export function motionInkFrame(video,maxEdge=1920){
 }
 // Self-contained installer: the same renderer is embedded into offline HTML.
 export function installMotionInk(root=document,removePaper=motionInkPixels){
-  if(!document.getElementById('motion-ink-style')){const style=document.createElement('style');style.id='motion-ink-style';style.textContent='.motion-ink-canvas{position:absolute;pointer-events:none;z-index:1}.motion-ink-toggle{position:absolute;left:12px;bottom:12px;z-index:3;font:300 13px/1.35 UniversMattar,Arial,sans-serif;letter-spacing:.04em;padding:9px 12px;background:#f7f6f2;color:#181818;border:1px solid #cbc9c4;cursor:pointer}.motion-ink-toggle:focus-visible{outline:2px solid currentColor;outline-offset:3px}@media print{.motion-ink-toggle{display:none}}';document.head.append(style);}
+  if(!document.getElementById('motion-ink-style')){const style=document.createElement('style');style.id='motion-ink-style';style.textContent='.motion-ink-canvas{position:absolute;pointer-events:none;z-index:1}.motion-ink-toggle{position:absolute;left:12px;bottom:12px;z-index:3;pointer-events:auto;font:300 13px/1.35 UniversMattar,Arial,sans-serif;letter-spacing:.04em;padding:9px 12px;background:#f7f6f2;color:#181818;border:1px solid #cbc9c4;cursor:pointer}.motion-ink-toggle:focus-visible{outline:2px solid currentColor;outline-offset:3px}@media print{.motion-ink-toggle{display:none}}';document.head.append(style);}
   for(const video of root.querySelectorAll('video[data-motion-ink]')){
     if(video.motionInk)continue;video.autoplay=false;video.removeAttribute('autoplay');video.muted=true;video.defaultMuted=true;video.pause();
     const parent=video.parentElement;if(getComputedStyle(parent).position==='static')parent.style.position='relative';

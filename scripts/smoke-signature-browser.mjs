@@ -119,8 +119,8 @@ try{
     "Symbol-only preset must not force metadata or a footer");
   await page.locator("#labReset").click();
   const reset=await inspect();
-  assert(reset.slots.some(x=>x.corner==="tl"&&x.kind==="text"),
-    "Reset must restore the canonical editorial signature");
+  assert(reset.slots.length===1&&reset.slots[0].kind==="symbol",
+    "Restoring a page study must retain the document signature");
   assert(errors.length===0,"Browser errors: "+errors.join("; "));
   console.log("LABMATTAR signature composer browser OK");
 }finally{

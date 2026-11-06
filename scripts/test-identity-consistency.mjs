@@ -49,5 +49,6 @@ test('a intensidade é compartilhada pela seção e divergências são recusadas
 test('o caderno original e as 12 respostas validadas permanecem rastreáveis',()=>{
  const review=JSON.parse(read('content/application-review.json'));assert.equal(review.status,'pending-author-validation');assert.equal(review.decisions.length,12);assert.equal(new Set(review.decisions.map(d=>d.id)).size,12);
  for(const d of review.decisions){assert.ok(d.question&&d.recommendation&&d.scope);assert.ok(d.options.length>=2);}
+ const approved=JSON.parse(read('content/application-review-approved.json'));assert.equal(approved.status,'approved-with-requested-adjustments');assert.equal(approved.decisions.length,12);assert.deepEqual(approved.decisions.map(d=>d.id),review.decisions.map(d=>d.id));assert.equal(manifest.governance.applicationReview.status,'approved');
  const html=read('design/validacao-aplicacoes.html');assert.match(html,/Pendente/);assert.match(html,/author-feedback/);assert.doesNotMatch(html,/fetch\(/);
 });

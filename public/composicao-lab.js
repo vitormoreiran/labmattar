@@ -635,7 +635,7 @@
     const room=Math.max(0,bottom-pad-mask.offsetHeight-captionHeight);
     const center=room?pad+mask.offsetHeight/2+room*state.mPositionY/100:board.offsetHeight/2-captionHeight/2;
     board.style.setProperty("--lab-m-y",center+"px");
-    if(!caption.hidden){caption.style.left=Math.max(pad,mask.offsetLeft-mask.offsetWidth/2)+"px";
+    if(!caption.hidden){caption.style.left=(mask.offsetLeft-mask.offsetWidth/2)+"px";
       caption.style.width=Math.min(mask.offsetWidth,board.offsetWidth-2*pad)+"px";
       caption.style.top=(center+mask.offsetHeight/2+gap)+"px";}
   }

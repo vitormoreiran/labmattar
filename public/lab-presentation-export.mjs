@@ -161,7 +161,7 @@ export async function webDocument(scenes,project,catalog,fonts){
     const text=project.pages[index].composition.pages[0].text;
     const live=[...scene.motions.map(motion=>{
       const op=scene.items.find(op=>op.motionId===motion.id);
-      return `<video data-motion-ink muted loop playsinline data-asset="${esc(motion.assetId)}" style="left:${op.x/scene.width*100}%;top:${op.y/scene.height*100}%;width:${op.w/scene.width*100}%;height:${op.h/scene.height*100}%" aria-hidden="true"></video>`;
+      return `<video data-motion-ink muted loop playsinline aria-label="${esc(catalog.find(a=>a.id===motion.assetId)?.title||'Motion')}" data-asset="${esc(motion.assetId)}" style="left:${op.x/scene.width*100}%;top:${op.y/scene.height*100}%;width:${op.w/scene.width*100}%;height:${op.h/scene.height*100}%" aria-hidden="true"></video>`;
     }),...(scene.clips||[]).map(clip=>{
       const op=scene.items.find(op=>op.privateClipId===clip.id);
       if(!op)throw Error('Quadro de vídeo não encontrado: '+clip.name);
@@ -184,6 +184,7 @@ export async function webDocument(scenes,project,catalog,fonts){
 ${animatedBackgroundCSS}
 .page-art .screen-scene{position:relative;z-index:1;pointer-events:none}
 .page-art .screen-scene svg{width:100%;height:auto}
+.page-art>video{z-index:1}.page-art>.foreground{z-index:2}
 .page-art[data-video-background]>video{z-index:4}
 .page-art[data-video-background]>.foreground{z-index:5}
 .page-art .print-scene{display:none}@media print{.page-art .screen-scene,.page-art>.foreground,.page-art .motion-ink-canvas{display:none}.page-art .print-scene{display:block}}

@@ -74,7 +74,7 @@ try{
     "Each corner must retain its own icon and label");
   await page.locator("#labSignatureScale").fill("120");
   await page.locator("#labSignatureScale").dispatchEvent("input");
-  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-composicao-lab-v1"))?.signature);
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-pages-v1"))?.document.signature);
   assert(saved?.scale===120&&saved?.slots?.tr?.text==="CAPÍTULOS"&&
     saved?.slots?.bl?.symbol==="vaso_09.svg","Composition must persist as the same editor draft");
 

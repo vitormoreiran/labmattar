@@ -91,6 +91,8 @@ jobs:
       - name: Testar composicoes no navegador
         run: |
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
@@ -98,8 +100,6 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
-          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs

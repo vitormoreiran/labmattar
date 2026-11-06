@@ -196,7 +196,7 @@
     if(style.transform!=="none"){
       const m=new DOMMatrixReadOnly(style.transform);ctx.translate(cx,cy);ctx.transform(m.a,m.b,m.c,m.d,0,0);ctx.translate(-cx,-cy);
     }
-    drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));ctx.restore();
+    drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img),frame.stillVideo||img);ctx.restore();
   }
   async function captureScene({edge=Number(sizeSelect.value),ask=true,live=false}={}){
     window.LabPages?.applySectionVisual?.();

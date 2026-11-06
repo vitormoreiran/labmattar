@@ -28,6 +28,7 @@ on:
       - 'public/composicao-pages-ui.mjs'
       - 'public/lab-project-lifecycle.mjs'
       - 'public/lab-video-export.mjs'
+      - 'public/lab-scene.mjs'
       - 'scripts/test-lab-render-fidelity.mjs'
       - 'scripts/smoke-lab-render-fidelity.mjs'
       - 'public/lab-sequence.mjs'

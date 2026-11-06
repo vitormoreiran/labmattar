@@ -37,9 +37,9 @@ try{
   await page.addInitScript(()=>{
     window.__fidelityDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;
     CanvasRenderingContext2D.prototype.drawImage=function(source,...args){
-      if(source instanceof HTMLVideoElement){
+      if(source instanceof HTMLVideoElement||source instanceof HTMLImageElement&&source.src.startsWith('data:image/png')){
         const b=document.querySelector('#labArtboard'),r=b.getBoundingClientRect(),v=source.getBoundingClientRect(),s=getComputedStyle(source),t=this.getTransform();
-        window.__fidelityDraws.push({type:window.__fidelityExportType,id:source.id,args,canvas:[this.canvas.width,this.canvas.height],transform:[t.a,t.d,t.e,t.f],board:[b.offsetWidth,b.offsetHeight,r.width,r.height],video:[source.videoWidth,source.videoHeight,v.width,v.height],css:[s.width,s.height,s.transform,s.objectPosition]});
+        window.__fidelityDraws.push({type:window.__fidelityExportType,id:source.id||'scene-image',args,canvas:[this.canvas.width,this.canvas.height],transform:[t.a,t.d,t.e,t.f],board:[b.offsetWidth,b.offsetHeight,r.width,r.height],video:[source.videoWidth||source.naturalWidth,source.videoHeight||source.naturalHeight,v.width,v.height],css:[s.width,s.height,s.transform,s.objectPosition]});
         if(window.__fidelityDraws.length>24)window.__fidelityDraws.shift();
       }
       return draw.call(this,source,...args);

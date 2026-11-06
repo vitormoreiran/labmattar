@@ -29,3 +29,6 @@ class Video extends EventTarget{
 test('as quatro variantes do fundo buscam o mesmo quadro, inclusive zero',async()=>{
   const media=[0.5,1,1.5,2].map(time=>new Video(time));await seekStillMedia(media,1.25);assert(media.every(v=>v.currentTime===1.25&&v.paused));await seekStillMedia(media,0);assert(media.every(v=>v.currentTime===0));
 });
+test('o quadro estático não herda o instante vizinho da reprodução',async()=>{
+  const media=[new Video(1.0995)];await seekStillMedia(media,1.1);assert.equal(media[0].currentTime,1.1);
+});

@@ -30,7 +30,7 @@ export async function seekStillMedia(media,seconds,signal){
   await readyMedia(media,signal);
   await Promise.all(media.map(async video=>{
     abort(signal);const target=staticFrameTime(seconds,video.duration);
-    if(video.seeking||Math.abs(video.currentTime-target)>1/1000)
+    if(video.seeking||video.currentTime!==target)
       await mediaEvent(video,'seeked',()=>{video.currentTime=target;},signal);
     if(video.readyState<2)await mediaEvent(video,'loadeddata',null,signal);
   }));

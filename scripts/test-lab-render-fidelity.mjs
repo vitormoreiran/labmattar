@@ -14,7 +14,7 @@ test('legenda isolada conserva intensidade e extremos de foco no JSON',()=>{
   for(const photoContrast of [0,20,40,60,80]){const doc=sectionProject({photoContrast}),before=structuredClone(doc),loaded=readSequence(doc,photos,[]);assert.equal(loaded.sections[0].background.contrastPercent,photoContrast);assert.equal(loaded.pages[0].state.focusX,0);assert.equal(loaded.pages[0].state.focusY,100);assert(hasSectionText('intro',loaded.pages));assert.deepEqual(doc,before);}
 });
 test('escalas existentes de 1–140% são legíveis nos quatro formatos',()=>{
-  for(const format of ['horizontal','vertical','quadrado','editorial'])for(const mScale of [1,15,45,74,94,95,140]){const page=createPage({id:'one',name:'M',state:{...state,format,mScale},photoCatalog:photos});const doc=sequenceDocument('Escala',[page],null,signature);assert.equal(readSequence(doc,photos,[]).pages[0].state.mScale,mScale);}
+  for(const format of ['horizontal','vertical','quadrado','editorial'])for(const mScale of [1,15,15.5,45,74,94,95,140]){const page=createPage({id:'one',name:'M',state:{...state,format,mScale},photoCatalog:photos});const doc=sequenceDocument('Escala',[page],null,signature);assert.equal(readSequence(doc,photos,[]).pages[0].state.mScale,mScale);}
 });
 test('quadro estático preserva zero e recusa duração incompatível',()=>{
   assert.equal(staticFrameTime(0,3),0);assert.equal(staticFrameTime(1.25,3),1.25);assert(staticFrameTime(3,3)<3);

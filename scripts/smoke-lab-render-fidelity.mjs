@@ -37,7 +37,7 @@ try{
   const signature={preset:'none',scale:100,slots:Object.fromEntries(['tl','tr','bl','br'].map(c=>[c,{kind:'none',symbol:'M.svg',text:''}]))};
   const base={...snapshot.state,signature,title:'FORMA',type:'univers',titleFonts:[],body:'',bodyMode:'oculto',textWidth:100,titleScale:70,kicker:'',footerLeft:'',footerRight:'',marker:'none',guides:'nenhuma',background:'color',mContent:'solid',mPresentation:'elemento',mCaption:'',mPositionY:50};
   const makePage=(id,state)=>createPage({id,name:id,state,photoCatalog:snapshot.photoCatalog,maxEdge:1920});
-  const scales=[['horizontal',74],['vertical',95],['quadrado',95],['editorial',94],['horizontal',1],['editorial',140]];
+  const scales=[['horizontal',74],['vertical',95],['quadrado',95],['editorial',94],['horizontal',1],['editorial',140],['vertical',15.5]];
   const scaleProject=sequenceDocument('Escalas preservadas',scales.map(([format,mScale],i)=>makePage('scale-'+i,{...base,format,mScale})),null,signature);
   await page.evaluate(doc=>window.LabPages.load(doc),scaleProject);await page.locator('[data-workspace-view=pages]').click();
   for(let i=0;i<scales.length;i++){
@@ -46,7 +46,7 @@ try{
     assert.equal(state.scale,scales[i][1]);assert.equal(state.slider,state.scale);assert.equal(state.number,state.scale);assert.equal(state.label,state.max+'%');
   }
   assert.deepEqual(await getProject(),scaleProject);await page.reload({waitUntil:'networkidle'});await page.locator('#labPages[data-ready=true]').waitFor({state:'attached'});assert.deepEqual(await getProject(),scaleProject);
-  proof.push({case:'m-scale',formats:4,pages:6,legacy:[1,140],projectUnchangedAfterReload:true});
+  proof.push({case:'m-scale',formats:4,pages:7,legacy:[1,140,15.5],projectUnchangedAfterReload:true});
 
   // Legenda isolada determina o véu da seção, inclusive nas páginas sem texto.
   const captionPixels=[];let captionProject;
@@ -88,10 +88,20 @@ try{
   const viewer=await context.newPage();await viewer.goto(pathToFileURL(htmlFile).href);const poster=await viewer.locator('.print-scene image').first().getAttribute('href');assert(poster?.startsWith('data:image/png;base64,'));
   const posterDifference=await rgbDifference(await readFile(png),Buffer.from(poster.split(',')[1],'base64'));assert(posterDifference<3);await viewer.close();
   assert.deepEqual(await getProject(),chosen);
-  const mp4=await download('mp4','moving-background.mp4');const hashes=execFileSync('ffmpeg',['-v','error','-i',mp4,'-f','framemd5','-'],{encoding:'utf8'}).split('\n').filter(line=>line&&!line.startsWith('#'));
-  assert.equal(hashes.length,60);assert(new Set(hashes.map(line=>line.split(',').at(-1))).size>10);assert.deepEqual(await getProject(),chosen);
+  const mp4Supported=await page.evaluate(async()=>{try{const {videoConfig}=await import('/vendor/lab-video.js');await videoConfig(720,720);return true;}catch{return false;}});
+  if(name==='chromium')assert(mp4Supported,'O ambiente Chromium de referência precisa oferecer H.264.');
+  let mp4Frames=0;
+  if(mp4Supported){
+    const mp4=await download('mp4','moving-background.mp4');const hashes=execFileSync('ffmpeg',['-v','error','-i',mp4,'-f','framemd5','-'],{encoding:'utf8'}).split('\n').filter(line=>line&&!line.startsWith('#'));
+    assert.equal(hashes.length,60);assert(new Set(hashes.map(line=>line.split(',').at(-1))).size>10);mp4Frames=hashes.length;
+  }else{
+    await page.locator('#labOpenDelivery').click();await page.locator('[data-delivery-format=mp4]').click();await page.locator('#labVideoSeconds').fill('2');await page.locator('#labExportMp4').click();
+    await page.waitForFunction(()=>document.querySelector('#labDeliveryStatus').textContent.includes('MP4 não concluído'));
+    assert.match(await page.locator('#labDeliveryStatus').textContent(),/navegador|dispositivo/);await page.locator('#labDeliveryBack').click();
+  }
+  assert.deepEqual(await getProject(),chosen);
   await page.evaluate(doc=>window.LabPages.load(doc),chosen);await settled();assert.equal((await getProject()).pages[0].backgroundVideo.frameSeconds,1.25);
-  proof.push({case:'background-frame',selectedSeconds:1.25,previewRestoredTo:secondScene.time,pdfDifference,htmlPosterDifference:posterDifference,focus:[0,100],mp4Frames:60,projectUnchanged:true});
+  proof.push({case:'background-frame',selectedSeconds:1.25,previewRestoredTo:secondScene.time,pdfDifference,htmlPosterDifference:posterDifference,focus:[0,100],mp4Frames,mp4UnsupportedHandled:!mp4Supported,projectUnchanged:true});
   assert.deepEqual(errors,[]);await writeFile(path.join(dir,'report.json'),JSON.stringify({browser:name,passed:true,proof,errors},null,2));console.log('Fidelidade de escala, legenda, foco e quadros de vídeo validada / '+name);
 }catch(error){const status=await page.evaluate(()=>({composition:document.querySelector('#labStatus')?.textContent,pages:document.querySelector('#labPagesStatus')?.textContent,export:document.querySelector('#labExportStatus')?.textContent})).catch(()=>({}));await writeFile(path.join(dir,'failure.json'),JSON.stringify({failure:error.stack,status,proof,errors},null,2));await page.screenshot({path:path.join(dir,'failure.png')}).catch(()=>{});console.error(JSON.stringify({status,proof,errors},null,2));throw error;}
 finally{await context.close();await browser.close();}

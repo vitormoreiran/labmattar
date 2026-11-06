@@ -226,7 +226,10 @@
     if(wrapper)wrapper.hidden=!visible;
   }
   function syncInputs(){
-    for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
+    for(const [key,id] of Object.entries(fields)){
+      const input=by(id);if(numeric.has(key))input.step=Number.isInteger(state[key])?'1':'any';
+      input.value=String(state[key]);
+    }
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     const mActive=state.mContent!=="off";
     const backgroundPhoto=state.background==="photo"||state.mContent==="photo";
@@ -274,6 +277,7 @@
       if(precision){
         precision.value=state[key];
         precision.min=by(fields[key]).min;precision.max=by(fields[key]).max;
+        precision.step=by(fields[key]).step;
         precision.disabled=by(fields[key]).disabled;
       }
       const slider=by(fields[key]),limits=slider.nextElementSibling;
@@ -398,8 +402,8 @@
     const mMax=maxMScale(state.format);
     // An inactive scale control must not overwrite an Elemento value stored
     // for another surface merely because Completo is selected now.
-    if(!mScaleRange||mScaleRange.format!==state.format)mScaleRange={format:state.format,min:Math.min(45,state.mScale),max:Math.max(mMax,state.mScale)};
-    mScaleRange.min=Math.min(mScaleRange.min,state.mScale);mScaleRange.max=Math.max(mScaleRange.max,mMax,state.mScale);
+    if(!mScaleRange||mScaleRange.format!==state.format)mScaleRange={format:state.format,min:Math.floor(Math.min(45,state.mScale)),max:Math.ceil(Math.max(mMax,state.mScale))};
+    mScaleRange.min=Math.min(mScaleRange.min,Math.floor(state.mScale));mScaleRange.max=Math.max(mScaleRange.max,mMax,Math.ceil(state.mScale));
     const visibleMax=mScaleRange.max;
     const mScaleInput=by("labMScale");
     mScaleInput.min=String(mScaleRange.min);

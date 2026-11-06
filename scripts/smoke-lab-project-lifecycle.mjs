@@ -8,13 +8,13 @@ const browser=await (browserName==='webkit'?webkit:chromium).launch({headless:tr
 const dir='lifecycle-proof/'+browserName;await mkdir(dir,{recursive:true});
 const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true});
 const page=await context.newPage(),errors=[],proof=[];page.on('pageerror',error=>errors.push(error.message));
-const waitReady=async p=>{await p.waitForSelector('#labPages[data-ready="true"]');};
+const waitReady=async p=>{await p.waitForSelector('#labPages[data-ready="true"]',{state:'attached'});};
 const project=()=>page.evaluate(()=>window.LabPages.create());
 const workspace=async(name,p=page)=>p.locator('button[data-workspace-view="'+name+'"]').click();
 async function openProjectTools(p=page){await workspace('pages',p);await p.locator('#labDownloadDocument').evaluate(el=>{for(let parent=el.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;});}
 try{
   await page.goto(origin+'?studio=1',{waitUntil:'networkidle'});await waitReady(page);
-  await page.waitForSelector('#labPages[data-motion-catalog="ready"]');
+  await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   const baseline=await page.evaluate(()=>window.LabProductionBridge.snapshot());
   const catalog=await (await page.request.get(new URL('/motion/catalog.json',origin).href)).json();
   const state=baseline.state,photos=baseline.photoCatalog;
@@ -54,14 +54,14 @@ try{
   page.once('dialog',dialog=>dialog.dismiss());await page.locator('#labStudioQuickReset').click();assert.deepEqual(await project(),original);
   page.once('dialog',dialog=>dialog.accept());await page.locator('#labReset').click();await page.locator('#labUndoReset').waitFor({state:'visible'});
   assert.notDeepEqual(await project(),original);
-  await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]');
+  await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   // A recuperação também não pode apagar sua cópia se a nova gravação falhar.
   await page.evaluate(()=>{const real=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='labmattar-pages-v1')throw new DOMException('Quota cheia','QuotaExceededError');return real.call(this,key,value);};});
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('recuperação foi preservada'));
   assert.deepEqual(await project(),original);
   assert(await page.evaluate(()=>Boolean(localStorage.getItem('labmattar-pages-v1-before-reset'))));
-  await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]');
+  await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('anterior recuperada'));
   assert.deepEqual(await project(),original);assert.equal(await page.locator('#labPageCount').textContent(),'2 / 2');
@@ -83,14 +83,14 @@ try{
   const offlineContext=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true}),offline=await offlineContext.newPage();offline.on('pageerror',e=>errors.push(e.message));
   await offlineContext.route('**/motion/catalog.json',route=>route.fulfill({status:503,body:'Temporariamente indisponível'}));
   await offlineContext.addInitScript(value=>localStorage.setItem('labmattar-pages-v1',JSON.stringify({document:value,current:0,enabled:true})),original);
-  await offline.goto(origin+'?studio=1',{waitUntil:'networkidle'});await waitReady(offline);await offline.waitForSelector('#labPages[data-motion-catalog="unavailable"]');
+  await offline.goto(origin+'?studio=1',{waitUntil:'networkidle'});await waitReady(offline);await offline.waitForSelector('#labPages[data-motion-catalog="unavailable"]',{state:'attached'});
   assert.deepEqual(await offline.evaluate(()=>window.LabPages.create()),original);
   await workspace('pages',offline);await offline.locator('#labPageAdd').click();await offline.waitForFunction(()=>window.LabPages.create().pages.length===3);
   const offlineEdited=await offline.evaluate(()=>window.LabPages.create());assert.equal(offlineEdited.pages.reduce((n,p)=>n+p.motions.length,0),1);
   await openProjectTools(offline);const offlineDownload=offline.waitForEvent('download');await offline.locator('#labDownloadDocument').click();
   const offlineFile=await offlineDownload;assert.equal(JSON.parse(await readFile(await offlineFile.path(),'utf8')).pages.length,3);
   await workspace('motion',offline);await offline.screenshot({path:dir+'/catalogo-indisponivel.png'});
-  await offlineContext.unroute('**/motion/catalog.json');await offline.locator('#labMotionOpen').click();await offline.waitForSelector('#labPages[data-motion-catalog="ready"]');
+  await offlineContext.unroute('**/motion/catalog.json');await offline.locator('#labMotionOpen').click();await offline.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   assert.equal(await offline.locator('[data-motion-asset]').count(),8);assert.equal((await offline.evaluate(()=>window.LabPages.create())).pages.reduce((n,p)=>n+p.motions.length,0),1);
   proof.push({case:'catalog-offline',pagesEditable:true,motionsPreserved:true,downloadVerified:true,retryRecovered:8});
   await offlineContext.close();assert.deepEqual(errors,[]);

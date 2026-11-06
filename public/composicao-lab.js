@@ -968,7 +968,7 @@
       "Quando o fundo é cor, o M pode receber cor ou fotografia. Sobre fundo fotográfico, o M usa sempre a fotografia.",
       "Os perfis de aplicação não alteram a geometria do vetor."],
     labMPresentation:["Aplicação do M",
-      "Sem M desativa a forma; Elemento é uma composição secundária com escala, posição vertical e legenda; Completo ocupa a altura da superfície.",
+      "Sem M desativa a forma; Elemento é uma composição secundária com escala, posição vertical e legenda; Completo ocupa 100% da altura da superfície.",
       "O perfil de Elemento mantém sua escala quando você muda de modo."],
     labPhoto:["Fotografia",
       "Escolha a fotografia de fundo. Vídeos do acervo também ocupam esta camada, preservando M e marcadores.",

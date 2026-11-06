@@ -474,3 +474,6 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 .lm-lab-m-caption[hidden],#labMPositionField[hidden]{display:none!important}
 #labMCaption{width:100%;padding:8px;border:1px solid #cbc9c4;background:#f7f6f2}
 .lm-title-words{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}.lm-title-words button{padding:7px;border:1px solid #cbc9c4;background:#f7f6f2;color:#181818}.lm-title-words button[data-font="perpetua"]{background:#e6dbcf}.lm-lab-title-word{display:inline!important}
+
+.lm-lab-range-scale{display:flex;justify-content:space-between}
+.lm-lab-caption-field{margin-top:14px}

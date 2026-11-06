@@ -1074,15 +1074,17 @@
     let header=field.querySelector(".lm-lab-field-title,.lm-lab-value-row,.lm-ctrl-signature-title,.lm-help-label-row");
     let buttonHost=header;
     if(header?.classList.contains("lm-lab-value-row")){
-      const label=header.querySelector("label");
+      const label=header.querySelector(":scope > label");
       buttonHost=document.createElement("span");
       buttonHost.className="lm-help-label-inline";
       if(label){header.insertBefore(buttonHost,label);buttonHost.append(label)}
+      else buttonHost=header.querySelector(":scope > .lm-help-label-inline")||header;
     }else if(header?.classList.contains("lm-ctrl-signature-title")){
-      const label=header.querySelector("label");
+      const label=header.querySelector(":scope > label");
       buttonHost=document.createElement("span");
       buttonHost.className="lm-help-label-inline";
       if(label){header.insertBefore(buttonHost,label);buttonHost.append(label)}
+      else buttonHost=header.querySelector(":scope > .lm-help-label-inline")||header;
     }else if(!header){
       const label=field.querySelector(":scope > label");
       buttonHost=document.createElement("div");

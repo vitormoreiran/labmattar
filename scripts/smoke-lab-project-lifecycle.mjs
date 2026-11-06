@@ -55,6 +55,13 @@ try{
   page.once('dialog',dialog=>dialog.accept());await page.locator('#labReset').click();await page.locator('#labUndoReset').waitFor({state:'visible'});
   assert.notDeepEqual(await project(),original);
   await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]');
+  // A recuperação também não pode apagar sua cópia se a nova gravação falhar.
+  await page.evaluate(()=>{const real=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='labmattar-pages-v1')throw new DOMException('Quota cheia','QuotaExceededError');return real.call(this,key,value);};});
+  await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
+  await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('recuperação foi preservada'));
+  assert.deepEqual(await project(),original);
+  assert(await page.evaluate(()=>Boolean(localStorage.getItem('labmattar-pages-v1-before-reset'))));
+  await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]');
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('anterior recuperada'));
   assert.deepEqual(await project(),original);assert.equal(await page.locator('#labPageCount').textContent(),'2 / 2');

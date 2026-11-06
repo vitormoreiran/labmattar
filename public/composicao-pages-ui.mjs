@@ -184,6 +184,9 @@ async function undoReset(){
   const previous=JSON.parse(localStorage.getItem(key+'-before-reset')||'null');
   if(!previous)throw Error('Não há restauração para desfazer.');
   await load(previous.document,{currentIndex:previous.current});
+  enabled=Boolean(previous.enabled);
+  const result=commit();
+  if(!result?.ok){notify('Estudo recuperado nesta sessão. A cópia de recuperação foi preservada; baixe o projeto JSON para guardar as alterações.',true);return;}
   localStorage.removeItem(key+'-before-reset');resetAvailability();
   notify('Apresentação anterior recuperada, incluindo páginas, seções, fundos e motions.');
 }

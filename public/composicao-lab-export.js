@@ -13,7 +13,6 @@
   if(!board||!button||!sizeSelect||!status)return;
   const maskUrl="/ambiente-editorial/media/m-publicado.svg";
   let exporting=false;
-  const videoFrames=new WeakMap();
 
   function report(message,state="idle"){
     status.textContent=message;
@@ -55,17 +54,7 @@
       fail("Mídia de fundo indisponível. Aguarde o carregamento e tente novamente.");
     const fit=Math.max(w/iw,h/ih),sw=w/fit,sh=h/fit;
     const [px,py]=position;
-    // Copy the intrinsic video frame before cropping. WebKit may otherwise
-    // reuse the element's displayed crop when its rendering state changes.
-    let source=img;
-    if(isVideo){
-      let canvas=videoFrames.get(img);
-      if(!canvas){canvas=document.createElement('canvas');videoFrames.set(img,canvas);}
-      if(canvas.width!==iw||canvas.height!==ih){canvas.width=iw;canvas.height=ih;}
-      const context=canvas.getContext('2d');if(!context)fail('Memória insuficiente para capturar o quadro do vídeo.');
-      context.clearRect(0,0,iw,ih);context.drawImage(img,0,0);source=canvas;
-    }
-    ctx.drawImage(source,(iw-sw)*px,(ih-sh)*py,sw,sh,x,y,w,h);
+    ctx.drawImage(img,(iw-sw)*px,(ih-sh)*py,sw,sh,x,y,w,h);
   }
   function imagePreflight(outW,frame){
     const zoom=outW/frame.width;

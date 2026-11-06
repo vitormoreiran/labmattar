@@ -41,7 +41,7 @@
     return result;
   }
   const defaultMetadata={
-    photoContrast:20,autoInkVersion:2,
+    photoContrast:40,autoInkVersion:2,mPositionY:50,mCaption:"",titleFonts:[],
     kicker:"LABMATTAR / 2026",
     footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
     footerRight:"LABMATTAR / IDENTIDADE VISUAL",
@@ -77,11 +77,11 @@
     format:"labFormat",color:"labColor",inkColor:"labInkColor",photoContrast:"labPhotoContrast",margin:"labMargin",guides:"labGuides",
     marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
-    mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
+    mScale:"labMScale",mPositionY:"labMPositionY",mCaption:"labMCaption",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY"]);
   // Approved digital colors from design/identity-system.json (no free-picker).
   const palette=Object.freeze({
     neutral:"#F7F6F2",white:"#FFFFFF",black:"#181818",
@@ -173,7 +173,7 @@
       if(numeric.has(key)){
         const val=Number(value),min=Number(el.min),max=Number(el.max);
         if(Number.isFinite(val))result[key]=Math.max(min,Math.min(max,val));
-      }else if(key==="title"||key==="body"){
+      }else if(key==="title"||key==="body"||key==="mCaption"){
         if(typeof value==="string")result[key]=value.slice(0,Number(el.maxLength)>0?el.maxLength:400);
       }else if(Array.from(el.options).some(option=>option.value===value)){
         result[key]=value;
@@ -182,6 +182,8 @@
     for(const [key,max] of [["kicker",80],["footerLeft",100],["footerRight",100]]){
       if(typeof data[key]==="string")result[key]=data[key].replace(/[\r\n]+/g," ").slice(0,max);
     }
+    result.titleFonts=Array.isArray(data.titleFonts)?data.titleFonts.slice(0,(result.title.match(/\S+/g)||[]).length).map(f=>["univers","perpetua"].includes(f)?f:null):[];
+    if(data.photoContrast===undefined)result.photoContrast=20;
     result.signature=sanitizeSignature(data.signature,data);
     result.autoInkVersion=data.autoInkVersion===2?2:1;
     // Saved projects made before this rule may contain a solid M on a photo.
@@ -263,7 +265,7 @@
     for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY","labPhotoContrast"])setFieldVisible(id,activeImage);
     setFieldVisible("labMScale",mActive&&!fullM);
     setFieldVisible("labMarker",!fullM);
-    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast"]){
+    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -332,20 +334,50 @@
       by("labSaveState").textContent="Configuração salva neste navegador / não publicada.";
     }catch{by("labSaveState").textContent="Rascunho local / armazenamento indisponível.";}
   }
+  function titleTokens(){return state.title.match(/\S+/g)||[];}
+  function wordFont(index,lineIndex,lineCount){return state.titleFonts[index]||
+    (state.type==="perpetua"||state.type==="alternada"&&lineIndex===Math.min(1,lineCount-1)?"perpetua":"univers");}
+  function syncTitleWords(){
+    const list=by("labTitleWords");if(!list)return;list.replaceChildren();
+    let index=0;const lines=state.title.replace(/\r/g,"").split("\n").map(s=>s.trim()).filter(Boolean);
+    lines.forEach((line,lineIndex)=>{for(const token of line.match(/\S+/g)||[]){
+      const n=index++,font=wordFont(n,lineIndex,lines.length),button=document.createElement("button");
+      button.type="button";button.textContent=token;button.dataset.font=font;button.dataset.wordIndex=String(n);
+      button.setAttribute("aria-label",token+" / "+(font==="perpetua"?"Perpetua":"Univers")+" / alternar fonte");
+      button.setAttribute("aria-pressed",String(font==="perpetua"));
+      button.addEventListener("click",()=>{
+        while(state.titleFonts.length<=n)state.titleFonts.push(null);
+        state.titleFonts[n]=font==="perpetua"?"univers":"perpetua";renderTitleLines();syncTitleWords();requestMeasurement();save();
+      });list.append(button);
+    }});
+  }
+  function remapTitleFonts(before,after,previous=state.titleFonts){
+    const a=before.match(/\S+/g)||[],b=after.match(/\S+/g)||[],old=previous||[];
+    const lengths=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+    for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)
+      lengths[i][j]=a[i]===b[j]?lengths[i+1][j+1]+1:Math.max(lengths[i+1][j],lengths[i][j+1]);
+    const next=Array(b.length).fill(null);let i=0,j=0;
+    while(i<a.length&&j<b.length){if(a[i]===b[j]){next[j]=old[i]||null;i++;j++;}
+      else if(lengths[i+1][j]>=lengths[i][j+1])i++;else j++;}
+    while(next.length&&next.at(-1)===null)next.pop();state.titleFonts=next;
+  }
   function renderTitleLines(){
-    title.replaceChildren();
+    title.replaceChildren();let index=0;
     const lines=state.title.replace(/\r/g,"").split("\n").map(s=>s.trim()).filter(Boolean);
-    for(let i=0;i<lines.length;i++){
-      const span=document.createElement("span");
-      span.className="lm-lab-title-line";
-      if(state.type==="perpetua"||(state.type==="alternada"&&i===Math.min(1,lines.length-1)))
-        span.classList.add("perpetua");
-      span.textContent=lines[i];
-      title.append(span);
-    }
+    lines.forEach((line,i)=>{
+      const span=document.createElement("span");span.className="lm-lab-title-line";
+      if(state.type==="perpetua"||state.type==="alternada"&&i===Math.min(1,lines.length-1))span.classList.add("perpetua");
+      for(const token of line.match(/\s+|\S+/g)||[]){
+        if(/^\s+$/.test(token)){span.append(document.createTextNode(token));continue;}
+        const word=document.createElement("span"),font=wordFont(index++,i,lines.length);
+        word.className="lm-lab-title-word";word.dataset.font=font;
+        word.style.setProperty("font-family",font==="perpetua"?"var(--lm-type-perpetua)":"var(--lm-type-univers)","important");
+        word.textContent=token;span.append(word);
+      }title.append(span);
+    });
   }
   function renderTitle(){
-    renderTitleLines();
+    renderTitleLines();syncTitleWords();
     body.textContent=state.body;
     body.hidden=state.bodyMode!=="visivel";
     kicker.textContent=state.kicker;
@@ -411,6 +443,8 @@
     renderTitle();
     // One canonical signature is assembled separately from the M image mask.
     window.LabSignatureComposer?.render(state.signature);
+    const caption=by("labMCaptionPreview");caption.textContent=state.mCaption;caption.hidden=state.mContent==="off"||state.mPresentation!=="elemento"||!state.mCaption.trim();
+    by("labMPositionField").hidden=state.mContent==="off"||state.mPresentation!=="elemento";
     // Do not carry the previous composition's fitted size into this one.
     title.style.removeProperty("font-size");
     body.style.removeProperty("font-size");
@@ -422,6 +456,7 @@
     get:()=>sanitizeSignature(state.signature),
     update:signature=>{
       state.signature=sanitizeSignature(signature);
+      window.LabPages?.setSignature?.(state.signature);
       activePreset="";
       render();
       save();
@@ -592,7 +627,17 @@
   function alignMToCopy(){
     if(state.mContent==="off")return;
     board.style.setProperty("--lab-m-x","50%");
-    board.style.setProperty("--lab-m-y","50%");
+    if(state.mPresentation==="completo"){board.style.setProperty("--lab-m-y","50%");return;}
+    const mask=by("labMask"),caption=by("labMCaptionPreview"),pad=board.offsetWidth*state.margin/100;
+    const gap=board.offsetWidth*.012,captionHeight=caption.hidden?0:caption.offsetHeight+gap;
+    let bottom=board.offsetHeight-pad;
+    if(captionHeight)for(const slot of board.querySelectorAll(".lm-lab-signature-slot[data-corner=bl],.lm-lab-signature-slot[data-corner=br]")){if(slot.offsetHeight)bottom=Math.min(bottom,slot.offsetTop+pad-gap);}
+    const room=Math.max(0,bottom-pad-mask.offsetHeight-captionHeight);
+    const center=room?pad+mask.offsetHeight/2+room*state.mPositionY/100:board.offsetHeight/2-captionHeight/2;
+    board.style.setProperty("--lab-m-y",center+"px");
+    if(!caption.hidden){caption.style.left=Math.max(pad,mask.offsetLeft-mask.offsetWidth/2)+"px";
+      caption.style.width=Math.min(mask.offsetWidth,board.offsetWidth-2*pad)+"px";
+      caption.style.top=(center+mask.offsetHeight/2+gap)+"px";}
   }
 
   function syncSolidContrast(){
@@ -633,7 +678,7 @@
     const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;
-    const candidates=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span,.lm-lab-signature-caption")];
+    const candidates=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span,.lm-lab-signature-caption,#labMCaptionPreview")];
     if(!body.hidden)candidates.push(body);
     // Metadata hidden by the current signature is not visible copy.
     const textNodes=candidates.filter(node=>node.textContent.trim()&&
@@ -655,7 +700,9 @@
     const footerRect=board.querySelector(".lm-lab-bottom").getBoundingClientRect();
     const titleWide=title.scrollWidth>title.clientWidth+3||
       [...title.querySelectorAll(".lm-lab-title-line")].some(n=>n.scrollWidth>n.clientWidth+3);
-    const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
+    const caption=by("labMCaptionPreview"),captionBox=caption.getBoundingClientRect();
+    const captionOverflow=!caption.hidden&&(captionBox.bottom>rect.bottom-state.margin*rect.width/100+2||caption.scrollWidth>caption.clientWidth+2);
+    const invalid=captionOverflow||!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
       (!body.hidden&&body.scrollWidth>body.clientWidth+3);
     const collision=false;
@@ -680,8 +727,9 @@
   }
   function applyPreset(key){
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
+    const signature=window.LabPages?.getSignature?.()||state.signature;
     state=copy(presets[key]);
-    state.signature=sanitizeSignature(state.signature);
+    state.signature=sanitizeSignature(signature||state.signature);
     rememberedReadingWidths.clear();
     rememberedReadingWidths.set(state.format,state.textWidth);
     rememberedMScales.clear();
@@ -709,7 +757,9 @@
   };
   const syncInlineValue=(editor)=>{
     const value=readInlineText(editor).slice(0,editor.limit);
+    if(editor.key==="title")remapTitleFonts(state.title,value);
     state[editor.key]=value;
+    if(editor.key==="title")syncTitleWords();
     const inspector=fields[editor.key]&&by(fields[editor.key]);
     if(inspector)inspector.value=value;
     activePreset="";
@@ -756,13 +806,13 @@
     });
     el.addEventListener("blur",()=>{
       if(!cancelled){
-        state[key]=readInlineText(editor).slice(0,editor.limit);
+        const next=readInlineText(editor).slice(0,editor.limit);if(key==="title")remapTitleFonts(state.title,next);state[key]=next;
       }
       const inspector=fields[key]&&by(fields[key]);
       if(inspector)inspector.value=state[key];
       // Only reconcile the editor being closed. A full render here could
       // reset the caret of another text layer receiving the next click.
-      if(key==="title")renderTitleLines();
+      if(key==="title"){renderTitleLines();syncTitleWords();}
       else el.textContent=state[key];
       board.removeAttribute("data-editing");
       activePreset="";
@@ -1303,9 +1353,11 @@
   }
   for(const id of Object.values(fields)){
     const el=by(id);
-    el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
-      const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale;
+    el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"||el.type==="text"?"input":"change",()=>{
+      const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale,previousTitle=state.title,previousFonts=[...state.titleFonts];
       readInputs();
+      if(id==="labTitleInput")remapTitleFonts(previousTitle,state.title,previousFonts);
+      if(id==="labType")state.titleFonts=[];
       if(id==="labColor"||id==="labInkColor")state.autoInkVersion=2;
       if(id==="labFormat"&&state.format!==previousFormat){
         rememberedReadingWidths.set(previousFormat,previousWidth);
@@ -1327,6 +1379,7 @@
   }
   document.querySelectorAll("[data-lab-preset]").forEach(b=>
     b.addEventListener("click",()=>applyPreset(b.dataset.labPreset)));
+  by("labTitleWordsReset").addEventListener("click",()=>{state.titleFonts=[];renderTitleLines();syncTitleWords();requestMeasurement();save();});
   by("labReset").addEventListener("click",()=>applyPreset("tipografia"));
   const obs=new ResizeObserver(requestMeasurement);
   obs.observe(board);

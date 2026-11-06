@@ -46,7 +46,7 @@ test('a intensidade é compartilhada pela seção e divergências são recusadas
  const old=structuredClone(doc);delete old.sections[0].background.contrastPercent;for(const p of old.pages){delete p.composition.pages[0].media.photoContrastPercent;}
  assert.equal(readSequence(old,photos,[]).pages[0].state.photoContrast,20);
 });
-test('o bloco 3 continua pendente e todas as escolhas podem receber retorno',()=>{
+test('o caderno original e as 12 respostas validadas permanecem rastreáveis',()=>{
  const review=JSON.parse(read('content/application-review.json'));assert.equal(review.status,'pending-author-validation');assert.equal(review.decisions.length,12);assert.equal(new Set(review.decisions.map(d=>d.id)).size,12);
  for(const d of review.decisions){assert.ok(d.question&&d.recommendation&&d.scope);assert.ok(d.options.length>=2);}
  const html=read('design/validacao-aplicacoes.html');assert.match(html,/Pendente/);assert.match(html,/author-feedback/);assert.doesNotMatch(html,/fetch\(/);

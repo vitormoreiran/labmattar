@@ -2,7 +2,7 @@
 .motion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:48px 32px;margin-top:40px}
 .motion-card{min-width:0;border-top:1px solid var(--line,#cbc9c4);padding-top:16px}
 .motion-card h3{margin:12px 0}
-.motion-frame{display:grid;place-items:center;background:#f2efe7;margin-block:16px;overflow:hidden}
+.motion-frame{display:grid;place-items:center;background:transparent;margin-block:16px;overflow:hidden}
 .motion-frame video{display:block;width:100%;height:100%;object-fit:contain}
 .motion-frame p{padding:24px}
 .motion-links{display:flex;flex-wrap:wrap;gap:12px 24px;margin-block:16px}
@@ -10,6 +10,6 @@
 .motion-meta{display:flex;flex-wrap:wrap;gap:8px 20px}
 .motion-group-links{display:flex;flex-wrap:wrap;gap:12px 24px;margin-block:28px}
 .motion-symbol-preview{max-width:720px;margin-block:40px 24px}
-.motion-symbol-preview video{display:block;width:100%;height:auto;background:#f2efe7}
+.motion-symbol-preview video{display:block;width:100%;height:auto;background:transparent}
 @media(max-width:760px){.motion-grid,.motion-reading{grid-template-columns:1fr}.motion-grid{gap:36px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}

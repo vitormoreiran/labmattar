@@ -16,7 +16,7 @@ A área `/motion.html` reúne a Matriz atual e os roteiros exportados. Motion te
 
 ## Uso
 
-Na galeria e na prévia em Símbolos, os vídeos iniciam automaticamente, sem áudio, em loop e sem controles de reprodução. Cada vídeo toca independentemente dos demais. Use Baixar MP4 para obter o arquivo e Editar na Matriz para abrir o projeto correspondente. Baixar roteiro JSON guarda o projeto portátil; salvamentos do navegador pertencem ao domínio em que foram feitos. Para levar um projeto de localhost ao manual publicado, importe seu JSON.
+Na galeria e na prévia em Símbolos, os vídeos começam pausados, sem áudio. O leitor inicia ou pausa cada reprodução; depois de iniciados, repetem em loop. A exibição remove o papel bege e conserva a tinta preta sobre o fundo real da página. Os arquivos MP4 originais e seus hashes são preservados. Use Baixar MP4 para obter o arquivo e Editar na Matriz para abrir o projeto correspondente. Baixar roteiro JSON guarda o projeto portátil; salvamentos do navegador pertencem ao domínio em que foram feitos. Para levar um projeto de localhost ao manual publicado, importe seu JSON.
 
 Na Matriz, escolha o roteiro à esquerda. Esta letra controla destino, duração e giro; Roteiro inteiro controla velocidade, cores e formato. A velocidade global mantém as relações entre as pistas. Os pontos de corte dos testes de transição estão descritos em 1× e devem ser recalculados proporcionalmente quando a velocidade mudar.
 
@@ -61,7 +61,7 @@ O registro verifica H.264, formato, duração e correspondência do projeto com 
 
 Somente os exports web otimizados, menores que 20 MiB cada, são versionados em `public/motion/videos/`. Os vídeos originais do acervo e os arquivos de produção grandes continuam fora do Git. Não subir `node_modules/`, saídas compiladas, dados pessoais de navegador ou identidade de outro Site.
 
-Os workflows preparam Motion antes de compilar o manual. Testar também importação e edição pelos oito links, reprodução automática silenciosa em loop, download dos arquivos e leitura em desktop e celular. A publicação validada segue pelo GitHub para a prévia e para o domínio oficial, conforme `site-oficial/README.md`. A Matriz atual é a referência; `/editor/` permanece identificado como legado.
+Os workflows preparam Motion antes de compilar o manual. Testar também importação e edição pelos oito links, reprodução iniciada pelo leitor, loop silencioso e recorte transparente da tinta, download dos arquivos e leitura em desktop e celular. A publicação validada segue pelo GitHub para a prévia e para o domínio oficial, conforme `site-oficial/README.md`. A Matriz atual é a referência; `/editor/` permanece identificado como legado.
 
 ## Exportação reproduzível em CI
 

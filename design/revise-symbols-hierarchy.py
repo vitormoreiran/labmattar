@@ -22,7 +22,7 @@ section = '''<section class="chapter chapter-spacious" id="transformacao"><div c
 <h2 class="title"><span class="line">SÍMBOLOS EM</span><span class="line perpetua">MOVIMENTO</span></h2>
 <p class="copy section-lead">O M encontra os pictogramas por giros e transformações. Explore os roteiros de símbolo, assinaturas e transições ou componha um percurso na Matriz.</p>
 <div class="motion-symbol-preview" data-motion-version="20261104-groups">
-<video autoplay muted loop playsinline preload="auto" poster="/motion/posters/m-form.png" aria-label="M + Forma — símbolo em movimento"><source src="/motion/videos/m-form.mp4" type="video/mp4"/><a href="/motion/videos/m-form.mp4">Baixar vídeo M + Forma</a></video>
+<video data-motion-ink muted loop playsinline preload="auto" poster="/motion/posters/m-form.png" aria-label="M + Forma — símbolo em movimento"><source src="/motion/videos/m-form.mp4" type="video/mp4"/><a href="/motion/videos/m-form.mp4">Baixar vídeo M + Forma</a></video>
 </div>
 <div class="motion-group-links detail"><a href="/motion.html#roteiros">SÍMBOLO EM MOVIMENTO ↗</a><a href="/motion.html#assinaturas">ASSINATURAS E ABERTURAS ↗</a><a href="/motion.html#transicoes">TRANSIÇÕES ↗</a><a href="/motion/matriz/index.html">ABRIR MATRIZ ↗</a></div>
 </div></section>'''

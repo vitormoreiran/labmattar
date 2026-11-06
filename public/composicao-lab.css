@@ -467,3 +467,10 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 .lm-lab-board[data-marker-focus="sharp"] #labMarkerVideo{
   inset:0;width:100%;height:100%;filter:none;transform:none
 }
+
+/* Secondary composition: the M keeps its axis and may move vertically. */
+.lm-lab-board[data-m-presentation="elemento"] .lm-lab-m-photo{top:var(--lab-m-y)!important}
+.lm-lab-m-caption{position:absolute;z-index:6;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--lab-ink)}
+.lm-lab-m-caption[hidden],#labMPositionField[hidden]{display:none!important}
+#labMCaption{width:100%;padding:8px;border:1px solid #cbc9c4;background:#f7f6f2}
+.lm-title-words{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}.lm-title-words button{padding:7px;border:1px solid #cbc9c4;background:#f7f6f2;color:#181818}.lm-title-words button[data-font="perpetua"]{background:#e6dbcf}.lm-lab-title-word{display:inline!important}

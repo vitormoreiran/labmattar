@@ -172,3 +172,13 @@ A Matriz Vetorial já é produto real e continua sendo desenvolvida em paralelo.
 - Automações Motion existentes: `.github/workflows/motion-export.yml`, `scripts/render-motion-exports.mjs`, `scripts/register-motion-export.mjs`.
 
 **Atualizar este contrato quando houver uma decisão aprovada ou mudança comprovada de capacidade.** Não registrar propostas como funcionalidade entregue.
+
+
+## Aplicações validadas em 06/11/2026
+
+- Em Texto, use Fontes por palavra para alternar Univers e Perpetua na mesma linha. Restaurar fontes volta ao tratamento geral do título.
+- Em M → Elemento, ajuste Posição vertical e a legenda opcional. A legenda usa Detalhe e acompanha a borda esquerda do M. Completo mantém a construção anterior.
+- Em Assinatura do documento, qualquer mudança de canto, texto ou símbolo acompanha todas as páginas. Projetos antigos sem assinatura geral adotam a assinatura da primeira página ao abrir.
+- Novas composições começam com tratamento fotográfico de 40%; projetos anteriores conservam seu valor salvo ou o padrão legado de 20%.
+- Contraste baixo pede confirmação para exportar como estudo. O aviso não certifica fotografias ou vídeos; confira o enquadramento.
+- Motions da Matriz começam pausados na web. O leitor inicia o loop silencioso; a tinta preta é composta sem o papel bege. PNG/PDF usam o quadro escolhido e MP4 compõe o movimento sobre a página. O download do MP4 original conserva o arquivo aprovado.

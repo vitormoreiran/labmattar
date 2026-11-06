@@ -80,11 +80,12 @@
       "title",
       "body",
       "detail"
-    ]
+    ],
+    "titleMixing": "Univers and Perpetua may alternate by word within the same line."
   },
   "image": {
     "textContrast": {
-      "status": "adjustable-implementation",
+      "status": "approved",
       "trigger": "visible text overlaps photographic area",
       "veilColor": "#000000",
       "legacyDefaultOpacity": 0.2,
@@ -104,8 +105,9 @@
         "unmasked image"
       ],
       "otherwise": "no automatic veil",
-      "approval": "Evaluate legibility at final size; preset values are not automatic approval.",
-      "notes": "Intensity belongs to the image, follows clipping, survives project round trips and is shared by pages in a section. Existing projects retain 20%."
+      "approval": "40% is the preferred starting point; adjust to the actual image and verify final-size reading.",
+      "notes": "New compositions start at 40%. Existing projects retain their saved intensity or legacy 20%. The section shares its treatment.",
+      "preferredOpacity": 0.4
     }
   },
   "colors": {
@@ -122,12 +124,16 @@
     },
     "validatedAccents": [
       "green",
-      "red"
+      "red",
+      "blue",
+      "brown"
     ],
-    "underEvaluation": [
-      "blue/white field",
-      "brown usage"
-    ]
+    "underEvaluation": [],
+    "applications": {
+      "redText": "pure white",
+      "blue": "editorial field without photograph",
+      "brown": "chromatic support"
+    }
   },
   "symbols": {
     "master": "M.svg",
@@ -142,7 +148,13 @@
       "vaso_08.svg",
       "vaso_09.svg"
     ],
-    "assetDirectory": "/identidade/"
+    "assetDirectory": "/identidade/",
+    "digitalMinimum": {
+      "mHeightPx": 24,
+      "pictogramHeightPx": 32,
+      "wordmarkWidthPx": 120
+    },
+    "signatureClearSpace": "one quarter of symbol height; does not constrain the compositional M bleed"
   },
   "governance": {
     "stages": [
@@ -153,9 +165,10 @@
     "sourceOfTruth": "design/identity-system.json",
     "rule": "Experiments cannot silently overwrite approved identity parameters.",
     "applicationReview": {
-      "status": "pending-author-validation",
-      "path": "/validacao-identidade.html",
-      "scope": "Application decisions remain proposals until recorded author approval."
+      "status": "approved",
+      "path": "/aplicacoes-validadas.html",
+      "evidence": "content/application-review-approved.json",
+      "date": "2026-11-06"
     }
   },
   "layout": {
@@ -174,8 +187,18 @@
     "typography": "/manual-headings.css",
     "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides.",
     "exceptions": {
-      "introduction": "Authored opening retained; shared chapter navigation; application choices pending review.",
+      "introduction": "Authored 00 opening retained.",
       "identityIndex": "Resource index retained; not a chapter cover."
     }
+  },
+  "composition": {
+    "mElement": "secondary composition; horizontal axis retained, vertical position adjustable, optional left-aligned Detail caption below",
+    "signatureScope": "document",
+    "exportLowContrast": "warn and confirm study export"
+  },
+  "motionApplication": {
+    "playback": "reader-initiated",
+    "sound": false,
+    "ink": "black with paper removed in the application renderer; approved source videos unchanged"
   }
 }

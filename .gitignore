@@ -44,3 +44,6 @@ production-proof/
 /public/validacao-identidade.html
 
 identity-proof/
+
+/public/aplicacoes-validadas.html
+approved-proof/

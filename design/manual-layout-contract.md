@@ -3,12 +3,12 @@
 **Status:** regra de construção para o manual de identidade (capítulos 00 a 07).
 **Escopo:** 00 Introdução, 01 Símbolos, 02 Motion, 03 Tipografia, 04 Cores, 05 Composição, 06 Laboratório, 07 Redes Sociais.
 
-A Introdução preserva a abertura autoral aprovada e compartilha a navegação. O índice `/identidade.html` é uma página de recursos, não uma capa de capítulo. A convergência dessas exceções está apresentada para validação; não aplicar uma nova diagramação silenciosamente.
+A Introdução preserva a abertura autoral aprovada e compartilha a navegação. O índice `/identidade.html` é uma página de recursos, não uma capa de capítulo. Essas exceções foram confirmadas na revisão de 06/11/2026; a capa de 03 Tipografia segue o modelo comum dos capítulos normativos.
 **Fontes da verdade:** este documento define a geometria; `public/manual-layout.css` executa a grade; `public/manual-headings.css` é a única fonte para tipografia.
 
 ## 1. Invariantes
 
-- Não existem layouts de capítulos independentes. Todas as capas usam o mesmo mapa de posição; todas as seções partem da mesma régua.
+- Não existem layouts de capítulos independentes. As capas normativas usam o mesmo mapa de posição; todas as seções partem da mesma régua.
 - Os únicos tratamentos tipográficos são **Título, Corpo e Detalhe**. Nunca criar um quarto peso, tamanho ou entrelinha para resolver uma quebra ou uma composição.
 - O título pode quebrar linhas, mas **não diminui** para caber. Sua banda é reservada e o conteúdo é centralizado verticalmente dentro dela: um título curto não cria uma lacuna exagerada antes do Corpo.
 - A cor e o formato mudam o conteúdo visual, não as coordenadas do texto do manual.

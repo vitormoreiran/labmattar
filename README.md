@@ -11,13 +11,13 @@ Este repositório mantém o manual de identidade e as ferramentas do LABMATTAR. 
 - Fontes vigentes: Univers LT Std 45 Light e Perpetua Titling MT Light. O manifesto content/identity-fonts.json registra os arquivos exatos; scripts/prepare-identity-kit.py verifica e prepara /identidade-kit/fontes-vigentes.zip.
 - Tipografia: Título, Corpo e Detalhe, definidos em public/manual-headings.css. A Introdução e o índice preservam as aberturas autorais; suas exceções são explicitadas no contrato de layout.
 
-## Regras e escolhas em validação
+## Aplicações validadas
 
 O manifesto registra as referências e os estados do sistema; o CSS executa a tipografia e a grade. As verificações devem detectar divergências entre esses arquivos. Recursos disponíveis não tornam uma aplicação aprovada.
 
-O tratamento preto de leitura é ajustável de 0% a 80%, com atalhos 0%, 20%, 40% e 60%. Projetos anteriores mantêm 20%. A intensidade acompanha a fotografia e seu recorte; não substitui a conferência de leitura no tamanho real. Novas composições recomendam branco puro sobre vermelho; projetos anteriores conservam seu perfil de cor até o usuário escolher novamente a cor do fundo ou Padrão.
+O tratamento preto de leitura é ajustável de 0% a 80%, com atalhos 0%, 20%, 40% e 60%. Novas composições começam em 40%; projetos anteriores conservam o valor salvo ou o padrão legado de 20%. A intensidade acompanha a fotografia e seu recorte; não substitui a conferência de leitura no tamanho real. Novas composições recomendam branco puro sobre vermelho; projetos anteriores conservam seu perfil de cor até o usuário escolher novamente a cor do fundo ou Padrão.
 
-O material /validacao-identidade.html reúne comparativos e escolhas do bloco 3. Azul e marrom, limites de redução e proteção, usos compositivos do M, assinaturas e exceções editoriais continuam sujeitos à validação do autor. Oito motions aprovados permanecem aprovados.
+As 12 escolhas do autor estão registradas em content/application-review-approved.json e em /aplicacoes-validadas.html. Azul editorial, marrom de apoio, redução digital e proteção estão definidos. O M Elemento aceita posição vertical e legenda; o título permite escolher a fonte de cada palavra. A assinatura vale para todo o documento. Contraste baixo pede confirmação para exportação como estudo. Os motions começam pausados; o leitor inicia o loop silencioso, com o papel removido da exibição e das composições. /validacao-identidade.html conserva o caderno original de comparação.
 
 ## Produção e publicação
 

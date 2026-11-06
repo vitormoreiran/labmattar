@@ -284,7 +284,9 @@ try {
   assert.equal(await page.locator('.state-explorer, #state-morph-svg').count(),0,'Contour demo has been replaced');
   const symbolVideo=page.locator('.motion-symbol-preview video');
   assert.equal(await symbolVideo.locator('source').getAttribute('src'),'/motion/videos/m-form.mp4');
-  assert.deepEqual(await symbolVideo.evaluate(video=>({autoplay:video.autoplay,muted:video.muted,loop:video.loop,controls:video.controls,inline:video.playsInline})),{autoplay:true,muted:true,loop:true,controls:false,inline:true});
+  assert.deepEqual(await symbolVideo.evaluate(video=>({autoplay:video.autoplay,muted:video.muted,loop:video.loop,controls:video.controls,inline:video.playsInline})),{autoplay:false,muted:true,loop:true,controls:false,inline:true});
+  assert.equal(await symbolVideo.evaluate(video=>video.paused),true);
+  await page.locator('.motion-symbol-preview .motion-ink-toggle').click();
   await page.waitForFunction(()=>document.querySelector('.motion-symbol-preview video').currentTime>0.1);
   await symbolVideo.evaluate(video=>{video.currentTime=video.duration-0.15;});
   await page.waitForFunction(()=>{const v=document.querySelector('.motion-symbol-preview video');return !v.paused&&v.currentTime<1.5;});
@@ -302,8 +304,10 @@ try {
     ]);
     assert.equal(await motionPage.locator('.motion-card video').count(),8);
     assert.equal(await motionPage.locator('.motion-status,[data-status]').count(),0);
-    assert.equal(await motionPage.locator('video[autoplay][muted][loop][playsinline]:not([controls])').count(),8);
-    await motionPage.waitForFunction(()=>[...document.querySelectorAll('.motion-card video')].slice(0,2).every(v=>!v.paused&&v.muted&&v.currentTime>0.1));
+    assert.equal(await motionPage.locator('video[data-motion-ink][muted][loop][playsinline]:not([controls])').count(),8);
+    assert.equal(await motionPage.locator('.motion-card video').evaluateAll(videos=>videos.every(v=>v.paused&&!v.autoplay)),true);
+    await motionPage.locator('.motion-card .motion-ink-toggle').first().click();
+    await motionPage.waitForFunction(()=>document.querySelector('.motion-card video').currentTime>0.1);
     assert.doesNotMatch(await motionPage.locator('main').innerText(),/aprovad|avaliação/i);
     for(const width of [1440,390]){
       await motionPage.setViewportSize({width,height:900});

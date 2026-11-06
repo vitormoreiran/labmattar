@@ -1,4 +1,6 @@
-import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog,createSection,sectionState,hasSectionText} from './lab-sequence.mjs';
+import {installMotionInk} from './lab-motion-ink.mjs';
+import {lowContrastPages} from './lab-application-rules.mjs';
+import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog,createSection,sectionState,hasSectionText,applyDocumentSignature} from './lab-sequence.mjs';
 import {createProductionDocument,verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs';
 const by=id=>document.getElementById(id),copy=value=>JSON.parse(JSON.stringify(value));
@@ -6,7 +8,7 @@ const board=by('labArtboard'),bridge=()=>window.LabProductionBridge;
 const key='labmattar-pages-v1';
 const uid=prefix=>prefix+'-'+crypto.randomUUID();
 const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by('labPagesStatus').dataset.state=error?'error':'idle';by('labExportStatus').textContent=message;by('labExportStatus').dataset.state=error?'error':busy?'busy':'idle';};
-let sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=false,selectedMotion='',selectedClip='',clipsPlaying=true;
+let documentSignature=null,sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=true,selectedMotion='',selectedClip='',clipsPlaying=true;
 const panel=by('labPages');
 if(board&&panel){init().catch(error=>notify(error.message,true));}
 function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],backgroundVideo=null){
@@ -17,7 +19,8 @@ function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],back
 function commit(){
   if(switching||busy||!pages.length)return;
   clearTimeout(timer);if(sections)syncSectionBackground();const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[],old.backgroundVideo||null);
-  try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages,sections),current,enabled}));}
+  pages=applyDocumentSignature(pages,documentSignature,bridge().snapshot().photoCatalog);
+  try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages,sections,documentSignature),current,enabled}));}
   catch{notify('Salve o projeto JSON para guardar esta sequência.');}
   renderPages();applySectionVisual();
 }
@@ -140,7 +143,7 @@ function renderSectionControls(){
 }
 function sortSectionPages(){const id=pages[current]?.id;pages.sort((a,b)=>sections.findIndex(section=>section.id===a.sectionId)-sections.findIndex(section=>section.id===b.sectionId));current=pages.findIndex(page=>page.id===id);}
 function blankPage(state,photoCatalog,sectionId){
-  const value={...copy(state),title:'NOVA\nPÁGINA',body:'',bodyMode:'oculto'};
+  const value={...copy(state),title:'NOVA\nPÁGINA',titleFonts:[],mCaption:'',body:'',bodyMode:'oculto'};
   const page=createPage({id:uid('page'),name:'Página '+(pages.length+1),state:value,photoCatalog,maxEdge:Number(by('labExportSize').value)});page.sectionId=sectionId;const video=sections?.find(section=>section.id===sectionId)?.background.video;if(video)page.backgroundVideo=copy(video);return page;
 }
 async function addPageToSection(sectionId){
@@ -170,13 +173,13 @@ function confirmSectionAction(message,label='CONTINUAR'){
 }
 async function sectionDemo(){
   if(!await confirmSectionAction('Abrir o ensaio com duas seções e seis páginas? Uma cópia do projeto atual será guardada neste navegador para restaurar depois.','ABRIR ENSAIO'))return;
-  commit();if(!localStorage.getItem(key+'-before-section-demo'))localStorage.setItem(key+'-before-section-demo',JSON.stringify(sequenceDocument(name,pages,sections)));
+  commit();if(!localStorage.getItem(key+'-before-section-demo'))localStorage.setItem(key+'-before-section-demo',JSON.stringify(sequenceDocument(name,pages,sections,documentSignature)));
   const snapshot=bridge().snapshot(),nextSections=[],nextPages=[];
   const titles=['UM INÍCIO\nEM COMUM','O QUE NOS\nAPROXIMA','UMA IDEIA\nEM MOVIMENTO','O PROJETO\nGANHA FORMA','CONTEÚDO\nEM SEQUÊNCIA','UM NOVO\nPERCURSO'];
   const bodies=['Uma imagem permanece enquanto a narrativa avança.','Role para percorrer as páginas desta seção.','O mesmo fundo reúne momentos diferentes de leitura.','Uma nova seção traz outra imagem e outro conjunto de páginas.','Os textos usam a entrada do sistema de identidade.','Ao voltar a rolagem, você revisita o conteúdo com a mesma organização.'];
   const names=['Abertura','Contexto','Proposta','Conceito','Desenvolvimento','Encerramento'];
   for(let group=0;group<2;group++){
-    const state={...copy(snapshot.state),format:'horizontal',background:'photo',photo:group===0?'64':'179',mContent:'off',marker:'none',focusX:50,focusY:50,guides:'nenhuma',type:'alternada',titleScale:85,textWidth:65,margin:7,
+    const state={...copy(snapshot.state),format:'horizontal',background:'photo',photo:group===0?'64':'179',mContent:'off',marker:'none',focusX:50,focusY:50,guides:'nenhuma',type:'alternada',titleFonts:[],titleScale:85,textWidth:65,margin:7,
       signature:{preset:'editorial',scale:100,slots:{tl:{kind:'text',text:'LABMATTAR / ENSAIO',symbol:'M.svg'},tr:{kind:'symbol',text:'',symbol:'vaso_03.svg'},bl:{kind:'text',text:'APRESENTAÇÃO POR SEÇÕES',symbol:'M.svg'},br:{kind:'text',text:'2026',symbol:'M.svg'}}}};
     const section=createSection(uid('section'),group===0?'Introdução':'O projeto',state,snapshot.photoCatalog);nextSections.push(section);
     for(let n=0;n<3;n++){const index=group*3+n;const page=createPage({id:uid('page'),name:names[index],state:{...state,title:titles[index],body:bodies[index],bodyMode:'visivel'},photoCatalog:snapshot.photoCatalog,maxEdge:1920});page.sectionId=section.id;nextPages.push(page);}
@@ -276,11 +279,11 @@ function renderBackgroundVideo(){
 }
 function renderMotions(){
   const layer=by('labPageMotions');
-  for(const video of layer.querySelectorAll('video')){video.pause();video.removeAttribute('src');video.load();}
+  for(const video of layer.querySelectorAll('video')){video.motionInk?.dispose();video.pause();video.removeAttribute('src');video.load();}
   layer.replaceChildren();
   for(const motion of pages[current].motions){
     const asset=catalog.find(asset=>asset.id===motion.assetId),video=document.createElement('video');
-    video.dataset.motionId=motion.id;video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
+    video.dataset.motionId=motion.id;video.dataset.motionInk="";video.dataset.motionControls="false";video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
     video.poster=asset.poster;video.src=asset.video;video.preload='auto';video.autoplay=!still;
     const update=()=>{
       if(still){video.pause();video.currentTime=Math.max(0,Math.min(motion.frameSeconds,video.duration-1/30));}
@@ -288,7 +291,7 @@ function renderMotions(){
     };
     video.addEventListener('loadedmetadata',update,{once:true});layer.append(video);
   }
-  placeMotions();requestAnimationFrame(placeMotions);renderMotionControls();
+  placeMotions();installMotionInk(layer);requestAnimationFrame(placeMotions);renderMotionControls();
   renderClips();
 }
 function placeMotions(){
@@ -297,7 +300,7 @@ function placeMotions(){
     const video=by('labPageMotions').querySelector(`[data-motion-id="${motion.id}"]`);
     if(!video)continue;
     const asset=catalog.find(asset=>asset.id===motion.assetId),box=motionBox(motion,asset,board.offsetWidth,board.offsetHeight);
-    Object.assign(video.style,{left:box.x+'px',top:box.y+'px',width:box.w+'px',height:box.h+'px'});
+    Object.assign(video.style,{left:box.x+'px',top:box.y+'px',width:box.w+'px',height:box.h+'px'});video.motionInk?.sync();
   }
   placeClips();
 }
@@ -420,7 +423,7 @@ async function capturePrivateClips(width,height){
 
 function closeLibrary(){
   by('labMotionLibrary').close();
-  for(const video of by('labMotionLibrary').querySelectorAll('video')){video.pause();video.removeAttribute('src');video.load();}
+  for(const video of by('labMotionLibrary').querySelectorAll('video')){video.motionInk?.dispose();video.pause();video.removeAttribute('src');video.load();}
   by('labMotionLibraryItems').replaceChildren();
 }
 function openLibrary(){
@@ -428,7 +431,7 @@ function openLibrary(){
   for(const asset of catalog){
     const button=document.createElement('button');button.type='button';button.dataset.motionAsset=asset.id;
     const video=document.createElement('video');video.src=asset.video;video.poster=asset.poster;
-    video.autoplay=true;video.muted=true;video.loop=true;video.playsInline=true;
+    video.dataset.motionInk="";video.dataset.motionControls="false";video.autoplay=false;video.muted=true;video.loop=true;video.playsInline=true;video.addEventListener("loadedmetadata",()=>{video.currentTime=asset.cut??Math.max(0,video.duration-1/30);},{once:true});
     const text=document.createElement('span');text.textContent=asset.title;
     const detail=document.createElement('small');detail.textContent=asset.duration.toLocaleString('pt-BR')+' s · '+asset.aspect;
     button.append(video,text,detail);button.addEventListener('click',()=>{
@@ -437,19 +440,19 @@ function openLibrary(){
       enabled=true;closeLibrary();renderMotions();commit();notify(asset.title+' adicionado à página.');
     });list.append(button);
   }
-  by('labMotionLibrary').showModal();
+  by('labMotionLibrary').showModal();installMotionInk(list);
 }
 async function load(document){
   const validated=readSequence(document,bridge().snapshot().photoCatalog,catalog);
   switching=true;
-  try{registerPhotos(validated.photoCatalog);sections=validated.sections||null;pages=validated.pages.map(({state,...page})=>page);name=validated.name;current=0;enabled=true;}
+  try{registerPhotos(validated.photoCatalog);sections=validated.sections||null;pages=validated.pages.map(({state,...page})=>page);documentSignature=copy(validated.signature||validated.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,validated.photoCatalog);name=validated.name;current=0;enabled=true;}
   finally{switching=false;}
   await switchPage(0,{capture:false});
 }
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);
   switching=true;
-  try{sections=null;registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[],clips:[]}];current=0;enabled=false;}
+  try{sections=null;documentSignature=copy(state.signature);registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[],clips:[]}];current=0;enabled=false;}
   finally{switching=false;}
   await switchPage(0,{capture:false});
 }
@@ -463,11 +466,13 @@ async function captureMotions(width,height){
   items.push(...await capturePrivateClips(width,height));
   return items;
 }
+function confirmStudy(pages){const names=lowContrastPages(pages);return !names.length||confirm("Contraste baixo em: "+names.join(", ")+". Revise a combinação ou confirme a exportação como estudo.");}
 async function exportVideo(){
   if(deliveryBusy())return;
   commit();
   const seconds=Number(by('labVideoSeconds').value),all=by('labVideoScope').value==='all';
   const indices=all?pages.map((_,index)=>index):[current];
+  if(!confirmStudy(indices.map(index=>pages[index])))return;
   const format=pages[indices[0]].composition.pages[0].surface.format;
   if(indices.some(index=>pages[index].composition.pages[0].surface.format!==format)){
     notify('Para reunir a sequência em um MP4, use o mesmo formato em todas as páginas. Você também pode exportar apenas a página em edição.',true);return;
@@ -538,11 +543,12 @@ async function exportVideo(){
 async function exportSequence(type){
   if(deliveryBusy())return;
   if(type==='mp4')return exportVideo();
+  commit();if(type!=='preview'&&!confirmStudy(pages))return;
   if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length||page.backgroundVideo)){
     if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
   }
   let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
-  commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections);
+  commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections,documentSignature);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);
   const active=pages[current];busy=true;switching=true;panel.setAttribute('aria-busy','true');
   const lab=by('laboratorio'),previousInert=lab.inert;lab.inert=true;
@@ -587,8 +593,8 @@ async function init(){
   if(manifest.schemaVersion!==1||!Array.isArray(manifest.items))throw Error('Versão do acervo Motion não reconhecida.');
   catalog=manifest.items;
   if(!catalog.length||catalog.some(asset=>!asset.video||!asset.sha256||!(asset.width>0)||!(asset.height>0)))throw Error('Catálogo Motion incompleto.');
-  pages=[nativePage()];
-  window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages,sections);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,
+  pages=[nativePage()];documentSignature=copy(bridge().snapshot().state.signature);
+  window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages,sections,documentSignature);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,getSignature:()=>copy(documentSignature),setSignature:signature=>{documentSignature=copy(signature);pages=applyDocumentSignature(pages,signature,bridge().snapshot().photoCatalog);enabled=true;notify("Assinatura atualizada em todas as páginas do documento.");},
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
     hasSequence:()=>Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo),
@@ -597,8 +603,8 @@ async function init(){
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');
     if(saved){const result=readSequence(saved.document,bridge().snapshot().photoCatalog,catalog);
-      switching=true;sections=result.sections||null;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
-      bridge().restore(result.pages[current].state);by('labExportSize').value=String(pages[current].composition.output.maxEdge);switching=false;await settled();}
+      switching=true;sections=result.sections||null;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);documentSignature=copy(result.signature||result.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,result.photoCatalog);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
+      bridge().restore({...result.pages[current].state,signature:documentSignature});by('labExportSize').value=String(pages[current].composition.output.maxEdge);switching=false;await settled();}
   }catch{switching=false;let recovered=false;try{localStorage.setItem(key+'-recovery',localStorage.getItem(key)||'');recovered=true;}catch{}notify('O rascunho anterior não pôde ser reaberto.'+(recovered?' Uma cópia de recuperação foi preservada neste navegador.':' Abra seu projeto JSON para recuperar a sequência.'),true);}
   initSections();
   initDelivery();
@@ -627,7 +633,7 @@ async function init(){
   by('labPageName').addEventListener('change',event=>{pages[current].name=event.target.value.slice(0,120);enabled=true;commit();});
   by('labPageAdd').addEventListener('click',async()=>{
     if(pages.length>=100){notify('Esta sequência já tem 100 páginas.',true);return;}
-    commit();const snapshot=bridge().snapshot(),state=copy(snapshot.state);state.title='NOVA\nPÁGINA';state.body='';state.bodyMode='oculto';
+    commit();const snapshot=bridge().snapshot(),state=copy(snapshot.state);state.title='NOVA\nPÁGINA';state.titleFonts=[];state.mCaption='';state.body='';state.bodyMode='oculto';
     const page=createPage({id:uid('page'),name:'Página '+(pages.length+1),state,photoCatalog:snapshot.photoCatalog,maxEdge:Number(by('labExportSize').value)});
     if(sections){page.sectionId=pages[current].sectionId;if(currentSection().background.video)page.backgroundVideo=copy(currentSection().background.video);}pages.splice(current+1,0,page);enabled=true;await switchPage(current+1);
   });

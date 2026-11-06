@@ -1,0 +1,84 @@
+{
+  "kind": "labmattar.application-review",
+  "schemaVersion": 1,
+  "edition": "2026-11-05-r1",
+  "sourceCommit": "16c0ba704c25271e51c22276ba397a72c22c856c",
+  "status": "approved-with-requested-adjustments",
+  "responded": 12,
+  "decisions": [
+    {
+      "id": "tratamento",
+      "title": "Intensidade do tratamento de leitura",
+      "choice": "Aprovar níveis e ajuste fino",
+      "notes": "o 40% foi o que mais funcionou. vamos seguir dessa forma mas dar preferencia ao 40% daqui em diante. "
+    },
+    {
+      "id": "vermelho",
+      "title": "Texto sobre vermelho",
+      "choice": "Branco puro como recomendação",
+      "notes": ""
+    },
+    {
+      "id": "azul",
+      "title": "Papel do azul",
+      "choice": "Aprovar campo editorial azul",
+      "notes": ""
+    },
+    {
+      "id": "marrom",
+      "title": "Papel do marrom",
+      "choice": "Aprovar como apoio cromático",
+      "notes": ""
+    },
+    {
+      "id": "m",
+      "title": "M compositivo e M de assinatura",
+      "choice": "Rever a proposta",
+      "notes": "acho que enquanto elemento seria a composição secundária. também gostaria de ter um controle para mover verticalmente esse elemento. também gostaria que enquanto elemento a gente tenha uma opção de colocar uma legenda abaixo dele. em texto detalhe alinhada bem ao canto esquerdo. "
+    },
+    {
+      "id": "assinatura",
+      "title": "Assinatura por função",
+      "choice": "Rever os tratamentos",
+      "notes": "acho que temos uma assinatura por documento. é algo que define todo o tom do que está sendo construído então é uma decisão que deve valer como configuração geral. do documento. "
+    },
+    {
+      "id": "reducao",
+      "title": "Redução dos elementos",
+      "choice": "Usar estes mínimos como referência",
+      "notes": ""
+    },
+    {
+      "id": "protecao",
+      "title": "Área de proteção",
+      "choice": "Um quarto da altura",
+      "notes": ""
+    },
+    {
+      "id": "tipografia",
+      "title": "Intervenção editorial no título",
+      "choice": "Alternância livre entre linhas",
+      "notes": "não é só entre linhas, se tivermos uma linha com duas palavras ainda podemos mesclar as duas fontes. "
+    },
+    {
+      "id": "excecoes",
+      "title": "Introdução e índice",
+      "choice": "Rever separadamente",
+      "notes": "mantenha o 00. o 03 precisa ser normalizado. "
+    },
+    {
+      "id": "leitura",
+      "title": "Revisão antes de exportar",
+      "choice": "Avisar e confirmar exportação de estudo",
+      "notes": ""
+    },
+    {
+      "id": "movimento",
+      "title": "Aplicar os motions aprovados",
+      "choice": "Reprodução iniciada pelo leitor",
+      "notes": "manter. será que a gente consegue aumentar o contraste desses vídeos de motion? o fundo ta bege e queria ele da mesma cor do fundo que estamos utilizando. se tiver uma forma de só preservar o preto desses vídeos é melhor ainda. "
+    }
+  ],
+  "appliedEdition": "2026-11-06",
+  "authorization": "User requested application of all choices after reviewing the consolidation."
+}

@@ -75,6 +75,7 @@ import {textMotionProfile} from './lab-text-motion.mjs';
   function prepareLine(line,scale){
     const original=line.textContent;
     if(!original.trim())return null;
+    const tokenFonts=[...line.querySelectorAll(".lm-lab-title-word")].map(node=>getComputedStyle(node).fontFamily);
     const cs=getComputedStyle(line);
     ctx.font=cs.fontWeight+" "+cs.fontSize+" "+cs.fontFamily;
     const glyphWidths=[...alphabet].map(char=>[char,ctx.measureText(char).width]);
@@ -89,6 +90,7 @@ import {textMotionProfile} from './lab-text-motion.mjs';
       else{
         const word=document.createElement("span");
         word.className="lm-lab-motion-word";
+        if(tokenFonts[words.length])word.style.fontFamily=tokenFonts[words.length];
         word.textContent=token;
         fragment.append(word);
         words.push({node:word,original:token,offset});

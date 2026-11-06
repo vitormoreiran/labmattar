@@ -57,7 +57,7 @@ jobs:
         with:
           node-version: '22'
       - name: Validar contrato de documento v1
-        run: node scripts/test-composicao-document.mjs
+        run: node --test scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
@@ -96,6 +96,7 @@ jobs:
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
+          IDENTITY_URL=http://127.0.0.1:8765 node scripts/smoke-approved-applications.mjs
       - name: Salvar capturas para revisao visual
         if: always()
         # A transient failure uploading optional screenshots must not override
@@ -108,4 +109,5 @@ jobs:
             composition-*.png
             laboratorio-*.png
             symbols-proof/
+            approved-proof/
           if-no-files-found: ignore

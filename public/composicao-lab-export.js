@@ -34,7 +34,7 @@
     let current=element;
     while(current&&current!==board.parentElement){
       const s=getComputedStyle(current);
-      if(s.display==="none"||s.visibility==="hidden"||Number(s.opacity)===0)return false;
+      if(s.display==="none"||s.visibility==="hidden"||(Number(s.opacity)===0&&!(current===element&&element.hasAttribute("data-motion-ink"))))return false;
       current=current.parentElement;
     }
     return true;
@@ -201,6 +201,7 @@
   async function captureScene({edge=Number(sizeSelect.value),ask=true,live=false}={}){
     window.LabPages?.applySectionVisual?.();
     await document.fonts.ready;
+    if(ask&&document.getElementById("labInkContrast")?.dataset.contrast==="warning"&&!confirm("Esta combinação tem contraste baixo. Exportar como estudo mesmo assim?"))return null;
     if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
     await Promise.all([...board.querySelectorAll("img")].filter(isVisible).map(img=>img.decode().catch(()=>{throw Error("Imagem indisponível. Conecte o acervo ou aguarde o carregamento.");})));
     if(board.dataset.videoBackground==="true"){
@@ -296,8 +297,10 @@
       items.push(...(await vector(img.currentSrc||img.src,rectangle(img,frame),tone)).map(op=>({...op,layer:"signature"})));
     }
     items.push(...words(signature,frame).map(op=>({...op,layer:"detail"})));
+    items.push(...words(board.querySelector("#labMCaptionPreview"),frame).map(op=>({...op,layer:"element-caption"})));
     // Runtime painters reuse the native masks, crops and filters for each video frame.
     // They are never serialized into PDF, HTML or saved project documents.
+    const inkFrame=live?(await import("./lab-motion-ink.mjs")).motionInkFrame:null;
     const media=live?[...board.querySelectorAll('video')].filter(isVisible):[];
     if(live){
       const painter=(paint,x=0,y=0)=>ctx=>{
@@ -316,7 +319,7 @@
         if(op.motionId||op.privateClipId){
           const video=media.find(video=>op.motionId?video.dataset.motionId===op.motionId:video.dataset.clipId===op.privateClipId);
           if(!video)throw Error('Vídeo da composição não encontrado: '+op.assetName);
-          op.paint=ctx=>ctx.drawImage(video,op.x,op.y,op.w,op.h);
+          op.paint=ctx=>ctx.drawImage(op.motionId?inkFrame(video):video,op.x,op.y,op.w,op.h);
         }
       }
     }

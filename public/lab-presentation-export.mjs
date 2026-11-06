@@ -1,3 +1,4 @@
+import {motionInkPixels,installMotionInk} from './lab-motion-ink.mjs';
 import {sectionWebDocument} from './lab-section-web.mjs';
 import {sceneSvg,escapeMarkup as esc} from './lab-scene.mjs';
 const bytesCache=new Map(),frameCache=new Map();
@@ -45,7 +46,7 @@ export async function motionFrame(asset,seconds){
       });video.currentTime=time;await seeked;
     }
     const canvas=document.createElement('canvas');canvas.width=video.videoWidth;canvas.height=video.videoHeight;
-    const ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);
+    const ctx=canvas.getContext('2d');ctx.drawImage(video,0,0);const frame=ctx.getImageData(0,0,canvas.width,canvas.height);motionInkPixels(frame.data);ctx.putImageData(frame,0,0);
     return canvas.toDataURL('image/png');
     }finally{video.pause();video.removeAttribute('src');video.load();URL.revokeObjectURL(objectUrl);}
   })());
@@ -136,7 +137,7 @@ function animatedBackground(scene,video){
 
 const animatedBackgroundCSS=":is(.page-art,.story-art) .animated-background{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}\n:is(.page-art,.story-art) .animated-background video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}\n:is(.page-art,.story-art) .animated-background .is-blurred{inset:-7%;width:114%;height:114%;filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);transform:scale(1.045)}\n:is(.page-art,.story-art) .bg-video-contrast,:is(.page-art,.story-art) .bg-video-m-contrast{position:absolute;inset:0;background:rgba(0,0,0,var(--photo-contrast,.2));pointer-events:none}\n:is(.page-art,.story-art) .bg-video-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-m{position:absolute;z-index:2;overflow:hidden;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;filter:drop-shadow(0 2px 10px rgba(0,0,0,.08))}\n:is(.page-art,.story-art) .bg-video-m-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-markers{position:absolute;inset:0;z-index:3;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}";
 export async function webDocument(scenes,project,catalog,fonts){
-  if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes,animatedBackground,animatedBackgroundCSS});
+  if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes,animatedBackground,animatedBackgroundCSS,motionInkPixels,installMotionInk});
   const used=new Set(scenes.flatMap(scene=>scene.motions.map(motion=>motion.assetId))),videos={},videoTypes={};
   for(const id of used){const asset=catalog.find(asset=>asset.id===id);videos[id]=base64(await motionBytes(asset));}
   const privateClips=new Map(scenes.flatMap(scene=>[...(scene.clips||[]),
@@ -160,19 +161,19 @@ export async function webDocument(scenes,project,catalog,fonts){
     const text=project.pages[index].composition.pages[0].text;
     const live=[...scene.motions.map(motion=>{
       const op=scene.items.find(op=>op.motionId===motion.id);
-      return `<video autoplay muted loop playsinline data-asset="${esc(motion.assetId)}" style="left:${op.x/scene.width*100}%;top:${op.y/scene.height*100}%;width:${op.w/scene.width*100}%;height:${op.h/scene.height*100}%" aria-hidden="true"></video>`;
+      return `<video data-motion-ink muted loop playsinline data-asset="${esc(motion.assetId)}" style="left:${op.x/scene.width*100}%;top:${op.y/scene.height*100}%;width:${op.w/scene.width*100}%;height:${op.h/scene.height*100}%" aria-hidden="true"></video>`;
     }),...(scene.clips||[]).map(clip=>{
       const op=scene.items.find(op=>op.privateClipId===clip.id);
       if(!op)throw Error('Quadro de vídeo não encontrado: '+clip.name);
       return `<video autoplay muted loop playsinline data-asset="private:${esc(clip.id)}" style="left:${op.x/scene.width*100}%;top:${op.y/scene.height*100}%;width:${op.w/scene.width*100}%;height:${op.h/scene.height*100}%" aria-hidden="true"></video>`;
     })].join('');
     const hasBackgroundVideo=Boolean(scene.backgroundVideo);
-    const screenBase=hasBackgroundVideo?{...base,items:base.items.filter(op=>!op.layer?.startsWith('video-bg-'))}:base;
+    const screenBase={...base,items:base.items.filter(op=>!op.motionId&&(!hasBackgroundVideo||!op.layer?.startsWith('video-bg-')))};
     const view=hasBackgroundVideo?
       animatedBackground(scene,scene.backgroundVideo)+'<div class="screen-scene">'+svg(screenBase)+'</div>'+live+
         (foreground.items.length?'<div class="foreground">'+svg(foreground)+'</div>':'')+
         '<div class="print-scene">'+svg(scene)+'</div>':
-      svg(base)+live+(foreground.items.length?'<div class="foreground">'+svg(foreground)+'</div>':'');
+      '<div class="screen-scene">'+svg(screenBase)+'</div>'+live+(foreground.items.length?'<div class="foreground">'+svg(foreground)+'</div>':'')+'<div class="print-scene">'+svg(scene)+'</div>';
     return `<section class="export-page" id="${scene.id}" style="page:print-${scene.id};--page-width:${scene.width*.75}pt;--page-height:${scene.height*.75}pt" aria-label="${esc(scene.name)}"><div class="semantic"><h2>${esc(text.title.value)}</h2><p>${esc(text.body.visible?text.body.value:'')}</p></div><div class="page-art"${hasBackgroundVideo?' data-video-background="true"':''} style="max-width:min(1440px,calc(${100*scene.width/scene.height}svh - ${122*scene.width/scene.height}px))">${view}</div></section>`;
   }).join('');
   const json=value=>JSON.stringify(value).replace(/</g,'\\u003c');
@@ -185,11 +186,11 @@ ${animatedBackgroundCSS}
 .page-art .screen-scene svg{width:100%;height:auto}
 .page-art[data-video-background]>video{z-index:4}
 .page-art[data-video-background]>.foreground{z-index:5}
-.page-art .print-scene{display:none}
+.page-art .print-scene{display:none}@media print{.page-art .screen-scene,.page-art>.foreground,.page-art .motion-ink-canvas{display:none}.page-art .print-scene{display:block}}
 @media print{.page-art[data-video-background] .animated-background,.page-art[data-video-background] .screen-scene,.page-art[data-video-background]>.foreground{display:none}
 .page-art[data-video-background] .print-scene{display:block;position:absolute;inset:0;width:100%;height:100%}
 .page-art[data-video-background] .print-scene svg{width:100%;height:100%}}
 </style></head><body><nav class="presentation-nav" aria-label="Apresentação"><strong>${esc(project.name)}</strong><button id="previous">ANTERIOR</button><span id="page-count">1 / ${scenes.length}</span><button id="next">PRÓXIMA</button><button id="save-project">PROJETO JSON</button><button id="print">IMPRIMIR</button></nav><main>${pages}</main><script type="application/json" id="project">${json(project)}</script><script type="application/json" id="clips">${json(videos)}</script><script type="application/json" id="clip-mimes">${json(videoTypes)}</script><script>
-(()=>{'use strict';const pages=[...document.querySelectorAll('.export-page')];let current=0;const show=index=>{current=Math.max(0,Math.min(index,pages.length-1));pages[current].scrollIntoView({block:'start'});document.getElementById('page-count').textContent=(current+1)+' / '+pages.length;};document.getElementById('next').onclick=()=>show(current+1);document.getElementById('previous').onclick=()=>show(current-1);document.addEventListener('keydown',event=>{if(['ArrowRight','PageDown'].includes(event.key)){event.preventDefault();show(current+1);}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(current-1);}});document.getElementById('print').onclick=()=>print();document.getElementById('save-project').onclick=()=>{const blob=new Blob([document.getElementById('project').textContent],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='labmattar-projeto.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);};const clips=JSON.parse(document.getElementById('clips').textContent);const urls={};for(const[id,value]of Object.entries(clips)){const data=Uint8Array.from(atob(value),char=>char.charCodeAt(0));urls[id]=URL.createObjectURL(new Blob([data],{type:(JSON.parse(document.getElementById('clip-mimes').textContent)[id]||'video/mp4')}));}document.querySelectorAll('video[data-asset]').forEach(video=>{video.muted=true;video.src=urls[video.dataset.asset];video.play().catch(()=>{});});if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){current=pages.indexOf(entry.target);document.getElementById('page-count').textContent=(current+1)+' / '+pages.length;}},{threshold:.5});pages.forEach(page=>observer.observe(page));}})();
-</script></body></html>`;
+(()=>{'use strict';const pages=[...document.querySelectorAll('.export-page')];let current=0;const show=index=>{current=Math.max(0,Math.min(index,pages.length-1));pages[current].scrollIntoView({block:'start'});document.getElementById('page-count').textContent=(current+1)+' / '+pages.length;};document.getElementById('next').onclick=()=>show(current+1);document.getElementById('previous').onclick=()=>show(current-1);document.addEventListener('keydown',event=>{if(['ArrowRight','PageDown'].includes(event.key)){event.preventDefault();show(current+1);}if(['ArrowLeft','PageUp'].includes(event.key)){event.preventDefault();show(current-1);}});document.getElementById('print').onclick=()=>print();document.getElementById('save-project').onclick=()=>{const blob=new Blob([document.getElementById('project').textContent],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='labmattar-projeto.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),60000);};const clips=JSON.parse(document.getElementById('clips').textContent);const urls={};for(const[id,value]of Object.entries(clips)){const data=Uint8Array.from(atob(value),char=>char.charCodeAt(0));urls[id]=URL.createObjectURL(new Blob([data],{type:(JSON.parse(document.getElementById('clip-mimes').textContent)[id]||'video/mp4')}));}document.querySelectorAll('video[data-asset]').forEach(video=>{video.muted=true;video.src=urls[video.dataset.asset];if(!video.hasAttribute('data-motion-ink'))video.play().catch(()=>{});});if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){current=pages.indexOf(entry.target);document.getElementById('page-count').textContent=(current+1)+' / '+pages.length;}},{threshold:.5});pages.forEach(page=>observer.observe(page));}})();
+(${installMotionInk.toString()})(document,${motionInkPixels.toString()});</script></body></html>`;
 }

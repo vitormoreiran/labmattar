@@ -18,7 +18,7 @@ Esta é a referência de manutenção da identidade, não um conjunto de exemplo
 
 **Estados que devem existir no canvas:** `data-backdrop` (color, photo, blur), `data-m-content` (off, solid, photo), `data-m-presentation` (elemento, completo), `data-marker-blur`, `data-format` e os atributos de contraste e guias. A preferência de fundo é salva separadamente de sua apresentação efetiva.
 
-**Estados que não devem retornar:** `data-image`, `data-m-mode`, `data-relation` e modos de posição personalizados. Não reintroduzir selects invisíveis de compatibilidade nem regras específicas de blur por modo do M. A régua editorial é única; quando o conteúdo não couber, registrar a condição e rever a composição, sem reduzir automaticamente um título.
+**Estados que não devem retornar:** `data-image`, `data-m-mode`, `data-relation` e os antigos modos de relação entre texto e M. Não reintroduzir selects invisíveis de compatibilidade nem regras específicas de blur por modo do M. A régua editorial é única; quando o conteúdo não couber, registrar a condição e rever a composição, sem reduzir automaticamente um título.
 
 **Critério de manutenção:** uma correção só é oficial quando preservar a identidade visível, passar a validação estrutural e os testes de navegador do Laboratório, inclusive nos quatro formatos e na prévia móvel. As alterações são feitas sobre a fonte real em `design/` ou `public/`, nunca somente sobre uma cópia compilada.
 
@@ -35,8 +35,8 @@ O inspetor é uma ferramenta de edição, não uma repetição do manual.
 
 - Os únicos tratamentos de texto são **Título**, **Corpo** e **Detalhe** com Univers e Perpetua; a escala proporcional à superfície é aplicada por `manual-headings.css`, não por fontes adicionais.
 - A origem horizontal, o alinhamento e a margem de leitura são únicos em toda a página.
-- O M conserva vetor, proporções e eixo central. A fotografia pode ser reenquadrada, nunca o vetor.
-- O tratamento de leitura pertence à fotografia sob o texto e acompanha o recorte do M. A intensidade é ajustável de 0% a 80%, com atalhos 0%, 20%, 40% e 60%. Projetos anteriores mantêm 20%. A escolha deve ser conferida no tamanho final; os atalhos não certificam legibilidade.
+- O M conserva vetor, proporções e eixo central. A fotografia pode ser reenquadrada. Em Elemento, o M permite posição vertical controlada e legenda em Detalhe, sem deformação.
+- O tratamento de leitura pertence à fotografia sob o texto e acompanha o recorte do M. A intensidade é ajustável de 0% a 80%, com atalhos 0%, 20%, 40% e 60%, com preferência e valor inicial de 40% para novas composições. Projetos anteriores mantêm 20%. A escolha deve ser conferida no tamanho final; os atalhos não certificam legibilidade.
 - **Relação entre camadas:** sempre que um M ou qualquer marcador estiver ativo, a camada de fundo exibe **a mesma imagem selecionada, ampliada e desfocada (blur)**. O conteúdo interior do M pode ser fotográfico ou sólido; em ambos os casos, a camada inferior não fica como cor plana nem vazia. A geometria não muda.
 - A opção de fundo (Cor ou Fotografia) continua como preferência salva. Ela só determina a superfície quando M e marcadores estiverem desligados. Desligar o último elemento restaura a escolha original, sem perda de foto, foco ou escala.
 - O blur do fundo e o tratamento preto ajustável são recursos diferentes: o blur define a camada inferior; o véu depende da sobreposição de texto à fotografia.
@@ -55,10 +55,10 @@ Em `16:9`, o núcleo ocupa uma coluna proporcional ao formato. Em `9:16`, essa c
 
 Todas as superfícies (**16:9, 9:16, 1:1 e editorial**) oferecem duas aplicações do **mesmo vetor oficial** (990,08 × 743,18). Não são símbolos distintos nem deformações do M:
 
-- **Elemento** (padrão, inclusive para composições salvas anteriormente): M inteiro, centralizado no eixo da página, com a escala manual do Laboratório preservada. É o comportamento já existente na ferramenta e na segunda referência.
+- **Elemento** (padrão, inclusive para composições salvas anteriormente): composição secundária com o M inteiro, centrado horizontalmente e ajustável verticalmente, com a escala manual do Laboratório preservada. É o comportamento já existente na ferramenta e na segunda referência.
 - **Completo**: M ocupa exatamente **100% da altura de qualquer canvas**; sua largura decorre do aspecto original (aproximadamente **133,222% da altura**). Em 9:16, sangra simetricamente pelas laterais e mostra os recortes das extremidades; em formatos largos, a lateral pode permanecer livre. Não esticar, achatar ou converter em outro vetor.
 
-A seleção é apresentada em **04 / Composição** e no **05 / Laboratório** para todos os formatos. Alterar a proporção não muda a escolha do M. A geometria é recalculada a partir da altura real da nova superfície; o tamanho salvo de Elemento permanece intocado.
+A seleção é apresentada em **05 / Composição** e no **06 / Laboratório** para todos os formatos. Alterar a proporção não muda a escolha do M. A geometria é recalculada a partir da altura real da nova superfície; o tamanho salvo de Elemento permanece intocado.
 
 No modo Completo, em qualquer formato, o controle de escala e os marcadores adicionais do M ficam temporariamente inativos para não criar recortes duplicados. Ao retornar para Elemento, a escala e os marcadores anteriormente escolhidos voltam sem perda dos valores. Foto, contraste normativo e campos de texto permanecem independentes do modo do M.
 
@@ -84,3 +84,7 @@ Validar navegador em desktop (1440×900) e celular (390×844, 320×640), em 16:9
 - Nenhuma mudança afeta o funcionamento do Laboratório nem as cinco capas do manual.
 
 **Não usar ajustes por elemento para resolver colisões:** corrigir a régua compartilhada e os conteúdos editoriais quando necessário.
+
+## Escolhas confirmadas em 06/11/2026
+
+A assinatura é única por documento. Univers e Perpetua podem se misturar entre palavras da mesma linha do Título, sem criar outro tratamento de texto. A legenda do Elemento usa Detalhe e começa na borda esquerda do elemento. A exportação de combinações sólidas com contraste baixo avisa e exige confirmação como estudo. Referências digitais: M 24 px, pictogramas 32 px e assinatura 120 px; proteção da assinatura isolada de ¼ da altura do símbolo.

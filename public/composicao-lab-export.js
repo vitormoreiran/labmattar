@@ -63,7 +63,7 @@
       if(!canvas){canvas=document.createElement('canvas');videoFrames.set(img,canvas);}
       if(canvas.width!==iw||canvas.height!==ih){canvas.width=iw;canvas.height=ih;}
       const context=canvas.getContext('2d');if(!context)fail('Memória insuficiente para capturar o quadro do vídeo.');
-      context.drawImage(img,0,0);source=canvas;
+      context.clearRect(0,0,iw,ih);context.drawImage(img,0,0);source=canvas;
     }
     ctx.drawImage(source,(iw-sw)*px,(ih-sh)*py,sw,sh,x,y,w,h);
   }

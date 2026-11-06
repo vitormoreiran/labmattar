@@ -52,7 +52,7 @@ try{
   await page.evaluate(doc=>window.LabPages.load(doc),original);await workspace('pages');await page.locator('#labPageList button[data-page-index="1"]').click();
   await page.waitForFunction(()=>document.querySelector('#labPageCount').textContent==='2 / 2');
   page.once('dialog',dialog=>dialog.dismiss());await page.locator('#labStudioQuickReset').click();assert.deepEqual(await project(),original);
-  page.once('dialog',dialog=>dialog.accept());await page.locator('#labReset').click();await page.locator('#labUndoReset').waitFor({state:'visible'});
+  page.once('dialog',dialog=>dialog.accept());await page.locator('#labStudioQuickReset').click();await page.locator('#labUndoReset').waitFor({state:'visible'});
   assert.notDeepEqual(await project(),original);
   await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   // A recuperação também não pode apagar sua cópia se a nova gravação falhar.

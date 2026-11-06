@@ -35,6 +35,11 @@ body.lm-studio-open #laboratorio .lm-lab-mini-actions:has(#labSaveState[data-sta
 #laboratorio #labUndoReset[hidden]{display:none!important}
 #laboratorio #labUndoReset{min-height:44px;height:auto}
 #laboratorio #labSaveState[data-state="error"]{color:#181818}
+#laboratorio #labBackgroundFrameField[hidden],#laboratorio #labMScaleNote[hidden]{display:none!important}
+.lab-background-frame-value{display:flex;align-items:center;gap:10px}
+.lab-background-frame-value input{width:100px;min-height:44px}
+.lab-background-frame-actions{display:flex;flex-wrap:wrap;gap:8px;margin-block:10px}
+.lab-background-frame-actions button{min-height:44px;flex:1}
 .lm-lab-mini-actions .lm-lab-local{color:#625e58;}
 .lm-lab-preview{position:sticky;top:77px;min-width:0}
 .lm-lab-preview-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0;}

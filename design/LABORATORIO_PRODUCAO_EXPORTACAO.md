@@ -16,6 +16,18 @@
 
 Regressões: `scripts/test-lab-project-lifecycle.mjs` e `scripts/smoke-lab-project-lifecycle.mjs` (Chromium e WebKit no CI).
 
+### Fidelidade de tratamento, escala e vídeo
+
+A legenda do M conta como texto da seção quando o elemento está visível. Assim, uma seção com apenas legenda recebe a mesma intensidade de leitura em todas as páginas. Uma página sem Título/Corpo não é considerada vazia ou inválida por esse motivo; limites da legenda continuam sendo conferidos.
+
+O projeto conserva escalas do M entre 1% e 140%, inclusive arquivos existentes fora da faixa de referência do editor. Restaurar uma página usa seus próprios valores, sem limitá-los pelo controle do formato anterior. Os rótulos e o campo numérico acompanham os limites do controle; valores fora da referência aparecem com aviso, sem modificar o arquivo. Trocas manuais de formato continuam lembrando os ajustes de cada superfície.
+
+Com vídeo de fundo, **Fundo → Quadro para PNG/PDF** define o instante estático. “Usar quadro atual” guarda o instante da prévia; “Ver quadro de PNG/PDF” pausa as variantes do fundo no quadro escolhido; “Reproduzir vídeo” retoma a prévia. Em seções, esse quadro é compartilhado pelo grupo. Salvar e reabrir preserva a escolha.
+
+PNG, PDF e a versão de impressão do HTML capturam o quadro escolhido, independentemente do instante em que a prévia estiver tocando. A captura devolve a prévia à posição e ao estado de reprodução anteriores. O HTML na tela e o MP4 continuam animados. Enquadramentos de 0% e 100% são valores válidos e não são substituídos por 50%.
+
+Regressões: `scripts/test-lab-render-fidelity.mjs` e `scripts/smoke-lab-render-fidelity.mjs`. A prova inclui escalas nos quatro formatos, legendas sem título, cinco intensidades, extremos de foco e comparação entre PNG, PDF e quadro de impressão do HTML, além de MP4 com quadros distintos.
+
 O Laboratório passa a manter uma sequência ordenada no editor existente: criar, duplicar, nomear, reordenar, excluir, salvar e reabrir páginas nos quatro formatos atuais. O contrato `labmattar.presentation` v1 contém composições v1, preservando a leitura dos JSON anteriores. O rascunho multipágina usa armazenamento local; o JSON continua sendo a cópia portátil de autoria.
 
 A cena lógica compartilhada alimenta PNG, PDF e HTML. PDF conserva texto selecionável, Univers/Perpetua incorporadas e paths oficiais; fotografias, filtros, sombras e quadros de motion são camadas raster nas dimensões de entrega. A qualidade 2K/4K determina essas camadas, não uma captura da tela. O PDF usa o formato de cada página; ele não declara PDF/X, CMYK ou qualidade de master fotográfico sem verificação.

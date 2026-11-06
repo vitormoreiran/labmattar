@@ -199,8 +199,9 @@ export function sectionState(state,section){
 }
 export function hasSectionText(sectionId,pages){
   return pages.filter(page=>page.sectionId===sectionId).some(page=>{
-    const text=page.composition.pages[0].text;
-    return Boolean(text.title.value.trim()||(text.body.visible&&text.body.value.trim())||Object.values(text.detail.signature.slots).some(slot=>['text','symbol-label'].includes(slot.kind)&&slot.text.trim()));
+    const {text,m}=page.composition.pages[0];
+    const caption=m.content!=='off'&&m.presentation==='elemento'&&m.caption?.trim();
+    return Boolean(caption||text.title.value.trim()||(text.body.visible&&text.body.value.trim())||Object.values(text.detail.signature.slots).some(slot=>['text','symbol-label'].includes(slot.kind)&&slot.text.trim()));
   });
 }
 function readSectionSequence(value,photoCatalog,motionCatalog){

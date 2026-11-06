@@ -266,9 +266,54 @@ function syncBackgroundVideoControls(){
   const remove=by('labBackgroundVideoRemove');
   if(label)label.textContent=video?'Vídeo de fundo · '+video.name+' · loop sem áudio':'';
   if(remove)remove.hidden=!video;
+  const field=by('labBackgroundFrameField');if(!field)return;
+  field.hidden=!video;if(!video)return;
+  const player=by('labAmbientVideo'),duration=player?.duration,known=Number.isFinite(duration)&&duration>0;
+  const value=video.frameSeconds,maximum=known?Math.min(3600,Math.floor(duration*100)/100):3600;
+  for(const id of ['labBackgroundFrame','labBackgroundFrameRange']){
+    const input=by(id);input.max=String(Math.max(maximum,value));input.value=String(value);input.disabled=!known;
+  }
+  const range=by('labBackgroundFrameRange'),limits=range.nextElementSibling;
+  if(limits?.classList.contains('lm-ctrl-range-limits')){limits.firstElementChild.textContent='0 s';limits.lastElementChild.textContent=maximum.toLocaleString('pt-BR')+' s';}
+  by('labBackgroundFrameCurrent').disabled=!known;by('labBackgroundFramePreview').disabled=!known;
+  by('labBackgroundFramePreview').textContent=backgroundStill?'REPRODUZIR VÍDEO':'VER QUADRO DE PNG/PDF';
+  by('labBackgroundFramePreview').setAttribute('aria-pressed',String(backgroundStill));
+  by('labBackgroundFrameHint').textContent=known&&value>duration+1e-6?
+    'O quadro salvo ultrapassa a duração atual do vídeo. Escolha outro quadro antes de exportar.':
+    (sections?'Quadro compartilhado pela seção. ':'')+'PNG e PDF usam '+value.toLocaleString('pt-BR',{maximumFractionDigits:2})+' s. HTML e MP4 mantêm o movimento.';
 }
-let backgroundRenderRevision=0;
+let backgroundRenderRevision=0,backgroundStill=false,backgroundFrameAbort=null,backgroundFrameQueue=Promise.resolve();
+function backgroundPlayers(){return [...document.querySelectorAll('video.lm-lab-background-video')];}
+function showBackgroundFrame(){
+  const revision=backgroundRenderRevision,pageId=pages[current]?.id,seconds=pages[current]?.backgroundVideo?.frameSeconds,signal=backgroundFrameAbort?.signal;
+  backgroundFrameQueue=backgroundFrameQueue.catch(()=>{}).then(async()=>{
+    if(revision!==backgroundRenderRevision||pageId!==pages[current]?.id||!backgroundStill)return;
+    const {seekStillMedia}=await import('./lab-video-export.mjs');
+    await seekStillMedia(backgroundPlayers(),seconds,signal);
+  }).catch(error=>{if(error.name!=='AbortError')notify(error.message,true);});
+  return backgroundFrameQueue;
+}
+function setBackgroundFrame(value){
+  const video=pages[current]?.backgroundVideo,player=by('labAmbientVideo');
+  if(!video||deliveryBusy()||!Number.isFinite(value)||!Number.isFinite(player?.duration))return;
+  video.frameSeconds=Number(Math.max(0,Math.min(value,Math.min(3600,Math.floor(player.duration*100)/100))).toFixed(2));
+  backgroundStill=true;commit();syncBackgroundVideoControls();showBackgroundFrame();
+}
+async function prepareBackgroundFrame({live=false}={}){
+  if(live||!pages[current]?.backgroundVideo)return {restore:async()=>{}};
+  await backgroundFrameQueue;
+  const players=backgroundPlayers(),seconds=pages[current].backgroundVideo.frameSeconds;
+  const snapshots=players.map(video=>({video,time:video.currentTime,play:!video.paused||video.autoplay&&!backgroundStill}));
+  const {seekStillMedia}=await import('./lab-video-export.mjs');
+  const restore=async()=>{await Promise.allSettled(snapshots.map(async({video,time,play})=>{
+    if(!video.isConnected)return;
+    try{await seekStillMedia([video],time);}finally{if(play)video.play().catch(()=>{});}
+  }));};
+  try{await seekStillMedia(players,seconds,backgroundFrameAbort?.signal);return {frameSeconds:seconds,restore};}
+  catch(error){await restore();throw error;}
+}
 function renderBackgroundVideo(){
+  backgroundFrameAbort?.abort();backgroundFrameAbort=new AbortController();
   const revision=++backgroundRenderRevision;
   for(const video of document.querySelectorAll('.lm-lab-background-video')){
     video.pause();video.removeAttribute('src');video.load();video.remove();
@@ -284,7 +329,7 @@ function renderBackgroundVideo(){
     const video=document.createElement('video');
     video.id=id;video.className='lm-lab-background-video';
     video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
-    video.autoplay=true;video.preload='auto';video.setAttribute('aria-hidden','true');
+    video.autoplay=!backgroundStill;video.preload='auto';video.setAttribute('aria-hidden','true');
     if(id==='labFocusVideo'){
       video.classList.add('lm-lab-focus-video');
       video.style.objectPosition=by('labFocusX').value+'% '+by('labFocusY').value+'%';
@@ -293,12 +338,16 @@ function renderBackgroundVideo(){
     video.addEventListener('error',()=>{
       if(revision===backgroundRenderRevision)notify('Vídeo de fundo indisponível. Confira o arquivo e o acesso ao acervo.',true);
     });
+    if(id==='labAmbientVideo')video.addEventListener('loadedmetadata',()=>{
+      if(revision!==backgroundRenderRevision)return;
+      syncBackgroundVideoControls();if(backgroundStill&&!deliveryBusy())showBackgroundFrame();
+    },{once:true});
     return video;
   });
   const pageId=currentPage.id;
   const apply=src=>{
     if(revision!==backgroundRenderRevision||pages[current]?.id!==pageId)return;
-    for(const video of players){video.src=src;video.play().catch(()=>{});}
+    for(const video of players){video.src=src;if(!backgroundStill)video.play().catch(()=>{});}
   };
   if(background.provider==='local'){
     window.LabAcervo?.localVideoUrl?.(background.fileId).then(apply).catch(error=>{
@@ -646,7 +695,7 @@ async function init(){
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
     hasSequence:()=>Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo),
-    sectionBackground:currentSectionBackground,applySectionVisual,
+    sectionBackground:currentSectionBackground,applySectionVisual,prepareBackgroundFrame,
     persist:commit,backupBeforeReset,undoReset,reloadMotionCatalog:loadMotionCatalog,
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
@@ -671,6 +720,12 @@ async function init(){
     if(busy||!pages[current]?.backgroundVideo)return;
     pages[current].backgroundVideo=null;renderBackgroundVideo();commit();
     notify('Vídeo de fundo removido. Escolha uma fotografia ou outro vídeo.');
+  });
+  for(const id of ['labBackgroundFrame','labBackgroundFrameRange'])by(id)?.addEventListener('change',event=>setBackgroundFrame(Number(event.target.value)));
+  by('labBackgroundFrameCurrent')?.addEventListener('click',()=>setBackgroundFrame(by('labAmbientVideo')?.currentTime));
+  by('labBackgroundFramePreview')?.addEventListener('click',()=>{
+    if(deliveryBusy())return;backgroundStill=!backgroundStill;syncBackgroundVideoControls();
+    if(backgroundStill)showBackgroundFrame();else{backgroundFrameQueue.then(()=>{if(!backgroundStill)for(const video of backgroundPlayers())video.play().catch(()=>{});});}
   });
   window.addEventListener('labmattar:composition-change',event=>{
     const focus=by('labFocusVideo');

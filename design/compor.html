@@ -225,6 +225,13 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           </button>
           <button id="labAcervoLocal" type="button" class="lm-acervo-local">+ ADICIONAR DO COMPUTADOR</button><input id="labAcervoLocalInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple hidden aria-label="Escolher fotografias ou vídeos do computador"><small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
           <div class="lm-acervo-background-selection" aria-live="polite"><span id="labBackgroundVideoStatus"></span><button id="labBackgroundVideoRemove" type="button" hidden>Remover vídeo</button></div>
+          <div id="labBackgroundFrameField" class="lm-lab-field" hidden>
+            <label for="labBackgroundFrame">Quadro para PNG / PDF</label>
+            <div class="lab-background-frame-value"><input id="labBackgroundFrame" type="number" min="0" max="3600" step="0.01" value="0" inputmode="decimal" aria-describedby="labBackgroundFrameHint"><span>segundos</span></div>
+            <input id="labBackgroundFrameRange" type="range" min="0" max="3600" step="0.01" value="0" aria-label="Quadro estático do vídeo de fundo em segundos" data-unit=" s">
+            <div class="lab-background-frame-actions"><button type="button" id="labBackgroundFrameCurrent">Usar quadro atual</button><button type="button" id="labBackgroundFramePreview">Ver quadro de PNG/PDF</button></div>
+            <small id="labBackgroundFrameHint">PNG e PDF usam este quadro. HTML e MP4 mantêm o movimento.</small>
+          </div>
         </div>
         <div id="labAcervoDialog" class="lm-acervo-overlay" hidden>
           <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">

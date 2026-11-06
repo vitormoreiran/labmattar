@@ -171,7 +171,9 @@
     for(const [key,id] of Object.entries(fields)){
       const el=by(id),value=data[key];
       if(numeric.has(key)){
-        const val=Number(value),min=Number(el.min),max=Number(el.max);
+        // O projeto aceita 1–140%. O controle anterior pode pertencer a outro
+        // formato; seus limites DOM não podem truncar o valor restaurado.
+        const val=Number(value),min=key==='mScale'?1:Number(el.min),max=key==='mScale'?140:Number(el.max);
         if(Number.isFinite(val))result[key]=Math.max(min,Math.min(max,val));
       }else if(key==="title"||key==="body"||key==="mCaption"){
         if(typeof value==="string")result[key]=value.slice(0,Number(el.maxLength)>0?el.maxLength:400);
@@ -205,6 +207,7 @@
   const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
+  let mScaleRange=null;
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),markerImg=by("labMarkerPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
@@ -270,7 +273,12 @@
       const precision=by("labPrecision-"+key);
       if(precision){
         precision.value=state[key];
+        precision.min=by(fields[key]).min;precision.max=by(fields[key]).max;
         precision.disabled=by(fields[key]).disabled;
+      }
+      const slider=by(fields[key]),limits=slider.nextElementSibling;
+      if(limits?.classList.contains('lm-ctrl-range-limits')){
+        limits.firstElementChild.textContent=slider.min+'%';limits.lastElementChild.textContent=slider.max+'%';
       }
     }
 
@@ -388,14 +396,20 @@
   }
   function render(){
     const mMax=maxMScale(state.format);
-    if(state.mPresentation!=="completo"&&state.mScale>mMax)state.mScale=mMax;
     // An inactive scale control must not overwrite an Elemento value stored
     // for another surface merely because Completo is selected now.
-    const visibleMax=state.mPresentation==="completo"?Math.max(mMax,state.mScale):mMax;
+    if(!mScaleRange||mScaleRange.format!==state.format)mScaleRange={format:state.format,min:Math.min(45,state.mScale),max:Math.max(mMax,state.mScale)};
+    mScaleRange.min=Math.min(mScaleRange.min,state.mScale);mScaleRange.max=Math.max(mScaleRange.max,mMax,state.mScale);
+    const visibleMax=mScaleRange.max;
     const mScaleInput=by("labMScale");
+    mScaleInput.min=String(mScaleRange.min);
     mScaleInput.max=String(visibleMax);
     const mPrecision=by("labPrecision-mScale");
     if(mPrecision)mPrecision.max=String(visibleMax);
+    let scaleNote=by('labMScaleNote');
+    if(!scaleNote){scaleNote=document.createElement('small');scaleNote.id='labMScaleNote';scaleNote.className='lm-ctrl-helper';mScaleInput.closest('.lm-m-scale-field').append(scaleNote);}
+    scaleNote.textContent='Escala do projeto preservada. Faixa de referência para Elemento neste formato: 45–'+mMax+'%.';
+    scaleNote.hidden=state.mScale>=45&&state.mScale<=mMax;
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.mPresentation=state.mPresentation;
@@ -505,6 +519,7 @@
     snapshot:()=>({state:JSON.parse(JSON.stringify(state)),photoCatalog:{...photos}}),
     restore:next=>{
       state=sanitize(next);
+      mScaleRange=null;
       rememberedReadingWidths.clear();
       rememberedReadingWidths.set(state.format,state.textWidth);
       rememberedMScales.clear();
@@ -590,6 +605,12 @@
     const column=copyArea.getBoundingClientRect();
     const kickerRect=kicker.getBoundingClientRect();
     const footerRect=footer.getBoundingClientRect();
+    if(!state.title.trim()&&(body.hidden||!state.body.trim())){
+      const info=by('labTitleFitInfo');
+      if(info){info.dataset.adjusted='false';info.textContent='Sem título ou corpo visível. Confira a legenda e as identificações na página.';}
+      board.dataset.typeFit='natural';
+      return {ok:true,adjusted:false,lowLegibility:false,emergency:false,requested,applied:requested};
+    }
     let ok=!!safe.width&&!!safe.height&&column.width>=4&&column.height>=1;
     if(ok){
       const gutter=safe.width*.012;
@@ -704,9 +725,10 @@
       [...title.querySelectorAll(".lm-lab-title-line")].some(n=>n.scrollWidth>n.clientWidth+3);
     const caption=by("labMCaptionPreview"),captionBox=caption.getBoundingClientRect();
     const captionOverflow=!caption.hidden&&(captionBox.bottom>rect.bottom-state.margin*rect.width/100+2||caption.scrollWidth>caption.clientWidth+2);
-    const invalid=captionOverflow||!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
+    const hasEditorial=Boolean(state.title.trim()||(!body.hidden&&state.body.trim()));
+    const invalid=captionOverflow||!titleFit.ok||hasEditorial&&(titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
-      (!body.hidden&&body.scrollWidth>body.clientWidth+3);
+      (!body.hidden&&body.scrollWidth>body.clientWidth+3));
     const collision=false;
     // The visual proof and its status must agree: an unintended overlap is
     // never an approved canvas, even if all text fits inside the page.
@@ -731,6 +753,7 @@
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
     const signature=window.LabPages?.getSignature?.()||state.signature;
     state=copy(presets[key]);
+    mScaleRange=null;
     state.signature=sanitizeSignature(signature||state.signature);
     rememberedReadingWidths.clear();
     rememberedReadingWidths.set(state.format,state.textWidth);
@@ -1379,7 +1402,8 @@
     scale.className="lm-ctrl-range-limits";
     const min=document.createElement("span");
     const max=document.createElement("span");
-    min.textContent=input.min+"%";max.textContent=input.max+"%";
+    const unit=input.dataset.unit||'%';
+    min.textContent=input.min+unit;max.textContent=input.max+unit;
     scale.append(min,max);
     input.insertAdjacentElement("afterend",scale);
   }

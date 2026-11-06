@@ -203,6 +203,8 @@
     await document.fonts.ready;
     if(ask&&document.getElementById("labInkContrast")?.dataset.contrast==="warning"&&!confirm("Esta combinação tem contraste baixo. Exportar como estudo mesmo assim?"))return null;
     if(board.dataset.motionPlaying==="true")throw Error("Conclua a entrada dos textos antes de exportar.");
+    const backgroundFrame=await window.LabPages?.prepareBackgroundFrame?.({live})||{restore:async()=>{}};
+    try{
     await Promise.all([...board.querySelectorAll("img")].filter(isVisible).map(img=>img.decode().catch(()=>{throw Error("Imagem indisponível. Conecte o acervo ou aguarde o carregamento.");})));
     if(board.dataset.videoBackground==="true"){
       const videos=[...board.querySelectorAll("video.lm-lab-background-video")]
@@ -228,10 +230,11 @@
     if(ask&&warnings.length&&!confirm("LABMATTAR / Qualidade dos originais\n\n"+warnings.join("\n")+"\n\nExportar mesmo assim?"))return null;
     const css=getComputedStyle(board),background=css.backgroundColor==="rgba(0, 0, 0, 0)"?css.getPropertyValue("--lab-bg"):css.backgroundColor;
     const hasVideo=board.dataset.videoBackground==="true";
+    const focusX=parseFloat(board.style.getPropertyValue('--lab-focus-x')),focusY=parseFloat(board.style.getPropertyValue('--lab-focus-y'));
     const videoVisual=hasVideo?{backdrop:board.dataset.backdrop,markerFocus:board.dataset.markerFocus,
-      focusX:parseFloat(board.style.getPropertyValue("--lab-focus-x"))||50,
-      focusY:parseFloat(board.style.getPropertyValue("--lab-focus-y"))||50,
-      contrast:board.dataset.photoText==="true",mContrast:board.dataset.mText==="true",contrastOpacity:Number(getComputedStyle(board).getPropertyValue("--lab-photo-contrast"))}:null;
+      focusX:Number.isFinite(focusX)?focusX:50,
+      focusY:Number.isFinite(focusY)?focusY:50,
+      contrast:board.dataset.photoText==="true"||board.dataset.sectionPhotoText==="true",mContrast:board.dataset.mText==="true",contrastOpacity:Number(getComputedStyle(board).getPropertyValue("--lab-photo-contrast"))}:null;
     items.push({kind:"rect",...(hasVideo?{layer:"video-bg-base"}:{layer:"background"}),
       x:0,y:0,w:frame.width,h:frame.height,color:background});
     if(board.dataset.backdrop!=="color"){
@@ -323,7 +326,8 @@
         }
       }
     }
-    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
+    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),...(backgroundFrame.frameSeconds!==undefined?{backgroundFrameSeconds:backgroundFrame.frameSeconds}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
+    }finally{await backgroundFrame.restore();}
   }
   async function rasterize(){
     const scene=await captureScene();if(!scene)return null;

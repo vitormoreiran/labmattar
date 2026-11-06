@@ -260,7 +260,7 @@ async function switchPage(index,{capture=true}={}){
     await settled();applySectionVisual();selectedMotion=pages[current].motions[0]?.id||'';renderMotions();renderBackgroundVideo();renderPages();
   }finally{switching=false;commit();}
 }
-function syncBackgroundVideoControls(){
+function syncBackgroundVideoControls({force=false}={}){
   const video=pages[current]?.backgroundVideo||null;
   const label=by('labBackgroundVideoStatus');
   const remove=by('labBackgroundVideoRemove');
@@ -271,7 +271,7 @@ function syncBackgroundVideoControls(){
   const player=by('labAmbientVideo'),duration=player?.duration,known=Number.isFinite(duration)&&duration>0;
   const value=video.frameSeconds,maximum=known?Math.min(3600,Math.floor(duration*100)/100):3600;
   for(const id of ['labBackgroundFrame','labBackgroundFrameRange']){
-    const input=by(id);input.max=String(Math.max(maximum,value));input.value=String(value);input.disabled=!known;
+    const input=by(id);input.max=String(Math.max(maximum,value));if(force||document.activeElement!==input)input.value=String(value);input.disabled=!known;
   }
   const range=by('labBackgroundFrameRange'),limits=range.nextElementSibling;
   if(limits?.classList.contains('lm-ctrl-range-limits')){limits.firstElementChild.textContent='0 s';limits.lastElementChild.textContent=maximum.toLocaleString('pt-BR')+' s';}
@@ -282,12 +282,12 @@ function syncBackgroundVideoControls(){
     'O quadro salvo ultrapassa a duração atual do vídeo. Escolha outro quadro antes de exportar.':
     (sections?'Quadro compartilhado pela seção. ':'')+'PNG e PDF usam '+value.toLocaleString('pt-BR',{maximumFractionDigits:2})+' s. HTML e MP4 mantêm o movimento.';
 }
-let backgroundRenderRevision=0,backgroundStill=false,backgroundFrameAbort=null,backgroundFrameQueue=Promise.resolve();
+let backgroundRenderRevision=0,backgroundStill=false,backgroundFrameAbort=null,backgroundFrameQueue=Promise.resolve(),backgroundSeekVersion=0;
 function backgroundPlayers(){return [...document.querySelectorAll('video.lm-lab-background-video')];}
 function showBackgroundFrame(){
-  const revision=backgroundRenderRevision,pageId=pages[current]?.id,seconds=pages[current]?.backgroundVideo?.frameSeconds,signal=backgroundFrameAbort?.signal;
+  const version=++backgroundSeekVersion,revision=backgroundRenderRevision,pageId=pages[current]?.id,seconds=pages[current]?.backgroundVideo?.frameSeconds,signal=backgroundFrameAbort?.signal;
   backgroundFrameQueue=backgroundFrameQueue.catch(()=>{}).then(async()=>{
-    if(revision!==backgroundRenderRevision||pageId!==pages[current]?.id||!backgroundStill)return;
+    if(version!==backgroundSeekVersion||revision!==backgroundRenderRevision||pageId!==pages[current]?.id||!backgroundStill)return;
     const {seekStillMedia}=await import('./lab-video-export.mjs');
     await seekStillMedia(backgroundPlayers(),seconds,signal);
   }).catch(error=>{if(error.name!=='AbortError')notify(error.message,true);});
@@ -721,7 +721,11 @@ async function init(){
     pages[current].backgroundVideo=null;renderBackgroundVideo();commit();
     notify('Vídeo de fundo removido. Escolha uma fotografia ou outro vídeo.');
   });
-  for(const id of ['labBackgroundFrame','labBackgroundFrameRange'])by(id)?.addEventListener('change',event=>setBackgroundFrame(Number(event.target.value)));
+  for(const id of ['labBackgroundFrame','labBackgroundFrameRange']){
+    by(id)?.addEventListener('input',event=>{if(event.target.value!==''&&!event.target.validity.badInput)setBackgroundFrame(Number(event.target.value));});
+    by(id)?.addEventListener('change',event=>{if(event.target.value!=='')setBackgroundFrame(Number(event.target.value));});
+    by(id)?.addEventListener('blur',()=>syncBackgroundVideoControls({force:true}));
+  }
   by('labBackgroundFrameCurrent')?.addEventListener('click',()=>setBackgroundFrame(by('labAmbientVideo')?.currentTime));
   by('labBackgroundFramePreview')?.addEventListener('click',()=>{
     if(deliveryBusy())return;backgroundStill=!backgroundStill;syncBackgroundVideoControls();

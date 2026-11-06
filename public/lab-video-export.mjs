@@ -37,16 +37,6 @@ export async function seekStillMedia(media,seconds,signal){
       throw Error('O navegador não alcançou o quadro escolhido. Reconecte o vídeo ou escolha outro instante antes de exportar.');
   }));
 }
-export async function staticFrameSource(player,seconds,signal){
-  const video=document.createElement('video');
-  video.muted=true;video.playsInline=true;video.preload='auto';
-  const dispose=()=>{video.pause();video.removeAttribute('src');video.load();};
-  try{
-    video.src=player.currentSrc||player.src;video.load();
-    await seekStillMedia([video],seconds,signal);
-    return {video,dispose};
-  }catch(error){dispose();throw error;}
-}
 export async function seekMedia(media,time,backgroundTime,signal){
   await Promise.all(media.map(async video=>{
     abort(signal);video.pause();

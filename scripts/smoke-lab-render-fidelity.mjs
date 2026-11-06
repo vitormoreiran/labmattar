@@ -99,7 +99,14 @@ try{
   const secondScene=await page.evaluate(async()=>{const scene=await window.LabRenderer.capture({edge:1920,ask:false});const bg=scene.items.find(op=>op.kind==='image'&&op.layer==='video-bg-base');return {frame:scene.backgroundFrameSeconds,time:document.querySelector('#labAmbientVideo').currentTime,hash:[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(bg.source)))].map(x=>x.toString(16).padStart(2,'0')).join('')};});
   assert.equal(secondScene.hash,firstScene.hash);assert(Math.abs(secondScene.time-2.2)<.001);assert.deepEqual(await getProject(),chosen);
   await page.screenshot({path:path.join(dir,'video-frame-controls.png')});
-  const png=await download('png','selected-frame.png'),pdf=await download('pdf','selected-frame.pdf');
+  const png=await download('png','selected-frame.png');
+  const debug=await page.evaluate(async()=>{
+    const scene=await window.LabRenderer.capture({edge:1920,ask:false}),source=scene.items.find(op=>op.kind==='image'&&op.layer==='video-bg-base').source;
+    const {sceneCanvas}=await import('/lab-scene.mjs'),canvas=await sceneCanvas(scene,1920);
+    return {source,canvas:canvas.toDataURL('image/png')};
+  });
+  for(const [key,value] of Object.entries(debug))await writeFile(path.join(dir,'probe-'+key+'.png'),Buffer.from(value.split(',')[1],'base64'));
+  const pdf=await download('pdf','selected-frame.pdf');
   execFileSync('pdftoppm',['-scale-to','1920','-singlefile','-png',pdf,path.join(dir,'selected-frame-pdf')]);
   const pdfDifference=await rgbDifference(await readFile(png),await readFile(path.join(dir,'selected-frame-pdf.png')));assert(pdfDifference<3,'PNG/PDF divergence: '+pdfDifference);
   const htmlFile=await download('html','selected-frame.html'),html=await readFile(htmlFile,'utf8');assert(html.includes('object-position:0% 100%'));

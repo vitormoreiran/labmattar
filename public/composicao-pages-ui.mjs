@@ -304,12 +304,17 @@ async function prepareBackgroundFrame({live=false}={}){
   await backgroundFrameQueue;
   const players=backgroundPlayers(),seconds=pages[current].backgroundVideo.frameSeconds;
   const snapshots=players.map(video=>({video,time:video.currentTime,play:!video.paused||video.autoplay&&!backgroundStill}));
-  const {seekStillMedia}=await import('./lab-video-export.mjs');
-  const restore=async()=>{await Promise.allSettled(snapshots.map(async({video,time,play})=>{
+  const {seekStillMedia,staticFrameSource}=await import('./lab-video-export.mjs');
+  let source=null;
+  const restore=async()=>{source?.dispose();await Promise.allSettled(snapshots.map(async({video,time,play})=>{
     if(!video.isConnected)return;
     try{await seekStillMedia([video],time);}finally{if(play)video.play().catch(()=>{});}
   }));};
-  try{await seekStillMedia(players,seconds,backgroundFrameAbort?.signal);return {frameSeconds:seconds,restore};}
+  try{
+    await seekStillMedia(players,seconds,backgroundFrameAbort?.signal);
+    source=await staticFrameSource(players[0],seconds,backgroundFrameAbort?.signal);
+    return {frameSeconds:seconds,video:source.video,restore};
+  }
   catch(error){await restore();throw error;}
 }
 function renderBackgroundVideo(){

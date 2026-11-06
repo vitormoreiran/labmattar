@@ -47,14 +47,14 @@
     const p=getComputedStyle(element).objectPosition.match(/[-\d.]+%?/g)||["50%","50%"];
     return [parseFloat(p[0])/100,parseFloat(p[1]||p[0])/100];
   }
-  function drawCover(ctx,img,x,y,w,h,position){
-    const isVideo=img instanceof HTMLVideoElement;
-    const iw=isVideo?img.videoWidth:img.naturalWidth,ih=isVideo?img.videoHeight:img.naturalHeight;
-    if(!iw||!ih||(isVideo?img.readyState<2:!img.complete))
+  function drawCover(ctx,img,x,y,w,h,position,source=img){
+    const isVideo=source instanceof HTMLVideoElement;
+    const iw=isVideo?source.videoWidth:source.naturalWidth,ih=isVideo?source.videoHeight:source.naturalHeight;
+    if(!iw||!ih||(isVideo?source.readyState<2:!source.complete))
       fail("Mídia de fundo indisponível. Aguarde o carregamento e tente novamente.");
     const fit=Math.max(w/iw,h/ih),sw=w/fit,sh=h/fit;
     const [px,py]=position;
-    ctx.drawImage(img,(iw-sw)*px,(ih-sh)*py,sw,sh,x,y,w,h);
+    ctx.drawImage(source,(iw-sw)*px,(ih-sh)*py,sw,sh,x,y,w,h);
   }
   function imagePreflight(outW,frame){
     const zoom=outW/frame.width;
@@ -95,7 +95,7 @@
       ctx.transform(m.a,m.b,m.c,m.d,0,0);
       ctx.translate(-centerX,-centerY);
     }
-    drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));
+    drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img),frame.stillVideo||img);
     ctx.restore();
     const scrim=board.querySelector(".lm-lab-photo-contrast");
     if(isVisible(scrim)){
@@ -225,6 +225,7 @@
       throw Error("A composição apresenta conflitos de leitura. Corrija antes de exportar.");
     if(![1920,3840].includes(edge))throw Error("Resolução não reconhecida.");
     const frame=logical(),[width,height]=dimensions(edge,frame);
+    frame.stillVideo=backgroundFrame.video||null;
     frame.outputScale=width/frame.width;frame.outputWidth=width;frame.outputHeight=height;
     const warnings=imagePreflight(width,frame),items=[],rasterized=[];
     if(ask&&warnings.length&&!confirm("LABMATTAR / Qualidade dos originais\n\n"+warnings.join("\n")+"\n\nExportar mesmo assim?"))return null;
@@ -259,7 +260,7 @@
         }
         const source=pixels(box.w,box.h,frame,ctx=>{
           const img=maskNode.querySelector(hasVideo?"video":"img");
-          drawCover(ctx,img,0,0,box.w,box.h,focal(img));
+          drawCover(ctx,img,0,0,box.w,box.h,focal(img),frame.stillVideo||img);
           if(board.dataset.mText==="true"){ctx.fillStyle="rgba(0,0,0,"+Number(getComputedStyle(board).getPropertyValue("--lab-photo-contrast"))+")";ctx.fillRect(0,0,box.w,box.h);}
         });
         items.push({kind:"group",...(hasVideo?{layer:"video-bg-m"}:{}),

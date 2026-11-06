@@ -22,10 +22,7 @@ export async function sceneCanvas(scene,edge=3840,options={}){
     if(op.kind==='rect'){ctx.fillStyle=op.color;ctx.fillRect(op.x,op.y,op.w,op.h);}
     else if(op.kind==='image'){
       if(op.paint)await op.paint(ctx);
-      else {
-        const bitmap=await image(op.source,imageCache);
-        ctx.drawImage(bitmap,0,0,bitmap.naturalWidth,bitmap.naturalHeight,op.x,op.y,op.w,op.h);
-      }
+      else ctx.drawImage(await image(op.source,imageCache),op.x,op.y,op.w,op.h);
     }
     else if(op.kind==='vector'){ctx.fillStyle=op.color;ctx.fill(pathFor(op),op.rule||'nonzero');}
     else if(op.kind==='group'){ctx.clip(pathFor(op.clip),op.clip.rule||'nonzero');await draw(op.items);}

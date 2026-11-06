@@ -34,7 +34,7 @@ async function rgbDifference(a,b){return page.evaluate(async images=>{
 try{
   await page.goto(url+'?studio=1',{waitUntil:'networkidle'});await page.locator('#labPages[data-ready=true]').waitFor({state:'attached'});
   await page.locator('#labPages[data-motion-catalog=ready]').waitFor({state:'attached'});
-  await page.evaluate(()=>{
+  await page.addInitScript(()=>{
     window.__fidelityDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;
     CanvasRenderingContext2D.prototype.drawImage=function(source,...args){
       if(source instanceof HTMLVideoElement){

@@ -33,6 +33,8 @@ export async function seekStillMedia(media,seconds,signal){
     if(video.seeking||video.currentTime!==target)
       await mediaEvent(video,'seeked',()=>{video.currentTime=target;},signal);
     if(video.readyState<2)await mediaEvent(video,'loadeddata',null,signal);
+    if(Math.abs(video.currentTime-target)>1e-5)
+      throw Error('O navegador não alcançou o quadro escolhido. Reconecte o vídeo ou escolha outro instante antes de exportar.');
   }));
 }
 export async function seekMedia(media,time,backgroundTime,signal){

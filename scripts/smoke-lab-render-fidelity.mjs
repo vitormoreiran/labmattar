@@ -67,7 +67,13 @@ try{
   proof.push({case:'caption-treatment',intensities:captionPixels,htmlVeil:.4});
 
   // Vídeo com mudança real de quadros; a mídia do teste usa o proxy permitido.
-  const videoBytes=await readFile(fixture);await page.route('**/api/acervo/public-media?project=fidelity123&id=video12345',route=>route.fulfill({body:videoBytes,contentType:'video/mp4'}));
+  const videoBytes=await readFile(fixture);await page.route('**/api/acervo/public-media?project=fidelity123&id=video12345',route=>{
+    const range=route.request().headers().range?.match(/^bytes=(\d+)-(\d*)$/);
+    const start=range?Number(range[1]):0,end=range&&range[2]?Math.min(Number(range[2]),videoBytes.length-1):videoBytes.length-1;
+    const body=videoBytes.subarray(start,end+1),headers={'Content-Type':'video/mp4','Accept-Ranges':'bytes','Content-Length':String(body.length)};
+    if(range)headers['Content-Range']='bytes '+start+'-'+end+'/'+videoBytes.length;
+    return route.fulfill({status:range?206:200,body,headers});
+  });
   const videoState={...base,format:'quadrado',title:'',mContent:'off',background:'photo',focusX:0,focusY:100,photoContrast:40};
   const videoPage=makePage('video',videoState);videoPage.backgroundVideo={id:'video-reference',provider:'public',projectId:'fidelity123',fileId:'video12345',name:'Referência de vídeo',mimeType:'video/mp4',frameSeconds:0};
   await page.evaluate(doc=>window.LabPages.load(doc),sequenceDocument('Quadro de referência',[videoPage],null,signature));await page.locator('[data-workspace-view=edit]').click();await page.locator('[data-mobile-module=fundo]').click();

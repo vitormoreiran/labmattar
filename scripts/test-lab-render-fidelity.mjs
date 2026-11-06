@@ -32,3 +32,8 @@ test('as quatro variantes do fundo buscam o mesmo quadro, inclusive zero',async(
 test('o quadro estático não herda o instante vizinho da reprodução',async()=>{
   const media=[new Video(1.0995)];await seekStillMedia(media,1.1);assert.equal(media[0].currentTime,1.1);
 });
+
+test('vídeo que ignora o seek não produz um quadro declarado como correto',async()=>{
+  class UnseekableVideo extends Video {get currentTime(){return this.time;}set currentTime(time){queueMicrotask(()=>this.dispatchEvent(new Event('seeked')));}}
+  await assert.rejects(seekStillMedia([new UnseekableVideo(0)],1.25),/não alcançou o quadro escolhido/);
+});

@@ -69,6 +69,10 @@ jobs:
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
+          # The runner mirror timed out while fetching WebKit dependencies.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            echo "https://archive.ubuntu.com/ubuntu" | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
           npx playwright install --with-deps chromium webkit
       - name: Preparar pagina e fontes para teste local
         run: |

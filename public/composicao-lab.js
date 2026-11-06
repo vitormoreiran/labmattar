@@ -372,6 +372,7 @@
         const word=document.createElement("span"),font=wordFont(index++,i,lines.length);
         word.className="lm-lab-title-word";word.dataset.font=font;
         word.style.setProperty("font-family",font==="perpetua"?"var(--lm-type-perpetua)":"var(--lm-type-univers)","important");
+        word.style.setProperty("letter-spacing",font==="perpetua"?"var(--lm-type-title-perpetua-tracking)":"var(--lm-type-title-tracking)","important");
         word.textContent=token;span.append(word);
       }title.append(span);
     });
@@ -930,15 +931,12 @@
     labMargin:["Margem",
       "Define a área útil.",
       "O texto não ultrapassa esse limite."],
-    labColor:["Campo cromático",
-      "Escolhe a cor da superfície quando a composição não usa fotografia.",
-      "Papel e bege são neutros; verde e vermelho são acentos validados. Azul e marrom continuam em estudo."],
     labGuides:["Guias",
       "Exibem margens e divisões de construção.",
       "Não fazem parte da composição final."],
     labType:["Título",
       "Define o tratamento tipográfico.",
-      "Existe um único tipo de título."],
+      "Univers e Perpetua podem ser escolhidas por palavra, inclusive na mesma linha, sem criar outro tratamento de título."],
     labTitleScale:["Escala do título",
       "Ajusta o tamanho do título.",
       "O texto permanece dentro da área útil."],
@@ -959,10 +957,10 @@
       "Este controle fica disponível quando Fundo está configurado como Cor."],
     labInkColor:["Cor do texto",
       "Aplica a mesma cor a Título, Corpo e Detalhe, sem criar novos tratamentos tipográficos.",
-      "Padrão mantém o contraste recomendado. A interface avisa se outra combinação prejudicar a leitura."],
+      "Padrão mantém o contraste recomendado. Se houver contraste baixo, a exportação pede confirmação como estudo."],
     labPhotoContrast:["Tratamento de leitura",
       "Ajusta a camada preta sobre a fotografia ou o vídeo quando há texto sobre a imagem.",
-      "Escolha a intensidade no enquadramento final. Os percentuais são opções de composição; confirme a leitura no tamanho real."],
+      "Novas composições começam em 40%. Ajuste de 0% a 80% e confirme a leitura no enquadramento e tamanho finais."],
     labBackground:["Fundo",
       "Define se a superfície usa cor ou mídia visual (fotografia ou vídeo).",
       "O fundo é independente do M."],
@@ -970,7 +968,7 @@
       "Quando o fundo é cor, o M pode receber cor ou fotografia. Sobre fundo fotográfico, o M usa sempre a fotografia.",
       "Os perfis de aplicação não alteram a geometria do vetor."],
     labMPresentation:["Aplicação do M",
-      "Sem M desativa a forma central; Elemento permite ajustar a escala; Completo ocupa 100% da altura da superfície.",
+      "Sem M desativa a forma; Elemento é uma composição secundária com escala, posição vertical e legenda; Completo ocupa a altura da superfície.",
       "O perfil de Elemento mantém sua escala quando você muda de modo."],
     labPhoto:["Fotografia",
       "Escolha a fotografia de fundo. Vídeos do acervo também ocupam esta camada, preservando M e marcadores.",
@@ -982,8 +980,14 @@
       "Blur nos marcadores deixa o restante nítido. Nítido nos marcadores deixa o restante com blur.",
       "As duas regiões utilizam a mesma fotografia e o mesmo ponto de enquadramento."],
     labMScale:["Escala do M",
-      "Ajusta o tamanho do M mantendo-o no eixo central da página.",
-      "A escala varia; posição central e proporção permanecem."],
+      "Ajusta o tamanho do M mantendo o eixo horizontal central da página.",
+      "A proporção permanece. Em Elemento, ajuste a altura pelo controle Posição vertical."],
+    labMPositionY:["Posição vertical do elemento",
+      "Move o M Elemento entre o alto e a base da área disponível.",
+      "A proporção e o eixo horizontal são preservados; a legenda acompanha o elemento."],
+    labMCaption:["Legenda do elemento",
+      "Acrescenta uma legenda opcional em Detalhe abaixo do M Elemento.",
+      "A legenda acompanha a borda esquerda do M. Confira o espaço disponível e a leitura no formato final."],
     labFocalPreview:["Enquadramento",
       "Clique ou arraste para escolher o foco.",
       "O ajuste atua apenas na fotografia."],

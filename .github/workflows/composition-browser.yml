@@ -25,6 +25,11 @@ on:
       - 'public/composicao-lab-export.css'
       - 'public/composicao-document.mjs'
       - 'public/composicao-document-ui.mjs'
+      - 'public/composicao-pages-ui.mjs'
+      - 'public/lab-project-lifecycle.mjs'
+      - 'public/lab-sequence.mjs'
+      - 'scripts/test-lab-project-lifecycle.mjs'
+      - 'scripts/smoke-lab-project-lifecycle.mjs'
       - 'scripts/test-composicao-document.mjs'
       - 'scripts/smoke-laboratorio-export.mjs'
       - 'public/composicao-lab-signature.js'
@@ -57,7 +62,7 @@ jobs:
         with:
           node-version: '22'
       - name: Validar contrato de documento v1
-        run: node --test scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
+        run: node --test scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
@@ -93,6 +98,8 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
@@ -110,4 +117,5 @@ jobs:
             laboratorio-*.png
             symbols-proof/
             approved-proof/
+            lifecycle-proof/
           if-no-files-found: ignore

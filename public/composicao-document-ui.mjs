@@ -1,6 +1,7 @@
 /* LABMATTAR / JSON editável. Preserva composições v1 e delega
  * sequências ao contrato de páginas, sem substituir o editor atual. */
 import {createProductionDocument,verifyRoundTrip} from "./composicao-document.mjs";
+import {serializeProject,parseProject,checkProjectBytes} from './lab-project-lifecycle.mjs';
 const by=id=>document.getElementById(id);
 const downloadButton=by("labDownloadDocument");
 const importButton=by("labImportDocument");
@@ -27,7 +28,7 @@ if(downloadButton&&importButton&&fileInput&&status&&board){
       const single=createProductionDocument({state,photoCatalog,maxEdge});
       const doc=window.LabPages?.hasSequence()?window.LabPages.create():single;
       if(doc.kind===single.kind)verifyRoundTrip(doc,photoCatalog);
-      const json=JSON.stringify(doc,null,2)+"\n";
+      const json=serializeProject(doc);
       const blob=new Blob([json],{type:"application/json;charset=utf-8"});
       const url=URL.createObjectURL(blob);
       const link=document.createElement("a");
@@ -47,8 +48,8 @@ if(downloadButton&&importButton&&fileInput&&status&&board){
     if(!file)return;
     try{
       ready();
-      if(file.size>5*1024*1024)throw new Error("Projeto maior do que o limite de 5 MB.");
-      const parsed=JSON.parse(await file.text());
+      checkProjectBytes(file.size);
+      const parsed=parseProject(await file.text());
       const {photoCatalog}=bridge().snapshot();
       const sequence=parsed.kind==="labmattar.presentation";
       if(sequence){if(!window.LabPages)throw Error("As páginas ainda estão carregando.");window.LabPages.validate(parsed);}

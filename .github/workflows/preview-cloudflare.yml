@@ -126,7 +126,7 @@ jobs:
       - name: Validar seguranca do acervo
         run: node scripts/test-acervo.mjs
       - name: Validar contratos de páginas e elementos
-        run: node --test scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
+        run: node --test scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash

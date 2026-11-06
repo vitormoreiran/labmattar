@@ -38,13 +38,18 @@ export function privatePhotoCatalog(document,base){
 }
 export function normalizeMotion(value,catalog){
   check(value&&identifier(value.id),'identificador do elemento');
-  const asset=catalog.find(asset=>asset.id===value.assetId);
-  check(asset&&asset.video&&asset.poster,'motion não encontrado no acervo');
-  check(value.projectHash===asset.projectHash&&value.videoHash===asset.sha256,'motion mudou desde este projeto');
-  const normalized={id:value.id,assetId:asset.id,projectHash:asset.projectHash,videoHash:asset.sha256,
+  // null é o modo indisponível explícito: preserva referências tipadas para
+  // autoria, sem declarar o asset verificado ou permitir seu render/export.
+  const asset=catalog===null?null:catalog.find(asset=>asset.id===value.assetId);
+  if(catalog!==null){
+    check(asset&&asset.video&&asset.poster,'motion não encontrado no acervo');
+    check(value.projectHash===asset.projectHash&&value.videoHash===asset.sha256,'motion mudou desde este projeto');
+  }
+  check(identifier(value.assetId)&&/^[a-f0-9]{64}$/.test(value.projectHash)&&/^[a-f0-9]{64}$/.test(value.videoHash),'referência do motion');
+  const normalized={id:value.id,assetId:value.assetId,projectHash:value.projectHash,videoHash:value.videoHash,
     x:number(value.x,0,100,'posição horizontal'),y:number(value.y,0,100,'posição vertical'),
     width:number(value.width,5,100,'largura do elemento'),
-    frameSeconds:number(value.frameSeconds,0,asset.duration,'quadro estático')};
+    frameSeconds:number(value.frameSeconds,0,asset?.duration??3600,'quadro estático')};
   check(Object.keys(value).sort().join(',')===Object.keys(normalized).sort().join(','),'campos do elemento');
   return normalized;
 }

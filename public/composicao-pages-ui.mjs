@@ -3,12 +3,13 @@ import {lowContrastPages} from './lab-application-rules.mjs';
 import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog,createSection,sectionState,hasSectionText,applyDocumentSignature} from './lab-sequence.mjs';
 import {createProductionDocument,verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs';
+import {persistProjectDraft,pagesToSections,fetchMotionCatalog} from './lab-project-lifecycle.mjs';
 const by=id=>document.getElementById(id),copy=value=>JSON.parse(JSON.stringify(value));
 const board=by('labArtboard'),bridge=()=>window.LabProductionBridge;
 const key='labmattar-pages-v1';
 const uid=prefix=>prefix+'-'+crypto.randomUUID();
 const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by('labPagesStatus').dataset.state=error?'error':'idle';by('labExportStatus').textContent=message;by('labExportStatus').dataset.state=error?'error':busy?'busy':'idle';};
-let documentSignature=null,sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=[],switching=false,busy=false,timer=0,enabled=false,still=true,selectedMotion='',selectedClip='',clipsPlaying=true;
+let documentSignature=null,sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=null,catalogLoading=false,switching=false,busy=false,timer=0,enabled=false,still=true,selectedMotion='',selectedClip='',clipsPlaying=true;
 const panel=by('labPages');
 if(board&&panel){init().catch(error=>notify(error.message,true));}
 function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],backgroundVideo=null){
@@ -17,12 +18,14 @@ function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],back
   if(sections)result.sectionId=pages[current]?.sectionId||sections[0].id;return result;
 }
 function commit(){
-  if(switching||busy||!pages.length)return;
+  if(switching||busy||!pages.length)return {deferred:true};
   clearTimeout(timer);if(sections)syncSectionBackground();const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[],old.backgroundVideo||null);
   pages=applyDocumentSignature(pages,documentSignature,bridge().snapshot().photoCatalog);
-  try{localStorage.setItem(key,JSON.stringify({document:sequenceDocument(name,pages,sections,documentSignature),current,enabled}));}
-  catch{notify('Salve o projeto JSON para guardar esta sequência.');}
+  const result=persistProjectDraft(localStorage,key,{document:sequenceDocument(name,pages,sections,documentSignature),current,enabled});
+  by('labSaveState').textContent=result.message;by('labSaveState').dataset.state=result.ok?'success':'error';
+  if(!result.ok)notify(result.message,true);
   renderPages();applySectionVisual();
+  return result;
 }
 let pageListKey='',deliveryFormat='pdf',videoAbort=null;
 function deliveryBusy(){return busy||switching||Boolean(window.LabExportPNG?.isExporting?.());}
@@ -159,9 +162,30 @@ async function moveCurrentPageToSection(sectionId){
   sortSectionPages();await switchPage(pages.findIndex(page=>page.id===id),{capture:false});
 }
 function enableSections(){
-  if(sections)return;commit();const snapshot=bridge().snapshot();
-  const next=pages.map((page,index)=>{const state=verifyRoundTrip(page.composition,snapshot.photoCatalog),section=createSection(uid('section'),index===0?'Introdução':'Seção '+(index+1),state,snapshot.photoCatalog);page.sectionId=section.id;if(page.backgroundVideo)section.background.video=copy(page.backgroundVideo);page.composition=createProductionDocument({state:sectionState(state,section),photoCatalog:snapshot.photoCatalog,maxEdge:page.composition.output.maxEdge});return section;});
-  sections=next;enabled=true;commit();notify('Seções ativadas. As páginas existentes conservaram seus fundos. Use Seção desta página para agrupar.');
+  if(sections)return;
+  if(pages.length>30)throw Error('A conversão cria uma seção por página e aceita até 30 páginas. O projeto atual foi preservado.');
+  commit();const snapshot=bridge().snapshot(),next=pagesToSections(pages,snapshot.photoCatalog,()=>uid('section'));
+  readSequence(sequenceDocument(name,next.pages,next.sections,documentSignature),snapshot.photoCatalog,catalog);
+  pages=next.pages;sections=next.sections;enabled=true;commit();notify('Seções ativadas. As páginas existentes conservaram seus fundos. Use Seção desta página para agrupar.');
+}
+function resetAvailability(){
+  let available=false;try{available=Boolean(localStorage.getItem(key+'-before-reset'));}catch{}
+  window.dispatchEvent(new CustomEvent('labmattar:reset-availability',{detail:{available}}));
+}
+function backupBeforeReset(){
+  if(deliveryBusy())return false;
+  commit();
+  const result=persistProjectDraft(localStorage,key+'-before-reset',{document:sequenceDocument(name,pages,sections,documentSignature),current,enabled});
+  if(!result.ok){notify('Não foi possível guardar a cópia de recuperação. Baixe o projeto JSON antes de restaurar.',true);return false;}
+  resetAvailability();return true;
+}
+async function undoReset(){
+  if(deliveryBusy())return;
+  const previous=JSON.parse(localStorage.getItem(key+'-before-reset')||'null');
+  if(!previous)throw Error('Não há restauração para desfazer.');
+  await load(previous.document,{currentIndex:previous.current});
+  localStorage.removeItem(key+'-before-reset');resetAvailability();
+  notify('Apresentação anterior recuperada, incluindo páginas, seções, fundos e motions.');
 }
 function confirmSectionAction(message,label='CONTINUAR'){
   return new Promise(resolve=>{
@@ -281,6 +305,7 @@ function renderMotions(){
   const layer=by('labPageMotions');
   for(const video of layer.querySelectorAll('video')){video.motionInk?.dispose();video.pause();video.removeAttribute('src');video.load();}
   layer.replaceChildren();
+  if(!catalog){renderMotionControls();renderClips();return;}
   for(const motion of pages[current].motions){
     const asset=catalog.find(asset=>asset.id===motion.assetId),video=document.createElement('video');
     video.dataset.motionId=motion.id;video.dataset.motionInk="";video.dataset.motionControls="false";video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;
@@ -295,7 +320,7 @@ function renderMotions(){
   renderClips();
 }
 function placeMotions(){
-  if(!pages.length)return;
+  if(!pages.length||!catalog)return;
   for(const motion of pages[current].motions){
     const video=by('labPageMotions').querySelector(`[data-motion-id="${motion.id}"]`);
     if(!video)continue;
@@ -306,6 +331,14 @@ function placeMotions(){
 }
 function renderMotionControls(){
   const list=by('labMotionInstance');list.replaceChildren();
+  if(!catalog){
+    by('labMotionSettings').hidden=true;by('labMotionEmpty').hidden=false;
+    by('labMotionEmpty').textContent=catalogLoading?'Carregando o acervo Motion. Você já pode editar e salvar as páginas.':'Acervo Motion indisponível. Os motions do projeto estão preservados. Recarregue o catálogo para visualizar e exportar esses elementos.';
+    by('labMotionOpen').textContent=catalogLoading?'CARREGANDO MOTION…':'RECARREGAR CATÁLOGO MOTION';by('labMotionOpen').disabled=catalogLoading;
+    return;
+  }
+  by('labMotionOpen').disabled=false;by('labMotionOpen').textContent='ADICIONAR MOTION';
+  by('labMotionEmpty').textContent='Adicione uma animação da Matriz à página atual.';
   for(const motion of pages[current].motions){const asset=catalog.find(asset=>asset.id===motion.assetId);list.add(new Option(asset.title,motion.id));}
   if(!pages[current].motions.some(motion=>motion.id===selectedMotion))selectedMotion=pages[current].motions[0]?.id||'';
   by('labMotionSettings').hidden=!selectedMotion;by('labMotionEmpty').hidden=Boolean(selectedMotion);list.value=selectedMotion;
@@ -426,7 +459,8 @@ function closeLibrary(){
   for(const video of by('labMotionLibrary').querySelectorAll('video')){video.motionInk?.dispose();video.pause();video.removeAttribute('src');video.load();}
   by('labMotionLibraryItems').replaceChildren();
 }
-function openLibrary(){
+async function openLibrary(){
+  if(!catalog&&!await loadMotionCatalog())return;
   const list=by('labMotionLibraryItems');list.replaceChildren();
   for(const asset of catalog){
     const button=document.createElement('button');button.type='button';button.dataset.motionAsset=asset.id;
@@ -442,12 +476,12 @@ function openLibrary(){
   }
   by('labMotionLibrary').showModal();installMotionInk(list);
 }
-async function load(document){
+async function load(document,{currentIndex=0}={}){
   const validated=readSequence(document,bridge().snapshot().photoCatalog,catalog);
   switching=true;
   try{registerPhotos(validated.photoCatalog);sections=validated.sections||null;pages=validated.pages.map(({state,...page})=>page);documentSignature=copy(validated.signature||validated.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,validated.photoCatalog);name=validated.name;current=0;enabled=true;}
   finally{switching=false;}
-  await switchPage(0,{capture:false});
+  await switchPage(Math.max(0,Math.min(Number(currentIndex)||0,pages.length-1)),{capture:false});
 }
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);
@@ -457,6 +491,7 @@ async function loadComposition(document){
   await switchPage(0,{capture:false});
 }
 async function captureMotions(width,height){
+  if(!catalog&&pages[current].motions.length)throw Error('Recarregue o catálogo Motion antes de exportar uma página com motions. As referências estão preservadas.');
   const items=[];
   for(const motion of pages[current].motions){
     const asset=catalog.find(asset=>asset.id===motion.assetId),box=motionBox(motion,asset,width,height);
@@ -472,6 +507,7 @@ async function exportVideo(){
   commit();
   const seconds=Number(by('labVideoSeconds').value),all=by('labVideoScope').value==='all';
   const indices=all?pages.map((_,index)=>index):[current];
+  if(!catalog&&indices.some(index=>pages[index].motions.length)){notify('Recarregue o catálogo Motion antes de exportar os motions preservados.',true);return;}
   if(!confirmStudy(indices.map(index=>pages[index])))return;
   const format=pages[indices[0]].composition.pages[0].surface.format;
   if(indices.some(index=>pages[index].composition.pages[0].surface.format!==format)){
@@ -543,6 +579,7 @@ async function exportVideo(){
 async function exportSequence(type){
   if(deliveryBusy())return;
   if(type==='mp4')return exportVideo();
+  if(!catalog&&pages.some(page=>page.motions.length)){notify('Recarregue o catálogo Motion antes de exportar os motions preservados.',true);return;}
   commit();if(type!=='preview'&&!confirmStudy(pages))return;
   if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length||page.backgroundVideo)){
     if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
@@ -574,7 +611,7 @@ async function exportSequence(type){
       const {createPDF}=await import('./vendor/lab-pdf.js');
       download(await createPDF(scenes,fonts),'labmattar-apresentacao.pdf');
     }else{
-      const html=await webDocument(scenes,project,catalog,fonts),blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      const html=await webDocument(scenes,project,catalog||[],fonts),blob=new Blob([html],{type:'text/html;charset=utf-8'});
       if(type==='preview'&&preview){const url=URL.createObjectURL(blob);preview.location.replace(url);const cleanup=setInterval(()=>{if(preview.closed){URL.revokeObjectURL(url);clearInterval(cleanup);}},1000);}
       else download(blob,'labmattar-site.html');
     }
@@ -587,18 +624,25 @@ async function exportSequence(type){
     by('labExportStatus').setAttribute('data-state',by('labExportStatus').dataset.state==='busy'?'idle':by('labExportStatus').dataset.state);
   }
 }
+async function loadMotionCatalog(){
+  if(catalogLoading)return false;
+  catalogLoading=true;panel.dataset.motionCatalog='loading';renderMotionControls();
+  try{
+    const next=await fetchMotionCatalog();
+    // Só liberar renderização após conferir hashes de todas as referências.
+    readSequence(sequenceDocument(name,pages,sections,documentSignature),bridge().snapshot().photoCatalog,next);
+    catalog=next;panel.dataset.motionCatalog='ready';return true;
+  }catch(error){catalog=null;panel.dataset.motionCatalog='unavailable';notify('Páginas disponíveis / Motion: '+error.message,true);return false;}
+  finally{catalogLoading=false;renderMotions();}
+}
 async function init(){
-  const response=await fetch('/motion/catalog.json');if(!response.ok)throw Error('O acervo Motion ainda não carregou. Atualize a página.');
-  const manifest=await response.json();
-  if(manifest.schemaVersion!==1||!Array.isArray(manifest.items))throw Error('Versão do acervo Motion não reconhecida.');
-  catalog=manifest.items;
-  if(!catalog.length||catalog.some(asset=>!asset.video||!asset.sha256||!(asset.width>0)||!(asset.height>0)))throw Error('Catálogo Motion incompleto.');
   pages=[nativePage()];documentSignature=copy(bridge().snapshot().state.signature);
   window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages,sections,documentSignature);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,getSignature:()=>copy(documentSignature),setSignature:signature=>{documentSignature=copy(signature);pages=applyDocumentSignature(pages,signature,bridge().snapshot().photoCatalog);enabled=true;notify("Assinatura atualizada em todas as páginas do documento.");},
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
     hasSequence:()=>Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo),
     sectionBackground:currentSectionBackground,applySectionVisual,
+    persist:commit,backupBeforeReset,undoReset,reloadMotionCatalog:loadMotionCatalog,
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');
@@ -623,10 +667,10 @@ async function init(){
     pages[current].backgroundVideo=null;renderBackgroundVideo();commit();
     notify('Vídeo de fundo removido. Escolha uma fotografia ou outro vídeo.');
   });
-  window.addEventListener('labmattar:composition-change',()=>{
+  window.addEventListener('labmattar:composition-change',event=>{
     const focus=by('labFocusVideo');
     if(focus)focus.style.objectPosition=by('labFocusX').value+'% '+by('labFocusY').value+'%';
-    if(!switching&&!busy){try{commit();}catch(error){notify(error.message,true);}}
+    if(!switching&&!busy&&event.detail?.persist!==false){try{commit();}catch(error){notify(error.message,true);}}
   });
   by('labPageSelect').addEventListener('change',event=>switchPage(Number(event.target.value)).catch(error=>notify(error.message,true)));
   by('labSequenceName').addEventListener('change',event=>{name=event.target.value.slice(0,120);enabled=true;commit();});
@@ -695,6 +739,7 @@ async function init(){
   by('labMotionLibrary').addEventListener('cancel',event=>{event.preventDefault();closeLibrary();});
   by('labMotionInstance').addEventListener('change',event=>{selectedMotion=event.target.value;renderMotionControls();});
   for(const [id,field] of [['labMotionX','x'],['labMotionY','y'],['labMotionWidth','width'],['labMotionFrame','frameSeconds']])by(id).addEventListener('input',event=>{
+    if(!catalog)return;
     const motion=pages[current].motions.find(motion=>motion.id===selectedMotion);if(!motion)return;
     const raw=Number(event.target.value);if(!Number.isFinite(raw))return;
     const asset=catalog.find(asset=>asset.id===motion.assetId);
@@ -711,4 +756,6 @@ async function init(){
   new MutationObserver(()=>requestAnimationFrame(placeMotions)).observe(board,{attributes:true,attributeFilter:['data-format']});
   window.addEventListener('resize',()=>requestAnimationFrame(placeMotions),{passive:true});
   panel.dataset.ready='true';
+  resetAvailability();
+  loadMotionCatalog();
 }

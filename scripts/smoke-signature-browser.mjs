@@ -117,6 +117,7 @@ try{
   const only=await inspect();
   assert(only.slots.length===1&&only.slots[0].kind==="symbol",
     "Symbol-only preset must not force metadata or a footer");
+  page.once("dialog",dialog=>dialog.accept());
   await page.locator("#labReset").click();
   const reset=await inspect();
   assert(reset.slots.length===1&&reset.slots[0].kind==="symbol",

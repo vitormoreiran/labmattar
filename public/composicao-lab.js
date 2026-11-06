@@ -328,7 +328,8 @@
     state=sanitize(next);
   }
   function save(){
-    window.dispatchEvent(new Event("labmattar:composition-change"));
+    window.dispatchEvent(new CustomEvent("labmattar:composition-change",{detail:{persist:false}}));
+    if(window.LabPages?.persist)return window.LabPages.persist();
     try{
       localStorage.setItem(storageKey,JSON.stringify(state));
       by("labSaveState").textContent="Configuração salva neste navegador / não publicada.";
@@ -738,6 +739,31 @@
     activePreset=key;
     render();save();
   }
+  const undoReset=by('labUndoReset');
+  window.addEventListener('labmattar:reset-availability',event=>{if(undoReset)undoReset.hidden=!event.detail.available;});
+  try{if(undoReset)undoReset.hidden=!localStorage.getItem(storageKey+'-before-reset');}catch{}
+  function requestReset(){
+    if(by('labPages')&&!window.LabPages){by('labSaveState').textContent='Aguarde a abertura das páginas antes de restaurar.';return;}
+    if(board.dataset.motionPlaying==='true'){by('labSaveState').textContent='Conclua a entrada dos textos antes de restaurar.';return;}
+    if(!confirm('Restaurar o estudo da página atual? Textos e ajustes serão substituídos. Se houver uma seção, seu fundo compartilhado também poderá mudar. Uma cópia da apresentação será guardada para desfazer.'))return;
+    if(window.LabPages){if(!window.LabPages.backupBeforeReset())return;}
+    else{
+      try{localStorage.setItem(storageKey+'-before-reset',JSON.stringify(state));if(undoReset)undoReset.hidden=false;}
+      catch{by('labSaveState').textContent='Não foi possível guardar a recuperação. Salve o projeto JSON antes de restaurar.';return;}
+    }
+    applyPreset('tipografia');
+  }
+  undoReset?.addEventListener('click',async()=>{
+    if(!confirm('Recuperar o estudo anterior à restauração? Isso substitui as alterações feitas depois dela.'))return;
+    try{
+      if(window.LabPages)await window.LabPages.undoReset();
+      else{
+        const previous=JSON.parse(localStorage.getItem(storageKey+'-before-reset')||'null');
+        if(!previous)throw Error('Não há restauração para desfazer.');
+        state=sanitize(previous);render();save();localStorage.removeItem(storageKey+'-before-reset');undoReset.hidden=true;
+      }
+    }catch(error){by('labSaveState').textContent='Recuperação não concluída / '+error.message;}
+  });
   /*
    * In-canvas editorial editing shares the inspector's state and local draft.
    * Never re-render the currently focused contenteditable on each keystroke:
@@ -1386,7 +1412,7 @@
   document.querySelectorAll("[data-lab-preset]").forEach(b=>
     b.addEventListener("click",()=>applyPreset(b.dataset.labPreset)));
   by("labTitleWordsReset").addEventListener("click",()=>{state.titleFonts=[];renderTitleLines();syncTitleWords();requestMeasurement();save();});
-  by("labReset").addEventListener("click",()=>applyPreset("tipografia"));
+  by("labReset").addEventListener("click",requestReset);
   const obs=new ResizeObserver(requestMeasurement);
   obs.observe(board);
   document.fonts.ready.then(requestMeasurement);

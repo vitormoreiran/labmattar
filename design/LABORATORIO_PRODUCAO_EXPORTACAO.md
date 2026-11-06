@@ -6,6 +6,16 @@
 
 ## Marco 1B — Páginas, Motion e publicação em arquivo
 
+### Integridade do projeto / revisão de 06/11/2026
+
+- Salvar e abrir JSON usam o mesmo limite de 64 MB, calculado em bytes UTF-8. Fotografias incorporadas continuam no contrato anterior; arquivos acima do limite são recusados antes do download ou da importação.
+- A apresentação inteira tem uma gravação canônica no navegador. “Salva” confirma essa gravação; falta de espaço ou armazenamento bloqueado orienta baixar o JSON e conserva a cópia anterior.
+- Restaurar estudo pede confirmação e guarda uma cópia da apresentação inteira, incluindo seleção, seções, fundos e motions. Desfazer restauração recupera essa cópia, inclusive depois de recarregar a página. Sem espaço para a recuperação, a restauração é interrompida.
+- A conversão inicial cria uma seção por página e aceita até 30 páginas. O conjunto é validado antes de substituir o projeto; 31 páginas são recusadas sem alterar IDs, fundos ou conteúdo.
+- Páginas inicia e reabre projetos mesmo sem o catálogo Motion. As referências dos motions são preservadas e podem ser salvas em JSON; visualização e exportação dessas mídias aguardam a recuperação do catálogo e a conferência de hashes. O botão do acervo permite tentar novamente.
+
+Regressões: `scripts/test-lab-project-lifecycle.mjs` e `scripts/smoke-lab-project-lifecycle.mjs` (Chromium e WebKit no CI).
+
 O Laboratório passa a manter uma sequência ordenada no editor existente: criar, duplicar, nomear, reordenar, excluir, salvar e reabrir páginas nos quatro formatos atuais. O contrato `labmattar.presentation` v1 contém composições v1, preservando a leitura dos JSON anteriores. O rascunho multipágina usa armazenamento local; o JSON continua sendo a cópia portátil de autoria.
 
 A cena lógica compartilhada alimenta PNG, PDF e HTML. PDF conserva texto selecionável, Univers/Perpetua incorporadas e paths oficiais; fotografias, filtros, sombras e quadros de motion são camadas raster nas dimensões de entrega. A qualidade 2K/4K determina essas camadas, não uma captura da tela. O PDF usa o formato de cada página; ele não declara PDF/X, CMYK ou qualidade de master fotográfico sem verificação.

@@ -56,6 +56,7 @@ try{
   assert.notDeepEqual(await project(),original);
   await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   // A recuperação também não pode apagar sua cópia se a nova gravação falhar.
+  await page.setViewportSize({width:390,height:844});
   await page.evaluate(()=>{const real=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='labmattar-pages-v1')throw new DOMException('Quota cheia','QuotaExceededError');return real.call(this,key,value);};});
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('recuperação foi preservada'));
@@ -65,7 +66,8 @@ try{
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('anterior recuperada'));
   assert.deepEqual(await project(),original);assert.equal(await page.locator('#labPageCount').textContent(),'2 / 2');
-  proof.push({case:'reset-undo',survivesReload:true,pages:2,sections:2,selection:1,motions:1});
+  proof.push({case:'reset-undo',survivesReload:true,pages:2,sections:2,selection:1,motions:1,mobileUndo:true});
+  await page.screenshot({path:dir+'/recuperacao-mobile.png'});await page.setViewportSize({width:1440,height:1000});
   await page.screenshot({path:dir+'/restauracao-recuperada.png'});
 
   // A10: falha na chave canônica não pode ser mascarada por salvar a página.

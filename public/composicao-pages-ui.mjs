@@ -11,7 +11,9 @@ const uid=prefix=>prefix+'-'+crypto.randomUUID();
 const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by('labPagesStatus').dataset.state=error?'error':'idle';by('labExportStatus').textContent=message;by('labExportStatus').dataset.state=error?'error':busy?'busy':'idle';};
 let documentSignature=null,sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=null,catalogLoading=false,switching=false,busy=false,timer=0,enabled=false,still=true,selectedMotion='',selectedClip='',clipsPlaying=true;
 const panel=by('labPages');
-if(board&&panel){init().catch(error=>notify(error.message,true));}
+// Inicializar após as variáveis do módulo, sem depender de uma requisição
+// assíncrona para escapar das declarações ainda não inicializadas abaixo.
+if(board&&panel)queueMicrotask(()=>init().catch(error=>notify(error.message,true)));
 function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],backgroundVideo=null){
   const {state,photoCatalog}=bridge().snapshot();
   const result=createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions,clips,backgroundVideo});

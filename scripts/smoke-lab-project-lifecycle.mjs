@@ -98,4 +98,9 @@ try{
   await offlineContext.close();assert.deepEqual(errors,[]);
   await writeFile(dir+'/report.json',JSON.stringify({browser:browserName,passed:true,proof,errors},null,2));
   console.log('Ciclo de projeto validado / '+browserName+' / cinco regressões críticas.');
+}catch(error){
+  const status=await page.evaluate(()=>({pages:document.querySelector('#labPagesStatus')?.textContent,save:document.querySelector('#labSaveState')?.textContent,ready:document.querySelector('#labPages')?.dataset.ready})).catch(()=>({}));
+  await writeFile(dir+'/failure.json',JSON.stringify({failure:error.stack,status,proof,errors},null,2));
+  await page.screenshot({path:dir+'/failure.png'}).catch(()=>{});
+  console.error(JSON.stringify({status,proof,errors},null,2));throw error;
 }finally{await context.close();await browser.close();}

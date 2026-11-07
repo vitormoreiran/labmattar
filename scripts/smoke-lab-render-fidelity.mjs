@@ -87,21 +87,7 @@ try{
   const secondScene=await page.evaluate(async()=>{const scene=await window.LabRenderer.capture({edge:1920,ask:false});const bg=scene.items.find(op=>op.kind==='image'&&op.layer==='video-bg-base');return {frame:scene.backgroundFrameSeconds,time:document.querySelector('#labAmbientVideo').currentTime,hash:[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(bg.source)))].map(x=>x.toString(16).padStart(2,'0')).join('')};});
   assert.equal(secondScene.hash,firstScene.hash);assert(Math.abs(secondScene.time-2.2)<.001);assert.deepEqual(await getProject(),chosen);
   await page.screenshot({path:path.join(dir,'video-frame-controls.png')});
-  await page.evaluate(()=>{
-    window.__pngSnapshots=[];window.__pngToURL=HTMLCanvasElement.prototype.toDataURL;window.__pngObjectURL=URL.createObjectURL;
-    HTMLCanvasElement.prototype.toDataURL=function(...args){const value=window.__pngToURL.apply(this,args);window.__pngSnapshots.push({width:this.width,height:this.height,value});return value;};
-    URL.createObjectURL=function(blob){if(blob.type==='image/png')window.__pngBlob=blob;return window.__pngObjectURL.call(URL,blob);};
-  });
-  const png=await download('png','selected-frame.png');
-  const pngAudit=await page.evaluate(async()=>{
-    HTMLCanvasElement.prototype.toDataURL=window.__pngToURL;URL.createObjectURL=window.__pngObjectURL;
-    const blob=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(window.__pngBlob);});
-    return {snapshots:window.__pngSnapshots,blob,renderer:window.LabExportPNG.capture.toString(),url:location.href};
-  });
-  for(const [index,item] of pngAudit.snapshots.entries()){await writeFile(path.join(dir,'button-stage-'+index+'.png'),Buffer.from(item.value.split(',')[1],'base64'));delete item.value;}
-  await writeFile(path.join(dir,'button-blob.png'),Buffer.from(pngAudit.blob.split(',')[1],'base64'));delete pngAudit.blob;
-  await writeFile(path.join(dir,'button-audit.json'),JSON.stringify(pngAudit,null,2));
-  const pdf=await download('pdf','selected-frame.pdf');
+  const png=await download('png','selected-frame.png'),pdf=await download('pdf','selected-frame.pdf');
   execFileSync('pdftoppm',['-scale-to','1920','-singlefile','-png',pdf,path.join(dir,'selected-frame-pdf')]);
   const pdfDifference=await rgbDifference(await readFile(png),await readFile(path.join(dir,'selected-frame-pdf.png')));assert(pdfDifference<3,'PNG/PDF divergence: '+pdfDifference);
   const htmlFile=await download('html','selected-frame.html'),html=await readFile(htmlFile,'utf8');assert(html.includes('object-position:0% 100%'));

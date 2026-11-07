@@ -329,27 +329,13 @@
     return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),...(backgroundFrame.frameSeconds!==undefined?{backgroundFrameSeconds:backgroundFrame.frameSeconds}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
     }finally{await backgroundFrame.restore();}
   }
-  function encodePng(canvas){
-    const prefix='data:image/png;base64,',snapshot=canvas.toDataURL('image/png');
-    if(!snapshot.startsWith(prefix))throw Error('Falha na codificação PNG.');
-    const encoded=snapshot.slice(prefix.length),parts=[];
-    for(let offset=0;offset<encoded.length;offset+=65536){
-      const binary=atob(encoded.slice(offset,offset+65536)),bytes=new Uint8Array(binary.length);
-      for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-      parts.push(bytes);
-    }
-    return new Blob(parts,{type:'image/png'});
-  }
   async function rasterize(){
-    const scene=await captureScene({ask:false});if(!scene)return null;
+    const scene=await captureScene();if(!scene)return null;
     report("RENDERIZANDO "+scene.outputWidth+" × "+scene.outputHeight+" PX…","busy");
     const {sceneCanvas}=await import("./lab-scene.mjs");
     const canvas=await sceneCanvas(scene,Number(sizeSelect.value));
-    // Serialize this bitmap snapshot without a second raster pass in WebKit.
-    const blob=encodePng(canvas);
+    const blob=await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(Error("Falha na codificação PNG.")),"image/png"));
     if(blob.size<2048)throw Error("PNG incompleto.");
-    if(document.getElementById("labInkContrast")?.dataset.contrast==="warning"&&!confirm("Esta combinação tem contraste baixo. Exportar como estudo mesmo assim?"))return null;
-    if(scene.warnings.length&&!confirm("LABMATTAR / Qualidade dos originais\n\n"+scene.warnings.join("\n")+"\n\nExportar na dimensão selecionada?"))return null;
     return {blob,width:canvas.width,height:canvas.height,warnings:scene.warnings};
   }
   function download(blob,name){

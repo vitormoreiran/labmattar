@@ -74,7 +74,7 @@ try{
     "Each corner must retain its own icon and label");
   await page.locator("#labSignatureScale").fill("120");
   await page.locator("#labSignatureScale").dispatchEvent("input");
-  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-composicao-lab-v1"))?.signature);
+  const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-pages-v1"))?.document.signature);
   assert(saved?.scale===120&&saved?.slots?.tr?.text==="CAPÍTULOS"&&
     saved?.slots?.bl?.symbol==="vaso_09.svg","Composition must persist as the same editor draft");
 
@@ -117,10 +117,11 @@ try{
   const only=await inspect();
   assert(only.slots.length===1&&only.slots[0].kind==="symbol",
     "Symbol-only preset must not force metadata or a footer");
+  page.once("dialog",dialog=>dialog.accept());
   await page.locator("#labReset").click();
   const reset=await inspect();
-  assert(reset.slots.some(x=>x.corner==="tl"&&x.kind==="text"),
-    "Reset must restore the canonical editorial signature");
+  assert(reset.slots.length===1&&reset.slots[0].kind==="symbol",
+    "Restoring a page study must retain the document signature");
   assert(errors.length===0,"Browser errors: "+errors.join("; "));
   console.log("LABMATTAR signature composer browser OK");
 }finally{

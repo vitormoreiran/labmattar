@@ -51,7 +51,7 @@ try {
           assert.equal(await areaPage.locator('#laboratorio, #labArtboard, #labStudioToggle').count(),0,
             'Composição must not contain the interactive laboratory');
           assert.equal(await areaPage.locator('main a[href="/laboratorio.html"]').count(),1,
-            'Composição must link to chapter 05');
+            'Composição must link to the Laboratory');
           assert.equal(await areaPage.locator('#construcao .lm-case-facts article').count(),0,
             'Construction guidance belongs in Compor, not in a fixed explanatory grid');
           assert.equal(await areaPage.locator('#regras-de-composicao .lm-m-guide-grid article').count(),6,
@@ -77,9 +77,9 @@ try {
           assert.equal(await areaPage.locator('#labArtboard, #labStudioToggle').count(),0,
             'The Laboratory index must not embed Compor');
           assert.equal(await areaPage.locator('.lm-lab-tool').count(),2,
-            'The Laboratory index must show both original tools');
-          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/editor/"]').count(),1,
-            'Matrix preview must open the original vector editor');
+            'The Laboratory index must show the current Matrix and Compor');
+          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/motion/matriz/index.html"]').count(),1,
+            'Matrix preview must open the current spatial Matrix');
           assert.equal(await areaPage.locator('a.lm-lab-tool[href="/compor.html?studio=1#laboratorio"]').count(),1,
             'Compor preview must open the separate composition editor');
         }
@@ -134,7 +134,7 @@ try {
           'Chapter section uses the exact same editorial left axis: '+area+'/'+viewportWidth+
           ' internal='+internalX+' cover='+placement.kicker.left);
         if(area==='composicao.html'){
-          for(const selector of ['#regras-de-composicao h2','.lm-composition-next .inner > p.eyebrow']){
+          for(const selector of ['#regras-de-composicao h2','#reducao-protecao h2','.lm-composition-next .inner > p.eyebrow']){
             const x=await areaPage.locator(selector).evaluate(el=>el.getBoundingClientRect().left);
             assert.ok(Math.abs(x-placement.kicker.left)<=2,'Composition internal section shares ruler: '+selector+'/'+viewportWidth);
           }
@@ -204,7 +204,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':6,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':3,'laboratorio.html':1};
+        const expected={'manual.html':6,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();
@@ -284,7 +284,9 @@ try {
   assert.equal(await page.locator('.state-explorer, #state-morph-svg').count(),0,'Contour demo has been replaced');
   const symbolVideo=page.locator('.motion-symbol-preview video');
   assert.equal(await symbolVideo.locator('source').getAttribute('src'),'/motion/videos/m-form.mp4');
-  assert.deepEqual(await symbolVideo.evaluate(video=>({autoplay:video.autoplay,muted:video.muted,loop:video.loop,controls:video.controls,inline:video.playsInline})),{autoplay:true,muted:true,loop:true,controls:false,inline:true});
+  assert.deepEqual(await symbolVideo.evaluate(video=>({autoplay:video.autoplay,muted:video.muted,loop:video.loop,controls:video.controls,inline:video.playsInline})),{autoplay:false,muted:true,loop:true,controls:false,inline:true});
+  assert.equal(await symbolVideo.evaluate(video=>video.paused),true);
+  await page.locator('.motion-symbol-preview .motion-ink-toggle').click();
   await page.waitForFunction(()=>document.querySelector('.motion-symbol-preview video').currentTime>0.1);
   await symbolVideo.evaluate(video=>{video.currentTime=video.duration-0.15;});
   await page.waitForFunction(()=>{const v=document.querySelector('.motion-symbol-preview video');return !v.paused&&v.currentTime<1.5;});
@@ -302,8 +304,10 @@ try {
     ]);
     assert.equal(await motionPage.locator('.motion-card video').count(),8);
     assert.equal(await motionPage.locator('.motion-status,[data-status]').count(),0);
-    assert.equal(await motionPage.locator('video[autoplay][muted][loop][playsinline]:not([controls])').count(),8);
-    await motionPage.waitForFunction(()=>[...document.querySelectorAll('.motion-card video')].slice(0,2).every(v=>!v.paused&&v.muted&&v.currentTime>0.1));
+    assert.equal(await motionPage.locator('video[data-motion-ink][muted][loop][playsinline]:not([controls])').count(),8);
+    assert.equal(await motionPage.locator('.motion-card video').evaluateAll(videos=>videos.every(v=>v.paused&&!v.autoplay)),true);
+    await motionPage.locator('.motion-card .motion-ink-toggle').first().click();
+    await motionPage.waitForFunction(()=>document.querySelector('.motion-card video').currentTime>0.1);
     assert.doesNotMatch(await motionPage.locator('main').innerText(),/aprovad|avaliação/i);
     for(const width of [1440,390]){
       await motionPage.setViewportSize({width,height:900});

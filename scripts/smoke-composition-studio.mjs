@@ -347,7 +347,7 @@ try{
     "Manual scale and duplicate end markers must be inactive in Completo");
   assert((await page.locator("#labMScale").inputValue())===savedScale,
     "Completo must not overwrite Elemento's saved scale");
-  assert(await page.evaluate(()=>JSON.parse(localStorage.getItem("labmattar-composicao-lab-v1")).mPresentation)==="completo",
+  assert(await page.evaluate(()=>(()=>{const saved=JSON.parse(localStorage.getItem("labmattar-pages-v1"));return saved.document.pages[saved.current].composition.pages[0].m.presentation;})())==="completo",
     "M appearance must persist in the same saved editor state");
   await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-vertical.png"});
   // Complete M uses EXACTLY 100% of the canvas height for all four formats;

@@ -25,6 +25,15 @@ on:
       - 'public/composicao-lab-export.css'
       - 'public/composicao-document.mjs'
       - 'public/composicao-document-ui.mjs'
+      - 'public/composicao-pages-ui.mjs'
+      - 'public/lab-project-lifecycle.mjs'
+      - 'public/lab-video-export.mjs'
+      - 'public/lab-scene.mjs'
+      - 'scripts/test-lab-render-fidelity.mjs'
+      - 'scripts/smoke-lab-render-fidelity.mjs'
+      - 'public/lab-sequence.mjs'
+      - 'scripts/test-lab-project-lifecycle.mjs'
+      - 'scripts/smoke-lab-project-lifecycle.mjs'
       - 'scripts/test-composicao-document.mjs'
       - 'scripts/smoke-laboratorio-export.mjs'
       - 'public/composicao-lab-signature.js'
@@ -57,10 +66,14 @@ jobs:
         with:
           node-version: '22'
       - name: Validar contrato de documento v1
-        run: node scripts/test-composicao-document.mjs
+        run: node --test scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
+          # The runner mirror timed out while fetching WebKit dependencies.
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            echo "https://archive.ubuntu.com/ubuntu" | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+          fi
           npx playwright install --with-deps chromium webkit
       - name: Preparar pagina e fontes para teste local
         run: |
@@ -83,9 +96,17 @@ jobs:
           s=s.replace("https://labmattar.com/fonts/perpetua-titling-light.ttf","/fonts/perpetua-titling-light.ttf")
           p.write_text(s,encoding="utf-8")
           PY
+      - name: Preparar prova de quadros e PDF
+        run: |
+          command -v ffmpeg >/dev/null && command -v pdftoppm >/dev/null || sudo apt-get install --no-install-recommends -y ffmpeg poppler-utils
+          node scripts/prepare-lab-pdf.mjs
       - name: Testar composicoes no navegador
         run: |
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-render-fidelity.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-render-fidelity.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
@@ -96,6 +117,7 @@ jobs:
           mkdir -p public/vendor
           cp node_modules/gsap/dist/MorphSVGPlugin.js public/vendor/MorphSVGPlugin.js
           MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
+          IDENTITY_URL=http://127.0.0.1:8765 node scripts/smoke-approved-applications.mjs
       - name: Salvar capturas para revisao visual
         if: always()
         # A transient failure uploading optional screenshots must not override
@@ -108,4 +130,7 @@ jobs:
             composition-*.png
             laboratorio-*.png
             symbols-proof/
+            approved-proof/
+            lifecycle-proof/
+            fidelity-proof/
           if-no-files-found: ignore

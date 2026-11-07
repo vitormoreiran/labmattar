@@ -52,7 +52,7 @@
           <ol><li>Monte as seções e páginas.</li><li>Confira a prévia com a interface final.</li><li>Depois da aprovação, publique com um endereço próprio no capítulo 4.</li></ol>
           <p class="detail">ENDEREÇO PREVISTO</p><output id="labPublicationAddress"></output>
           <p class="lab-publication-state">A publicação no domínio oficial passa por revisão no GitHub. Baixe o HTML e prepare o pacote da apresentação; após a aprovação no repositório, o deploy atualiza o capítulo 4. Baixar o arquivo, sozinho, não publica.</p>
-          <p class="detail">No site, os quatro cantos são reservados à navegação. As assinaturas de cada página permanecem no PDF.</p>
+          <p class="detail">A assinatura vale para todo o documento. Em apresentações por seções, seus cantos se integram ao menu e ao sumário do site. PDF e imagens conservam a mesma configuração.</p>
         </div>
         <div id="labVideoOptions" class="lab-video-options" hidden>
           <label for="labVideoScope">PÁGINAS NO VÍDEO<select id="labVideoScope"><option value="current">Página em edição</option><option value="all">Sequência completa</option></select></label>
@@ -161,9 +161,10 @@
       <section class="lm-inspector-panel lm-composition-module" id="labPanel-texto" data-lab-panel="texto" data-module="texto">
         <div class="lm-inspector-panel-heading"><span>TEXTO</span></div>
         <div class="lm-lab-fields lm-inspector-primary">
-        <div class="lm-lab-field lm-ctrl-choice-field"><div id="labTypeTitle" class="lm-lab-field-title">01 / TÍTULO · Tratamento</div><select id="labType" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="alternada">Univers + Perpetua</option><option value="univers">Univers</option><option value="perpetua">Perpetua</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labTypeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="alternada" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="mixed"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Alternado</span></button>
+        <div class="lm-lab-field lm-ctrl-choice-field"><div id="labTypeTitle" class="lm-lab-field-title">01 / TÍTULO · Tratamento</div><select id="labType" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="alternada">Univers + Perpetua</option><option value="univers">Univers</option><option value="perpetua">Perpetua</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labTypeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="alternada" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="mixed"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Misto</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="univers" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="univers"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Univers</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="type" data-value="perpetua" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-type" data-type="perpetua"><i>AB</i><i>ab</i></span></span><span class="lm-ctrl-name">Perpetua</span></button></div><small class="lm-ctrl-helper">Um único tipo de título.</small></div>
+        <div class="lm-lab-field lm-title-word-field"><div class="lm-lab-field-title">Fonte por palavra</div><p class="detail">Clique numa palavra para alternar Univers e Perpetua, inclusive na mesma linha.</p><div id="labTitleWords" class="lm-title-words" role="group" aria-label="Fonte de cada palavra do título"></div><button type="button" id="labTitleWordsReset">USAR TRATAMENTO GERAL</button></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTitleScale">Escala do título</label><output id="labTitleScaleValue" for="labTitleScale">100%</output></div><input type="range" id="labTitleScale" min="70" max="140" step="5" value="100"><div class="lm-control-effect" data-control-effect="title" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">Ajusta a escala do título.</span></div><small class="lm-lab-fit-info" id="labTitleFitInfo" data-adjusted="false" role="status" aria-live="polite">O título permanece dentro da área útil.</small></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labTextWidth">Largura da coluna</label><output for="labTextWidth" id="labTextWidthValue">61%</output></div><input type="range" id="labTextWidth" min="40" max="100" step="1" value="61"><div class="lm-control-effect" data-control-effect="width" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">Define a largura do bloco de texto.</span></div></div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labBodyModeTitle" class="lm-lab-field-title">02 / CORPO · Leitura</div><select id="labBodyMode" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="oculto">Somente título</option><option value="visivel">Título + texto</option></select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labBodyModeTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="bodyMode" data-value="oculto" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-relation" data-relation="title"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Só título</span></button>
@@ -189,6 +190,7 @@
         </div></div>
         <details class="lm-inspector-more" data-lab-more="texto">
           <summary><span>EDITAR TEXTO</span></summary>
+          
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field"><label for="labTitleInput">Título <span class="lm-ctrl-subtitle">/ quebras por linha</span></label><textarea id="labTitleInput" rows="3" maxlength="140" spellcheck="true">PRÁTICAS
 MATERIAIS
 E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
@@ -223,6 +225,13 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           </button>
           <button id="labAcervoLocal" type="button" class="lm-acervo-local">+ ADICIONAR DO COMPUTADOR</button><input id="labAcervoLocalInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple hidden aria-label="Escolher fotografias ou vídeos do computador"><small id="labAcervoCurrent" class="lm-acervo-current">Usando imagens do laboratório</small>
           <div class="lm-acervo-background-selection" aria-live="polite"><span id="labBackgroundVideoStatus"></span><button id="labBackgroundVideoRemove" type="button" hidden>Remover vídeo</button></div>
+          <div id="labBackgroundFrameField" class="lm-lab-field" hidden>
+            <label for="labBackgroundFrame">Quadro para PNG / PDF</label>
+            <div class="lab-background-frame-value"><input id="labBackgroundFrame" type="number" min="0" max="3600" step="0.01" value="0" inputmode="decimal" aria-describedby="labBackgroundFrameHint"><span>segundos</span></div>
+            <input id="labBackgroundFrameRange" type="range" min="0" max="3600" step="0.01" value="0" aria-label="Quadro estático do vídeo de fundo em segundos" data-unit=" s">
+            <div class="lab-background-frame-actions"><button type="button" id="labBackgroundFrameCurrent">Usar quadro atual</button><button type="button" id="labBackgroundFramePreview">Ver quadro de PNG/PDF</button></div>
+            <small id="labBackgroundFrameHint">PNG e PDF usam este quadro. HTML e MP4 mantêm o movimento.</small>
+          </div>
         </div>
         <div id="labAcervoDialog" class="lm-acervo-overlay" hidden>
           <section class="lm-acervo-dialog" role="dialog" aria-modal="true" aria-labelledby="labAcervoTitle" aria-describedby="labAcervoDescription" tabindex="-1">
@@ -287,6 +296,12 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             </div>
           </section>
         </div>
+        <div class="lm-lab-field" id="labPhotoContrastField">
+  <div class="lm-lab-value-row"><label for="labPhotoContrast">Tratamento de leitura</label><output id="labPhotoContrastValue" for="labPhotoContrast">40%</output></div>
+  <input id="labPhotoContrast" type="range" min="0" max="80" step="1" value="40" aria-label="Intensidade do tratamento de leitura">
+  <div class="lm-ctrl-choice-grid lm-ctrl-columns-4" role="group" aria-label="Intensidades de tratamento de leitura"><button type="button" class="lm-ctrl-choice" data-lab-choice="photoContrast" data-value="0" aria-pressed="false"><span class="lm-ctrl-name">Sem tratamento</span></button><button type="button" class="lm-ctrl-choice" data-lab-choice="photoContrast" data-value="20" aria-pressed="false"><span class="lm-ctrl-name">20%</span></button><button type="button" class="lm-ctrl-choice" data-lab-choice="photoContrast" data-value="40" aria-pressed="true"><span class="lm-ctrl-name">40%</span></button><button type="button" class="lm-ctrl-choice" data-lab-choice="photoContrast" data-value="60" aria-pressed="false"><span class="lm-ctrl-name">60%</span></button></div>
+  <small class="lm-ctrl-helper">Ajuste à imagem e confira a leitura. Não há um percentual obrigatório.</small>
+</div>
         <div class="lm-ctrl-focus-field"><button type="button" class="lm-ctrl-focus-visual" id="labFocalPreview" aria-label="Escolher o foco da fotografia" disabled><span class="lm-ctrl-focus-image" id="labFocusImage" aria-hidden="true"></span><span class="lm-ctrl-focus-cross" id="labFocusPointer" aria-hidden="true"></span><span class="lm-ctrl-focus-label">CLIQUE OU ARRASTE PARA ENQUADRAR</span></button></div>
         </div>
         <div class="lm-lab-field lm-ctrl-choice-field"><div id="labColorTitle" class="lm-lab-field-title">Cor do fundo</div><select id="labColor" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
@@ -352,6 +367,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           </div>
         </div>
         <div class="lm-lab-field lm-m-scale-field"><div class="lm-lab-value-row"><label for="labMScale">Escala do M</label><output id="labMScaleValue" for="labMScale">60%</output></div><input id="labMScale" type="range" min="45" max="95" step="1" value="60"></div>
+        <div class="lm-lab-field" id="labMPositionField"><div class="lm-lab-value-row"><label for="labMPositionY">Posição vertical do elemento</label><output id="labMPositionYValue">50%</output></div><input id="labMPositionY" type="range" min="0" max="100" step="1" value="50"><div class="lm-lab-range-scale detail"><span>TOPO</span><span>BASE</span></div><div class="lm-lab-field lm-lab-caption-field"><label for="labMCaption">Legenda abaixo do elemento</label><input id="labMCaption" type="text" maxlength="100" placeholder="Legenda opcional"><p class="detail">Composição secundária. Legenda em Detalhe, alinhada à esquerda do elemento.</p></div></div>
         
 
       </div>
@@ -367,7 +383,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         <div class="lm-inspector-panel-heading"><span>ASSINATURA</span></div>
         <div class="lm-lab-fields lm-inspector-primary lm-signature-controls">
           <div class="lm-lab-field lm-signature-presets-field">
-            <div class="lm-lab-field-title" id="labSignaturePresetsTitle">Construção</div>
+            <div class="lm-lab-field-title" id="labSignaturePresetsTitle">Assinatura do documento</div><p class="detail">Vale para todas as páginas. Alterar os cantos, símbolos ou textos atualiza o documento inteiro.</p>
             <div class="lm-signature-presets" role="group" aria-labelledby="labSignaturePresetsTitle">
               <button type="button" class="lm-signature-preset" data-signature-preset="none" aria-pressed="false"><span class="lm-signature-mini" data-layout="none" aria-hidden="true"><i></i></span><span>Sem assinatura</span></button>
               <button type="button" class="lm-signature-preset" data-signature-preset="editorial" aria-pressed="true"><span class="lm-signature-mini" data-layout="editorial" aria-hidden="true"><i></i><i></i><i></i></span><span>Editorial</span></button>
@@ -404,7 +420,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
           <select id="labSymbol" hidden aria-hidden="true" tabindex="-1"><option value="none">Sem símbolo</option><option value="M.svg">M mestre</option><option value="vaso_01.svg">Vaso 01</option><option value="vaso_02.svg">Vaso 02</option><option value="vaso_03.svg">Vaso 03</option><option value="vaso_04.svg">Vaso 04</option><option value="vaso_05.svg">Vaso 05</option><option value="vaso_06.svg">Vaso 06</option><option value="vaso_07.svg">Vaso 07</option><option value="vaso_08.svg">Vaso 08</option><option value="vaso_09.svg">Vaso 09</option></select>
         </div>
       </section>
-      <div class="lm-lab-mini-actions"><button type="button" id="labReset"><span aria-hidden="true" class="lm-ctrl-reset-icon">↺</span> RESTAURAR ESTUDO</button><span class="lm-lab-local" id="labSaveState">Rascunho local.</span></div>
+      <div class="lm-lab-mini-actions"><button type="button" id="labReset"><span aria-hidden="true" class="lm-ctrl-reset-icon">↺</span> RESTAURAR ESTUDO</button><button type="button" id="labUndoReset" hidden>DESFAZER RESTAURAÇÃO</button><span class="lm-lab-local" id="labSaveState" role="status" aria-live="polite">Rascunho local.</span></div>
     </aside>
     <div class="lm-lab-preview">
       <div class="lm-lab-preview-head"><span>PROVA DE PÁGINA / CADA CORPO ABRE UM MUNDO</span><span class="lm-lab-preview-edit-note">CLIQUE NO TEXTO PARA EDITAR</span><span id="labFormatLabel">HORIZONTAL / 16:9</span></div>
@@ -422,6 +438,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             <svg class="lm-lab-m-marker lm-lab-m-marker-bottom" viewBox="0 0 316.29 110.71" preserveAspectRatio="none"><path d="M0 110.71L134.4 16.63C147.46 7.49 168.83 7.49 181.89 16.63L316.29 110.71Z"/></svg>
           </div>
           <img id="labSignature" class="lm-lab-mark" src="/identidade/M.svg" alt="" aria-hidden="true" hidden>
+          <div id="labMCaptionPreview" class="detail lm-lab-m-caption" hidden></div>
           <div id="labSignatureLayer" class="lm-lab-signature-layer" aria-hidden="true"></div>
           <div id="labPageVideos" class="lab-page-videos" aria-label="Vídeos do acervo nesta página"></div>
            <div id="labPageMotions" class="lab-page-motions" aria-hidden="true"></div>
@@ -444,7 +461,7 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <div class="lm-lab-legend">
     <div><b>CONSTRUIR</b><p>Escolha um ponto de partida e ajuste a composição.</p></div>
     <div><b>COMPARAR</b><p>Formato, escala, marcadores e enquadramento podem ser ajustados separadamente.</p></div>
-    <div><b>VERIFICAR</b><p>O texto permanece dentro das margens. Sobre fotografia, o preto 20% é automático.</p></div>
+    <div><b>VERIFICAR</b><p>Confira margens e leitura. O tratamento fotográfico começa em 40% nas novas composições e pode ser ajustado.</p></div>
   </div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>

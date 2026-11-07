@@ -41,6 +41,7 @@
     return result;
   }
   const defaultMetadata={
+    photoContrast:40,autoInkVersion:2,mPositionY:50,mCaption:"",titleFonts:[],
     kicker:"LABMATTAR / 2026",
     footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
     footerRight:"LABMATTAR / IDENTIDADE VISUAL",
@@ -73,24 +74,24 @@
     }
   };
   const fields={
-    format:"labFormat",color:"labColor",inkColor:"labInkColor",margin:"labMargin",guides:"labGuides",
+    format:"labFormat",color:"labColor",inkColor:"labInkColor",photoContrast:"labPhotoContrast",margin:"labMargin",guides:"labGuides",
     marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
-    mScale:"labMScale",mPresentation:"labMPresentation",focusX:"labFocusX",
+    mScale:"labMScale",mPositionY:"labMPositionY",mCaption:"labMCaption",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY"]);
   // Approved digital colors from design/identity-system.json (no free-picker).
   const palette=Object.freeze({
     neutral:"#F7F6F2",white:"#FFFFFF",black:"#181818",
     beige:"#E6DBCF",green:"#8FD81B",red:"#E22E24",
     blue:"#1F3554",brown:"#5B463E"
   });
-  // The existing automatic contrast remains the initial recommendation.
+  // New compositions use a readable default; saved projects retain their original profile.
   const automaticInk=Object.freeze({
     neutral:"black",white:"black",black:"white",beige:"black",
-    green:"black",red:"black",blue:"white",brown:"white"
+    green:"black",red:"white",blue:"white",brown:"white"
   });
   function contrastRatio(foreground,background){
     const light=hex=>{
@@ -170,9 +171,11 @@
     for(const [key,id] of Object.entries(fields)){
       const el=by(id),value=data[key];
       if(numeric.has(key)){
-        const val=Number(value),min=Number(el.min),max=Number(el.max);
+        // O projeto aceita 1–140%. O controle anterior pode pertencer a outro
+        // formato; seus limites DOM não podem truncar o valor restaurado.
+        const val=Number(value),min=key==='mScale'?1:Number(el.min),max=key==='mScale'?140:Number(el.max);
         if(Number.isFinite(val))result[key]=Math.max(min,Math.min(max,val));
-      }else if(key==="title"||key==="body"){
+      }else if(key==="title"||key==="body"||key==="mCaption"){
         if(typeof value==="string")result[key]=value.slice(0,Number(el.maxLength)>0?el.maxLength:400);
       }else if(Array.from(el.options).some(option=>option.value===value)){
         result[key]=value;
@@ -181,7 +184,10 @@
     for(const [key,max] of [["kicker",80],["footerLeft",100],["footerRight",100]]){
       if(typeof data[key]==="string")result[key]=data[key].replace(/[\r\n]+/g," ").slice(0,max);
     }
+    result.titleFonts=Array.isArray(data.titleFonts)?data.titleFonts.slice(0,(result.title.match(/\S+/g)||[]).length).map(f=>["univers","perpetua"].includes(f)?f:null):[];
+    if(data.photoContrast===undefined)result.photoContrast=20;
     result.signature=sanitizeSignature(data.signature,data);
+    result.autoInkVersion=data.autoInkVersion===2?2:1;
     // Saved projects made before this rule may contain a solid M on a photo.
     // Normalize that impossible combination before rendering or exporting.
     if(result.background==="photo"&&result.mContent==="solid")result.mContent="photo";
@@ -201,6 +207,7 @@
   const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
+  let mScaleRange=null;
   const previewImg=by("labAmbientPhoto"),maskImg=by("labMaskPhoto"),markerImg=by("labMarkerPhoto"),mark=by("labSignature");
   const title=by("labRenderedTitle"),body=by("labRenderedBody"),copyArea=by("labCopy");
   const kicker=by("labKicker"),footerLeft=by("labFooterLeft"),footerRight=by("labFooterRight");
@@ -219,7 +226,10 @@
     if(wrapper)wrapper.hidden=!visible;
   }
   function syncInputs(){
-    for(const [key,id] of Object.entries(fields))by(id).value=String(state[key]);
+    for(const [key,id] of Object.entries(fields)){
+      const input=by(id);if(numeric.has(key))input.step=Number.isInteger(state[key])?'1':'any';
+      input.value=String(state[key]);
+    }
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     const mActive=state.mContent!=="off";
     const backgroundPhoto=state.background==="photo"||state.mContent==="photo";
@@ -258,15 +268,21 @@
     // Progressive disclosure: only relevant controls occupy inspector space.
     // Markers are independent of the central M, except in Completo.
     setFieldVisible("labColor",state.background==="color");
-    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY"])setFieldVisible(id,activeImage);
+    for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY","labPhotoContrast"])setFieldVisible(id,activeImage);
     setFieldVisible("labMScale",mActive&&!fullM);
     setFieldVisible("labMarker",!fullM);
-    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY"]){
+    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY"]){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
         precision.value=state[key];
+        precision.min=by(fields[key]).min;precision.max=by(fields[key]).max;
+        precision.step=by(fields[key]).step;
         precision.disabled=by(fields[key]).disabled;
+      }
+      const slider=by(fields[key]),limits=slider.nextElementSibling;
+      if(limits?.classList.contains('lm-ctrl-range-limits')){
+        limits.firstElementChild.textContent=slider.min+'%';limits.lastElementChild.textContent=slider.max+'%';
       }
     }
 
@@ -277,7 +293,7 @@
       const select=by(fields[key]);
       button.setAttribute("aria-pressed",String(key==="mPresentation"
         ? mActive&&state.mPresentation===button.dataset.value
-        : state[key]===button.dataset.value));
+        : String(state[key])===button.dataset.value));
       button.disabled=Boolean(select&&select.disabled);
     });
     for(const [key,id] of Object.entries(fields)){
@@ -324,26 +340,58 @@
     state=sanitize(next);
   }
   function save(){
-    window.dispatchEvent(new Event("labmattar:composition-change"));
+    window.dispatchEvent(new CustomEvent("labmattar:composition-change",{detail:{persist:false}}));
+    if(window.LabPages?.persist)return window.LabPages.persist();
     try{
       localStorage.setItem(storageKey,JSON.stringify(state));
       by("labSaveState").textContent="Configuração salva neste navegador / não publicada.";
     }catch{by("labSaveState").textContent="Rascunho local / armazenamento indisponível.";}
   }
+  function titleTokens(){return state.title.match(/\S+/g)||[];}
+  function wordFont(index,lineIndex,lineCount){return state.titleFonts[index]||
+    (state.type==="perpetua"||state.type==="alternada"&&lineIndex===Math.min(1,lineCount-1)?"perpetua":"univers");}
+  function syncTitleWords(){
+    const list=by("labTitleWords");if(!list)return;list.replaceChildren();
+    let index=0;const lines=state.title.replace(/\r/g,"").split("\n").map(s=>s.trim()).filter(Boolean);
+    lines.forEach((line,lineIndex)=>{for(const token of line.match(/\S+/g)||[]){
+      const n=index++,font=wordFont(n,lineIndex,lines.length),button=document.createElement("button");
+      button.type="button";button.textContent=token;button.dataset.font=font;button.dataset.wordIndex=String(n);
+      button.setAttribute("aria-label",token+" / "+(font==="perpetua"?"Perpetua":"Univers")+" / alternar fonte");
+      button.setAttribute("aria-pressed",String(font==="perpetua"));
+      button.addEventListener("click",()=>{
+        while(state.titleFonts.length<=n)state.titleFonts.push(null);
+        state.titleFonts[n]=font==="perpetua"?"univers":"perpetua";renderTitleLines();syncTitleWords();requestMeasurement();save();
+      });list.append(button);
+    }});
+  }
+  function remapTitleFonts(before,after,previous=state.titleFonts){
+    const a=before.match(/\S+/g)||[],b=after.match(/\S+/g)||[],old=previous||[];
+    const lengths=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));
+    for(let i=a.length-1;i>=0;i--)for(let j=b.length-1;j>=0;j--)
+      lengths[i][j]=a[i]===b[j]?lengths[i+1][j+1]+1:Math.max(lengths[i+1][j],lengths[i][j+1]);
+    const next=Array(b.length).fill(null);let i=0,j=0;
+    while(i<a.length&&j<b.length){if(a[i]===b[j]){next[j]=old[i]||null;i++;j++;}
+      else if(lengths[i+1][j]>=lengths[i][j+1])i++;else j++;}
+    while(next.length&&next.at(-1)===null)next.pop();state.titleFonts=next;
+  }
   function renderTitleLines(){
-    title.replaceChildren();
+    title.replaceChildren();let index=0;
     const lines=state.title.replace(/\r/g,"").split("\n").map(s=>s.trim()).filter(Boolean);
-    for(let i=0;i<lines.length;i++){
-      const span=document.createElement("span");
-      span.className="lm-lab-title-line";
-      if(state.type==="perpetua"||(state.type==="alternada"&&i===Math.min(1,lines.length-1)))
-        span.classList.add("perpetua");
-      span.textContent=lines[i];
-      title.append(span);
-    }
+    lines.forEach((line,i)=>{
+      const span=document.createElement("span");span.className="lm-lab-title-line";
+      if(state.type==="perpetua"||state.type==="alternada"&&i===Math.min(1,lines.length-1))span.classList.add("perpetua");
+      for(const token of line.match(/\s+|\S+/g)||[]){
+        if(/^\s+$/.test(token)){span.append(document.createTextNode(token));continue;}
+        const word=document.createElement("span"),font=wordFont(index++,i,lines.length);
+        word.className="lm-lab-title-word";word.dataset.font=font;
+        word.style.setProperty("font-family",font==="perpetua"?"var(--lm-type-perpetua)":"var(--lm-type-univers)","important");
+        word.style.setProperty("letter-spacing",font==="perpetua"?"var(--lm-type-title-perpetua-tracking)":"var(--lm-type-title-tracking)","important");
+        word.textContent=token;span.append(word);
+      }title.append(span);
+    });
   }
   function renderTitle(){
-    renderTitleLines();
+    renderTitleLines();syncTitleWords();
     body.textContent=state.body;
     body.hidden=state.bodyMode!=="visivel";
     kicker.textContent=state.kicker;
@@ -352,14 +400,20 @@
   }
   function render(){
     const mMax=maxMScale(state.format);
-    if(state.mPresentation!=="completo"&&state.mScale>mMax)state.mScale=mMax;
     // An inactive scale control must not overwrite an Elemento value stored
     // for another surface merely because Completo is selected now.
-    const visibleMax=state.mPresentation==="completo"?Math.max(mMax,state.mScale):mMax;
+    if(!mScaleRange||mScaleRange.format!==state.format)mScaleRange={format:state.format,min:Math.floor(Math.min(45,state.mScale)),max:Math.ceil(Math.max(mMax,state.mScale))};
+    mScaleRange.min=Math.min(mScaleRange.min,Math.floor(state.mScale));mScaleRange.max=Math.max(mScaleRange.max,mMax,Math.ceil(state.mScale));
+    const visibleMax=mScaleRange.max;
     const mScaleInput=by("labMScale");
+    mScaleInput.min=String(mScaleRange.min);
     mScaleInput.max=String(visibleMax);
     const mPrecision=by("labPrecision-mScale");
     if(mPrecision)mPrecision.max=String(visibleMax);
+    let scaleNote=by('labMScaleNote');
+    if(!scaleNote){scaleNote=document.createElement('small');scaleNote.id='labMScaleNote';scaleNote.className='lm-ctrl-helper';mScaleInput.closest('.lm-m-scale-field').append(scaleNote);}
+    scaleNote.textContent='Escala do projeto preservada. Faixa de referência para Elemento neste formato: 45–'+mMax+'%.';
+    scaleNote.hidden=state.mScale>=45&&state.mScale<=mMax;
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.mPresentation=state.mPresentation;
@@ -385,12 +439,13 @@
     board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
+    board.style.setProperty("--lab-photo-contrast",String(state.photoContrast/100));
     board.style.setProperty("--lab-m-x","50%");
     board.style.setProperty("--lab-m-y","50%");
     by("labMMarkers").dataset.marker=markerActive?state.marker:"none";
     const bg=palette[state.color];
     const automatic=effectiveBackground==="color"?
-      palette[automaticInk[state.color]]:palette.neutral;
+      palette[state.autoInkVersion===1&&state.color==="red"?"black":automaticInk[state.color]]:palette.neutral;
     const ink=state.inkColor==="auto"?automatic:palette[state.inkColor];
     board.dataset.textColor=state.inkColor;
     board.style.setProperty("--lab-bg",bg);
@@ -408,6 +463,8 @@
     renderTitle();
     // One canonical signature is assembled separately from the M image mask.
     window.LabSignatureComposer?.render(state.signature);
+    const caption=by("labMCaptionPreview");caption.textContent=state.mCaption;caption.hidden=state.mContent==="off"||state.mPresentation!=="elemento"||!state.mCaption.trim();
+    by("labMPositionField").hidden=state.mContent==="off"||state.mPresentation!=="elemento";
     // Do not carry the previous composition's fitted size into this one.
     title.style.removeProperty("font-size");
     body.style.removeProperty("font-size");
@@ -419,6 +476,7 @@
     get:()=>sanitizeSignature(state.signature),
     update:signature=>{
       state.signature=sanitizeSignature(signature);
+      window.LabPages?.setSignature?.(state.signature);
       activePreset="";
       render();
       save();
@@ -465,6 +523,7 @@
     snapshot:()=>({state:JSON.parse(JSON.stringify(state)),photoCatalog:{...photos}}),
     restore:next=>{
       state=sanitize(next);
+      mScaleRange=null;
       rememberedReadingWidths.clear();
       rememberedReadingWidths.set(state.format,state.textWidth);
       rememberedMScales.clear();
@@ -550,6 +609,12 @@
     const column=copyArea.getBoundingClientRect();
     const kickerRect=kicker.getBoundingClientRect();
     const footerRect=footer.getBoundingClientRect();
+    if(!state.title.trim()&&(body.hidden||!state.body.trim())){
+      const info=by('labTitleFitInfo');
+      if(info){info.dataset.adjusted='false';info.textContent='Sem título ou corpo visível. Confira a legenda e as identificações na página.';}
+      board.dataset.typeFit='natural';
+      return {ok:true,adjusted:false,lowLegibility:false,emergency:false,requested,applied:requested};
+    }
     let ok=!!safe.width&&!!safe.height&&column.width>=4&&column.height>=1;
     if(ok){
       const gutter=safe.width*.012;
@@ -589,7 +654,17 @@
   function alignMToCopy(){
     if(state.mContent==="off")return;
     board.style.setProperty("--lab-m-x","50%");
-    board.style.setProperty("--lab-m-y","50%");
+    if(state.mPresentation==="completo"){board.style.setProperty("--lab-m-y","50%");return;}
+    const mask=by("labMask"),caption=by("labMCaptionPreview"),pad=board.offsetWidth*state.margin/100;
+    const gap=board.offsetWidth*.012,captionHeight=caption.hidden?0:caption.offsetHeight+gap;
+    let bottom=board.offsetHeight-pad;
+    if(captionHeight)for(const slot of board.querySelectorAll(".lm-lab-signature-slot[data-corner=bl],.lm-lab-signature-slot[data-corner=br]")){if(slot.offsetHeight)bottom=Math.min(bottom,slot.offsetTop+pad-gap);}
+    const room=Math.max(0,bottom-pad-mask.offsetHeight-captionHeight);
+    const center=room?pad+mask.offsetHeight/2+room*state.mPositionY/100:board.offsetHeight/2-captionHeight/2;
+    board.style.setProperty("--lab-m-y",center+"px");
+    if(!caption.hidden){caption.style.left=(mask.offsetLeft-mask.offsetWidth/2)+"px";
+      caption.style.width=Math.min(mask.offsetWidth,board.offsetWidth-2*pad)+"px";
+      caption.style.top=(center+mask.offsetHeight/2+gap)+"px";}
   }
 
   function syncSolidContrast(){
@@ -630,14 +705,17 @@
     const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
     const mPhoto=state.mContent==="photo";
     const hasPhoto=backgroundPhoto||mPhoto;
-    const textNodes=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span")];
-    if(!body.hidden)textNodes.push(body);
+    const candidates=[...board.querySelectorAll(".lm-lab-kicker,.lm-lab-title-line,.lm-lab-bottom span,.lm-lab-signature-caption,#labMCaptionPreview")];
+    if(!body.hidden)candidates.push(body);
+    // Metadata hidden by the current signature is not visible copy.
+    const textNodes=candidates.filter(node=>node.textContent.trim()&&
+      getComputedStyle(node).visibility!=="hidden"&&node.getClientRects().length>0);
     board.dataset.photoText=String(backgroundPhoto&&textNodes.some(n=>n.textContent.trim()));
     const mask=by("labMask");
     const overlap=mPhoto&&
       textNodes.some(n=>rects(n).some(r=>intersects(r,mask.getBoundingClientRect())));
     // Footer and kicker are metadata, not the primary editorial column. They
-    // still receive the 20% photographic treatment, but do not create a false
+    // still receive the selected photographic treatment, but do not create a false
     // "separate image/text" conflict beside an otherwise intact title.
     const editorialText=[...board.querySelectorAll(".lm-lab-title-line")];
     if(!body.hidden)editorialText.push(body);
@@ -649,9 +727,12 @@
     const footerRect=board.querySelector(".lm-lab-bottom").getBoundingClientRect();
     const titleWide=title.scrollWidth>title.clientWidth+3||
       [...title.querySelectorAll(".lm-lab-title-line")].some(n=>n.scrollWidth>n.clientWidth+3);
-    const invalid=!titleFit.ok||titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
+    const caption=by("labMCaptionPreview"),captionBox=caption.getBoundingClientRect();
+    const captionOverflow=!caption.hidden&&(captionBox.bottom>rect.bottom-state.margin*rect.width/100+2||caption.scrollWidth>caption.clientWidth+2);
+    const hasEditorial=Boolean(state.title.trim()||(!body.hidden&&state.body.trim()));
+    const invalid=captionOverflow||!titleFit.ok||hasEditorial&&(titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
-      (!body.hidden&&body.scrollWidth>body.clientWidth+3);
+      (!body.hidden&&body.scrollWidth>body.clientWidth+3));
     const collision=false;
     // The visual proof and its status must agree: an unintended overlap is
     // never an approved canvas, even if all text fits inside the page.
@@ -668,14 +749,16 @@
     status.dataset.state=invalid?"overflow":collision?"collision":titleFit.lowLegibility?"review":"ok";
     const treatment=by("labPhotoStatus");
     treatment.textContent=!hasPhoto?"SEM VÉU FOTOGRÁFICO":
-      backgroundPhoto&&mPhoto?"PRETO 20% / FUNDO + M":
-      mPhoto?"PRETO 20% / M":
-      "PRETO 20% / FUNDO";
+      backgroundPhoto&&mPhoto?"PRETO "+state.photoContrast+"% / FUNDO + M":
+      mPhoto?"PRETO "+state.photoContrast+"% / M":
+      "PRETO "+state.photoContrast+"% / FUNDO";
   }
   function applyPreset(key){
     if(!Object.prototype.hasOwnProperty.call(presets,key))return;
+    const signature=window.LabPages?.getSignature?.()||state.signature;
     state=copy(presets[key]);
-    state.signature=sanitizeSignature(state.signature);
+    mScaleRange=null;
+    state.signature=sanitizeSignature(signature||state.signature);
     rememberedReadingWidths.clear();
     rememberedReadingWidths.set(state.format,state.textWidth);
     rememberedMScales.clear();
@@ -683,6 +766,31 @@
     activePreset=key;
     render();save();
   }
+  const undoReset=by('labUndoReset');
+  window.addEventListener('labmattar:reset-availability',event=>{if(undoReset)undoReset.hidden=!event.detail.available;});
+  try{if(undoReset)undoReset.hidden=!localStorage.getItem(storageKey+'-before-reset');}catch{}
+  function requestReset(){
+    if(by('labPages')&&!window.LabPages){by('labSaveState').textContent='Aguarde a abertura das páginas antes de restaurar.';return;}
+    if(board.dataset.motionPlaying==='true'){by('labSaveState').textContent='Conclua a entrada dos textos antes de restaurar.';return;}
+    if(!confirm('Restaurar o estudo da página atual? Textos e ajustes serão substituídos. Se houver uma seção, seu fundo compartilhado também poderá mudar. Uma cópia da apresentação será guardada para desfazer.'))return;
+    if(window.LabPages){if(!window.LabPages.backupBeforeReset())return;}
+    else{
+      try{localStorage.setItem(storageKey+'-before-reset',JSON.stringify(state));if(undoReset)undoReset.hidden=false;}
+      catch{by('labSaveState').textContent='Não foi possível guardar a recuperação. Salve o projeto JSON antes de restaurar.';return;}
+    }
+    applyPreset('tipografia');
+  }
+  undoReset?.addEventListener('click',async()=>{
+    if(!confirm('Recuperar o estudo anterior à restauração? Isso substitui as alterações feitas depois dela.'))return;
+    try{
+      if(window.LabPages)await window.LabPages.undoReset();
+      else{
+        const previous=JSON.parse(localStorage.getItem(storageKey+'-before-reset')||'null');
+        if(!previous)throw Error('Não há restauração para desfazer.');
+        state=sanitize(previous);render();save();localStorage.removeItem(storageKey+'-before-reset');undoReset.hidden=true;
+      }
+    }catch(error){by('labSaveState').textContent='Recuperação não concluída / '+error.message;}
+  });
   /*
    * In-canvas editorial editing shares the inspector's state and local draft.
    * Never re-render the currently focused contenteditable on each keystroke:
@@ -703,7 +811,9 @@
   };
   const syncInlineValue=(editor)=>{
     const value=readInlineText(editor).slice(0,editor.limit);
+    if(editor.key==="title")remapTitleFonts(state.title,value);
     state[editor.key]=value;
+    if(editor.key==="title")syncTitleWords();
     const inspector=fields[editor.key]&&by(fields[editor.key]);
     if(inspector)inspector.value=value;
     activePreset="";
@@ -750,13 +860,13 @@
     });
     el.addEventListener("blur",()=>{
       if(!cancelled){
-        state[key]=readInlineText(editor).slice(0,editor.limit);
+        const next=readInlineText(editor).slice(0,editor.limit);if(key==="title")remapTitleFonts(state.title,next);state[key]=next;
       }
       const inspector=fields[key]&&by(fields[key]);
       if(inspector)inspector.value=state[key];
       // Only reconcile the editor being closed. A full render here could
       // reset the caret of another text layer receiving the next click.
-      if(key==="title")renderTitleLines();
+      if(key==="title"){renderTitleLines();syncTitleWords();}
       else el.textContent=state[key];
       board.removeAttribute("data-editing");
       activePreset="";
@@ -817,7 +927,7 @@
         by("labMContent").value=state.background==="photo"?"photo":lastMContent;
       }
       select.value=button.dataset.value;
-      select.dispatchEvent(new Event("change",{bubbles:true}));
+      select.dispatchEvent(new Event(select.type==="range"?"input":"change",{bubbles:true}));
     });
   });
   by("labOpenPhotoFromM")?.addEventListener("click",()=>{
@@ -874,15 +984,12 @@
     labMargin:["Margem",
       "Define a área útil.",
       "O texto não ultrapassa esse limite."],
-    labColor:["Campo cromático",
-      "Escolhe a cor da superfície quando a composição não usa fotografia.",
-      "Papel e bege são neutros; verde e vermelho são acentos validados. Azul e marrom continuam em estudo."],
     labGuides:["Guias",
       "Exibem margens e divisões de construção.",
       "Não fazem parte da composição final."],
     labType:["Título",
       "Define o tratamento tipográfico.",
-      "Existe um único tipo de título."],
+      "Univers e Perpetua podem ser escolhidas por palavra, inclusive na mesma linha, sem criar outro tratamento de título."],
     labTitleScale:["Escala do título",
       "Ajusta o tamanho do título.",
       "O texto permanece dentro da área útil."],
@@ -903,7 +1010,10 @@
       "Este controle fica disponível quando Fundo está configurado como Cor."],
     labInkColor:["Cor do texto",
       "Aplica a mesma cor a Título, Corpo e Detalhe, sem criar novos tratamentos tipográficos.",
-      "Padrão mantém o contraste recomendado. A interface avisa se outra combinação prejudicar a leitura."],
+      "Padrão mantém o contraste recomendado. Se houver contraste baixo, a exportação pede confirmação como estudo."],
+    labPhotoContrast:["Tratamento de leitura",
+      "Ajusta a camada preta sobre a fotografia ou o vídeo quando há texto sobre a imagem.",
+      "Novas composições começam em 40%. Ajuste de 0% a 80% e confirme a leitura no enquadramento e tamanho finais."],
     labBackground:["Fundo",
       "Define se a superfície usa cor ou mídia visual (fotografia ou vídeo).",
       "O fundo é independente do M."],
@@ -911,7 +1021,7 @@
       "Quando o fundo é cor, o M pode receber cor ou fotografia. Sobre fundo fotográfico, o M usa sempre a fotografia.",
       "Os perfis de aplicação não alteram a geometria do vetor."],
     labMPresentation:["Aplicação do M",
-      "Sem M desativa a forma central; Elemento permite ajustar a escala; Completo ocupa 100% da altura da superfície.",
+      "Sem M desativa a forma; Elemento é uma composição secundária com escala, posição vertical e legenda; Completo ocupa 100% da altura da superfície.",
       "O perfil de Elemento mantém sua escala quando você muda de modo."],
     labPhoto:["Fotografia",
       "Escolha a fotografia de fundo. Vídeos do acervo também ocupam esta camada, preservando M e marcadores.",
@@ -923,8 +1033,14 @@
       "Blur nos marcadores deixa o restante nítido. Nítido nos marcadores deixa o restante com blur.",
       "As duas regiões utilizam a mesma fotografia e o mesmo ponto de enquadramento."],
     labMScale:["Escala do M",
-      "Ajusta o tamanho do M mantendo-o no eixo central da página.",
-      "A escala varia; posição central e proporção permanecem."],
+      "Ajusta o tamanho do M mantendo o eixo horizontal central da página.",
+      "A proporção permanece. Em Elemento, ajuste a altura pelo controle Posição vertical."],
+    labMPositionY:["Posição vertical do elemento",
+      "Move o M Elemento entre o alto e a base da área disponível.",
+      "A proporção e o eixo horizontal são preservados; a legenda acompanha o elemento."],
+    labMCaption:["Legenda do elemento",
+      "Acrescenta uma legenda opcional em Detalhe abaixo do M Elemento.",
+      "A legenda acompanha a borda esquerda do M. Confira o espaço disponível e a leitura no formato final."],
     labFocalPreview:["Enquadramento",
       "Clique ou arraste para escolher o foco.",
       "O ajuste atua apenas na fotografia."],
@@ -1011,15 +1127,17 @@
     let header=field.querySelector(".lm-lab-field-title,.lm-lab-value-row,.lm-ctrl-signature-title,.lm-help-label-row");
     let buttonHost=header;
     if(header?.classList.contains("lm-lab-value-row")){
-      const label=header.querySelector("label");
+      const label=header.querySelector(":scope > label");
       buttonHost=document.createElement("span");
       buttonHost.className="lm-help-label-inline";
       if(label){header.insertBefore(buttonHost,label);buttonHost.append(label)}
+      else buttonHost=header.querySelector(":scope > .lm-help-label-inline")||header;
     }else if(header?.classList.contains("lm-ctrl-signature-title")){
-      const label=header.querySelector("label");
+      const label=header.querySelector(":scope > label");
       buttonHost=document.createElement("span");
       buttonHost.className="lm-help-label-inline";
       if(label){header.insertBefore(buttonHost,label);buttonHost.append(label)}
+      else buttonHost=header.querySelector(":scope > .lm-help-label-inline")||header;
     }else if(!header){
       const label=field.querySelector(":scope > label");
       buttonHost=document.createElement("div");
@@ -1083,7 +1201,7 @@
     {
       title:"Imagem e contraste",
       text:"Escolha cor, fotografia ou vídeo de fundo e ajuste o enquadramento. O M e os marcadores usam a mesma mídia, com regiões nítidas ou desfocadas.",
-      rule:"Preto 20% somente sobre fotografia com texto. Nenhum fundo sólido é criado atrás dos marcadores fotográficos.",
+      rule:"Tratamento preto ajustável sobre fotografia com texto. Nenhum fundo sólido é criado atrás dos marcadores fotográficos.",
       module:"fundo",
       target:"#labBackground"
     },
@@ -1288,15 +1406,19 @@
     scale.className="lm-ctrl-range-limits";
     const min=document.createElement("span");
     const max=document.createElement("span");
-    min.textContent=input.min+"%";max.textContent=input.max+"%";
+    const unit=input.dataset.unit||'%';
+    min.textContent=input.min+unit;max.textContent=input.max+unit;
     scale.append(min,max);
     input.insertAdjacentElement("afterend",scale);
   }
   for(const id of Object.values(fields)){
     const el=by(id);
-    el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"?"input":"change",()=>{
-      const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale;
+    el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"||el.type==="text"?"input":"change",()=>{
+      const previousFormat=state.format,previousWidth=state.textWidth,previousMScale=state.mScale,previousTitle=state.title,previousFonts=[...state.titleFonts];
       readInputs();
+      if(id==="labTitleInput")remapTitleFonts(previousTitle,state.title,previousFonts);
+      if(id==="labType")state.titleFonts=[];
+      if(id==="labColor"||id==="labInkColor")state.autoInkVersion=2;
       if(id==="labFormat"&&state.format!==previousFormat){
         rememberedReadingWidths.set(previousFormat,previousWidth);
         rememberedMScales.set(previousFormat,previousMScale);
@@ -1317,7 +1439,8 @@
   }
   document.querySelectorAll("[data-lab-preset]").forEach(b=>
     b.addEventListener("click",()=>applyPreset(b.dataset.labPreset)));
-  by("labReset").addEventListener("click",()=>applyPreset("tipografia"));
+  by("labTitleWordsReset").addEventListener("click",()=>{state.titleFonts=[];renderTitleLines();syncTitleWords();requestMeasurement();save();});
+  by("labReset").addEventListener("click",requestReset);
   const obs=new ResizeObserver(requestMeasurement);
   obs.observe(board);
   document.fonts.ready.then(requestMeasurement);

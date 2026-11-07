@@ -6,6 +6,28 @@
 
 ## Marco 1B — Páginas, Motion e publicação em arquivo
 
+### Integridade do projeto / revisão de 06/11/2026
+
+- Salvar e abrir JSON usam o mesmo limite de 64 MB, calculado em bytes UTF-8. Fotografias incorporadas continuam no contrato anterior; arquivos acima do limite são recusados antes do download ou da importação.
+- A apresentação inteira tem uma gravação canônica no navegador. “Salva” confirma essa gravação; falta de espaço ou armazenamento bloqueado orienta baixar o JSON e conserva a cópia anterior.
+- Restaurar estudo pede confirmação e guarda uma cópia da apresentação inteira, incluindo seleção, seções, fundos e motions. Desfazer restauração recupera essa cópia, inclusive depois de recarregar a página. Sem espaço para a recuperação, a restauração é interrompida.
+- A conversão inicial cria uma seção por página e aceita até 30 páginas. O conjunto é validado antes de substituir o projeto; 31 páginas são recusadas sem alterar IDs, fundos ou conteúdo.
+- Páginas inicia e reabre projetos mesmo sem o catálogo Motion. As referências dos motions são preservadas e podem ser salvas em JSON; visualização e exportação dessas mídias aguardam a recuperação do catálogo e a conferência de hashes. O botão do acervo permite tentar novamente.
+
+Regressões: `scripts/test-lab-project-lifecycle.mjs` e `scripts/smoke-lab-project-lifecycle.mjs` (Chromium e WebKit no CI).
+
+### Fidelidade de tratamento, escala e vídeo
+
+A legenda do M conta como texto da seção quando o elemento está visível. Assim, uma seção com apenas legenda recebe a mesma intensidade de leitura em todas as páginas. Uma página sem Título/Corpo não é considerada vazia ou inválida por esse motivo; limites da legenda continuam sendo conferidos.
+
+O projeto conserva escalas do M entre 1% e 140%, inclusive arquivos existentes fora da faixa de referência do editor. Restaurar uma página usa seus próprios valores, sem limitá-los pelo controle do formato anterior. Os rótulos e o campo numérico acompanham os limites do controle; valores fora da referência aparecem com aviso, sem modificar o arquivo. Trocas manuais de formato continuam lembrando os ajustes de cada superfície.
+
+Com vídeo de fundo, **Fundo → Quadro para PNG/PDF** define o instante estático. “Usar quadro atual” guarda o instante da prévia; “Ver quadro de PNG/PDF” pausa as variantes do fundo no quadro escolhido; “Reproduzir vídeo” retoma a prévia. Em seções, esse quadro é compartilhado pelo grupo. Salvar e reabrir preserva a escolha.
+
+PNG, PDF e a versão de impressão do HTML capturam o quadro escolhido, independentemente do instante em que a prévia estiver tocando. A captura devolve a prévia à posição e ao estado de reprodução anteriores. O HTML na tela e o MP4 continuam animados. Enquadramentos de 0% e 100% são valores válidos e não são substituídos por 50%.
+
+Regressões: `scripts/test-lab-render-fidelity.mjs` e `scripts/smoke-lab-render-fidelity.mjs`. A prova inclui escalas nos quatro formatos, legendas sem título, cinco intensidades, extremos de foco e comparação entre PNG, PDF e quadro de impressão do HTML, além de MP4 com quadros distintos.
+
 O Laboratório passa a manter uma sequência ordenada no editor existente: criar, duplicar, nomear, reordenar, excluir, salvar e reabrir páginas nos quatro formatos atuais. O contrato `labmattar.presentation` v1 contém composições v1, preservando a leitura dos JSON anteriores. O rascunho multipágina usa armazenamento local; o JSON continua sendo a cópia portátil de autoria.
 
 A cena lógica compartilhada alimenta PNG, PDF e HTML. PDF conserva texto selecionável, Univers/Perpetua incorporadas e paths oficiais; fotografias, filtros, sombras e quadros de motion são camadas raster nas dimensões de entrega. A qualidade 2K/4K determina essas camadas, não uma captura da tela. O PDF usa o formato de cada página; ele não declara PDF/X, CMYK ou qualidade de master fotográfico sem verificação.
@@ -155,7 +177,7 @@ O `.aep` resulta da abertura/montagem no After Effects; não fingir que um PNG, 
 - **CI visual:** composição comparativa nos quatro formatos atuais (e 4:5 após implementação), navegadores desktop/mobile, fontes carregadas, textos sem colisão, vetores e máscaras preservados.
 - **Regressão:** imagens de referência aprovadas para foto, M sólido/fotográfico, blur, título, corpo, detalhe e quatro variantes de assinatura, incluindo **Sem assinatura**.
 - **CI Motion:** conservar testes, fingerprint dos roteiros, verificação do primeiro e último quadro, duração/FPS e H.264; não misturar parâmetros de render de Motion com resoluções do editor editorial.
-- **Release:** mudança do código da Matriz exige revisão de seus próprios testes e contrato de interoperabilidade, sem substituir automaticamente um motor pelo outro. Testes e deploy apenas na prévia autorizada.
+- **Release:** mudança do código da Matriz exige revisão de seus próprios testes e contrato de interoperabilidade, sem substituir automaticamente um motor pelo outro. Conferir a prévia e seguir o workflow oficial descrito em `site-oficial/README.md`. As regras de aplicação em avaliação não se tornam aprovadas por serem implementadas.
 - **Documentação de limites:** toda opção informa se é **implementada**, **experimental** ou **planejada**. Nenhum formato de exportação aparece como disponível antes de funcionar.
 
 ## 9. Decisão operacional
@@ -172,3 +194,13 @@ A Matriz Vetorial já é produto real e continua sendo desenvolvida em paralelo.
 - Automações Motion existentes: `.github/workflows/motion-export.yml`, `scripts/render-motion-exports.mjs`, `scripts/register-motion-export.mjs`.
 
 **Atualizar este contrato quando houver uma decisão aprovada ou mudança comprovada de capacidade.** Não registrar propostas como funcionalidade entregue.
+
+
+## Aplicações validadas em 06/11/2026
+
+- Em Texto, use Fontes por palavra para alternar Univers e Perpetua na mesma linha. Restaurar fontes volta ao tratamento geral do título.
+- Em M → Elemento, ajuste Posição vertical e a legenda opcional. A legenda usa Detalhe e acompanha a borda esquerda do M. Completo mantém a construção anterior.
+- Em Assinatura do documento, qualquer mudança de canto, texto ou símbolo acompanha todas as páginas. Projetos antigos sem assinatura geral adotam a assinatura da primeira página ao abrir.
+- Novas composições começam com tratamento fotográfico de 40%; projetos anteriores conservam seu valor salvo ou o padrão legado de 20%.
+- Contraste baixo pede confirmação para exportar como estudo. O aviso não certifica fotografias ou vídeos; confira o enquadramento.
+- Motions da Matriz começam pausados na web. O leitor inicia o loop silencioso; a tinta preta é composta sem o papel bege. PNG/PDF usam o quadro escolhido e MP4 compõe o movimento sobre a página. O download do MP4 original conserva o arquivo aprovado.

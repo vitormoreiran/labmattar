@@ -21,6 +21,22 @@ export async function readyMedia(media,signal){
     video.pause();if(!video.videoWidth||!Number.isFinite(video.duration)||video.duration<=0)throw Error('Duração ou dimensões do vídeo indisponíveis.');
   }));
 }
+export function staticFrameTime(seconds,duration){
+  if(!Number.isFinite(seconds)||seconds<0||!Number.isFinite(duration)||duration<=0||seconds>duration+1e-6)
+    throw Error('O quadro escolhido está fora da duração do vídeo. Escolha outro quadro para PNG/PDF.');
+  return Math.min(seconds,Math.max(0,duration-1/120));
+}
+export async function seekStillMedia(media,seconds,signal){
+  await readyMedia(media,signal);
+  await Promise.all(media.map(async video=>{
+    abort(signal);const target=staticFrameTime(seconds,video.duration);
+    if(video.seeking||video.currentTime!==target)
+      await mediaEvent(video,'seeked',()=>{video.currentTime=target;},signal);
+    if(video.readyState<2)await mediaEvent(video,'loadeddata',null,signal);
+    if(Math.abs(video.currentTime-target)>1e-5)
+      throw Error('O navegador não alcançou o quadro escolhido. Reconecte o vídeo ou escolha outro instante antes de exportar.');
+  }));
+}
 export async function seekMedia(media,time,backgroundTime,signal){
   await Promise.all(media.map(async video=>{
     abort(signal);video.pause();

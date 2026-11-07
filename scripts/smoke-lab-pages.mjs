@@ -13,7 +13,7 @@ page.on('pageerror',error=>report.errors.push(error.message));page.on('dialog',d
 const pause=()=>page.waitForTimeout(170);
 async function surface(){await page.locator('[data-workspace-view=pages]').click();}
 async function state(patch){
-  await page.evaluate(patch=>{const b=window.LabProductionBridge;b.restore({...b.snapshot().state,...patch});},patch);await pause();
+  await page.evaluate(patch=>{const b=window.LabProductionBridge;if(patch.signature)window.LabPages.setSignature(patch.signature);b.restore({...b.snapshot().state,...patch});},patch);await pause();
 }
 async function downloadButton(id,file){
   const result=page.waitForEvent('download',{timeout:180000});
@@ -64,7 +64,7 @@ try{
   const signature=await page.evaluate(()=>window.LabProductionBridge.snapshot().state.signature);
   signature.slots.tl.text='PÁGINA TRÊS';
   await state({format:'quadrado',title:'',body:'',bodyMode:'oculto',background:'color',mContent:'solid',
-    color:'beige',marker:'none',signature,mScale:50});
+    color:'beige',marker:'none',signature,mScale:50,mCaption:'VETOR OFICIAL'});
   await page.locator('#labPageName').fill('Vetor oficial');await page.locator('#labPageName').press('Tab');
   await page.locator('#labPageAdd').click();await pause();
   signature.slots.tl.text='LABMATTAR / 2026';
@@ -121,7 +121,9 @@ try{
   await htmlPage.evaluate(()=>document.fonts.ready);
   assert.equal(await htmlPage.locator('.export-page').count(),4);
   assert.equal(await htmlPage.locator('svg text').count()>5,true,'Web pages retain actual text and vectors');
-  assert.equal(await htmlPage.locator('video[autoplay][muted][loop]:not([controls])').count(),1);
+  assert.equal(await htmlPage.locator('video[data-motion-ink][muted][loop]:not([controls])').count(),1);
+  assert.equal(await htmlPage.locator('video').evaluate(v=>v.paused&&!v.autoplay),true);
+  await htmlPage.locator('.motion-ink-toggle').click();
   await htmlPage.waitForFunction(()=>document.querySelector('video').currentTime>0.1);
   assert.equal(await htmlPage.evaluate(()=>window.injected),undefined,'Authored HTML-like text cannot execute');
   assert.deepEqual(await htmlPage.locator('#project').evaluate(node=>JSON.parse(node.textContent)),await page.evaluate(()=>window.LabPages.create()));

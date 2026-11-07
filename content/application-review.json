@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "edition": "2026-11-05-r1",
+  "sourceCommit": "16c0ba704c25271e51c22276ba397a72c22c856c",
+  "status": "pending-author-validation",
+  "decisions": [
+    {
+      "id": "tratamento",
+      "n": "01",
+      "title": "Intensidade do tratamento de leitura",
+      "question": "Os níveis e o ajuste fino dão liberdade suficiente para preservar a imagem e a leitura?",
+      "recommendation": "Manter os atalhos 0%, 20%, 40% e 60%, com ajuste fino entre 0% e 80%. Conferir cada enquadramento.",
+      "options": [
+        "Aprovar níveis e ajuste fino",
+        "Preferir apenas atalhos",
+        "Rever a proposta"
+      ],
+      "scope": "Controle implementado; critério de aplicação em validação."
+    },
+    {
+      "id": "vermelho",
+      "n": "02",
+      "title": "Texto sobre vermelho",
+      "question": "Qual recomendação deve orientar novas composições sobre vermelho?",
+      "recommendation": "Recomendar branco puro. Papel e preto da identidade não atingem 4,5:1 para corpo e detalhes sobre este vermelho.",
+      "options": [
+        "Branco puro como recomendação",
+        "Escolha sempre manual",
+        "Rever a proposta"
+      ],
+      "scope": "A recomendação nova está implementada; projetos antigos mantêm a aparência."
+    },
+    {
+      "id": "azul",
+      "n": "03",
+      "title": "Papel do azul",
+      "question": "O azul pode ser um campo cromático da identidade?",
+      "recommendation": "Aprovar o azul com texto claro para campos editoriais sem fotografia, com uso intencional.",
+      "options": [
+        "Aprovar campo editorial azul",
+        "Manter azul em estudo",
+        "Rever o papel do azul"
+      ],
+      "scope": "Proposta. A regra atual continua em avaliação."
+    },
+    {
+      "id": "marrom",
+      "n": "04",
+      "title": "Papel do marrom",
+      "question": "Que função o marrom deve assumir?",
+      "recommendation": "Usar como apoio cromático, com texto claro, sem torná-lo fundo obrigatório de uma categoria.",
+      "options": [
+        "Aprovar como apoio cromático",
+        "Manter marrom em estudo",
+        "Rever o papel do marrom"
+      ],
+      "scope": "Proposta. Nenhuma aplicação foi aprovada automaticamente."
+    },
+    {
+      "id": "m",
+      "n": "05",
+      "title": "M compositivo e M de assinatura",
+      "question": "A distinção entre composição central e assinatura nos cantos está clara?",
+      "recommendation": "Manter o eixo central para o M compositivo. Permitir o símbolo na assinatura de canto, preservando proporção e área de leitura.",
+      "options": [
+        "Aprovar a distinção de funções",
+        "Rever a posição compositiva",
+        "Rever a proposta"
+      ],
+      "scope": "As opções existentes foram preservadas; esta redação aguarda validação."
+    },
+    {
+      "id": "assinatura",
+      "n": "06",
+      "title": "Assinatura por função",
+      "question": "Quais tratamentos de assinatura devem orientar as páginas?",
+      "recommendation": "Escolher entre Sem assinatura, Editorial, Navegação e Símbolo conforme a função da página. Evitar repetir a marca sem necessidade.",
+      "options": [
+        "Aprovar os quatro tratamentos",
+        "Restringir a Editorial e Símbolo",
+        "Rever os tratamentos"
+      ],
+      "scope": "Controles existentes. A recomendação de uso ainda é proposta."
+    },
+    {
+      "id": "reducao",
+      "n": "07",
+      "title": "Redução dos elementos",
+      "question": "Os elementos continuam reconhecíveis nas escalas comparadas?",
+      "recommendation": "Ponto de partida para testar: M a 24 px de altura, pictogramas a 32 px e assinatura a 120 px de largura. Validar também no suporte real.",
+      "options": [
+        "Usar estes mínimos como referência",
+        "Adotar limites mais conservadores",
+        "Rever elemento por elemento"
+      ],
+      "scope": "Proposta de referência digital. Não é norma publicada nem medida de impressão."
+    },
+    {
+      "id": "protecao",
+      "n": "08",
+      "title": "Área de proteção",
+      "question": "Que respiro protege a assinatura sem engessar a composição?",
+      "recommendation": "Testar um quarto da altura do símbolo ao redor de assinaturas isoladas. O M compositivo e o modo Completo seguem a régua e a sangria da página.",
+      "options": [
+        "Um quarto da altura",
+        "Metade da altura",
+        "Rever a unidade de proteção"
+      ],
+      "scope": "Proposta. Não aplicar ao recorte compositivo do M como se fosse um logotipo isolado."
+    },
+    {
+      "id": "tipografia",
+      "n": "09",
+      "title": "Intervenção editorial no título",
+      "question": "Como Univers e Perpetua devem conviver nos títulos?",
+      "recommendation": "Usar Univers como estrutura e escolher intervenções de Perpetua com intenção editorial. A opção Alternada atual aplica Perpetua à segunda linha.",
+      "options": [
+        "Intervenção editorial intencional",
+        "Alternância livre entre linhas",
+        "Rever os exemplos"
+      ],
+      "scope": "Três papéis e fontes Light permanecem vigentes. A escolha editorial aguarda validação."
+    },
+    {
+      "id": "excecoes",
+      "n": "10",
+      "title": "Introdução e índice",
+      "question": "Essas duas páginas devem conservar a abertura própria?",
+      "recommendation": "Preservar a Introdução autoral e tratar o índice como página de recursos. Compartilhar navegação, fontes e cores, explicitando as exceções de escala.",
+      "options": [
+        "Preservar as duas exceções",
+        "Uniformizar com os capítulos",
+        "Rever separadamente"
+      ],
+      "scope": "A aparência atual foi preservada; nenhuma nova diagramação foi aplicada."
+    },
+    {
+      "id": "leitura",
+      "n": "11",
+      "title": "Revisão antes de exportar",
+      "question": "O que a ferramenta deve fazer ao detectar contraste baixo em uma cor sólida?",
+      "recommendation": "Avisar e pedir revisão ou uma confirmação de exportação como estudo. Salvar o projeto deve continuar possível.",
+      "options": [
+        "Avisar e confirmar exportação de estudo",
+        "Impedir exportação com contraste baixo",
+        "Manter apenas o aviso atual"
+      ],
+      "scope": "O aviso atual permanece. A política de bloqueio ainda não foi alterada."
+    },
+    {
+      "id": "movimento",
+      "n": "12",
+      "title": "Aplicar os motions aprovados",
+      "question": "Como controlar os loops durante a leitura de uma página?",
+      "recommendation": "Conservar loops silenciosos e prever uma pausa geral discreta. Na montagem, usar os cortes indicados e conferir a pausa de leitura com o conteúdo.",
+      "options": [
+        "Loops com pausa geral",
+        "Reprodução iniciada pelo leitor",
+        "Rever por contexto"
+      ],
+      "scope": "Oito roteiros já aprovados. Esta escolha é sobre sua aplicação; a interface da Matriz foi preservada."
+    }
+  ]
+}

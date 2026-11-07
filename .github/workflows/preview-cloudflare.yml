@@ -94,16 +94,9 @@ jobs:
           cmp /tmp/manual-once.html public/manual.html
           git diff --exit-code -- public/identidade
           python3 design/validate-identity.py
-          mkdir -p public/fonts
-          curl --fail --location --silent --show-error --retry 3 https://labmattar.com/fonts/univers-lt-std-45-light.otf --output public/fonts/univers-lt-std-45-light.otf
-          curl --fail --location --silent --show-error --retry 3 https://labmattar.com/fonts/perpetua-titling-light.ttf --output public/fonts/perpetua-titling-light.ttf
-          python3 - <<'PY'
-          from pathlib import Path
-          for name in ('univers-lt-std-45-light.otf','perpetua-titling-light.ttf'):
-              data=(Path('public/fonts')/name).read_bytes()
-              assert len(data)>3000 and data[:4] in (b'OTTO',bytes.fromhex('00010000'),b'true',b'ttcf'),f'Invalid font: {name}'
-          PY
+          python3 scripts/prepare-identity-kit.py
           python3 design/localize-fonts.py
+          node scripts/prepare-identity-review.mjs
       - uses: actions/setup-node@v4
         with:
           node-version: '22.13.0'
@@ -133,7 +126,7 @@ jobs:
       - name: Validar seguranca do acervo
         run: node scripts/test-acervo.mjs
       - name: Validar contratos de páginas e elementos
-        run: node --test scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
+        run: node --test scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash
@@ -215,6 +208,7 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
+          node scripts/smoke-identity-review.mjs
       - name: Conferir pacote do domínio oficial sem publicar
         run: |
           node scripts/build-official.mjs dist/client dist/oficial-checked
@@ -286,6 +280,7 @@ jobs:
             colors-proof/
             redes-proof/
             production-proof/
+            identity-proof/
             laboratorio-export-4k.png
             composition-studio-*.png
           if-no-files-found: warn

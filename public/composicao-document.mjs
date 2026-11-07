@@ -57,7 +57,7 @@ function safeImagePath(v){
       provider==="dropbox"&&/^id:[A-Za-z0-9_=-]{5,200}$/.test(id||"");
   }catch{return false}
 }
-function signatureOf(value){
+export function signatureOf(value){
   check(isObject(value)&&isObject(value.slots),"assinatura");
   const slots={};
   for(const corner of CORNERS){
@@ -75,6 +75,10 @@ function signatureOf(value){
     slots
   };
 }
+export function wordFonts(value,title){
+  check(Array.isArray(value)&&value.length<=(String(title).match(/\S+/g)||[]).length,"fontes por palavra");
+  return value.map(font=>font===null?null:enumValue(font,["univers","perpetua"],"fonte da palavra"));
+}
 export function dimensionsFor(format,maxEdge){
   const ratio=FORMATS[enumValue(format,Object.keys(FORMATS),"formato")];
   check(maxEdge===1920||maxEdge===3840,"perfil de qualidade");
@@ -88,6 +92,8 @@ function captureState(state,photoCatalog){
     format:enumValue(state.format,Object.keys(FORMATS),"formato"),
     color:enumValue(state.color,CHOICES.color,"cor"),
     inkColor:enumValue(state.inkColor??"auto",CHOICES.inkColor,"cor do texto"),
+    autoInkVersion:bounded(state.autoInkVersion??1,1,2,"perfil de cor automática"),
+    photoContrast:bounded(state.photoContrast??20,0,80,"tratamento de leitura"),
     margin:bounded(state.margin,4,16,"margem"),
     guides:enumValue(state.guides,CHOICES.guides,"guias"),
     marker:text(state.marker,40,"marcadores"),
@@ -100,10 +106,13 @@ function captureState(state,photoCatalog){
     mPresentation:enumValue(state.mPresentation,CHOICES.mPresentation,"apresentação do M"),
     photo:text(state.photo,30,"foto"),
     mScale:bounded(state.mScale,1,140,"escala do M"),
+    mPositionY:bounded(state.mPositionY??50,0,100,"posição vertical do M"),
+    mCaption:text(state.mCaption??"",100,"legenda do elemento"),
     focusX:bounded(state.focusX,0,100,"foco horizontal"),
     focusY:bounded(state.focusY,0,100,"foco vertical"),
     symbol:enumValue(state.symbol,CHOICES.symbol,"símbolo"),
     title:text(state.title,140,"Título"),
+    titleFonts:wordFonts(state.titleFonts??[],state.title),
     body:text(state.body,380,"Corpo"),
     bodyMode:enumValue(state.bodyMode,CHOICES.bodyMode,"visibilidade do Corpo"),
     kicker:text(state.kicker,80,"identificação superior"),
@@ -111,6 +120,7 @@ function captureState(state,photoCatalog){
     footerRight:text(state.footerRight,100,"identificação inferior direita"),
     signature:signatureOf(state.signature)
   };
+  check(Number.isInteger(clean.autoInkVersion),"perfil de cor automática");
   check(CHOICES.marker.includes(clean.marker),"marcadores do M");
   check(!(clean.background==="photo"&&clean.mContent==="solid"),"M sólido não existe sobre fotografia");
   check(Object.hasOwn(photoCatalog,clean.photo)&&safeImagePath(photoCatalog[clean.photo]),"fotografia do catálogo local");
@@ -144,14 +154,14 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
       surface:{format:s.format,color:s.color,background:s.background,guides:s.guides,marginPercent:s.margin},
       reading:{widthPercent:s.textWidth},
       text:{
-        inkColor:s.inkColor,
-        title:{role:"title",value:s.title,treatment:s.type,scalePercent:s.titleScale},
+        inkColor:s.inkColor,autoInkVersion:s.autoInkVersion,
+        title:{role:"title",value:s.title,treatment:s.type,scalePercent:s.titleScale,wordFonts:s.titleFonts},
         body:{role:"body",value:s.body,visible:s.bodyMode==="visivel"},
         detail:{role:"detail",metadata:{kicker:s.kicker,footerLeft:s.footerLeft,footerRight:s.footerRight},signature:s.signature}
       },
-      media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,focalPoint:{x:s.focusX,y:s.focusY}},
+      media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,photoContrastPercent:s.photoContrast,focalPoint:{x:s.focusX,y:s.focusY}},
       m:{maskAssetId:"identity:m-mask",content:s.mContent,presentation:s.mPresentation,
-        scalePercent:s.mScale,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
+        scalePercent:s.mScale,positionYPercent:s.mPositionY,caption:s.mCaption,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
     }],
     assets:assetList(s,photoCatalog),
     output:{format:"image/png",maxEdge,...dimensions,reference:"laboratorio-canvas-2d",masterVerified:false},
@@ -174,10 +184,10 @@ export function readProductionDocument(doc,photoCatalog){
   const expected=dimensionsFor(page.surface?.format,doc.output.maxEdge);
   check(doc.output.width===expected.width&&doc.output.height===expected.height,"dimensões da página");
   const state={
-    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",margin:page.surface.marginPercent,
+    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",autoInkVersion:t.autoInkVersion??1,photoContrast:media.photoContrastPercent??20,margin:page.surface.marginPercent,
     guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,
-    titleScale:t.title?.scalePercent,type:t.title?.treatment,background:page.surface.background,
-    mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,
+    titleScale:t.title?.scalePercent,titleFonts:t.title?.wordFonts??[],type:t.title?.treatment,background:page.surface.background,
+    mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,mPositionY:m.positionYPercent??50,mCaption:m.caption??"",
     focusX:media.focalPoint?.x,focusY:media.focalPoint?.y,symbol:m.legacySymbol,
     title:t.title?.value,body:t.body?.value,bodyMode:t.body?.visible===true?"visivel":"oculto",
     kicker:t.detail?.metadata?.kicker,footerLeft:t.detail?.metadata?.footerLeft,
@@ -192,6 +202,12 @@ export function verifyRoundTrip(doc,photoCatalog){
   // Earlier v1 documents have no markerFocus. Keep them readable without
   // inventing a new schema version; a missing value means blur in markers.
   if(doc.pages[0].m.markerFocus===undefined)delete normalized.pages[0].m.markerFocus;
+  if(doc.pages[0].m.positionYPercent===undefined)delete normalized.pages[0].m.positionYPercent;
+  if(doc.pages[0].m.caption===undefined)delete normalized.pages[0].m.caption;
+  if(doc.pages[0].text.title.wordFonts===undefined)delete normalized.pages[0].text.title.wordFonts;
+  // Legacy documents preserve their 20% treatment and original automatic red ink.
+  if(doc.pages[0].media.photoContrastPercent===undefined)delete normalized.pages[0].media.photoContrastPercent;
+  if(doc.pages[0].text.autoInkVersion===undefined)delete normalized.pages[0].text.autoInkVersion;
   // Legacy v1 documents remain readable without a color field.
   if(doc.pages[0].text.inkColor===undefined)delete normalized.pages[0].text.inkColor;
   check(JSON.stringify(doc)===JSON.stringify(normalized),"documento alterado ou campos não reconhecidos");

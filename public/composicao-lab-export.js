@@ -341,13 +341,15 @@
     return new Blob(parts,{type:'image/png'});
   }
   async function rasterize(){
-    const scene=await captureScene();if(!scene)return null;
+    const scene=await captureScene({ask:false});if(!scene)return null;
     report("RENDERIZANDO "+scene.outputWidth+" × "+scene.outputHeight+" PX…","busy");
     const {sceneCanvas}=await import("./lab-scene.mjs");
     const canvas=await sceneCanvas(scene,Number(sizeSelect.value));
     // Serialize this bitmap snapshot without a second raster pass in WebKit.
     const blob=encodePng(canvas);
     if(blob.size<2048)throw Error("PNG incompleto.");
+    if(document.getElementById("labInkContrast")?.dataset.contrast==="warning"&&!confirm("Esta combinação tem contraste baixo. Exportar como estudo mesmo assim?"))return null;
+    if(scene.warnings.length&&!confirm("LABMATTAR / Qualidade dos originais\n\n"+scene.warnings.join("\n")+"\n\nExportar na dimensão selecionada?"))return null;
     return {blob,width:canvas.width,height:canvas.height,warnings:scene.warnings};
   }
   function download(blob,name){

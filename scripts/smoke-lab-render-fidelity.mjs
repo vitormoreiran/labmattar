@@ -21,7 +21,6 @@ async function download(type,file){
   await page.locator('[data-delivery-format="'+type+'"]').click();
   if(type==='mp4'){await page.locator('#labVideoScope').selectOption('current');await page.locator('#labVideoSeconds').fill('2');await page.locator('#labVideoQuality').selectOption('hd');await page.locator('#labVideoText').uncheck();}
   else await page.locator('#labExportSize').selectOption('1920');
-  await page.evaluate(type=>{window.__fidelityExportType=type;},type);
   await page.locator('#'+({png:'labExportPng',pdf:'labExportPdf',html:'labExportHtml',mp4:'labExportMp4'})[type]).click();
   const item=await pending;await item.saveAs(path.join(dir,file));assert.equal(await item.failure(),null);
   await page.locator('#labDeliveryBack').click();return path.join(dir,file);
@@ -34,17 +33,6 @@ async function rgbDifference(a,b){return page.evaluate(async images=>{
 try{
   await page.goto(url+'?studio=1',{waitUntil:'networkidle'});await page.locator('#labPages[data-ready=true]').waitFor({state:'attached'});
   await page.locator('#labPages[data-motion-catalog=ready]').waitFor({state:'attached'});
-  await page.addInitScript(()=>{
-    window.__fidelityDraws=[];const draw=CanvasRenderingContext2D.prototype.drawImage;
-    CanvasRenderingContext2D.prototype.drawImage=function(source,...args){
-      if(source instanceof HTMLVideoElement||source instanceof HTMLImageElement&&source.src.startsWith('data:image/png')){
-        const b=document.querySelector('#labArtboard'),r=b.getBoundingClientRect(),v=source.getBoundingClientRect(),s=getComputedStyle(source),t=this.getTransform();
-        window.__fidelityDraws.push({type:window.__fidelityExportType,id:source.id||'scene-image',args,canvas:[this.canvas.width,this.canvas.height],transform:[t.a,t.d,t.e,t.f],board:[b.offsetWidth,b.offsetHeight,r.width,r.height],video:[source.videoWidth||source.naturalWidth,source.videoHeight||source.naturalHeight,v.width,v.height],css:[s.width,s.height,s.transform,s.objectPosition]});
-        if(window.__fidelityDraws.length>24)window.__fidelityDraws.shift();
-      }
-      return draw.call(this,source,...args);
-    };
-  });
   const snapshot=await page.evaluate(()=>window.LabProductionBridge.snapshot());
   const signature={preset:'none',scale:100,slots:Object.fromEntries(['tl','tr','bl','br'].map(c=>[c,{kind:'none',symbol:'M.svg',text:''}]))};
   const base={...snapshot.state,signature,title:'FORMA',type:'univers',titleFonts:[],body:'',bodyMode:'oculto',textWidth:100,titleScale:70,kicker:'',footerLeft:'',footerRight:'',marker:'none',guides:'nenhuma',background:'color',mContent:'solid',mPresentation:'elemento',mCaption:'',mPositionY:50};
@@ -99,16 +87,7 @@ try{
   const secondScene=await page.evaluate(async()=>{const scene=await window.LabRenderer.capture({edge:1920,ask:false});const bg=scene.items.find(op=>op.kind==='image'&&op.layer==='video-bg-base');return {frame:scene.backgroundFrameSeconds,time:document.querySelector('#labAmbientVideo').currentTime,hash:[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(bg.source)))].map(x=>x.toString(16).padStart(2,'0')).join('')};});
   assert.equal(secondScene.hash,firstScene.hash);assert(Math.abs(secondScene.time-2.2)<.001);assert.deepEqual(await getProject(),chosen);
   await page.screenshot({path:path.join(dir,'video-frame-controls.png')});
-  const png=await download('png','selected-frame.png');
-  const debug=await page.evaluate(async()=>{
-    const scene=await window.LabRenderer.capture({edge:1920,ask:false}),source=scene.items.find(op=>op.kind==='image'&&op.layer==='video-bg-base').source;
-    const {sceneCanvas}=await import('/lab-scene.mjs'),canvas=await sceneCanvas(scene,1920);
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
-    const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(blob);});
-    return {source,canvas:canvas.toDataURL('image/png'),blob:encoded};
-  });
-  for(const [key,value] of Object.entries(debug))await writeFile(path.join(dir,'probe-'+key+'.png'),Buffer.from(value.split(',')[1],'base64'));
-  const pdf=await download('pdf','selected-frame.pdf');
+  const png=await download('png','selected-frame.png'),pdf=await download('pdf','selected-frame.pdf');
   execFileSync('pdftoppm',['-scale-to','1920','-singlefile','-png',pdf,path.join(dir,'selected-frame-pdf')]);
   const pdfDifference=await rgbDifference(await readFile(png),await readFile(path.join(dir,'selected-frame-pdf.png')));assert(pdfDifference<3,'PNG/PDF divergence: '+pdfDifference);
   const htmlFile=await download('html','selected-frame.html'),html=await readFile(htmlFile,'utf8');assert(html.includes('object-position:0% 100%'));
@@ -130,5 +109,5 @@ try{
   await page.evaluate(doc=>window.LabPages.load(doc),chosen);await settled();assert.equal((await getProject()).pages[0].backgroundVideo.frameSeconds,1.25);
   proof.push({case:'background-frame',selectedSeconds:1.25,previewRestoredTo:secondScene.time,pdfDifference,htmlPosterDifference:posterDifference,focus:[0,100],mp4Frames,mp4UnsupportedHandled:!mp4Supported,projectUnchanged:true});
   assert.deepEqual(errors,[]);await writeFile(path.join(dir,'report.json'),JSON.stringify({browser:name,passed:true,proof,errors},null,2));console.log('Fidelidade de escala, legenda, foco e quadros de vídeo validada / '+name);
-}catch(error){const status=await page.evaluate(()=>({draws:window.__fidelityDraws,frame:document.querySelector('#labBackgroundFrame')?.value,savedFrame:window.LabPages?.create().pages[0]?.backgroundVideo?.frameSeconds,players:[...document.querySelectorAll('video.lm-lab-background-video')].map(v=>({id:v.id,time:v.currentTime,paused:v.paused,seeking:v.seeking,ready:v.readyState,autoplay:v.autoplay,duration:v.duration,error:v.error?.message})),composition:document.querySelector('#labStatus')?.textContent,pages:document.querySelector('#labPagesStatus')?.textContent,export:document.querySelector('#labExportStatus')?.textContent})).catch(()=>({}));await writeFile(path.join(dir,'failure.json'),JSON.stringify({failure:error.stack,status,proof,errors},null,2));await page.screenshot({path:path.join(dir,'failure.png')}).catch(()=>{});console.error(JSON.stringify({status,proof,errors},null,2));throw error;}
+}catch(error){const status=await page.evaluate(()=>({frame:document.querySelector('#labBackgroundFrame')?.value,savedFrame:window.LabPages?.create().pages[0]?.backgroundVideo?.frameSeconds,players:[...document.querySelectorAll('video.lm-lab-background-video')].map(v=>({id:v.id,time:v.currentTime,paused:v.paused,seeking:v.seeking,ready:v.readyState,autoplay:v.autoplay,duration:v.duration,error:v.error?.message})),composition:document.querySelector('#labStatus')?.textContent,pages:document.querySelector('#labPagesStatus')?.textContent,export:document.querySelector('#labExportStatus')?.textContent})).catch(()=>({}));await writeFile(path.join(dir,'failure.json'),JSON.stringify({failure:error.stack,status,proof,errors},null,2));await page.screenshot({path:path.join(dir,'failure.png')}).catch(()=>{});console.error(JSON.stringify({status,proof,errors},null,2));throw error;}
 finally{await context.close();await browser.close();}

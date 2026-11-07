@@ -329,14 +329,24 @@
     return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),...(backgroundFrame.frameSeconds!==undefined?{backgroundFrameSeconds:backgroundFrame.frameSeconds}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
     }finally{await backgroundFrame.restore();}
   }
+  function encodePng(canvas){
+    const prefix='data:image/png;base64,',snapshot=canvas.toDataURL('image/png');
+    if(!snapshot.startsWith(prefix))throw Error('Falha na codificação PNG.');
+    const encoded=snapshot.slice(prefix.length),parts=[];
+    for(let offset=0;offset<encoded.length;offset+=65536){
+      const binary=atob(encoded.slice(offset,offset+65536)),bytes=new Uint8Array(binary.length);
+      for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+      parts.push(bytes);
+    }
+    return new Blob(parts,{type:'image/png'});
+  }
   async function rasterize(){
     const scene=await captureScene();if(!scene)return null;
     report("RENDERIZANDO "+scene.outputWidth+" × "+scene.outputHeight+" PX…","busy");
     const {sceneCanvas}=await import("./lab-scene.mjs");
     const canvas=await sceneCanvas(scene,Number(sizeSelect.value));
-    // Encode the completed bitmap in pixel coordinates.
-    canvas.getContext('2d').resetTransform();
-    const blob=await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(Error("Falha na codificação PNG.")),"image/png"));
+    // Serialize this bitmap snapshot without a second raster pass in WebKit.
+    const blob=encodePng(canvas);
     if(blob.size<2048)throw Error("PNG incompleto.");
     return {blob,width:canvas.width,height:canvas.height,warnings:scene.warnings};
   }

@@ -334,6 +334,8 @@
     report("RENDERIZANDO "+scene.outputWidth+" × "+scene.outputHeight+" PX…","busy");
     const {sceneCanvas}=await import("./lab-scene.mjs");
     const canvas=await sceneCanvas(scene,Number(sizeSelect.value));
+    // Encode the completed bitmap in pixel coordinates.
+    canvas.getContext('2d').resetTransform();
     const blob=await new Promise((resolve,reject)=>canvas.toBlob(result=>result?resolve(result):reject(Error("Falha na codificação PNG.")),"image/png"));
     if(blob.size<2048)throw Error("PNG incompleto.");
     return {blob,width:canvas.width,height:canvas.height,warnings:scene.warnings};

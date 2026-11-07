@@ -103,7 +103,9 @@ try{
   const debug=await page.evaluate(async()=>{
     const scene=await window.LabRenderer.capture({edge:1920,ask:false}),source=scene.items.find(op=>op.kind==='image'&&op.layer==='video-bg-base').source;
     const {sceneCanvas}=await import('/lab-scene.mjs'),canvas=await sceneCanvas(scene,1920);
-    return {source,canvas:canvas.toDataURL('image/png')};
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    const encoded=await new Promise(resolve=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.readAsDataURL(blob);});
+    return {source,canvas:canvas.toDataURL('image/png'),blob:encoded};
   });
   for(const [key,value] of Object.entries(debug))await writeFile(path.join(dir,'probe-'+key+'.png'),Buffer.from(value.split(',')[1],'base64'));
   const pdf=await download('pdf','selected-frame.pdf');

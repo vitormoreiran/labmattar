@@ -1,6 +1,6 @@
 const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 async function image(source,imageCache){
-  if(!imageCache.has(source))imageCache.set(source,(async()=>{const img=new Image();img.src=source;await img.decode();return img;})());
+  if(!imageCache.has(source))imageCache.set(source,(async()=>{const img=new Image();img.src=source;await img.decode();return typeof createImageBitmap==='function'?await createImageBitmap(img):img;})());
   return imageCache.get(source);
 }
 function pathFor(vector){
@@ -22,14 +22,7 @@ export async function sceneCanvas(scene,edge=3840,options={}){
     if(op.kind==='rect'){ctx.fillStyle=op.color;ctx.fillRect(op.x,op.y,op.w,op.h);}
     else if(op.kind==='image'){
       if(op.paint)await op.paint(ctx);
-      else {
-        const bitmap=await image(op.source,imageCache),matrix=ctx.getTransform();
-        // Blit in device pixels so an already-rasterized layer is scaled once.
-        if(matrix.b===0&&matrix.c===0&&matrix.a>0&&matrix.d>0){
-          ctx.setTransform(1,0,0,1,0,0);
-          ctx.drawImage(bitmap,op.x*matrix.a+matrix.e,op.y*matrix.d+matrix.f,op.w*matrix.a,op.h*matrix.d);
-        }else ctx.drawImage(bitmap,op.x,op.y,op.w,op.h);
-      }
+      else {const bitmap=await image(op.source,imageCache);ctx.drawImage(bitmap,op.x,op.y,op.w,op.h);}
     }
     else if(op.kind==='vector'){ctx.fillStyle=op.color;ctx.fill(pathFor(op),op.rule||'nonzero');}
     else if(op.kind==='group'){ctx.clip(pathFor(op.clip),op.clip.rule||'nonzero');await draw(op.items);}
@@ -41,7 +34,7 @@ export async function sceneCanvas(scene,edge=3840,options={}){
     }
     ctx.restore();
   }}
-  await draw(scene.items);ctx.setTransform(1,0,0,1,0,0);return canvas;
+  await draw(scene.items);return canvas;
 }
 export function sceneSvg(scene,{motionStills=true}={}){
   let count=0;const definitions=[];

@@ -4,11 +4,20 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const url = process.env.MANUAL_URL || 'http://127.0.0.1:8765/manual.html';
 const phase = process.env.CHECK_EDITOR ? 'published' : 'built';
 await mkdir('symbols-proof', {recursive:true});
-const report = {url,phase,viewports:[],states:[],errors:[],failedRequests:[],editor:null};
+const report = {url,phase,viewports:[],states:[],errors:[],failedRequests:[],cancelledMediaRequests:[],editor:null};
 const browser = await chromium.launch({headless:true});
 const page = await browser.newPage({viewport:{width:1440,height:900},reducedMotion:'reduce'});
 page.on('pageerror', error => report.errors.push(error.message));
-page.on('requestfailed', request => report.failedRequests.push({url:request.url(),error:request.failure()?.errorText}));
+page.on('requestfailed', request => {
+  const failure={url:request.url(),error:request.failure()?.errorText},asset=new URL(request.url());
+  // Paused media preloads, seeking and navigation can cancel a valid transfer.
+  // Playback and looping are verified below; other network failures still fail.
+  if(request.resourceType()==='media'&&failure.error==='net::ERR_ABORTED'&&
+    asset.origin===new URL(url).origin&&/^\/motion\/videos\/[^/]+\.mp4$/.test(asset.pathname)){
+    report.cancelledMediaRequests.push(failure);return;
+  }
+  report.failedRequests.push(failure);
+});
 const check = (ok,message) => assert.ok(ok,message);
 try {
   const response = await page.goto(url,{waitUntil:'networkidle',timeout:60000});

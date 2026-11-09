@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Preencha seus dados e crie sua assinatura de e-mail MATTAR para o Gmail.">
+  <meta name="robots" content="noindex">
+  <title>Assinatura de e-mail — LABMATTAR</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assinatura-email.css">
+  <script type="module" src="/assinatura-email.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#dados">Ir para os seus dados</a>
+  <header class="topbar"><a class="brand" href="/inicio">LABMATTAR</a><span>FERRAMENTAS DO TIME</span><a href="/inicio">MANUAL DE IDENTIDADE ↗</a></header>
+  <main>
+    <section class="opening" aria-labelledby="title">
+      <p class="eyebrow">COMUNICAÇÃO / GMAIL &amp; GOOGLE WORKSPACE</p>
+      <h1 id="title">ASSINATURA<br><span>DE E-MAIL</span></h1>
+      <p class="intro">Uma mesma identidade.<br>O contato de cada pessoa.</p>
+    </section>
+    <div class="workspace">
+      <section class="data-panel" aria-labelledby="dados">
+        <h2 id="dados" tabindex="-1"><span>01</span> SEUS DADOS</h2>
+        <p class="section-intro">Preencha como deseja aparecer nas comunicações.</p>
+        <form id="signatureForm" novalidate>
+          <fieldset class="motion-choice"><legend>COMPOSIÇÃO / ONDA E RESPOSTA</legend><label for="useMotion"><input id="useMotion" type="checkbox" checked> Usar a assinatura em movimento</label><p>As letras se transformam em peças do acervo e retornam a MATTAR.</p></fieldset>
+          <label for="name">Nome <span>obrigatório</span></label>
+          <input id="name" name="name" autocomplete="name" maxlength="100" placeholder="Seu nome e sobrenome" required aria-describedby="nameError">
+          <p class="field-error" id="nameError"></p>
+          <label for="role">Função ou área <span>opcional</span></label>
+          <input id="role" name="role" autocomplete="organization-title" maxlength="100" placeholder="Ex.: Produção e projetos">
+          <label for="email">E-mail <span>obrigatório</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" maxlength="150" placeholder="Seu e-mail de trabalho" required aria-describedby="emailError">
+          <p class="field-error" id="emailError"></p>
+          <label for="phone">Telefone <span>opcional</span></label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+55 11 99999-9999" aria-describedby="phoneHint phoneError">
+          <p class="hint" id="phoneHint">Inclua DDD e código do país. Em branco, esta linha desaparece.</p>
+          <p class="field-error" id="phoneError"></p>
+          <p class="fixed-site">SITE DO LABORATÓRIO <span>labmattar.com</span></p>
+          <button type="submit" class="primary" id="copySignature">COPIAR ASSINATURA <span aria-hidden="true">↗</span></button>
+          <p class="action-hint">Depois, cole com Ctrl+V ou ⌘V na assinatura do Gmail.</p>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+        </form>
+        <div class="secondary-actions"><button id="downloadHTML" type="button">BAIXAR HTML ↓</button><button id="downloadMotion" type="button">BAIXAR GIF ↓</button><button id="copyText" type="button">COPIAR SÓ TEXTO</button></div>
+      </section>
+      <section class="preview-panel" aria-labelledby="previewTitle">
+        <div class="preview-heading"><h2 id="previewTitle"><span>02</span> PRÉVIA</h2><span id="exampleLabel" class="tag">EXEMPLO — PREENCHA SEUS DADOS</span></div>
+        <div class="motion-toolbar"><span>ONDA E RESPOSTA <span class="motion-info">/ GIF · 74 KB · 3 CICLOS</span></span><button type="button" id="togglePreview">PAUSAR PRÉVIA</button></div>
+        <div class="mail-window">
+          <div class="mail-top"><span>NOVA MENSAGEM</span><span aria-hidden="true">— &nbsp; ×</span></div>
+          <div class="mail-meta">Para <span>Destinatário</span></div>
+          <div class="mail-meta">Assunto <span>Vamos conversar?</span></div>
+          <div class="mail-body"><p class="sample-copy">Olá,<br><br>Vamos construir o próximo projeto juntos.<br><br>Até breve,</p><div id="signaturePreview" aria-label="Prévia da sua assinatura"></div></div>
+        </div>
+        <p class="preview-note">Dados no alto, marca em transformação e contatos na base. O movimento faz três ciclos e termina em MATTAR. Pausar a prévia não altera o que será copiado.</p>
+        <details class="specification"><summary>SOBRE ESTE MODELO <span aria-hidden="true">+</span></summary><p>Uma composição sobre o papel MATTAR (#F7F6F2), com o motion aprovado “Onda e resposta”. O desenho, os giros e o tempo da Matriz são preservados. O papel antigo do vídeo é substituído pelo mesmo tratamento usado no Laboratório.</p><p>O GIF mede 320 × 100 px. Primeiro e último quadro mostram MATTAR; a assinatura continua reconhecível quando o destinatário não reproduz animações.</p><p>Nome e contatos permanecem em texto selecionável. Usam Arial, uma adaptação para os aplicativos de e-mail. A opção sem movimento mantém a mesma composição com uma imagem estática.</p><p>O Gmail pode ajustar as cores no modo escuro ou ocultar imagens. Confira a assinatura em um envio de teste.</p></details>
+      </section>
+    </div>
+    <section class="installation" aria-labelledby="installTitle">
+      <div class="installation-heading"><h2 id="installTitle"><span>03</span> INSTALAR NO GMAIL</h2><p>Faça a configuração pelo Gmail no computador.</p></div>
+      <ol class="steps">
+        <li><span class="step-number">1</span><h3>Copie aqui</h3><p>Preencha seus dados e clique em <strong>Copiar assinatura</strong>.</p></li>
+        <li><span class="step-number">2</span><h3>Abra as configurações</h3><p>No Gmail: engrenagem → <strong>Ver todas as configurações</strong> → <strong>Geral</strong> → <strong>Assinatura</strong>.</p></li>
+        <li><span class="step-number">3</span><h3>Crie e cole</h3><p>Crie uma assinatura chamada <strong>MATTAR</strong> e cole na caixa. Escolha-a como padrão para novas mensagens e respostas.</p></li>
+        <li><span class="step-number">4</span><h3>Salve e confira</h3><p>Clique em <strong>Salvar alterações</strong> no fim da página. Abra uma nova mensagem e faça um envio de teste.</p></li>
+      </ol>
+      <p class="help">Se a cópia automática não funcionar, use <button type="button" id="selectSignature">Selecionar assinatura</button> e copie com Ctrl+C ou ⌘C. <a href="https://support.google.com/mail/answer/8395?hl=pt-BR" target="_blank" rel="noopener noreferrer">AJUDA OFICIAL DO GMAIL ↗</a></p>
+      <details><summary>A MARCA NÃO APARECEU?</summary><p>Se o Gmail não mantiver a imagem ao colar, baixe o GIF pelo botão acima e insira o arquivo na mesma posição usando Inserir imagem no editor de assinatura. Use Tamanho original. O arquivo tem 320 × 100 px.</p><p>Também é possível inserir pelo endereço público: <a href="https://labmattar.com/identidade/email/mattar-onda.gif" target="_blank" rel="noopener noreferrer">https://labmattar.com/identidade/email/mattar-onda.gif</a>.</p><p>Para a opção sem movimento, use <a href="https://labmattar.com/identidade/email/mattar-onda-poster.png" target="_blank" rel="noopener noreferrer">a imagem estática</a>. Ela tem as mesmas dimensões.</p></details>
+    </section>
+  </main>
+  <footer><span>LABMATTAR / COMUNICAÇÃO DO TIME</span><span>Os dados ficam apenas nesta aba.</span></footer>
+</body>
+</html>

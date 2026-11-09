@@ -1,0 +1,34 @@
+{
+  "source": "/motion/videos/mattar-rhythm.mp4",
+  "sourceSha256": "17a1d1a8f0aa89ee91d555bed360de6d736763b1a5f8b80e79de958ca9b7c512",
+  "projectHash": "11fabebda4334d1049b29cab4fb702d17694342f08a3f648d238bb5867ea8f26",
+  "sourceDuration": 5.800000000000001,
+  "sampledFps": 20,
+  "sampledFrames": 116,
+  "crop": {
+    "x": 220,
+    "y": 202,
+    "width": 640,
+    "height": 200
+  },
+  "sourceInkBounds": {
+    "left": 266,
+    "top": 252,
+    "right": 814,
+    "bottom": 355
+  },
+  "paper": "#F7F6F2",
+  "inkRenderer": "/lab-motion-ink.mjs",
+  "gif": "/identidade/email/mattar-onda.gif",
+  "poster": "/identidade/email/mattar-onda-poster.png",
+  "width": 320,
+  "height": 100,
+  "bytes": 74115,
+  "gifSha256": "2a64512b5fb4480191f68d020345f1a74beed6e7d06f37b495be19eb578dafa1",
+  "frames": 116,
+  "durationMs": 5800,
+  "iterations": 3,
+  "sourceUnchanged": true,
+  "firstFrame": "MATTAR",
+  "lastFrame": "MATTAR"
+}

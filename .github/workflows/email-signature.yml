@@ -1,0 +1,40 @@
+name: Validar assinatura de email
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/email-signature.yml'
+      - 'public/assinatura-email*'
+      - 'public/email-signature.mjs'
+      - 'public/identidade/email/**'
+      - 'content/email-signature*'
+      - 'scripts/prepare-email-signature.mjs'
+      - 'tests/email-signature.test.mjs'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/email-signature.yml'
+      - 'public/assinatura-email*'
+      - 'public/email-signature.mjs'
+      - 'public/identidade/email/**'
+      - 'content/email-signature*'
+      - 'scripts/prepare-email-signature.mjs'
+      - 'tests/email-signature.test.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Conferir assinatura e origem do motion
+        run: |
+          node --check public/assinatura-email.mjs
+          node --check public/email-signature.mjs
+          node --test tests/email-signature.test.mjs

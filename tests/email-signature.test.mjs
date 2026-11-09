@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
+import { motionProjects } from '../tools/matriz-vetorial/src/motion-catalog.mjs';
+import { fingerprint } from '../scripts/motion-fingerprint.mjs';
 import { signatureHTML, signatureText, signatureDocument, validateSignature, normalizeSignature, MOTION_URL, POSTER_URL } from '../public/email-signature.mjs';
 
 const contact = {name:'Ana Ribeiro', role:'Produção e projetos', email:'ana+projetos@example.com', phone:'+55 (11) 99999-9999'};
@@ -56,15 +58,16 @@ test('download contains the exact copied fragment and remains within Gmail limit
 
 test('GIF is derived from the approved film with the recorded size and fingerprint', () => {
   const evidence=JSON.parse(readFileSync(new URL('../content/email-signature-motion.json',import.meta.url)));
-  const catalog=JSON.parse(readFileSync(new URL('../content/motion.json',import.meta.url)));
-  const motion=catalog.items.find(item=>item.id==='mattar-rhythm');
+  const motion=motionProjects().find(item=>item.id==='mattar-rhythm');
+  const record=JSON.parse(readFileSync(new URL('../public/motion/exports.json',import.meta.url)))[motion.id];
   const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
   const gif=readFileSync(new URL('../public/identidade/email/mattar-onda.gif',import.meta.url));
-  const source=readFileSync(new URL('../public'+motion.video,import.meta.url));
+  const source=readFileSync(new URL('../public/motion/videos/mattar-rhythm.mp4',import.meta.url));
   assert.equal(motion.status,'approved');
-  assert.equal(digest(source),motion.sha256);
-  assert.equal(evidence.sourceSha256,motion.sha256);
-  assert.equal(evidence.projectHash,motion.projectHash);
+  assert.equal(digest(source),record.sha256);
+  assert.equal(evidence.sourceSha256,record.sha256);
+  assert.equal(evidence.projectHash,record.projectHash);
+  assert.equal(evidence.projectHash,fingerprint(motion.project));
   assert.equal(digest(gif),evidence.gifSha256);
   assert.equal(gif.length,evidence.bytes);
   assert.equal(gif.subarray(0,6).toString(),'GIF89a');

@@ -1,6 +1,18 @@
 const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 async function image(source,imageCache){
-  if(!imageCache.has(source))imageCache.set(source,(async()=>{const img=new Image();img.src=source;await img.decode();return img;})());
+  if(!imageCache.has(source))imageCache.set(source,(async()=>{
+    const prefix='data:image/png;base64,';
+    if(typeof createImageBitmap==='function'&&source.startsWith(prefix)){
+      const encoded=source.slice(prefix.length),parts=[];
+      for(let offset=0;offset<encoded.length;offset+=65536){
+        const binary=atob(encoded.slice(offset,offset+65536)),bytes=new Uint8Array(binary.length);
+        for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+        parts.push(bytes);
+      }
+      return createImageBitmap(new Blob(parts,{type:'image/png'}));
+    }
+    const img=new Image();img.src=source;await img.decode();return img;
+  })());
   return imageCache.get(source);
 }
 function pathFor(vector){
@@ -22,7 +34,13 @@ export async function sceneCanvas(scene,edge=3840,options={}){
     if(op.kind==='rect'){ctx.fillStyle=op.color;ctx.fillRect(op.x,op.y,op.w,op.h);}
     else if(op.kind==='image'){
       if(op.paint)await op.paint(ctx);
-      else ctx.drawImage(await image(op.source,imageCache),op.x,op.y,op.w,op.h);
+      else {
+        const bitmap=await image(op.source,imageCache),{a,b,c,d,e,f}=ctx.getTransform();
+        if(b===0&&c===0&&a>0&&d>0){
+          ctx.setTransform(1,0,0,1,0,0);
+          ctx.drawImage(bitmap,op.x*a+e,op.y*d+f,op.w*a,op.h*d);
+        }else ctx.drawImage(bitmap,op.x,op.y,op.w,op.h);
+      }
     }
     else if(op.kind==='vector'){ctx.fillStyle=op.color;ctx.fill(pathFor(op),op.rule||'nonzero');}
     else if(op.kind==='group'){ctx.clip(pathFor(op.clip),op.clip.rule||'nonzero');await draw(op.items);}
@@ -34,7 +52,7 @@ export async function sceneCanvas(scene,edge=3840,options={}){
     }
     ctx.restore();
   }}
-  await draw(scene.items);return canvas;
+  await draw(scene.items);ctx.setTransform(1,0,0,1,0,0);return canvas;
 }
 export function sceneSvg(scene,{motionStills=true}={}){
   let count=0;const definitions=[];

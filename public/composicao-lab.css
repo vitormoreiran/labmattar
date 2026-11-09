@@ -26,6 +26,20 @@
 .lm-lab-field textarea:focus-visible{outline:2px solid #181818;outline-offset:3px}
 .lm-lab-mini-actions{display:flex;flex-wrap:wrap;align-items:center;padding:22px 0}
 .lm-lab-mini-actions button{border:1px solid #181818;}
+/* Recuperação e falhas de gravação precisam ficar acessíveis mesmo nos
+   layouts compactos que recolhem o rodapé comum do inspetor. */
+body.lm-studio-open #laboratorio .lm-lab-mini-actions:has(#labUndoReset:not([hidden])),
+body.lm-studio-open #laboratorio .lm-lab-mini-actions:has(#labSaveState[data-state="error"]){
+  display:flex!important;flex-wrap:wrap;flex-shrink:0;gap:8px;
+}
+#laboratorio #labUndoReset[hidden]{display:none!important}
+#laboratorio #labUndoReset{min-height:44px;height:auto}
+#laboratorio #labSaveState[data-state="error"]{color:#181818}
+#laboratorio #labBackgroundFrameField[hidden],#laboratorio #labMScaleNote[hidden]{display:none!important}
+.lab-background-frame-value{display:flex;align-items:center;gap:10px}
+.lab-background-frame-value input{width:100px;min-height:44px}
+.lab-background-frame-actions{display:flex;flex-wrap:wrap;gap:8px;margin-block:10px}
+.lab-background-frame-actions button{min-height:44px;flex:1}
 .lm-lab-mini-actions .lm-lab-local{color:#625e58;}
 .lm-lab-preview{position:sticky;top:77px;min-width:0}
 .lm-lab-preview-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0;}
@@ -56,7 +70,7 @@
 .lm-lab-photo-ambient{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y);display:block}
 /* Photograph treatment comes exclusively from data-backdrop below.
  * There is no extra mask mode, and no separate blur rule per application. */
-.lm-lab-photo-contrast{position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;pointer-events:none;z-index:1}
+.lm-lab-photo-contrast{position:absolute;inset:0;background:rgba(0,0,0,var(--lab-photo-contrast,.2));opacity:0;pointer-events:none;z-index:1}
 .lm-lab-board[data-photo-text=true] .lm-lab-photo-contrast{opacity:1}
 .lm-lab-m-photo{
   position:absolute;
@@ -68,7 +82,7 @@
   mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;
 }
 .lm-lab-m-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--lab-focus-x) var(--lab-focus-y)}
-.lm-lab-m-photo::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.20);opacity:0;z-index:1;pointer-events:none}
+.lm-lab-m-photo::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--lab-photo-contrast,.2));opacity:0;z-index:1;pointer-events:none}
 .lm-lab-board[data-m-text=true] .lm-lab-m-photo::after{opacity:1}
 .lm-lab-mark{position:absolute;z-index:4;top:var(--lab-pad);right:var(--lab-pad);width:clamp(30px,9cqw,110px);max-height:22cqh;object-fit:contain;pointer-events:none}
 .lm-lab-mark[data-position=esquerda]{right:auto;left:var(--lab-pad)}
@@ -467,3 +481,13 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 .lm-lab-board[data-marker-focus="sharp"] #labMarkerVideo{
   inset:0;width:100%;height:100%;filter:none;transform:none
 }
+
+/* Secondary composition: the M keeps its axis and may move vertically. */
+.lm-lab-board[data-m-presentation="elemento"] .lm-lab-m-photo{top:var(--lab-m-y)!important}
+.lm-lab-m-caption{position:absolute;z-index:6;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--lab-ink)}
+.lm-lab-m-caption[hidden],#labMPositionField[hidden]{display:none!important}
+#labMCaption{width:100%;padding:8px;border:1px solid #cbc9c4;background:#f7f6f2}
+.lm-title-words{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}.lm-title-words button{padding:7px;border:1px solid #cbc9c4;background:#f7f6f2;color:#181818}.lm-title-words button[data-font="perpetua"]{background:#e6dbcf}.lm-lab-title-word{display:inline!important}
+
+.lm-lab-range-scale{display:flex;justify-content:space-between}
+.lm-lab-caption-field{margin-top:14px}

@@ -4,36 +4,48 @@
   "status": "working-system",
   "sections": [
     {
+      "id": "introduction",
+      "label": "Introdução",
+      "path": "/inicio.html",
+      "stage": "existing",
+      "number": "00"
+    },
+    {
       "id": "symbols",
       "label": "Símbolos",
       "path": "/manual.html",
       "stage": "existing",
-      "editor": "/motion/matriz/index.html"
+      "editor": "/motion/matriz/index.html",
+      "number": "01"
     },
     {
       "id": "motion",
       "label": "Motion",
       "stage": "existing",
       "path": "/motion.html",
-      "editor": "/motion/matriz/index.html"
+      "editor": "/motion/matriz/index.html",
+      "number": "02"
     },
     {
       "id": "typography",
       "label": "Tipografia",
       "path": "/tipografia.html",
-      "stage": "existing"
+      "stage": "existing",
+      "number": "03"
     },
     {
       "id": "color",
       "label": "Cores",
       "path": "/cores.html",
-      "stage": "draft"
+      "stage": "draft",
+      "number": "04"
     },
     {
       "id": "composition",
       "label": "Composição",
       "stage": "experimental",
-      "path": "/composicao.html"
+      "path": "/composicao.html",
+      "number": "05"
     },
     {
       "id": "laboratory",
@@ -41,13 +53,16 @@
       "path": "/laboratorio.html",
       "stage": "experimental",
       "editor": "/compor.html?studio=1#laboratorio",
-      "matrixEditor": "/editor/"
+      "matrixEditor": "/motion/matriz/index.html",
+      "number": "06",
+      "legacyEditor": "/editor/"
     },
     {
       "id": "social",
       "label": "Redes Sociais",
       "path": "/redes.html",
-      "stage": "experimental"
+      "stage": "experimental",
+      "number": "07"
     }
   ],
   "typography": {
@@ -65,21 +80,34 @@
       "title",
       "body",
       "detail"
-    ]
+    ],
+    "titleMixing": "Univers and Perpetua may alternate by word within the same line."
   },
   "image": {
     "textContrast": {
       "status": "approved",
       "trigger": "visible text overlaps photographic area",
       "veilColor": "#000000",
-      "veilOpacity": 0.2,
+      "legacyDefaultOpacity": 0.2,
+      "rangePercent": [
+        0,
+        80
+      ],
+      "presetsPercent": [
+        0,
+        20,
+        40,
+        60
+      ],
       "targets": [
         "photographic background",
         "image clipped by M",
         "unmasked image"
       ],
       "otherwise": "no automatic veil",
-      "notes": "The 20% black veil belongs to the photo layer and follows its clipping; it is separate from atmospheric blur and tonal treatments."
+      "approval": "40% is the preferred starting point; adjust to the actual image and verify final-size reading.",
+      "notes": "New compositions start at 40%. Existing projects retain their saved intensity or legacy 20%. The section shares its treatment.",
+      "preferredOpacity": 0.4
     }
   },
   "colors": {
@@ -96,12 +124,16 @@
     },
     "validatedAccents": [
       "green",
-      "red"
+      "red",
+      "blue",
+      "brown"
     ],
-    "underEvaluation": [
-      "blue/white field",
-      "brown usage"
-    ]
+    "underEvaluation": [],
+    "applications": {
+      "redText": "pure white",
+      "blue": "editorial field without photograph",
+      "brown": "chromatic support"
+    }
   },
   "symbols": {
     "master": "M.svg",
@@ -116,7 +148,13 @@
       "vaso_08.svg",
       "vaso_09.svg"
     ],
-    "assetDirectory": "/identidade/"
+    "assetDirectory": "/identidade/",
+    "digitalMinimum": {
+      "mHeightPx": 24,
+      "pictogramHeightPx": 32,
+      "wordmarkWidthPx": 120
+    },
+    "signatureClearSpace": "one quarter of symbol height; does not constrain the compositional M bleed"
   },
   "governance": {
     "stages": [
@@ -125,13 +163,21 @@
       "experimental"
     ],
     "sourceOfTruth": "design/identity-system.json",
-    "rule": "Experiments cannot silently overwrite approved identity parameters."
+    "rule": "Experiments cannot silently overwrite approved identity parameters.",
+    "applicationReview": {
+      "status": "approved",
+      "path": "/aplicacoes-validadas.html",
+      "evidence": "content/application-review-approved.json",
+      "date": "2026-11-06"
+    }
   },
   "layout": {
     "contract": "design/manual-layout-contract.md",
     "stylesheet": "/manual-layout.css",
     "chapters": [
+      "introduction",
       "symbols",
+      "motion",
       "typography",
       "color",
       "composition",
@@ -139,6 +185,20 @@
       "social"
     ],
     "typography": "/manual-headings.css",
-    "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides."
+    "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides.",
+    "exceptions": {
+      "introduction": "Authored 00 opening retained.",
+      "identityIndex": "Resource index retained; not a chapter cover."
+    }
+  },
+  "composition": {
+    "mElement": "secondary composition; horizontal axis retained, vertical position adjustable, optional left-aligned Detail caption below",
+    "signatureScope": "document",
+    "exportLowContrast": "warn and confirm study export"
+  },
+  "motionApplication": {
+    "playback": "reader-initiated",
+    "sound": false,
+    "ink": "black with paper removed in the application renderer; approved source videos unchanged"
   }
 }

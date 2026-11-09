@@ -148,18 +148,74 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
 .lm-site-nav a:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 @media(max-width:600px){.lm-site-nav{justify-content:flex-start;gap:18px;padding:10px 16px;min-height:48px}}
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
 <link rel="stylesheet" href="/motion.css"/>
 <script defer src="/motion.js"></script>
-</head><body><nav class="lm-site-nav" aria-label="Sistemas da identidade LABMATTAR">
-<a href="/manual.html" aria-current="page" data-area="simbolos">01 / SÍMBOLOS</a>
-<a href="/motion.html" data-area="motion">MOTION</a>
-<a href="/tipografia.html" data-area="tipografia">02 / TIPOGRAFIA</a>
-<a href="/cores.html" data-area="cores">03 / CORES</a>
-<a href="/composicao.html" data-area="composicao">04 / COMPOSIÇÃO</a>
-<a href="/laboratorio.html" data-area="laboratorio">05 / LABORATÓRIO DE COMPOSIÇÃO</a>
-</nav>
+<style id="lm-site-navigation-style">
+/* Editorial navigation: single canonical source for all chapters. */
+html body > nav.lm-site-nav {
+  box-sizing:border-box; display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:nowrap; gap:clamp(18px,2vw,32px); position:sticky; top:0; z-index:100;
+  height:54px; min-height:54px; padding:0 clamp(20px,3vw,48px);
+  background:rgba(247,246,242,.97); color:#181818; border-bottom:1px solid #c9c8c2;
+  overflow:visible;
+}
+html body > nav.lm-site-nav a { color:inherit; text-decoration:none; }
+html body > nav.lm-site-nav .lm-nav-home {
+  display:flex; align-items:center; gap:12px; flex:none; padding:0;
+  height:100%; white-space:nowrap; border:0;
+}
+html body > nav.lm-site-nav .lm-nav-monogram {
+}
+html body > nav.lm-site-nav .lm-nav-home-label { opacity:.7; white-space:nowrap;
+}
+html body > nav.lm-site-nav .lm-nav-list {
+  min-width:0; display:flex; gap:clamp(12px,1.35vw,24px); align-items:stretch;
+  height:100%; overflow-x:auto; overflow-y:hidden;
+  scrollbar-width:none; overscroll-behavior-x:contain;
+}
+html body > nav.lm-site-nav .lm-nav-list::-webkit-scrollbar { display:none; }
+html body > nav.lm-site-nav .lm-nav-list a {
+  display:inline-flex; position:relative; align-items:center; gap:5px;
+  flex:none; height:100%; white-space:nowrap;
+  color:inherit; opacity:.58; transition:opacity .18s ease;
+}
+html body > nav.lm-site-nav .lm-nav-list a:hover,
+html body > nav.lm-site-nav .lm-nav-list a[aria-current="page"] { opacity:1; }
+html body > nav.lm-site-nav .lm-nav-list a[aria-current="page"]::after {
+  content:""; position:absolute; bottom:0; left:0; right:0;
+  height:2px; background:currentColor;
+}
+html body > nav.lm-site-nav .lm-nav-index {
+  opacity:.72; font-variant-numeric:tabular-nums; margin-right:2px;
+}
+html body > nav.lm-site-nav a:focus-visible { outline:1px solid currentColor; outline-offset:-4px; }
+@media(max-width:1250px) {
+  html body > nav.lm-site-nav { gap:18px; padding-inline:20px; }
+  html body > nav.lm-site-nav .lm-nav-home-label { display:none; }
+  html body > nav.lm-site-nav .lm-nav-list { gap:20px; }
+}
+@media(max-width:700px) {
+  html body > nav.lm-site-nav { gap:15px; padding-inline:16px; }
+  html body > nav.lm-site-nav .lm-nav-list { gap:19px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  html body > nav.lm-site-nav .lm-nav-list a { transition:none; }
+}
+</style></head><body><nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR" data-lm-text-role="detail"><a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — introdução"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a><div class="lm-nav-list" role="group" aria-label="Capítulos"><a href="/inicio.html" data-area="introducao"><span class="lm-nav-index">00</span><span>Introdução</span></a><a href="/manual.html" aria-current="page" data-area="simbolos"><span class="lm-nav-index">01</span><span>Símbolos</span></a><a href="/motion.html" data-area="motion"><span class="lm-nav-index">02</span><span>Motion</span></a><a href="/tipografia.html" data-area="tipografia"><span class="lm-nav-index">03</span><span>Tipografia</span></a><a href="/cores.html" data-area="cores"><span class="lm-nav-index">04</span><span>Cores</span></a><a href="/composicao.html" data-area="composicao"><span class="lm-nav-index">05</span><span>Composição</span></a><a href="/laboratorio.html" data-area="laboratorio"><span class="lm-nav-index">06</span><span>Laboratório</span></a><a href="/redes.html" data-area="redes"><span class="lm-nav-index">07</span><span>Redes Sociais</span></a></div></nav>
 <header class="top"><span>LABMATTAR / IDENTIDADE VISUAL</span><nav aria-label="Seções"><a href="#principio">Princípio</a><a href="#estrutura">Elementos</a><a href="#vasos">Vasos</a><a href="#transformacao">Motion</a><a href="#ferramenta">Ferramenta</a><a href="#regras">Regras</a></nav></header>
-<main><section class="chapter cover lm-manual-cover" id="principio"><div class="inner"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS</p><h1 class="title lm-manual-page-title lm-manual-page-title"><span class="lm-cover-title-content"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></span></h1><div class="bottomline"><p class="copy">Uma assinatura, um símbolo principal e nove vasos.</p><p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p></div></div></section>
+<main><section class="chapter cover lm-manual-cover" id="principio"><div class="inner"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS</p><h1 class="title lm-manual-page-title"><span class="lm-cover-title-content"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></span></h1><div class="bottomline"><p class="copy">Uma assinatura, um símbolo principal e nove vasos.</p><p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p></div></div></section>
 <section class="chapter" id="estrutura"><div class="inner"><div class="lm-reading-intro"><h2 class="lm-manual-section-title"><span class="line">Assinatura e</span><span class="line perpetua">símbolo</span></h2><p>A assinatura Mattar identifica a instituição. O M é o símbolo principal, também utilizado como máscara e elemento de composição.</p></div><div class="symbol-row"><article class="symbol"><p class="eyebrow">Assinatura principal</p><div class="art-zone word"><svg aria-hidden="true" class="artwork" fill="none" height="199" viewbox="0 0 822 199" width="822" xmlns="http://www.w3.org/2000/svg">
 <path d="M561.647 46.2084H530.071V0H516.864V46.2084H485.3C472.479 46.2084 461.991 56.6967 461.991 69.517V103.646C461.991 116.466 472.479 126.954 485.3 126.954H516.864V198.218H530.071V126.954H561.647C574.467 126.954 584.955 116.466 584.955 103.646V69.517C584.955 56.6967 574.467 46.2084 561.647 46.2084Z" fill="#CE211A"></path>
 <path d="M427.722 46.2084H396.146V0H382.939V46.2084H351.374C338.554 46.2084 328.066 56.6967 328.066 69.517V103.646C328.066 116.466 338.554 126.954 351.374 126.954H382.939V198.218H396.146V126.954H427.722C440.542 126.954 451.03 116.466 451.03 103.646V69.517C451.03 56.6967 440.542 46.2084 427.722 46.2084Z" fill="#CE211A"></path>
@@ -259,7 +315,7 @@ header.top nav a:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
 <h2 class="title lm-manual-section-title"><span class="line">SÍMBOLOS EM</span><span class="line perpetua">MOVIMENTO</span></h2>
 <p class="copy section-lead">O M encontra os pictogramas por giros e transformações. Explore os roteiros de símbolo, assinaturas e transições ou componha um percurso na Matriz.</p>
 <div class="motion-symbol-preview" data-motion-version="20261104-groups">
-<video autoplay muted loop playsinline preload="auto" poster="/motion/posters/m-form.png" aria-label="M + Forma — símbolo em movimento"><source src="/motion/videos/m-form.mp4" type="video/mp4"/><a href="/motion/videos/m-form.mp4">Baixar vídeo M + Forma</a></video>
+<video data-motion-ink muted loop playsinline preload="auto" poster="/motion/posters/m-form.png" aria-label="M + Forma — símbolo em movimento"><source src="/motion/videos/m-form.mp4" type="video/mp4"/><a href="/motion/videos/m-form.mp4">Baixar vídeo M + Forma</a></video>
 </div>
 <div class="motion-group-links detail"><a href="/motion.html#roteiros">SÍMBOLO EM MOVIMENTO ↗</a><a href="/motion.html#assinaturas">ASSINATURAS E ABERTURAS ↗</a><a href="/motion.html#transicoes">TRANSIÇÕES ↗</a><a href="/motion/matriz/index.html">ABRIR MATRIZ ↗</a></div>
 </div></section>

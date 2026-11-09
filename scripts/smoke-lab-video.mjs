@@ -34,7 +34,7 @@ async function exportVideo(file,seconds,width,height){
 try{
   await page.goto((process.env.COMPOSITION_URL||'http://127.0.0.1:8765/compor.html')+'?studio=1#laboratorio',{waitUntil:'networkidle'});
   await page.locator('#labPages[data-ready=true]').waitFor({state:'attached'});
-  await state({title:'MATTAR EM MOVIMENTO',body:'Composição, motion e vídeo.',bodyMode:'visivel',mContent:'off',background:'color',marker:'none',guides:'nenhuma',titleScale:70});
+  await state({title:'MATTAR EM MOVIMENTO',titleFonts:[null,'perpetua',null],body:'Composição, motion e vídeo.',bodyMode:'visivel',mContent:'off',background:'color',marker:'none',guides:'nenhuma',titleScale:70});
   await page.evaluate(()=>{
     const capture=window.LabRenderer.capture;
     window.LabRenderer.capture=async options=>{const scene=await capture(options);if(options?.live)window.videoCapturedScene=scene;return scene;};

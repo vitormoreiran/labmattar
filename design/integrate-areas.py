@@ -1,20 +1,14 @@
 from pathlib import Path
 import re
 import sys
+import json
 
-NAV='''<nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR" data-lm-text-role="detail">
-<a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — introdução"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a>
-<div class="lm-nav-list" role="group" aria-label="Capítulos">
-<a href="/inicio.html" data-area="introducao"><span class="lm-nav-index">00</span><span>Introdução</span></a>
-<a href="/manual.html" data-area="simbolos"><span class="lm-nav-index">01</span><span>Símbolos</span></a>
-<a href="/motion.html" data-area="motion"><span class="lm-nav-index">02</span><span>Motion</span></a>
-<a href="/tipografia.html" data-area="tipografia"><span class="lm-nav-index">03</span><span>Tipografia</span></a>
-<a href="/cores.html" data-area="cores"><span class="lm-nav-index">04</span><span>Cores</span></a>
-<a href="/composicao.html" data-area="composicao"><span class="lm-nav-index">05</span><span>Composição</span></a>
-<a href="/laboratorio.html" data-area="laboratorio"><span class="lm-nav-index">06</span><span>Laboratório</span></a>
-<a href="/redes.html" data-area="redes"><span class="lm-nav-index">07</span><span>Redes sociais</span></a>
-</div>
-</nav>'''
+manifest=json.loads(Path("design/identity-system.json").read_text(encoding="utf-8"))
+area_ids={"introduction":"introducao","symbols":"simbolos","motion":"motion","typography":"tipografia","color":"cores","composition":"composicao","laboratory":"laboratorio","social":"redes"}
+NAV='<nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR" data-lm-text-role="detail"><a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — introdução"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a><div class="lm-nav-list" role="group" aria-label="Capítulos">'
+for chapter in manifest["sections"]:
+ NAV+=f'<a href="{chapter["path"]}" data-area="{area_ids[chapter["id"]]}"><span class="lm-nav-index">{chapter["number"]}</span><span>{chapter["label"]}</span></a>'
+NAV+='</div></nav>'
 STYLE='''<style id="lm-site-navigation-style">
 /* Editorial navigation: single canonical source for all chapters. */
 html body > nav.lm-site-nav {
@@ -94,7 +88,7 @@ for filename,area in areas.items():
   assert title_match, f"Missing page-level H1 in {filename}"
   title_open = title_match.group(0)
   if 'class="' in title_open:
-   title_open = re.sub(r'class="([^"]*)"', lambda m: 'class="' + m.group(1) + ' lm-manual-page-title"', title_open, count=1)
+   title_open = re.sub(r'class="([^"]*)"', lambda m: 'class="' + ' '.join(dict.fromkeys(m.group(1).split()+['lm-manual-page-title'])) + '"', title_open, count=1)
   else:
    title_open = title_open[:-1] + ' class="lm-manual-page-title">'
   s = s[:title_match.start()] + title_open + s[title_match.end():]

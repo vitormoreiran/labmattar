@@ -6,4 +6,4 @@ The preview preparation runs `revise-symbols-hierarchy.py` twice and compares it
 
 Before preview deployment, `scripts/smoke-symbols-browser.mjs` checks the built page in Chromium at 1920, 1440, 1024, 768, 390, 375 and 320 pixels. It validates official fonts, two signature illustrations, all nine endpoints, 45 timeline positions, play/pause/resume/reset, keyboard control, rapid selection and sticky navigation. Screenshots and JSON reports are retained as workflow artifacts.
 
-After deployment the same tests run against the actual preview URL and also open the original matrix editor, check its ten states and exercise its playback controls. The production domain is never a deployment target.
+After deployment the same tests run against the actual preview URL and also open the original matrix editor, check its ten states and exercise its playback controls. The official workflow promotes the validated preview artifact to labmattar.com; see site-oficial/README.md.

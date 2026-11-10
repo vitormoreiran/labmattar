@@ -60,7 +60,7 @@ jobs:
           GITHUB_SHA: ${{ steps.source.outputs.sha }}
         run: |
           npm ci --ignore-scripts
-          node --test scripts/test-official-publication.mjs
+          node --test scripts/test-official-publication.mjs scripts/test-official-routing.mjs
           node scripts/build-official.mjs
           node --check dist/oficial/worker/index.js
           node --check dist/oficial/worker/entry.mjs

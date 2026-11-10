@@ -187,8 +187,10 @@ jobs:
       - name: Preparar inspeção do PDF
         run: |
           python3 -m pip install --quiet pypdf==6.10.0
-          sudo apt-get update -qq -o Acquire::Retries=1 -o Acquire::http::Timeout=15
-          sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
+          if ! command -v pdftoppm >/dev/null || ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq -o Acquire::Retries=1 -o Acquire::http::Timeout=15
+            sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
+          fi
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2

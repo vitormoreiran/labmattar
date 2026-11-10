@@ -6,9 +6,6 @@
 .lm-lab-tool-preview{
  position:relative;aspect-ratio:16/10;overflow:hidden;isolation:isolate;display:block;
  container-type:size;
- /* These are miniature pages: scale the manual's three roles to the cover. */
- --lm-type-title-size:7.3cqw;--lm-type-title-leading:.98;
- --lm-type-body-size:3.2cqw;--lm-type-detail-size:clamp(8px,2.25cqw,11px);
 }
 .lm-lab-tool-preview-matrix{background:#e2dfd8;color:#181818}
 .lm-lab-matrix-main{position:absolute;inset:24% 24% 30%}

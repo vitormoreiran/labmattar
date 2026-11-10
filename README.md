@@ -8,6 +8,7 @@ Este repositório mantém o manual de identidade e as ferramentas do LABMATTAR. 
 - Matriz atual: /motion/matriz/index.html; código em tools/matriz-vetorial/. Os oito roteiros aprovados e suas geometrias são a referência. A interface não é reconstruída pelo Laboratório.
 - /editor/ e o editor de contornos são legados preservados para abrir trabalhos anteriores. Não são o acesso principal à Matriz atual.
 - Compor: /compor.html?studio=1. Cria páginas e seções com fundo compartilhado e usa os motions registrados.
+- Cartão MATTAR: /assinatura-email.html, acessível pela página do Laboratório e pelo menu Ferramentas do editor. Composição personalizada em PNG e GIF, com formatos para cartão digital e Gmail / Google Workspace. Começa com fundo Papel, texto e marca em Preto e forma em Vermelho. A paleta permite escolher as três tintas separadamente. O menu abre outras ferramentas em outra aba para preservar a edição atual.
 - Fontes vigentes: Univers LT Std 45 Light e Perpetua Titling MT Light. O manifesto content/identity-fonts.json registra os arquivos exatos; scripts/prepare-identity-kit.py verifica e prepara /identidade-kit/fontes-vigentes.zip.
 - Tipografia: Título, Corpo e Detalhe, definidos em public/manual-headings.css. A Introdução e o índice preservam as aberturas autorais; suas exceções são explicitadas no contrato de layout.
 

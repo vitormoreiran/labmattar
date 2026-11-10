@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+  <title>Cartão MATTAR — LABMATTAR</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assinatura-email.css?v=cores-cartao-06">
+  <link rel="stylesheet" href="/lab-tool-navigation.css">
+  <script type="module" src="/lab-tool-navigation.mjs"></script>
+  <script type="module" src="/assinatura-email.mjs?v=cores-cartao-06"></script>
+</head>
+<body>
+  <a class="skip" href="#dados">Ir para os seus dados</a>
+  <header class="topbar"><a class="brand" href="/laboratorio.html#ferramentas">LABMATTAR</a><span>COMUNICAÇÃO DO TIME</span><nav class="lab-tool-navigation" data-lab-tools data-current-tool="email" aria-label="Ferramentas do Laboratório"><a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">FERRAMENTAS ↗</a></nav></header>
+  <main>
+    <section class="opening" aria-labelledby="title">
+      <p class="eyebrow">LABORATÓRIO / COMUNICAÇÃO DO TIME</p>
+      <h1 id="title">CARTÃO<br><span>MATTAR</span></h1>
+      <p class="intro">Nome, marca e movimento em uma só composição.<br>Uma imagem pronta para acompanhar a conversa.</p>
+    </section>
+    <div class="workspace">
+      <section class="preview-panel" aria-labelledby="previewTitle">
+        <div class="section-heading"><h2 id="previewTitle"><span>01</span> A COMPOSIÇÃO</h2><span id="exampleLabel" class="tag">PREENCHA SEUS DADOS</span></div>
+        <div class="format-tabs" role="group" aria-label="Formato da composição"><button type="button" data-format="card" aria-pressed="true">CARTÃO DIGITAL <span>480 × 280</span></button><button type="button" data-format="email" aria-pressed="false">PARA E-MAIL <span>480 × 100</span></button></div>
+        <div class="preview-stage" id="previewStage" data-format="card">
+          <div class="card-mount" id="cardMount" role="img" aria-label="Prévia do cartão personalizado"></div>
+          <p id="previewLoading" role="status">PREPARANDO A COMPOSIÇÃO…</p>
+        </div>
+        <div class="preview-footer"><p id="formatNote">Mais espaço para a apresentação da marca e de quem faz parte dela.</p><button type="button" id="togglePreview" aria-pressed="false">PAUSAR MOTION Ⅱ</button></div>
+        <fieldset class="card-colors"><legend>CORES DO CARTÃO</legend><div class="color-palette" data-color-palette="paper"><div class="color-label">Fundo <output></output></div><div class="color-options" role="group" aria-label="Cor do fundo"></div></div><div class="color-palette" data-color-palette="ink"><div class="color-label">Texto e marca <output></output></div><div class="color-options" role="group" aria-label="Cor do texto e da marca"></div></div><div class="color-palette" data-color-palette="accent"><div class="color-label">Forma em movimento <output></output></div><div class="color-options" role="group" aria-label="Cor da forma em movimento"></div></div><div class="color-footer"><p id="colorStatus" role="status" aria-live="polite"></p><button type="button" id="resetColors">RESTAURAR PADRÃO</button></div></fieldset>
+        <p class="preview-note">A prévia mostra a mesma arte do arquivo final. O PNG traz o cartão fixo; o GIF mantém os dados visíveis enquanto o M se transforma.</p>
+      </section>
+      <section class="data-panel" aria-labelledby="dados">
+        <h2 id="dados" tabindex="-1"><span>02</span> QUEM ASSINA</h2>
+        <form id="signatureForm" novalidate>
+          <label for="name">Nome <span>obrigatório</span></label><input id="name" name="name" autocomplete="name" maxlength="100" placeholder="Nome de apresentação" required aria-describedby="nameError"><p class="field-error" id="nameError"></p>
+          <label for="role">Função ou área <span>opcional</span></label><input id="role" name="role" autocomplete="organization-title" maxlength="100" placeholder="Ex.: Produção e projetos" aria-describedby="roleError"><p class="field-error" id="roleError"></p>
+          <label for="email">E-mail <span>obrigatório</span></label><input id="email" name="email" type="email" autocomplete="email" maxlength="150" placeholder="Seu e-mail de trabalho" required aria-describedby="emailError"><p class="field-error" id="emailError"></p>
+          <label for="phone">Telefone <span>opcional</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+55 11 99999-9999" aria-describedby="phoneError"><p class="field-error" id="phoneError"></p>
+          <p class="data-note">Seus dados ficam apenas nesta página.</p>
+          <div class="export-heading"><h2><span>03</span> LEVAR COM VOCÊ</h2><p id="exportDescription">Cartão digital · imagem em alta resolução</p></div>
+          <button class="primary" id="downloadMotion" type="submit">BAIXAR GIF PERSONALIZADO <span>↓</span></button>
+          <button class="secondary" id="downloadPNG" type="button">BAIXAR IMAGEM FIXA / PNG <span>↓</span></button>
+          <div class="export-progress" hidden><progress id="exportProgress" max="100" value="0" aria-label="Geração do GIF"></progress><button type="button" id="cancelExport">CANCELAR</button></div>
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+        </form>
+        <div class="secondary-actions"><button id="downloadHTML" type="button">CARTÃO EM HTML ↗</button><button id="downloadContact" type="button">SALVAR CONTATO ↓</button><button id="copyText" type="button">COPIAR CONTATOS</button></div>
+      </section>
+    </div>
+    <section class="application" aria-labelledby="applicationTitle">
+      <h2 id="applicationTitle"><span>04</span> DOIS USOS, A MESMA IDENTIDADE</h2>
+      <div class="application-grid"><p><span>CARTÃO DIGITAL</span>Para compartilhar sua apresentação, enviar em uma conversa ou guardar junto dos seus materiais. PNG e GIF em 960 × 560 px.</p><p><span>ASSINATURA DE E-MAIL</span>Uma faixa de 480 × 100 px, com a composição e os contatos incorporados. Pronta para inserir no editor de assinatura do Gmail.</p><p><span>MOVIMENTO COM CONTEXTO</span>O filme aprovado M + Forma acompanha seus dados. Primeiro e último quadro já mostram uma assinatura completa.</p></div>
+    </section>
+    <details class="installation"><summary>COMO INSTALAR NO GMAIL <span>+</span></summary><div class="installation-content"><ol><li>Selecione <strong>Para e-mail</strong>, preencha os dados e baixe o GIF personalizado ou o PNG.</li><li>No Gmail do computador, abra Configurações → Ver todas as configurações → Geral → Assinatura.</li><li>Crie uma assinatura e use Inserir imagem → Fazer upload. Envie o arquivo baixado e escolha Tamanho original.</li><li>Se quiser, adicione um link à imagem selecionada. Use Copiar contatos para incluir também os links de e-mail e telefone em texto.</li><li>Selecione a assinatura como padrão, salve e confira um envio no computador e no celular.</li></ol><p>O arquivo já contém sua tipografia e suas cores. Alguns aplicativos ocultam imagens ou mostram apenas o primeiro quadro do GIF; os dados permanecem nesse quadro. <a href="https://support.google.com/mail/answer/11468381?hl=pt-BR" target="_blank" rel="noopener">ORIENTAÇÕES DO GMAIL ↗</a></p></div></details>
+  </main>
+  <footer><span>LABMATTAR / COMUNICAÇÃO DO TIME</span><span>PNG · GIF · CONTATO</span></footer>
+</body>
+</html>

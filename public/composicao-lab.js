@@ -41,7 +41,7 @@
     return result;
   }
   const defaultMetadata={
-    photoContrast:40,autoInkVersion:2,mPositionY:50,mCaption:"",titleFonts:[],
+    photoContrast:40,autoInkVersion:2,mPositionY:50,mExpandedPositionY:50,textPositionY:50,mCaption:"",titleFonts:[],
     kicker:"LABMATTAR / 2026",
     footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
     footerRight:"LABMATTAR / IDENTIDADE VISUAL",
@@ -77,11 +77,11 @@
     format:"labFormat",color:"labColor",inkColor:"labInkColor",photoContrast:"labPhotoContrast",margin:"labMargin",guides:"labGuides",
     marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
-    mScale:"labMScale",mPositionY:"labMPositionY",mCaption:"labMCaption",mPresentation:"labMPresentation",focusX:"labFocusX",
+    mScale:"labMScale",mPositionY:"labMPositionY",mExpandedPositionY:"labMExpandedPositionY",textPositionY:"labTextPositionY",mCaption:"labMCaption",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY","mExpandedPositionY","textPositionY"]);
   // Approved digital colors from design/identity-system.json (no free-picker).
   const palette=Object.freeze({
     neutral:"#F7F6F2",white:"#FFFFFF",black:"#181818",
@@ -163,7 +163,11 @@
   const formatRatio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
   const mAspect=990.08/743.18;
   const maxMScale=format=>Math.min(95,Math.floor(100*mAspect/formatRatio[format]));
-  let activePreset="tipografia",frame=0;
+  // The expanded M leads new studies. Legacy defaults remain available to
+  // sanitize older projects without changing their authored presentation.
+  const defaultPreset='expandido';
+  presets.expandido={...presets.mascara,mPresentation:'completo',guides:'nenhuma',bodyMode:'oculto'};
+  let activePreset=defaultPreset,frame=0;
   const copy=v=>({...v});
   function sanitize(data){
     const result=copy(presets.tipografia);
@@ -193,8 +197,8 @@
     if(result.background==="photo"&&result.mContent==="solid")result.mContent="photo";
     return result;
   }
-  let state=copy(presets.tipografia);
-  try{state=sanitize(JSON.parse(localStorage.getItem(storageKey)))}catch{}
+  let state=copy(presets[defaultPreset]);
+  try{const saved=JSON.parse(localStorage.getItem(storageKey));if(saved)state=sanitize(saved)}catch{}
   // M's material survives a temporary "Sem M"; the visible application
   // controls do not create another data model or change the document schema.
   let lastMContent=state.mContent==="off"?(state.background==="photo"?"photo":"solid"):state.mContent;
@@ -246,9 +250,9 @@
     by("labMPresentation").disabled=false;
     by("labMScale").disabled=!mActive||fullM;
     by("labMPresentationHint").textContent=!mActive?
-      "Selecione Elemento ou Completo para aplicar o M.":
+      "Selecione Expandido ou Elemento para aplicar o M.":
       fullM?
-      "Completo: M com 100% da altura do canvas, com proporção preservada. A escala anterior fica salva para Elemento.":
+      "Expandido: ocupa toda a altura da página, com proporção preservada. O recorte acompanha o formato.":
       "Elemento: M inteiro, centralizado e com escala ajustável.";
     by("labMScale").closest(".lm-m-scale-field").dataset.scaleLocked=String(fullM);
     by("labColor").disabled=state.background==="photo";
@@ -271,7 +275,7 @@
     for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY","labPhotoContrast"])setFieldVisible(id,activeImage);
     setFieldVisible("labMScale",mActive&&!fullM);
     setFieldVisible("labMarker",!fullM);
-    for(const key of ["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY"]){
+    for(const key of numeric){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
@@ -465,6 +469,7 @@
     window.LabSignatureComposer?.render(state.signature);
     const caption=by("labMCaptionPreview");caption.textContent=state.mCaption;caption.hidden=state.mContent==="off"||state.mPresentation!=="elemento"||!state.mCaption.trim();
     by("labMPositionField").hidden=state.mContent==="off"||state.mPresentation!=="elemento";
+    by("labMExpandedPositionField").hidden=state.mContent==="off"||state.mPresentation!=="completo";
     // Do not carry the previous composition's fitted size into this one.
     title.style.removeProperty("font-size");
     body.style.removeProperty("font-size");
@@ -551,12 +556,15 @@
     const zoom=boardRect.width/width||1;
     for(const svg of by("labMMarkers").querySelectorAll("svg")){
       if(getComputedStyle(svg).display==="none")continue;
-      const box=svg.getBoundingClientRect(),view=svg.viewBox.baseVal;
+      const view=svg.viewBox.baseVal;
       const shape=svg.querySelector("path")?.getAttribute("d");
       if(!shape||!view.width||!view.height)continue;
-      const x=(box.left-boardRect.left)/zoom,y=(box.top-boardRect.top)/zoom;
-      const sx=box.width/zoom/view.width,sy=box.height/zoom/view.height;
-      paths.push('<path transform="translate('+x+' '+y+') scale('+sx+' '+sy+')" d="'+shape+'" fill="white"/>');
+      // O navegador já calculou o encaixe proporcional do SVG. Reutilizar
+      // essa matriz mantém a máscara fotográfica idêntica ao fragmento sólido.
+      const m=svg.querySelector('path').getScreenCTM();
+      if(!m)continue;
+      const matrix=[m.a/zoom,m.b/zoom,m.c/zoom,m.d/zoom,(m.e-boardRect.left)/zoom,(m.f-boardRect.top)/zoom];
+      paths.push('<path transform="matrix('+matrix.join(' ')+')" d="'+shape+'" fill="white"/>');
     }
     if(!paths.length)return;
     const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'" viewBox="0 0 '+width+' '+height+'">'+paths.join("")+'</svg>';
@@ -654,7 +662,7 @@
   function alignMToCopy(){
     if(state.mContent==="off")return;
     board.style.setProperty("--lab-m-x","50%");
-    if(state.mPresentation==="completo"){board.style.setProperty("--lab-m-y","50%");return;}
+    if(state.mPresentation==="completo"){board.style.setProperty("--lab-m-y",state.mExpandedPositionY+"%");return;}
     const mask=by("labMask"),caption=by("labMCaptionPreview"),pad=board.offsetWidth*state.margin/100;
     const gap=board.offsetWidth*.012,captionHeight=caption.hidden?0:caption.offsetHeight+gap;
     let bottom=board.offsetHeight-pad;
@@ -665,6 +673,14 @@
     if(!caption.hidden){caption.style.left=(mask.offsetLeft-mask.offsetWidth/2)+"px";
       caption.style.width=Math.min(mask.offsetWidth,board.offsetWidth-2*pad)+"px";
       caption.style.top=(center+mask.offsetHeight/2+gap)+"px";}
+  }
+
+  function alignTextBlock(){
+    const reading=by('labReading'),copy=reading.querySelector('.lm-lab-main-copy');
+    // Relative positioning moves the whole title/body group. Its typography,
+    // line spacing, width and gap are untouched, and 50% preserves the layout.
+    const room=Math.max(0,reading.clientHeight-copy.offsetHeight);
+    copy.style.top=((state.textPositionY/100-.5)*room)+'px';
   }
 
   function syncSolidContrast(){
@@ -689,7 +705,7 @@
       node.removeAttribute("aria-label");
     }
     overlay.replaceChildren(reading);
-    const w=mask.offsetWidth,h=mask.offsetHeight;
+    const w=parseFloat(getComputedStyle(mask).width),h=w/mAspect;
     const size=w+"px "+h+"px";
     const position=(mask.offsetLeft-w/2)+"px "+(mask.offsetTop-h/2)+"px";
     overlay.style.maskSize=size;
@@ -700,6 +716,7 @@
 
   function measure(){
     const titleFit=fitTitleToReadingArea();
+    alignTextBlock();
     alignMToCopy();
     syncSolidContrast();
     const backgroundPhoto=board.dataset.backdrop==="blur"||board.dataset.backdrop==="photo";
@@ -778,7 +795,7 @@
       try{localStorage.setItem(storageKey+'-before-reset',JSON.stringify(state));if(undoReset)undoReset.hidden=false;}
       catch{by('labSaveState').textContent='Não foi possível guardar a recuperação. Salve o projeto JSON antes de restaurar.';return;}
     }
-    applyPreset('tipografia');
+    applyPreset(defaultPreset);
   }
   undoReset?.addEventListener('click',async()=>{
     if(!confirm('Recuperar o estudo anterior à restauração? Isso substitui as alterações feitas depois dela.'))return;
@@ -935,6 +952,10 @@
     if(document.body.classList.contains("lm-studio-open"))tab?.click();
     else by("labPhoto")?.closest(".lm-photo-library-field")?.scrollIntoView({block:"nearest",behavior:"smooth"});
   });
+  document.querySelectorAll('[data-lab-center]').forEach(button=>button.addEventListener('click',()=>{
+    const slider=by(fields[button.dataset.labCenter]);
+    slider.value='50';slider.dispatchEvent(new Event('input',{bubbles:true}));
+  }));
   // Keep the original sliders as the source of truth, but allow exact integer
   // percentages in a compact numeric input. This makes one-percent edits
   // possible without adding separate scale controls or new design tokens.
@@ -1038,6 +1059,12 @@
     labMPositionY:["Posição vertical do elemento",
       "Move o M Elemento entre o alto e a base da área disponível.",
       "A proporção e o eixo horizontal são preservados; a legenda acompanha o elemento."],
+    labMExpandedPositionY:["Posição vertical do M expandido",
+      "Move o M expandido sem alterar tamanho, proporção ou enquadramento da fotografia dentro dele.",
+      "50% mantém o centro recomendado. Ao deslocar, parte do M pode sair da página; a exceção é salva somente nesta página."],
+    labTextPositionY:["Posição vertical do bloco de texto",
+      "Move título e corpo juntos dentro da área útil, preservando entrelinhas e a distância entre os dois.",
+      "50% mantém o centro recomendado. As identificações dos cantos continuam na moldura da página."],
     labMCaption:["Legenda do elemento",
       "Acrescenta uma legenda opcional em Detalhe abaixo do M Elemento.",
       "A legenda acompanha a borda esquerda do M. Confira o espaço disponível e a leitura no formato final."],

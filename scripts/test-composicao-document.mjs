@@ -15,7 +15,7 @@ const state={
   format:"horizontal",color:"neutral",inkColor:"auto",photoContrast:20,autoInkVersion:1,margin:7,guides:"margens",
   marker:"both",textWidth:61,titleScale:100,type:"alternada",
   background:"photo",mContent:"photo",mPresentation:"elemento",photo:"64",markerFocus:"blur",
-  mScale:60,mPositionY:50,mCaption:"",titleFonts:[],focusX:45,focusY:55,symbol:"M.svg",
+  mScale:60,mPositionY:50,mExpandedPositionY:50,textPositionY:50,mCaption:"",titleFonts:[],focusX:45,focusY:55,symbol:"M.svg",
   title:"CADA CORPO\nABRE UM MUNDO",body:"Uma experiência de encontro.",
   bodyMode:"visivel",kicker:"LABMATTAR / 2026",
   footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
@@ -144,4 +144,21 @@ test("projetos v1 sem a cor do texto preservam o contraste automático",()=>{
   const rogue=JSON.parse(JSON.stringify(withInk));
   rogue.pages[0].text.inkColor="custom";
   assert.throws(()=>verifyRoundTrip(rogue,photoCatalog),/cor do texto/);
+});
+
+test('posições verticais de texto e M são independentes e sobrevivem ao JSON',()=>{
+  for(const format of ['horizontal','vertical','quadrado','editorial']){
+    const doc=generate({format,textPositionY:20,mPositionY:75,mExpandedPositionY:35});
+    const before=JSON.stringify(doc),restored=verifyRoundTrip(JSON.parse(before),photoCatalog);
+    assert.equal(restored.textPositionY,20);assert.equal(restored.mPositionY,75);assert.equal(restored.mExpandedPositionY,35);
+    assert.equal(doc.pages[0].reading.positionYPercent,20);assert.equal(JSON.stringify(doc),before);
+  }
+  for(const key of ['textPositionY','mPositionY','mExpandedPositionY'])for(const value of [-1,101,NaN,Infinity])assert.throws(()=>generate({[key]:value}),/posição vertical/);
+});
+test('documentos anteriores conservam o centro do texto e do M expandido',()=>{
+  const doc=generate({mPresentation:'completo',mPositionY:15});
+  delete doc.pages[0].reading.positionYPercent;delete doc.pages[0].m.expandedPositionYPercent;
+  const before=JSON.stringify(doc),restored=verifyRoundTrip(doc,photoCatalog);
+  assert.equal(restored.textPositionY,50);assert.equal(restored.mExpandedPositionY,50);assert.equal(restored.mPositionY,15);
+  assert.equal(JSON.stringify(doc),before);
 });

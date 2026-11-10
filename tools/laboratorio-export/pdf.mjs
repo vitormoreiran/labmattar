@@ -1,5 +1,6 @@
 import PDFDocument from 'pdfkit/js/pdfkit.standalone.js';
 import {Buffer} from 'buffer';
+import {fitBox,vectorTransform} from '../../public/lab-geometry.mjs';
 function color(value){
   if(value.startsWith('#'))return value;
   const numbers=value.match(/[\d.]+/g);
@@ -7,8 +8,8 @@ function color(value){
   return numbers.slice(0,3).map(Number);
 }
 function path(doc,vector){
-  const [x,y,w,h]=vector.viewBox,b=vector.box;
-  doc.transform(b.w/w,0,0,b.h/h,b.x-x*b.w/w,b.y-y*b.h/h);
+  const {scale,x,y}=vectorTransform(vector);
+  doc.transform(scale,0,0,scale,x,y);
   for(const item of vector.paths)doc.path(item.d);
 }
 export async function createPDF(scenes,fonts){
@@ -23,14 +24,18 @@ export async function createPDF(scenes,fonts){
   function draw(ops){for(const op of ops){
     doc.save();
     if(op.kind==='rect')doc.fillColor(color(op.color)).rect(op.x,op.y,op.w,op.h).fill();
-    else if(op.kind==='image')doc.image(op.source,op.x,op.y,{width:op.w,height:op.h});
+    else if(op.kind==='image'){
+      const image=doc.openImage(op.source),box=fitBox(image.width,image.height,op,{fit:op.fit||'contain'});
+      doc.rect(op.x,op.y,op.w,op.h).clip();
+      doc.image(image,box.x,box.y,{width:box.w,height:box.h});
+    }
     else if(op.kind==='vector'){doc.fillColor(color(op.color));path(doc,op);doc.fill(op.rule==='evenodd'?'even-odd':'non-zero');}
     else if(op.kind==='text')doc.font(op.family).fontSize(op.size).fillColor(color(op.color)).text(op.text,op.x,op.y,{baseline:'alphabetic',lineBreak:false,characterSpacing:op.spacing});
     else if(op.kind==='group'){
-      const [x,y,w,h]=op.clip.viewBox,b=op.clip.box;
+      const {scale,x,y}=vectorTransform(op.clip);
       path(doc,op.clip);doc.clip(op.clip.rule==='evenodd'?'even-odd':'non-zero');
       // Restore the page coordinate system while keeping the vector clip.
-      const sx=b.w/w,sy=b.h/h;doc.transform(1/sx,0,0,1/sy,x-b.x/sx,y-b.y/sy);
+      doc.transform(1/scale,0,0,1/scale,-x/scale,-y/scale);
       draw(op.items);
     }else throw Error('Elemento PDF não reconhecido.');
     doc.restore();

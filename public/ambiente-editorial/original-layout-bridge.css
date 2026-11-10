@@ -15,4 +15,4 @@
 .ed-sheet.ed-source-page .role-title{white-space:pre-wrap;overflow-wrap:normal;hyphens:none}
 .ed-sheet.ed-source-page .role-body{max-width:65ch}
 .ed-sheet.ed-source-page .chapter2-stage-stack{aspect-ratio:990.08/743.18}
-.ed-sheet.ed-source-page .chapter2-m-image{mask-size:100% 100%;-webkit-mask-size:100% 100%}
+.ed-sheet.ed-source-page .chapter2-m-image{mask-size:contain;-webkit-mask-size:contain}

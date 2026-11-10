@@ -27,7 +27,7 @@
 .lm-case-ambient{position:absolute;inset:-7%;width:114%;height:114%;object-fit:cover;object-position:50% 50%;filter:blur(23px) saturate(.82) brightness(.52);transform:scale(1.06);z-index:0}
 .lm-case-veil{position:absolute;inset:0;background:linear-gradient(90deg,#080a081f,#080a0812 55%,#080a085a);z-index:1}
 .lm-case-symbol{position:absolute;inset:0;display:grid;place-items:center;z-index:2;pointer-events:none}
-.lm-case-symbol .lm-case-image{position:relative;width:min(100%,133.2cqh);height:auto;aspect-ratio:990.08 / 743.18;overflow:hidden;-webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat;mask:url('/ambiente-editorial/media/m-publicado.svg') center/100% 100% no-repeat}
+.lm-case-symbol .lm-case-image{position:relative;width:min(100%,133.2cqh);height:auto;aspect-ratio:990.08 / 743.18;overflow:hidden;-webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat}
 .lm-case-symbol .lm-case-image img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
 .lm-case-symbol .lm-case-image::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--case-contrast-opacity,.2));opacity:0;pointer-events:none;z-index:1}
 .lm-case-frame[data-step="completa"][data-contrast="on"] .lm-case-image::after{opacity:1}
@@ -85,8 +85,8 @@
     </div>
     <div class="lm-case-control lm-case-m-presentation" role="group" aria-label="Aparição do M na superfície" hidden>
       <span>M / SUPERFÍCIE</span>
-      <button type="button" data-case-m-presentation="elemento" aria-pressed="true">Elemento</button>
-      <button type="button" data-case-m-presentation="completo" aria-pressed="false">Completo</button>
+      <button type="button" data-case-m-presentation="completo" aria-pressed="true">Expandido</button>
+      <button type="button" data-case-m-presentation="elemento" aria-pressed="false">Elemento</button>
     </div>
     <div class="lm-case-control" role="group" aria-label="Comparar intensidades de tratamento com a mesma imagem e texto">
       <span>CONTRASTE / COMPARAR</span>
@@ -103,7 +103,7 @@
   </div>
   <div class="lm-case-layout">
     <div class="lm-case-stage">
-      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-format="horizontal" data-view="resultado" data-contrast="on" data-m-presentation="elemento"
+      <div class="lm-case-frame" id="caseFrame" data-step="completa" data-format="horizontal" data-view="resultado" data-contrast="on" data-m-presentation="completo"
            role="img" aria-label="Composição horizontal com identificação, título, corpo, créditos e fotografia recortada pelo M">
         <img class="lm-case-ambient" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
         <div class="lm-case-veil" aria-hidden="true"></div>
@@ -138,7 +138,7 @@
   </div>
   <div class="lm-case-validation">
     <div><p class="eyebrow">O QUE PERMANECE</p><p>A régua, as margens, o eixo central do M e os três tratamentos de texto.</p></div>
-    <div><p class="eyebrow">O QUE SE ADAPTA</p><p>Formato, enquadramento e aparição do M: Elemento (inteiro, com escala própria) ou Completo (altura total com sangria lateral). O vertical recompõe a página sem deformar o vetor.</p></div>
+    <div><p class="eyebrow">O QUE SE ADAPTA</p><p>Formato, enquadramento e aparição do M: Elemento (inteiro, com escala própria) ou Expandido (altura total com sangria lateral). O vertical recompõe a página sem deformar o vetor.</p></div>
   </div>
 </section>
   <section class="chapter lm-m-guide lm-manual-section" id="regras-de-composicao" aria-labelledby="lmCompositionRulesTitle">
@@ -164,7 +164,7 @@
       <article>
         <span class="lm-rule-diagram" data-rule="alinhamento" aria-hidden="true"><i></i><i></i><i></i></span>
         <h3>M central</h3>
-        <p>O eixo horizontal permanece central. Em Elemento, a posição vertical é ajustável; em Completo, a altura total e a sangria são preservadas.</p>
+        <p>O eixo horizontal permanece central. Em Elemento, a posição vertical é ajustável; em Expandido, a altura total e a sangria são preservadas.</p>
       </article>
       <article>
         <span class="lm-rule-diagram" data-rule="espacamento" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -179,7 +179,7 @@
     </div>
     <p class="lm-m-guide-rule"><strong>Regra central:</strong> o M conserva o eixo horizontal e sua geometria. Em Elemento, a composição é secundária e pode mover-se verticalmente, com legenda em Detalhe alinhada à esquerda abaixo do elemento. Texto e detalhes continuam presos à régua de leitura.</p>
   </section>
-<section class="chapter lm-manual-section" id="reducao-protecao"><div class="inner"><p class="eyebrow">APLICAÇÕES VALIDADAS / 06.11.2026</p><h2>REDUÇÃO E PROTEÇÃO</h2><p>Referências digitais: M com 24 px de altura, pictogramas com 32 px e assinatura com 120 px de largura. Confira o reconhecimento no suporte final; estas medidas não são mínimos de impressão.</p><p>Reserve ao redor da assinatura isolada um quarto da altura do símbolo. Esta proteção não se aplica ao recorte compositivo do M em modo Completo.</p><p>A assinatura é escolhida uma vez por documento e acompanha todas as páginas. A exportação com contraste baixo requer confirmação como estudo.</p></div></section><section class="chapter lm-composition-next lm-manual-section">
+<section class="chapter lm-manual-section" id="reducao-protecao"><div class="inner"><p class="eyebrow">APLICAÇÕES VALIDADAS / 06.11.2026</p><h2>REDUÇÃO E PROTEÇÃO</h2><p>Referências digitais: M com 24 px de altura, pictogramas com 32 px e assinatura com 120 px de largura. Confira o reconhecimento no suporte final; estas medidas não são mínimos de impressão.</p><p>Reserve ao redor da assinatura isolada um quarto da altura do símbolo. Esta proteção não se aplica ao recorte compositivo do M em modo Expandido.</p><p>A assinatura é escolhida uma vez por documento e acompanha todas as páginas. A exportação com contraste baixo requer confirmação como estudo.</p></div></section><section class="chapter lm-composition-next lm-manual-section">
   <div class="inner">
   <p class="eyebrow">APLICAR E CONFERIR</p>
   <p>Confira escala, reconhecimento e leitura no formato final. Azul editorial e marrom de apoio fazem parte das aplicações validadas. O eixo horizontal é preservado. O tratamento fotográfico é ajustável, com preferência por 40%. A assinatura é uma configuração geral do documento.</p>
@@ -192,7 +192,7 @@
   "use strict";
   const frame=document.getElementById("caseFrame");
   if(!frame)return;
-  const state={step:"completa",format:"desktop",view:"resultado",contrast:"40",mPresentation:"elemento"};
+  const state={step:"completa",format:"desktop",view:"resultado",contrast:"40",mPresentation:"completo"};
   function update(){
     const vertical=state.format==="mobile";
     const structure=state.view==="estrutura";

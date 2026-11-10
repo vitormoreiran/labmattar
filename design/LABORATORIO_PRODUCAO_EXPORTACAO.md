@@ -204,3 +204,15 @@ A Matriz Vetorial já é produto real e continua sendo desenvolvida em paralelo.
 - Novas composições começam com tratamento fotográfico de 40%; projetos anteriores conservam seu valor salvo ou o padrão legado de 20%.
 - Contraste baixo pede confirmação para exportar como estudo. O aviso não certifica fotografias ou vídeos; confira o enquadramento.
 - Motions da Matriz começam pausados na web. O leitor inicia o loop silencioso; a tinta preta é composta sem o papel bege. PNG/PDF usam o quadro escolhido e MP4 compõe o movimento sobre a página. O download do MP4 original conserva o arquivo aprovado.
+
+
+## Preservação de proporções — conferência local de 09/11/2026
+
+- O M inteiro, os fragmentos e os símbolos conservam o contorno e a proporção do respectivo arquivo original. O M compositivo (990,08 × 743,18) e o M do acervo de símbolos são fontes distintas; não são intercambiados para ajustar uma caixa.
+- Prévia e exportadores usam uma única escala por elemento. `contain` encaixa a forma inteira; `cover` recorta a mídia com escala uniforme. Não há ajuste independente de largura e altura.
+- `public/lab-geometry.mjs` concentra o encaixe de vetores, imagens e páginas para Canvas, SVG/HTML e PDF. O MP4 usa o mesmo renderizador Canvas. Os fragmentos fotográficos reutilizam a matriz efetiva do SVG exibido.
+- Dimensões inválidas interrompem a renderização. Uma escala fotográfica desigual interrompe a exportação com mensagem de erro. Os giros e as transformações dos motions aprovados continuam sendo movimentos intencionais; seus arquivos e contornos não foram alterados.
+- Conferência: 48 combinações no Compor (quatro formatos, três larguras de tela, M Elemento/Completo, sólido/fotográfico), comparação entre fragmentos na prévia e na cena exportada, círculos de referência em PNG, SVG/HTML, PDF e MP4, e inspeção de mídias nas interfaces ativas. Materiais históricos de validação não foram regravados.
+- Regressões: `node --test scripts/test-lab-proportions.mjs` e `node scripts/smoke-lab-proportions.cjs`. A prova de navegador requer Playwright/Chromium, servidor local e `pdftoppm`; está incluída na verificação de composição. Confere também uma caixa de saída com proporção diferente da página, sem achatar o conteúdo.
+
+A conferência cobre os caminhos acima; novos controles de dimensão e novos renderizadores precisam passar pelos mesmos testes.

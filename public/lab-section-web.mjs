@@ -24,7 +24,7 @@ export async function sectionWebDocument(scenes,project,catalog,fonts,{resource,
       return '<span class="story-title-line">'+content+'</span>';}).join('');
    const art={...scene,id:scene.id+'-art',items:scene.items.filter(op=>op.layer!=='background'&&op.layer!=='reading'&&op.layer!=='detail'&&op.layer!=='signature'&&!op.privateClipId&&!op.layer?.startsWith('video-bg-'))};
    const live=[...scene.motions,...(scene.clips||[]).map(clip=>({...clip,assetId:"private:"+clip.id,private:true}))].map(motion=>{const op=scene.items.find(op=>(motion.private?op.privateClipId:op.motionId)===motion.id);return '<video aria-label="'+esc(motion.private?motion.name:catalog.find(a=>a.id===motion.assetId)?.title||'Motion')+'" '+(motion.private?'autoplay ':'data-motion-ink ')+'muted loop playsinline data-asset="'+esc(motion.assetId)+'" style="left:'+op.x/scene.width*100+'%;top:'+op.y/scene.height*100+'%;width:'+op.w/scene.width*100+'%;height:'+op.h/scene.height*100+'%"></video>';}).join('');
-   return '<article class="story-page" id="'+esc(page.id)+'" aria-label="'+esc(page.name)+'" style="--ink:'+esc(ink)+';--margin:'+p.surface.marginPercent+'%;--reading:'+p.reading.widthPercent+'%;--title:'+Math.min(9,Math.max(4,7*title.scalePercent/100))+'vw;page:print-'+esc(page.id)+';--print-width:'+scene.width*.75+'pt;--print-height:'+scene.height*.75+'pt"><div class="story-art">'+(scene.backgroundVideo?animatedBackground(scene,scene.backgroundVideo):'')+sceneSvg(art,{motionStills:false})+live+'</div><div class="story-reading"><h2>'+headings+'</h2>'+(p.text.body.visible?'<p data-text-entrance>'+esc(p.text.body.value)+'</p>':'')+'</div><div class="print-art">'+sceneSvg(scene)+'</div></article>';
+   return '<article class="story-page" data-reading-position="'+esc(p.reading.positionYPercent??50)+'" id="'+esc(page.id)+'" aria-label="'+esc(page.name)+'" style="--ink:'+esc(ink)+';--margin:'+p.surface.marginPercent+'%;--reading:'+p.reading.widthPercent+'%;--title:'+Math.min(9,Math.max(4,7*title.scalePercent/100))+'vw;page:print-'+esc(page.id)+';--print-width:'+scene.width*.75+'pt;--print-height:'+scene.height*.75+'pt"><div class="story-art">'+(scene.backgroundVideo?animatedBackground(scene,scene.backgroundVideo):'')+sceneSvg(art,{motionStills:false})+live+'</div><div class="story-reading"><h2>'+headings+'</h2>'+(p.text.body.visible?'<p data-text-entrance>'+esc(p.text.body.value)+'</p>':'')+'</div><div class="print-art">'+sceneSvg(scene)+'</div></article>';
   }).join('');
   return '<section class="presentation-section section" data-nav-title="'+esc(section.name)+'" id="'+esc(section.id)+'" aria-label="'+esc(section.name)+'"><div class="section-backdrop '+(b.treatment==='blur'?'blur':'')+'" style="background:'+esc(color)+';--photo-contrast:'+Number(b.contrastPercent??20)/100+'">'+image+(b.mode==='photo'&&hasText?'<div class="veil"></div>':'')+'</div><div class="section-pages">'+pages+'</div></section>';
  }).join('');
@@ -36,6 +36,17 @@ export async function sectionWebDocument(scenes,project,catalog,fonts,{resource,
 }
 export function sectionNavigation(){
  const pages=[...document.querySelectorAll('.story-page')];let current=0;
+ // Each page owns its reading position. Move the title/body group as one
+ // unit; leave its line spacing, internal gap and the fixed corners intact.
+ function alignReading(){for(const page of pages){
+  const copy=page.querySelector('.story-reading');if(!copy)continue;
+  const style=getComputedStyle(page),position=Number(page.dataset.readingPosition??50);
+  const room=Math.max(0,page.clientHeight-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom)-copy.offsetHeight);
+  copy.style.top=((position/100-.5)*room)+'px';
+ }}
+ const readingObserver=new ResizeObserver(alignReading);
+ for(const page of pages){readingObserver.observe(page);const copy=page.querySelector('.story-reading');if(copy)readingObserver.observe(copy);}
+ alignReading();document.fonts?.ready.then(alignReading);
  function update(){const active=pages[current];document.getElementById('page-count').textContent=String(current+1).padStart(2,'0')+' / '+String(pages.length).padStart(2,'0');document.getElementById('previous').disabled=current===0;document.getElementById('next').disabled=current===pages.length-1;document.documentElement.style.setProperty('--presentation-ink',getComputedStyle(active).getPropertyValue('--ink'));}
  const show=index=>pages[Math.max(0,Math.min(index,pages.length-1))].scrollIntoView({block:'start'});
  document.getElementById('next').onclick=()=>show(current+1);document.getElementById('previous').onclick=()=>show(current-1);

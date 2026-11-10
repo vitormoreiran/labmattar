@@ -74,8 +74,8 @@ As regiões de conteúdo são uma composição de fluxo; a imagem obedece
   aspect-ratio:990.08/743.18;
   transform:translateY(-50%);
   overflow:hidden;
-  -webkit-mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;
-  mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;
+  -webkit-mask:url("./media/m-publicado.svg") center / contain no-repeat;
+  mask:url("./media/m-publicado.svg") center / contain no-repeat;
 }
 .artboard .masked-photo::after{
   content:"";

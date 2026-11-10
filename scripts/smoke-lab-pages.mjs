@@ -64,7 +64,7 @@ try{
   const signature=await page.evaluate(()=>window.LabProductionBridge.snapshot().state.signature);
   signature.slots.tl.text='PÁGINA TRÊS';
   await state({format:'quadrado',title:'',body:'',bodyMode:'oculto',background:'color',mContent:'solid',
-    color:'beige',marker:'none',signature,mScale:50,mCaption:'VETOR OFICIAL'});
+    color:'beige',marker:'none',signature,mPresentation:'elemento',mScale:50,mCaption:'VETOR OFICIAL'});
   await page.locator('#labPageName').fill('Vetor oficial');await page.locator('#labPageName').press('Tab');
   await page.locator('#labPageAdd').click();await pause();
   signature.slots.tl.text='LABMATTAR / 2026';

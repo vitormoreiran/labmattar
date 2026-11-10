@@ -1,4 +1,5 @@
 import {chromium} from 'playwright';
+import {checkLaboratoryLinks} from './laboratory-readiness.mjs';
 const base='https://labmattar-identidade-previa.vitormoreiran.workers.dev';
 const browser=await chromium.launch();
 const page=await browser.newPage();
@@ -17,8 +18,10 @@ try {
     await page.locator('#laboratorio').count()===0&&
     await page.locator('main a[href="/laboratorio.html"]').count()===1;
   const laboratory=await page.goto(base+'/laboratorio.html?publication='+stamp,{waitUntil:'domcontentloaded',timeout:30000});
+  const toolLinks=await page.locator('a.lm-lab-tool').evaluateAll(links=>links.map(link=>link.getAttribute('href')));
+  const tools=checkLaboratoryLinks(toolLinks,base);
   const labReady=laboratory.status()===200&&
-    await page.locator('.lm-lab-tool').count()===2&&
+    tools.ready&&
     await page.locator('a[href="/motion/matriz/index.html"]').count()===1&&
     await page.locator('a[href="/compor.html?studio=1#laboratorio"]').count()===1&&
     await page.locator('#labArtboard').count()===0;
@@ -31,7 +34,7 @@ try {
    await page.waitForSelector('.lm-root[aria-busy="false"]',{timeout:60000});
    ready=true;console.log('Published laboratory index points to the current Matrix; isolated Compor and the preserved contour editor are ready.');break;
   }
-  console.log('Published assets not yet consistent; rechecking both routes.');
+  console.log('Published assets not yet consistent:',JSON.stringify({manual:correct,construction:constructionReady,laboratory:labReady,composition:compositionReady,editor:editor.status(),tools}));
   await page.waitForTimeout(5000);
  }
  if(!ready)throw new Error('Published manual and editor did not become consistent');

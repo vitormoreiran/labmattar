@@ -14,6 +14,9 @@ on:
       - 'tests/email-signature.test.mjs'
       - 'scripts/smoke-email-card.mjs'
       - 'scripts/test-official-verification.mjs'
+      - 'scripts/laboratory-readiness.mjs'
+      - 'scripts/test-laboratory-readiness.mjs'
+      - 'scripts/wait-symbols-preview.mjs'
   push:
     branches: [main]
     paths:
@@ -28,6 +31,9 @@ on:
       - 'tests/email-signature.test.mjs'
       - 'scripts/smoke-email-card.mjs'
       - 'scripts/test-official-verification.mjs'
+      - 'scripts/laboratory-readiness.mjs'
+      - 'scripts/test-laboratory-readiness.mjs'
+      - 'scripts/wait-symbols-preview.mjs'
 
 permissions:
   contents: read
@@ -46,4 +52,4 @@ jobs:
           node --check public/assinatura-email.mjs
           node --check public/email-signature.mjs
           node --check public/email-card.mjs
-          node --test tests/email-signature.test.mjs scripts/test-official-verification.mjs
+          node --test tests/email-signature.test.mjs scripts/test-official-verification.mjs scripts/test-laboratory-readiness.mjs

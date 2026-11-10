@@ -38,8 +38,10 @@ try{
   assert(landing.status()===200 &&
     landingHtml.includes('href="/motion/matriz/index.html"') &&
     landingHtml.includes('href="/compor.html?studio=1#laboratorio"') &&
+    landingHtml.includes('href="/assinatura-email.html?origem=laboratorio"') &&
+    landingHtml.includes('CARTÃO MATTAR') &&
     !landingHtml.includes('id="labArtboard"'),
-    "Laboratory must show two instrument previews without embedding Compor");
+    "Laboratory must expose its three tools without embedding Compor");
   const standalone=await page.request.get(new URL("/compor.html",url).href);
   assert(standalone.status()===200 &&
     (await standalone.text()).includes('id="labAcervo"'),

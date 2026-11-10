@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19">
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
+<link rel="stylesheet" href="/lab-tool-navigation.css">
+<script type="module" src="/lab-tool-navigation.mjs"></script>
 </head><body>
 <main>
 <section class="chapter lm-laboratory-intro lm-manual-cover"><div class="inner">
@@ -25,6 +27,7 @@
   </div>
   <div class="lm-lab-prep lm-lab-single-system">
     <div class="lm-studio-launch">
+      <nav class="lab-tool-navigation" data-lab-tools data-current-tool="composition" aria-label="Ferramentas do Laboratório"><a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">FERRAMENTAS ↗</a></nav>
       <button type="button" id="labTourStudioHelp" class="lm-studio-help" aria-label="Abrir ajuda guiada e dúvidas do Laboratório" aria-controls="labHelp-overview" aria-expanded="false"><span aria-hidden="true">?</span><span class="lm-studio-help-label">DÚVIDAS</span></button>
       <button type="button" class="lm-lab-motion-play" id="labMotionPlay" aria-controls="labArtboard" aria-label="Reproduzir entrada dos textos" title="Reproduzir a entrada de Título, Corpo e Detalhe"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1 0.5 9 5 1 9.5Z"/></svg><span id="labMotionPlayText">ENTRADA</span></button>
       <span id="labMotionStatus" class="lm-lab-motion-status" role="status" aria-live="polite"></span>

@@ -211,6 +211,7 @@ jobs:
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-email-card.mjs
           node scripts/smoke-identity-review.mjs
       - name: Conferir pacote do domínio oficial sem publicar
         run: |

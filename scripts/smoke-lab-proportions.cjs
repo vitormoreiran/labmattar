@@ -11,6 +11,9 @@ const output=path.resolve(process.env.PROPORTION_OUTPUT||'proportion-proof');
   const page=await browser.newPage({viewport:{width:1440,height:1000}});page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'?studio=1#laboratorio');await page.waitForFunction(()=>window.LabRenderer&&window.LabPages&&document.querySelector('#labPages').dataset.ready==='true');await page.evaluate(()=>document.fonts.ready);
   const original=await page.evaluate(()=>LabProductionBridge.snapshot().state);
+  assert.equal(original.mPresentation,'completo','Novos rascunhos devem começar com M expandido');
+  assert.equal(original.mContent,'photo');
+  assert.equal(original.textPositionY,50);assert.equal(original.mExpandedPositionY,50);
   for(const vw of [1440,1024,390]){
    await page.setViewportSize({width:vw,height:1000});
    for(const format of ['horizontal','vertical','quadrado','editorial'])for(const mode of ['elemento','completo'])for(const content of ['solid','photo']){

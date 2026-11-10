@@ -65,6 +65,8 @@ try{
          await page.locator("#labMContent").count()===1,
     "Background and M must have independent controls");
 
+  // This color/contrast study explicitly starts without a photographic M.
+  await choose("mContent","off");
   const officialTones=["neutral","white","black","beige","green","red","blue","brown"];
   const groundOptions=await page.locator("#labColor option").evaluateAll(options=>options.map(option=>option.value));
   const inkOptions=await page.locator("#labInkColor option").evaluateAll(options=>options.map(option=>option.value));
@@ -191,6 +193,8 @@ try{
   constructionPage.on("pageerror",e=>errors.push("Construction: "+e.message));
   await constructionPage.goto(new URL("/composicao.html",url).href,{waitUntil:"load",timeout:60000});
   await constructionPage.evaluate(()=>document.fonts.ready);
+  assert(await constructionPage.locator('#caseFrame').getAttribute('data-m-presentation')==='completo',
+    'Construction must open with the expanded M');
   assert(await constructionPage.locator('#caseFrame').count()===1,
     "Construction chapter must contain the original applied example");
   assert(await constructionPage.locator('.lm-case-facts, .lm-case-aside').count()===0,
@@ -227,6 +231,7 @@ try{
   assert(await constructionPage.locator("#caseFrame").getAttribute("data-view")==="resultado",
     "Result mode must show the clean composed page");
   await constructionPage.screenshot({path:"composition-manual-desktop.png",fullPage:true});
+  await constructionPage.locator('[data-case-m-presentation="elemento"]').click();
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator('#caseFrame').evaluate(el=>el.classList.contains("is-mobile")),
     "Construction must demonstrate responsive recomposition");

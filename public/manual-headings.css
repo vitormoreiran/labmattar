@@ -113,6 +113,13 @@ html body main .lm-case-frame.is-mobile{
 html body main .lm-case-frame .lm-case-safe::before{
  font-size:var(--lm-type-detail-size)!important;
 }
+/* Tool covers are miniature applications, not full-page manual headings.
+ * Keep their three roles here with the other simulated-page scales. */
+html body main .lm-lab-tool-preview{
+ --lm-type-title-size:7.3cqw;
+ --lm-type-body-size:3.2cqw;
+ --lm-type-detail-size:clamp(8px,2.25cqw,11px);
+}
 /* Structural headline geometry remains consistent across the five chapters. */
 html body main :is(h1.lm-manual-page-title,h2.lm-manual-section-title){
  text-align:left!important;

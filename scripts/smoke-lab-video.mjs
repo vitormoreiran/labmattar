@@ -18,6 +18,7 @@ async function review(){
   await page.locator('#labVideoSeconds').fill('2');await page.locator('#labVideoQuality').selectOption('hd');
 }
 async function exportVideo(file,seconds,width,height){
+  assert.equal(await page.locator('#labArtboard').getAttribute('data-state'),'ok',await page.locator('#labStatus').textContent());
   const waiting=page.waitForEvent('download',{timeout:180000});
   await page.locator('#labExportMp4').click();const download=await waiting;
   const target=path.join(output,file);await download.saveAs(target);assert.equal(await download.failure(),null);
@@ -34,7 +35,7 @@ async function exportVideo(file,seconds,width,height){
 try{
   await page.goto((process.env.COMPOSITION_URL||'http://127.0.0.1:8765/compor.html')+'?studio=1#laboratorio',{waitUntil:'networkidle'});
   await page.locator('#labPages[data-ready=true]').waitFor({state:'attached'});
-  await state({title:'MATTAR EM MOVIMENTO',titleFonts:[null,'perpetua',null],body:'Composição, motion e vídeo.',bodyMode:'visivel',mContent:'off',background:'color',marker:'none',guides:'nenhuma',titleScale:70});
+  await state({title:'MATTAR EM MOVIMENTO',titleFonts:[null,'perpetua',null],body:'Composição, motion e vídeo.',bodyMode:'visivel',mContent:'off',background:'color',marker:'none',guides:'nenhuma',titleScale:70,textWidth:100,mPresentation:'elemento'});
   await page.evaluate(()=>{
     const capture=window.LabRenderer.capture;
     window.LabRenderer.capture=async options=>{const scene=await capture(options);if(options?.live)window.videoCapturedScene=scene;return scene;};

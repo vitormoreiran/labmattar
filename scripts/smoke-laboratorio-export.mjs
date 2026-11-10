@@ -70,6 +70,8 @@ try{
   assert(await page.locator("#labOpenDelivery").isVisible(),"Review and export must be reachable from the editor");
   assert(await page.locator("#labExportSize").inputValue()==="3840","4K must be the default export profile");
   assert(await page.locator("#labExportStatus").count()===1,"Accessible status is required");
+  // The reference studies a scaled M with markers, not the opening preset.
+  await page.evaluate(()=>{const bridge=window.LabProductionBridge;bridge.restore({...bridge.snapshot().state,mPresentation:'elemento',textWidth:61,titleScale:100,title:'PRÁTICAS\nMATERIAIS E\nPROCESSOS',mScale:60});});
   await choose("format","horizontal");
   await choose("background","photo");
   await choose("mContent","photo");

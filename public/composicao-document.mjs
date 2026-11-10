@@ -99,6 +99,7 @@ function captureState(state,photoCatalog){
     marker:text(state.marker,40,"marcadores"),
     markerFocus:enumValue(state.markerFocus??"blur",CHOICES.markerFocus,"nitidez dos marcadores"),
     textWidth:bounded(state.textWidth,40,100,"largura de leitura"),
+    textPositionY:bounded(state.textPositionY??50,0,100,"posição vertical do texto"),
     titleScale:bounded(state.titleScale,70,140,"escala do título"),
     type:enumValue(state.type,CHOICES.type,"tratamento do título"),
     background:enumValue(state.background,CHOICES.background,"fundo"),
@@ -107,6 +108,7 @@ function captureState(state,photoCatalog){
     photo:text(state.photo,30,"foto"),
     mScale:bounded(state.mScale,1,140,"escala do M"),
     mPositionY:bounded(state.mPositionY??50,0,100,"posição vertical do M"),
+    mExpandedPositionY:bounded(state.mExpandedPositionY??50,0,100,"posição vertical do M expandido"),
     mCaption:text(state.mCaption??"",100,"legenda do elemento"),
     focusX:bounded(state.focusX,0,100,"foco horizontal"),
     focusY:bounded(state.focusY,0,100,"foco vertical"),
@@ -152,7 +154,7 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
     pages:[{
       id:"page-1",
       surface:{format:s.format,color:s.color,background:s.background,guides:s.guides,marginPercent:s.margin},
-      reading:{widthPercent:s.textWidth},
+      reading:{widthPercent:s.textWidth,positionYPercent:s.textPositionY},
       text:{
         inkColor:s.inkColor,autoInkVersion:s.autoInkVersion,
         title:{role:"title",value:s.title,treatment:s.type,scalePercent:s.titleScale,wordFonts:s.titleFonts},
@@ -161,7 +163,7 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
       },
       media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,photoContrastPercent:s.photoContrast,focalPoint:{x:s.focusX,y:s.focusY}},
       m:{maskAssetId:"identity:m-mask",content:s.mContent,presentation:s.mPresentation,
-        scalePercent:s.mScale,positionYPercent:s.mPositionY,caption:s.mCaption,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
+        scalePercent:s.mScale,positionYPercent:s.mPositionY,expandedPositionYPercent:s.mExpandedPositionY,caption:s.mCaption,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
     }],
     assets:assetList(s,photoCatalog),
     output:{format:"image/png",maxEdge,...dimensions,reference:"laboratorio-canvas-2d",masterVerified:false},
@@ -185,9 +187,9 @@ export function readProductionDocument(doc,photoCatalog){
   check(doc.output.width===expected.width&&doc.output.height===expected.height,"dimensões da página");
   const state={
     format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",autoInkVersion:t.autoInkVersion??1,photoContrast:media.photoContrastPercent??20,margin:page.surface.marginPercent,
-    guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,
+    guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,textPositionY:page.reading?.positionYPercent??50,
     titleScale:t.title?.scalePercent,titleFonts:t.title?.wordFonts??[],type:t.title?.treatment,background:page.surface.background,
-    mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,mPositionY:m.positionYPercent??50,mCaption:m.caption??"",
+    mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,mPositionY:m.positionYPercent??50,mExpandedPositionY:m.expandedPositionYPercent??50,mCaption:m.caption??"",
     focusX:media.focalPoint?.x,focusY:media.focalPoint?.y,symbol:m.legacySymbol,
     title:t.title?.value,body:t.body?.value,bodyMode:t.body?.visible===true?"visivel":"oculto",
     kicker:t.detail?.metadata?.kicker,footerLeft:t.detail?.metadata?.footerLeft,
@@ -203,6 +205,8 @@ export function verifyRoundTrip(doc,photoCatalog){
   // inventing a new schema version; a missing value means blur in markers.
   if(doc.pages[0].m.markerFocus===undefined)delete normalized.pages[0].m.markerFocus;
   if(doc.pages[0].m.positionYPercent===undefined)delete normalized.pages[0].m.positionYPercent;
+  if(doc.pages[0].m.expandedPositionYPercent===undefined)delete normalized.pages[0].m.expandedPositionYPercent;
+  if(doc.pages[0].reading.positionYPercent===undefined)delete normalized.pages[0].reading.positionYPercent;
   if(doc.pages[0].m.caption===undefined)delete normalized.pages[0].m.caption;
   if(doc.pages[0].text.title.wordFonts===undefined)delete normalized.pages[0].text.title.wordFonts;
   // Legacy documents preserve their 20% treatment and original automatic red ink.

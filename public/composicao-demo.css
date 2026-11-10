@@ -192,8 +192,8 @@
   left:50%;
   top:50%;
   transform:translate(-50%,-50%);
-  width:133.222cqh!important;
-  height:100cqh!important;
+  width:calc(100cqh * 990.08 / 743.18)!important;
+  height:auto!important;
   max-width:none!important;
 }
 .lm-case-m-presentation[hidden]{display:none!important}

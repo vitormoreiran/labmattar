@@ -1,33 +1,40 @@
-/* 05 / Laboratório — seleção de instrumentos, sem editor na página do manual.
+/* 06 / Laboratório — seleção de instrumentos, sem editor na página do manual.
  * A tipografia vem exclusivamente de manual-headings.css. */
 .lm-lab-tools{padding-block:clamp(68px,8vw,125px)}
 .lm-lab-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,46px)}
 .lm-lab-tool{display:block;min-width:0;color:inherit;text-decoration:none;outline-offset:6px}
-.lm-lab-tool-preview{position:relative;aspect-ratio:16/10;overflow:hidden;isolation:isolate;display:block}
+.lm-lab-tool-preview{
+ position:relative;aspect-ratio:16/10;overflow:hidden;isolation:isolate;display:block;
+ container-type:size;
+}
 .lm-lab-tool-preview-matrix{background:#e2dfd8;color:#181818}
-.lm-lab-matrix-main{position:absolute;inset:13% 25% 31%;display:grid;place-items:center}
-.lm-lab-matrix-main img{display:block;max-width:100%;max-height:100%;height:100%;width:auto;object-fit:contain}
-.lm-lab-matrix-track{position:absolute;left:9%;right:9%;bottom:10%;height:15%;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #99958c;padding-top:12px}
-.lm-lab-matrix-track img{width:10%;height:100%;object-fit:contain}
+.lm-lab-matrix-main{position:absolute;inset:24% 24% 30%}
+.lm-lab-matrix-symbol{
+ display:block;width:100%;height:100%;background:#e22e24;
+ -webkit-mask:url('/identidade/M.svg') center/contain no-repeat;
+ mask:url('/identidade/M.svg') center/contain no-repeat;
+}
+.lm-lab-matrix-track{position:absolute;left:12%;right:12%;bottom:10%;height:11%;display:flex;align-items:center;justify-content:space-between;gap:5%}
+.lm-lab-matrix-track img{display:block;flex:none;width:11%;height:100%;object-fit:contain;filter:brightness(0)}
 .lm-lab-matrix-line{height:1px;flex:1;background:#aaa69e}
-.lm-lab-preview-index{position:absolute;top:4%;left:5%;z-index:4}
+.lm-lab-preview-index{position:absolute;top:8%;left:8%;right:8%;z-index:4}
 .lm-lab-tool-preview-composition{background:#213d34;color:#f7f6f2}
-.lm-lab-composition-photo{position:absolute;inset:-7%;background:url('/ambiente-editorial/media/BOXDOSENTIR-64.jpg') center/cover no-repeat;filter:blur(14px) brightness(.60);transform:scale(1.07)}
-.lm-lab-composition-m{position:absolute;inset:0;display:grid;place-items:center;z-index:1}
+.lm-lab-composition-photo{position:absolute;inset:-7%;background:url('/ambiente-editorial/media/BOXDOSENTIR-64.jpg') center/cover no-repeat;filter:blur(14px) brightness(.45);transform:scale(1.07)}
+.lm-lab-composition-m{position:absolute;top:0;left:50%;height:100%;width:calc(100cqh * 990.08 / 743.18);transform:translateX(-50%);z-index:1}
 .lm-lab-composition-m img{
- width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.68);
+ position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.85);
  -webkit-mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
  mask:url('/ambiente-editorial/media/m-publicado.svg') center/contain no-repeat;
 }
-.lm-lab-composition-copy{position:absolute;z-index:2;inset:13% 7% 10%;display:flex;flex-direction:column;align-items:flex-start;gap:10px;max-width:86%}
-.lm-lab-composition-title{display:block;margin:auto 0;color:inherit}
-.lm-lab-tool-preview-composition .lm-lab-preview-index{top:auto;bottom:4%;left:auto;right:5%}
+.lm-lab-composition-copy{position:absolute;z-index:2;inset:35% 8% 8%;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:10px}
+.lm-lab-composition-title{display:block;margin:0;color:inherit;max-width:100%}
 .lm-lab-tool-text{display:flex;flex-direction:column;gap:15px;border-top:1px solid #181818;padding:20px 0 0;margin-top:18px}
 .lm-lab-tool-text h3{margin:0;max-width:95%}
 .lm-lab-tool-text p{margin:0;max-width:44ch}
 .lm-lab-tool-action{display:inline-block;align-self:flex-start;border-bottom:1px solid currentColor;padding:0 0 6px;margin-top:13px}
 .lm-lab-tool:hover .lm-lab-tool-action{border-bottom-width:2px}
 .lm-lab-tool:focus-visible{outline:2px solid #181818}
+@media(max-width:1100px){.lm-lab-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:750px){
  .lm-lab-tool-grid{grid-template-columns:1fr;gap:70px}
  .lm-lab-tool-preview{aspect-ratio:16/11}

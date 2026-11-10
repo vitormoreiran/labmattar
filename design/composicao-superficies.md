@@ -88,3 +88,21 @@ Validar navegador em desktop (1440×900) e celular (390×844, 320×640), em 16:9
 ## Escolhas confirmadas em 06/11/2026
 
 A assinatura é única por documento. Univers e Perpetua podem se misturar entre palavras da mesma linha do Título, sem criar outro tratamento de texto. A legenda do Elemento usa Detalhe e começa na borda esquerda do elemento. A exportação de combinações sólidas com contraste baixo avisa e exige confirmação como estudo. Referências digitais: M 24 px, pictogramas 32 px e assinatura 120 px; proteção da assinatura isolada de ¼ da altura do símbolo.
+
+
+## Prioridade visual do M expandido — 10/11/2026
+
+O M expandido é a apresentação principal na capa do Laboratório de Composição, no exemplo interativo de Composição e na abertura de um novo rascunho. A capa da Matriz Vetorial mantém a composição de M e pictogramas para mostrar a relação entre as formas. O controle **Expandido** aparece antes de **Elemento** e **Sem M**. Ele ocupa toda a altura da superfície com escala uniforme; as laterais seguem o recorte de cada formato.
+
+A referência interna continua sendo `mPresentation: "completo"`, preservando a compatibilidade com os documentos existentes. Elemento e Sem M continuam disponíveis. Rascunhos e apresentações salvos conservam a configuração de autoria; a prioridade só define o ponto de partida quando não existe rascunho. Restaurar estudo usa esse ponto de partida e mantém a cópia de recuperação anterior.
+
+Essa prioridade não substitui as geometrias originais da Matriz nem as dimensões próprias da assinatura de e-mail.
+
+
+## Exceções de posição vertical por página — 10/11/2026
+
+O centro (50%) continua como ponto de partida. Em Texto, **Posição vertical do bloco** move título e corpo juntos na área útil, conservando largura, fontes, entrelinhas e distância entre título e corpo. Em M, o controle move o elemento sem alterar a escala; no Expandido, desloca a forma e seu recorte na página. **Centralizar** restaura 50% em cada controle.
+
+A configuração pertence à página, mesmo quando várias páginas compartilham o fundo de uma seção. A assinatura dos quatro cantos permanece fixa. JSON, PNG, PDF, MP4 e HTML guardam essa escolha; no HTML com seções, o bloco se posiciona na área disponível da página responsiva.
+
+`textPositionY` é salvo em `reading.positionYPercent`; o Elemento conserva `mPositionY` em `m.positionYPercent`, e o Expandido usa `mExpandedPositionY` em `m.expandedPositionYPercent`. Os dois campos novos são opcionais em documentos anteriores e assumem 50%, para não reinterpretar a posição antiga do M expandido.

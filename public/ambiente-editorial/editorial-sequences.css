@@ -228,8 +228,8 @@
   aspect-ratio:990.08/743.18;
   overflow:hidden;
   margin:0;
-  -webkit-mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;
-  mask:url("./media/m-publicado.svg") center / 100% 100% no-repeat;
+  -webkit-mask:url("./media/m-publicado.svg") center / contain no-repeat;
+  mask:url("./media/m-publicado.svg") center / contain no-repeat;
 }
 .story-page-media img{
   display:block;width:100%;height:100%;

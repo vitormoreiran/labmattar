@@ -166,7 +166,10 @@ try {
             const artboard=e.closest('.lm-case-frame');
             const width=artboard?.getBoundingClientRect().width;
             const vertical=artboard?.classList.contains('is-mobile');
-            const sizes=width?vertical?
+            const cover=e.closest('.lm-lab-tool-preview'),coverWidth=cover?.getBoundingClientRect().width;
+            const sizes=coverWidth?
+              {title:coverWidth*.073,body:coverWidth*.032,detail:scale(8,.0225,11,coverWidth)}:
+              width?vertical?
               {title:scale(18,.096,38,width),body:scale(9.5,.0385,15,width),detail:scale(7,.0255,10,width)}:
               {title:scale(12,.069,84,width),body:scale(8.5,.0185,19,width),detail:scale(6,.0125,13,width)}:null;
             const lab=e.closest('#labArtboard');

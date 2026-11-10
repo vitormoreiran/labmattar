@@ -73,7 +73,12 @@
   }
   function photoRectangle(img,frame){
     const box=rectangle(img,frame),transform=getComputedStyle(img).transform;
-    if(transform!=="none"){const m=new DOMMatrixReadOnly(transform);const w=box.w/m.a,h=box.h/m.d;box.x+=(box.w-w)/2;box.y+=(box.h-h)/2;box.w=w;box.h=h;}
+    if(transform!=="none"){
+      const m=new DOMMatrixReadOnly(transform);
+      if(!m.is2D||m.a<=0||Math.abs(m.a-m.d)>1e-6||Math.abs(m.b)>1e-6||Math.abs(m.c)>1e-6)
+        fail('A fotografia tem uma transformação incompatível com a proporção original.');
+      const w=box.w/m.a,h=box.h/m.a;box.x+=(box.w-w)/2;box.y+=(box.h-h)/2;box.w=w;box.h=h;
+    }
     return box;
   }
   function drawBackground(ctx,frame){
@@ -158,7 +163,7 @@
       const xml=new DOMParser().parseFromString(await response.text(),"image/svg+xml"),root=xml.documentElement;
       if(xml.querySelector("parsererror")||xml.querySelector("[transform]"))throw Error("Vetor oficial incompatível.");
       const viewBox=root.getAttribute("viewBox")?.trim().split(/[ ,]+/).map(Number);
-      if(viewBox?.length!==4||!viewBox.every(Number.isFinite))throw Error("Vetor sem dimensões válidas.");
+      if(viewBox?.length!==4||!viewBox.every(Number.isFinite)||viewBox[2]<=0||viewBox[3]<=0)throw Error("Vetor sem dimensões válidas.");
       const paths=[...xml.querySelectorAll("path")].map(path=>{
         let node=path,fill=null;
         while(node&&!fill){fill=node.getAttribute?.("fill");node=node.parentElement;}
@@ -199,6 +204,7 @@
     drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));ctx.restore();
   }
   async function captureScene({edge=Number(sizeSelect.value),ask=true,live=false}={}){
+    const {vectorTransform,drawFittedImage}=await import('./lab-geometry.mjs');
     window.LabPages?.applySectionVisual?.();
     await document.fonts.ready;
     if(ask&&document.getElementById("labInkContrast")?.dataset.contrast==="warning"&&!confirm("Esta combinação tem contraste baixo. Exportar como estudo mesmo assim?"))return null;
@@ -251,8 +257,8 @@
         const filter=getComputedStyle(maskNode).filter;
         if(filter!=="none"){
           const shadow=pixels(frame.width,frame.height,frame,ctx=>{
-            const shape=new Path2D();const [vx,vy,vw,vh]=maskVector.viewBox;
-            for(const path of maskVector.paths)shape.addPath(new Path2D(path.d),new DOMMatrix([box.w/vw,0,0,box.h/vh,box.x-vx*box.w/vw,box.y-vy*box.h/vh]));
+            const shape=new Path2D(),{scale,x,y}=vectorTransform(maskVector);
+            for(const path of maskVector.paths)shape.addPath(new Path2D(path.d),new DOMMatrix([scale,0,0,scale,x,y]));
             ctx.filter=filter.replace(/(-?[\d.]+)px/g,(_,n)=>(Number(n)*frame.outputScale)+"px");ctx.fillStyle="#000000";ctx.fill(shape);
             ctx.filter="none";ctx.globalCompositeOperation="destination-out";ctx.fill(shape);ctx.globalCompositeOperation="source-over";
           });items.push({kind:"image",source:shadow,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("sombra fotográfica do M");
@@ -273,7 +279,7 @@
         if(getComputedStyle(svg).display==="none")continue;
         const v=svg.viewBox.baseVal,box=rectangle(svg,frame),d=svg.querySelector("path")?.getAttribute("d");
         if(d)items.push({kind:"group",...(hasVideo?{layer:"video-bg-marker"}:{}),
-          clip:{viewBox:[v.x,v.y,v.width,v.height],box,paths:[{d}]},
+          clip:{viewBox:[v.x,v.y,v.width,v.height],box,alignY:svg.classList.contains('lm-lab-m-marker-top')?0:1,paths:[{d}]},
           items:[{kind:"image",source,x:0,y:0,w:frame.width,h:frame.height}]});
       }
       rasterized.push("tratamento fotográfico dos marcadores");
@@ -281,7 +287,7 @@
     for(const svg of board.querySelectorAll("#labMMarkers svg")){
       if(!isVisible(svg))continue;
       const v=svg.viewBox.baseVal,d=svg.querySelector("path")?.getAttribute("d");
-      if(d)items.push({kind:"vector",viewBox:[v.x,v.y,v.width,v.height],paths:[{d}],box:rectangle(svg,frame),color:getComputedStyle(svg).color});
+      if(d)items.push({kind:"vector",viewBox:[v.x,v.y,v.width,v.height],paths:[{d}],box:rectangle(svg,frame),alignY:svg.classList.contains('lm-lab-m-marker-top')?0:1,color:getComputedStyle(svg).color});
     }
     const motions=await window.LabPages?.captureMotions?.(frame.width,frame.height)||[];
     for(const motion of motions){
@@ -322,7 +328,7 @@
         if(op.motionId||op.privateClipId){
           const video=media.find(video=>op.motionId?video.dataset.motionId===op.motionId:video.dataset.clipId===op.privateClipId);
           if(!video)throw Error('Vídeo da composição não encontrado: '+op.assetName);
-          op.paint=ctx=>ctx.drawImage(op.motionId?inkFrame(video):video,op.x,op.y,op.w,op.h);
+          op.paint=ctx=>drawFittedImage(ctx,op.motionId?inkFrame(video):video,op);
         }
       }
     }

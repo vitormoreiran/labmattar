@@ -366,8 +366,8 @@
 .treatment-figure img{display:block;width:100%;height:100%;object-fit:cover}
 .treatment-figure[data-treatment-figure="m-central"] img,
 .treatment-figure[data-treatment-figure="m-detalhe"] img{
-  -webkit-mask:url("./media/m-publicado.svg") center / 90% 90% no-repeat;
-  mask:url("./media/m-publicado.svg") center / 90% 90% no-repeat;
+  -webkit-mask:url("./media/m-publicado.svg") center / contain no-repeat;
+  mask:url("./media/m-publicado.svg") center / contain no-repeat;
 }
 .treatment-figure[data-treatment-figure="m-detalhe"] img{transform:scale(1.25)}
 .treatment-figure[data-treatment-figure="fundo-com-blur"] img{

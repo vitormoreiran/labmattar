@@ -4,7 +4,8 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 const source = await readFile(new URL('./verify-official.mjs', import.meta.url), 'utf8');
 const sha = 'a'.repeat(40);
-function execute({ readyAfter = 0, origin } = {}) {
+const overviewHTML = await readFile(new URL('../design/laboratorio.html', import.meta.url), 'utf8');
+function execute({ readyAfter = 0, origin, laboratoryHTML = overviewHTML } = {}) {
   const requests = []; let releases = 0;
   const context = {
     process: { env: { EXPECTED_SHA: sha, ...(origin ? { VERIFY_PREVIEW: '1', OFFICIAL_PREVIEW_URL: origin } : {}) } },
@@ -12,7 +13,7 @@ function execute({ readyAfter = 0, origin } = {}) {
     fetch: async url => {
       requests.push(url);
       if (url.includes('laboratorio-release.json')) return { ok: true, json: async () => ({ sha: releases++ < readyAfter ? 'b'.repeat(40) : sha }) };
-      return { ok: true, status: 200, headers: new Headers({ 'content-type': 'text/html' }), text: async () => '<!doctype html>' + 'x'.repeat(1000) };
+      return { ok: true, status: 200, headers: new Headers({ 'content-type': 'text/html' }), text: async () => url.includes('/laboratorio') ? laboratoryHTML : '<!doctype html>' + 'x'.repeat(1000) };
     }
   };
   return { promise: vm.runInNewContext('(async()=>{' + source + '})()', context), requests, releases: () => releases };
@@ -31,4 +32,8 @@ test('an old release never passes and no routes are accepted before it is curren
 test('verification refuses an unrecognized preview origin', async () => {
   const run = execute({ origin: 'https://example.com' });
   await assert.rejects(run.promise, /Origem de verificação inesperada/); assert.equal(run.requests.length, 0);
+});
+test('an HTTP 200 editor response cannot pass as the Laboratory overview', async () => {
+  const run = execute({ laboratoryHTML: '<main id="labArtboard">' + 'x'.repeat(1000) + '</main>' });
+  await assert.rejects(run.promise, /Laboratório deve abrir o overview/);
 });

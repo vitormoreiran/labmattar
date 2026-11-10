@@ -5,8 +5,7 @@ export default {
   const url=new URL(request.url);
   if(url.pathname.startsWith('/api/acervo/'))return handleAcervoRequest(request,env);
   if(['/laboratorio','/laboratorio/'].includes(url.pathname)){
-   url.pathname='/compor.html';url.search='?studio=1&workspace=pages';url.hash='laboratorio';
-   return Response.redirect(url.href,302);
+   return env.ASSETS.fetch(request);
   }
   return original.fetch(request,env,ctx);
  }

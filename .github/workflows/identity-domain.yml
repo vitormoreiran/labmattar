@@ -1,0 +1,36 @@
+name: Validar domínio da identidade
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/identity-domain.yml'
+      - '.github/workflows/publish-official.yml'
+      - 'site-oficial/worker/identity-domain.mjs'
+      - 'site-oficial/worker/entry.mjs'
+      - 'site-oficial/wrangler.jsonc'
+      - 'scripts/*identity-domain.mjs'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/identity-domain.yml'
+      - 'site-oficial/worker/identity-domain.mjs'
+      - 'scripts/*identity-domain.mjs'
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: preview
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Conferir configuração e preservação do site
+        run: node --test scripts/test-identity-domain.mjs scripts/test-official-routing.mjs
+      - name: Conferir vínculo e DNS sem alterar registros
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/configure-identity-domain.mjs

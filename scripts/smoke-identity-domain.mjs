@@ -1,0 +1,36 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { IDENTITY_ORIGIN } from '../site-oficial/worker/identity-domain.mjs';
+const output = 'identity-domain-proof';
+await mkdir(output, { recursive: true });
+const browser = await chromium.launch({ headless: true });
+const errors = [];
+try {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, reducedMotion: 'reduce' });
+  context.setDefaultNavigationTimeout(60000);
+  const page = await context.newPage(); page.on('pageerror', error => errors.push(error.message));
+  await page.goto(IDENTITY_ORIGIN + '/', { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('#sistemas');
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: output + '/introducao.png' });
+  await page.goto(IDENTITY_ORIGIN + '/laboratorio');
+  assert.equal(await page.locator('a.lm-lab-tool').count(), 3);
+  assert.equal(await page.locator('#labArtboard').count(), 0);
+  await page.screenshot({ path: output + '/laboratorio.png', fullPage: true });
+  await page.locator('a.lm-lab-tool[href^="/compor.html"]').click();
+  await page.waitForFunction(() => window.LabPages && window.LabRenderer, null, { timeout: 60000 });
+  assert.equal(new URL(page.url()).origin, IDENTITY_ORIGIN);
+  const matrix = await context.newPage(); matrix.on('pageerror', error => errors.push(error.message));
+  await matrix.goto(IDENTITY_ORIGIN + '/motion/matriz/index.html');
+  await matrix.waitForSelector('#app .initial-loading', { state: 'hidden', timeout: 60000 });
+  assert.ok(await matrix.locator('#app svg').count(), 'Matriz monta seus vetores no novo domínio');
+  const card = await context.newPage(); card.on('pageerror', error => errors.push(error.message));
+  await card.goto(IDENTITY_ORIGIN + '/assinatura-email');
+  await card.waitForSelector('#previewStage[data-ready=true] canvas', { timeout: 60000 });
+  assert.equal(await card.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#F7F6F2');
+  assert.equal(await card.locator('.installation').getAttribute('open'), '');
+  assert.deepEqual(errors, []);
+  const report = { origin: IDENTITY_ORIGIN, introduction: true, overview: true, composition: true, matrix: true, card: true, errors };
+  await writeFile(output + '/report.json', JSON.stringify(report, null, 2)); console.log(JSON.stringify(report));
+} finally { await browser.close(); }

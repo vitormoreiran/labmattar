@@ -99,3 +99,34 @@ jobs:
           name: labmattar-oficial-${{ steps.source.outputs.sha }}
           path: dist/oficial
           retention-days: 7
+      - name: Vincular o endereço da identidade ao serviço oficial
+        if: steps.source.outputs.eligible == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/configure-identity-domain.mjs --apply
+      - name: Conferir identidade no novo domínio
+        if: steps.source.outputs.eligible == 'true'
+        env:
+          EXPECTED_SHA: ${{ steps.source.outputs.sha }}
+        run: node scripts/verify-identity-domain.mjs
+      - name: Guardar vínculo do domínio da identidade
+        if: steps.source.outputs.eligible == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: identidade-domain-${{ steps.source.outputs.sha }}
+          path: dist/identity-domain.json
+          retention-days: 7
+      - name: Conferir ferramentas no novo endereço
+        if: steps.source.outputs.eligible == 'true'
+        run: |
+          npm install --no-save --no-package-lock playwright@1.58.2
+          npx playwright install chromium
+          node scripts/smoke-identity-domain.mjs
+      - name: Guardar revisão visual da identidade
+        if: steps.source.outputs.eligible == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: identidade-domain-visual-${{ steps.source.outputs.sha }}
+          path: identity-domain-proof/
+          retention-days: 7

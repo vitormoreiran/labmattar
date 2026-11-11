@@ -1,50 +1,62 @@
-# Cartão MATTAR — cartão digital e assinatura de e-mail
+# Cartão MATTAR — quatro composições de assinatura
 
-Publicação autorizada pelo autor em 10/11/2026, com fundo Papel, texto e marca em Preto e forma em Vermelho. Nome escolhido: Cartão MATTAR. O PR #109 conserva o ensaio anterior; esta versão substitui sua proposta de composição e exportação.
+Endereço principal: https://identidade.labmattar.com/assinatura-email . Acesso também pelo overview do Laboratório e pelo menu Ferramentas. Os endereços anteriores continuam válidos.
 
-Endereço: https://labmattar.com/assinatura-email.html . Acesso também pela página do Laboratório e pelo menu Ferramentas do editor de páginas.
+As quatro composições foram revisadas em PNG pelo autor em 11/11/2026. O gerador usa os mesmos vetores nativos, cores e posições; os dados de exemplo mostram Joana Oliveira e não são preenchidos automaticamente no formulário.
 
-## Composição vigente neste estudo
+| Modelo | Identificador | Tamanho de uso | PNG em alta | Movimento |
+| --- | --- | --- | --- | --- |
+| 01 / M horizontal | m-horizontal | 360 × 180 px | 720 × 360 px | M + Forma |
+| 02 / M compacto | m-compacto | 320 × 160 px | 640 × 320 px | M + Forma |
+| 03 / MATTAR na faixa | mattar-faixa | 360 × 180 px | 720 × 360 px | Assinatura fixa |
+| 04 / M com linha | m-linha | 360 × 180 px | 720 × 360 px | M + Forma |
 
-Uma composição personalizada incorpora nome, função, e-mail e telefone à própria imagem. A marca nativa, o contexto de gastroperformance e o filme aprovado M + Forma fazem parte da arte. Os dados não são armazenados nem enviados a um servidor.
+O Cartão digital anterior permanece disponível em 480 × 280 px, com exportação em 960 × 560 px. O antigo modelo de e-mail de 480 × 100 px foi substituído pelas quatro composições revisadas.
 
-Duas aplicações compartilham o mesmo renderizador Canvas:
+## Escolha e personalização
 
-- Cartão digital: 480 × 280 px na apresentação; PNG e GIF em 960 × 560 px.
-- Assinatura de e-mail: PNG e GIF em 480 × 100 px. A altura acompanha a orientação de tamanho do Gmail: https://support.google.com/mail/answer/11468381?hl=pt-BR .
+A página inicia em Para e-mail e mostra os quatro modelos. A escolha pode ser compartilhada pelo parâmetro modelo no endereço, por exemplo ?modelo=m-compacto. O usuário escolhe o modelo, preenche nome, função, e-mail e telefone e exporta. Nome e e-mail são obrigatórios; função e telefone são opcionais. Os dados ficam apenas na página, sem gravação local ou envio a um servidor.
 
-O painel Cores do cartão oferece três escolhas independentes: Fundo, Texto e marca, e Forma em movimento. Cada uma contém Papel, Branco, Preto, Bege, Verde, Vermelho, Azul e Marrom, com os valores exatos do manual. O padrão usa Papel #F7F6F2, Preto #181818 no texto e na marca e Vermelho #E22E24 na forma; Restaurar padrão recupera essa combinação sem apagar os dados. Um aviso calcula o contraste real entre as cores escolhidas (4,5:1 para texto; 3:1 para a forma) e preserva as escolhas. PNG e GIF recebem os mesmos valores selecionados. A fonte Univers LT Std 45 Light é incorporada à imagem. Não há dependência de fontes instaladas pelo destinatário.
+O nome usa Univers LT Std 45 Light em 22 px; função e contatos usam 13 px. M compacto divide o nome em até duas linhas, preservando palavras inteiras. Os demais usam uma linha. Nomes, funções ou contatos que excedam a área produzem erro no campo e bloqueiam o PNG, GIF e HTML. O gerador não comprime os vetores, reduz a fonte ou corta o arquivo exportado para fazê-lo caber. Um endereço longo deve usar outro modelo com mais espaço.
 
-Nome e e-mail são obrigatórios. Função e telefone são opcionais. A composição aceita até duas linhas no nome; função tem até duas linhas no cartão e uma na faixa de e-mail. O editor mede o texto com a fonte carregada e bloqueia a exportação se ultrapassar a área prevista. Não reduz a fonte nem distorce o conteúdo para fazê-lo caber. Nome, contatos, marca e margens permanecem fixos durante todo o GIF.
+Fundo, Texto e M / faixa são escolhas independentes da paleta de oito cores. O padrão usa Papel, Preto e Vermelho; M com linha inicia em Branco, Preto e Vermelho. Cores personalizadas acompanham a troca de modelo. Restaurar padrão recupera a combinação do modelo atual sem apagar os dados. O contraste considera também o texto claro sobre a faixa.
 
-## Exportação
+## Imagens, movimento e arquivos
 
-PNG e GIF são a assinatura completa, personalizada. O PNG usa o primeiro quadro do filme. O GIF usa o mesmo primeiro quadro, amostra o vídeo aprovado em 20 fps, preserva os 10,8 segundos e repete três ciclos. Os quadros seguintes atualizam somente os pixels que mudaram; isso mantém a imagem leve sem redesenhar os textos ou alterar o ritmo. Exportações verificadas com os dados fictícios: cartão de aproximadamente 557 KB; faixa de e-mail de aproximadamente 121 KB. O tamanho varia conforme os dados.
+A prévia inicia fixa e mostra o M nativo no mesmo enquadramento do PNG. A opção Reproduzir motion usa o filme aprovado M + Forma. A pausa recupera o quadro fixo da assinatura. MATTAR na faixa conserva a assinatura nativa completa e não oferece motion.
 
-A pausa da prévia não altera o export. A preferência de movimento reduzido inicia no quadro fixo. A geração tem progresso e cancelamento, sem apagar os dados preenchidos. O renderizador usa somente escala uniforme no recorte aprovado do filme e na marca SVG nativa.
+O PNG em tamanho de uso tem as dimensões da tabela. PNG em alta contém duas vezes os pixels e deve ser exibido no tamanho de uso. O HTML incorpora a imagem em alta e declara as dimensões corretas de apresentação, incluindo os 320 × 160 px de M compacto. Também contém links reais de e-mail, telefone e site. Salvar contato produz vCard; Copiar contatos oferece os dados em texto.
 
-O cartão HTML incorpora o PNG para funcionar offline e inclui links reais de e-mail, telefone e site. Salvar contato gera um vCard com os campos preenchidos. Copiar contatos oferece uma alternativa em texto.
+Os GIFs dos modelos com M usam os 10,8 segundos e 20 fps do filme aprovado e repetem três ciclos. O primeiro quadro mantém a composição fixa completa. O recorte do filme é ajustado por escala uniforme e centralizado dentro da área do M, sem esticar seus eixos. Os dados ficam imóveis. A exportação tem progresso e cancelamento e não apaga os campos.
+
+As fontes ficam incorporadas à imagem final. A geometria original é preservada em PNG, GIF, prévia e miniaturas. Clientes que bloqueiam imagens precisam dos contatos em texto; clientes sem animação mostram o primeiro quadro completo.
 
 ## Instalação no Gmail
 
-1. Escolher Para e-mail e preencher os dados.
-2. Baixar o GIF personalizado ou o PNG.
-3. Gmail no computador → Configurações → Ver todas as configurações → Geral → Assinatura.
-4. Criar uma assinatura; Inserir imagem → Fazer upload → escolher o arquivo.
-5. Usar Tamanho original, definir a assinatura padrão e salvar.
-6. Conferir um envio real no computador e no celular.
+1. Escolher Para e-mail, selecionar uma composição e preencher os dados.
+2. Baixar o PNG em tamanho de uso ou o GIF dos modelos com M.
+3. No Gmail do computador, abrir Configurações → Ver todas as configurações → Geral → Assinatura.
+4. Criar a assinatura e usar Inserir imagem → Fazer upload.
+5. Ajustar a imagem proporcionalmente no editor e conferir a leitura. PNG em alta tem o dobro das dimensões do tamanho de uso.
+6. Definir a assinatura padrão, salvar e conferir um envio no computador e no celular.
 
-O usuário pode adicionar um link à imagem e contatos em texto. Clientes que bloqueiam imagens não conseguem mostrar os dados embutidos; clientes sem animação mostram o primeiro quadro completo. Nenhuma conta de e-mail foi acessada e nenhuma mensagem foi enviada nesta revisão.
+A orientação do Google recomenda imagens de 70 a 100 px de altura para assinaturas. Estes modelos preservam os formatos revisados de 160 a 180 px; o tamanho de apresentação no cliente de e-mail deve ser conferido, preservando proporção e legibilidade. Não houve acesso à conta do Gmail nem envio de mensagens nesta integração.
+
+Referência: https://support.google.com/mail/answer/11468381?hl=pt-BR .
 
 ## Fontes e manutenção
 
-- public/email-card.mjs: composição, medidas, fonte, adaptação, PNG, GIF, HTML e vCard.
-- public/assinatura-email.mjs: formulário, prévia, seleção de formato/cor e ações.
-- public/email-signature.mjs: normalização e validação dos dados de contato.
-- public/presentation-assets/mattar-published.svg: marca nativa, sem alterações.
-- public/motion/videos/m-form.mp4: filme aprovado, sem alterações; hashes em public/motion/exports.json.
-- public/vendor/gifenc/gifenc-1.0.3.mjs: codificador MIT, versão fixada e integridade SHA512 conferida contra o pacote npm. Licença no mesmo diretório.
+- public/email-compositions.mjs: catálogo, dimensões, campos, validação de encaixe e desenho das quatro composições.
+- public/email-card.mjs: recursos nativos, cartão digital, renderização compartilhada, movimento, PNG, GIF, HTML e vCard.
+- public/assinatura-email.mjs: seleção, formulário, cores, prévia e exportações.
+- public/email-signature.mjs: normalização, validação dos contatos e alternativa em texto.
+- public/identidade/email/modelos/: oito miniaturas PNG, em tamanho de uso e 2×, correspondentes aos estudos finais com Joana.
+- public/identidade/M.svg e public/presentation-assets/mattar-published.svg: vetores originais, sem alterações.
+- public/motion/videos/m-form.mp4: filme aprovado, sem alterações.
+- public/vendor/gifenc/: codificador com versão e licença já fixadas.
 
-Os GIFs genéricos pequenos pertencem ao estudo anterior do PR #109. Não integram a composição ou o pacote atual: o GIF completo é gerado no navegador com os dados de cada pessoa.
+A rotina histórica scripts/prepare-email-signature.mjs gera os GIFs pequenos do estudo anterior; ela não define as quatro composições atuais.
 
-Relatórios e imagens: outputs/email-card-06 no workspace. Conferidos: PNG e GIF reais, duração, três ciclos, dimensões, peso, pausa, textos longos, opcionais, HTML offline, contato vCard e ausência de rolagem horizontal em 320, 390 e 1440 px.
+## Verificação
+
+Os testes de contrato cobrem dimensões, cores, escape do HTML, vCard e escala uniforme do motion. O smoke de navegador cobre os quatro modelos, comparação com as miniaturas revisadas, nomes longos, PNG normal e 2×, GIF, HTML offline, cartão digital anterior, cores e telas de 320, 390 e 1440 px.

@@ -9,3 +9,7 @@
 @media(max-width:1050px){.color-palette{grid-template-columns:1fr;gap:7px;margin:16px 0}.color-label{display:flex;justify-content:space-between;gap:12px}.color-label output{margin:0}.color-footer{flex-wrap:wrap}}
 
 .disclosure-mark::before{content:"+"}.installation[open] .disclosure-mark::before{content:"−"}
+
+.composition-picker{min-width:0;display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:0;padding:14px 0}.composition-picker>span{font-size:10px}.composition-options{display:flex;gap:4px}.composition-choice{display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid transparent;background:transparent;color:var(--ink);font-size:12px;line-height:1}.composition-choice[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:var(--paper)}.preview-stage[data-format=email]{min-height:260px}.composition-picker[hidden],#togglePreview[hidden],#downloadMotion[hidden],#downloadPNGHigh[hidden]{display:none}.secondary.primary{background:var(--ink);color:var(--paper)}
+@media(max-width:760px){.preview-stage[data-format=email]{min-height:0;padding:24px 12px}}
+

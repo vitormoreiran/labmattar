@@ -201,24 +201,58 @@ jobs:
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           npx playwright install chromium
-      - name: Validar manual e matriz compilados antes de publicar
+      - name: Servir pacote compilado para as verificações
         shell: bash
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-sections.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-video.mjs
-          REDES_URL=http://127.0.0.1:8765/redes.html node scripts/smoke-redes-browser.mjs
-          MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
-          COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
-          EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
-          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-email-card.mjs
-          node scripts/smoke-identity-review.mjs
+          for attempt in 1 2 3 4 5; do
+            if curl --fail --silent http://127.0.0.1:8765/assinatura-email.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/manual-http.log
+          exit 1
+      - name: Validar os quatro modelos de assinatura
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-email-card.mjs
+      - name: Validar páginas e PDF do Laboratório
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
+      - name: Validar seções e publicação HTML
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-sections.mjs
+      - name: Validar exportação de vídeo
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-video.mjs
+      - name: Validar Redes Sociais
+        shell: bash
+        run: REDES_URL=http://127.0.0.1:8765/redes.html node scripts/smoke-redes-browser.mjs
+      - name: Validar Símbolos
+        shell: bash
+        run: MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
+      - name: Validar Cores
+        shell: bash
+        run: COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
+      - name: Validar Matriz Vetorial
+        shell: bash
+        run: EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
+      - name: Validar composição
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
+      - name: Validar controles do Laboratório
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
+      - name: Validar assinaturas na composição
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
+      - name: Validar renderização PNG
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
+      - name: Validar interface do acervo
+        shell: bash
+        run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
+      - name: Validar coerência do manual
+        shell: bash
+        run: node scripts/smoke-identity-review.mjs
       - name: Conferir pacote do domínio oficial sem publicar
         run: |
           node scripts/build-official.mjs dist/client dist/oficial-checked
@@ -294,3 +328,4 @@ jobs:
             laboratorio-export-4k.png
             composition-studio-*.png
           if-no-files-found: warn
+

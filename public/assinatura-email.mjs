@@ -23,12 +23,8 @@ const exportDensity = () => format === 'email' ? 1 : 2;
 for (const [index, model] of EMAIL_COMPOSITIONS.entries()) {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'composition-choice';
   button.dataset.composition = model.id;
-  const image = new Image(); image.src = model.thumbnail;
-  image.srcset = model.thumbnail.replace('.png', '@2x.png') + ' 2x';
-  image.width = model.width; image.height = model.height; image.alt = ''; image.decoding = 'async';
-  const label = document.createElement('span'); label.className = 'model-name'; label.textContent = '0' + (index + 1) + ' / ' + model.label;
-  const size = document.createElement('span'); size.className = 'model-size'; size.textContent = model.width + ' × ' + model.height + ' px';
-  button.append(image, label, size);
+  button.textContent = String(index + 1);
+  button.setAttribute('aria-label', 'Composição ' + (index + 1));
   button.addEventListener('click', () => {
     pauseMotion(); composition = model.id; format = 'email';
     if (!customColors) colors = defaults();
@@ -221,3 +217,4 @@ document.getElementById('copyText').addEventListener('click', async () => {
 });
 controls();
 update();
+

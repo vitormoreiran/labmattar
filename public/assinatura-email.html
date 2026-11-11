@@ -4,10 +4,10 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
   <title>Cartão MATTAR — LABMATTAR</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assinatura-email.css?v=modelos-20261111">
+  <link rel="stylesheet" href="/assinatura-email.css?v=composicoes-20261111-2">
   <link rel="stylesheet" href="/lab-tool-navigation.css">
   <script type="module" src="/lab-tool-navigation.mjs"></script>
-  <script type="module" src="/assinatura-email.mjs?v=modelos-20261111"></script>
+  <script type="module" src="/assinatura-email.mjs?v=composicoes-20261111-2"></script>
 </head>
 <body>
   <a class="skip" href="#dados">Ir para os seus dados</a>
@@ -22,7 +22,7 @@
       <section class="preview-panel" aria-labelledby="previewTitle">
         <div class="section-heading"><h2 id="previewTitle"><span>01</span> A COMPOSIÇÃO</h2><span id="exampleLabel" class="tag">PREENCHA SEUS DADOS</span></div>
         <div class="format-tabs" role="group" aria-label="Formato da composição"><button type="button" data-format="email" aria-pressed="true">PARA E-MAIL <span id="emailFormatSize">360 × 180</span></button><button type="button" data-format="card" aria-pressed="false">CARTÃO DIGITAL <span>480 × 280</span></button></div>
-        <fieldset class="composition-picker" id="compositionPicker"><legend>ESCOLHA A COMPOSIÇÃO</legend><div class="composition-options" id="compositionOptions" role="group" aria-label="Quatro modelos de assinatura de e-mail"></div></fieldset>
+        <div class="composition-picker" id="compositionPicker"><span id="compositionLabel">ESCOLHA A COMPOSIÇÃO</span><div class="composition-options" id="compositionOptions" role="group" aria-labelledby="compositionLabel"></div></div>
         <div class="preview-stage" id="previewStage" data-format="email">
           <div class="card-mount" id="cardMount" role="img" aria-label="Prévia do cartão personalizado"></div>
           <p id="previewLoading" role="status">PREPARANDO A COMPOSIÇÃO…</p>
@@ -54,3 +54,4 @@
   <footer><span>LABMATTAR / COMUNICAÇÃO DO TIME</span><span>PNG · GIF · CONTATO</span></footer>
 </body>
 </html>
+

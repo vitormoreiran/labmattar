@@ -25,6 +25,8 @@ try {
   await page.waitForSelector('#previewStage[data-ready=true] canvas');
   assert.equal(await page.title(), 'Cartão MATTAR — LABMATTAR');
   assert.equal(await page.locator('button[data-composition]').count(), 4);
+  assert.deepEqual(await page.locator('button[data-composition]').allTextContents(), ['1', '2', '3', '4']);
+  assert.equal(await page.locator('#compositionOptions img').count(), 0);
   assert.equal(await page.locator('[data-color-key]').count(), 24);
   await page.locator('#downloadPNG').click();
   assert.equal(await page.locator('#name').getAttribute('aria-invalid'), 'true');
@@ -50,7 +52,8 @@ try {
     assert.equal(alta.readUInt32BE(16), model.width * 2); assert.equal(alta.readUInt32BE(20), model.height * 2);
     // Compare the live raster against the exact Joana thumbnail reviewed in chat.
     const fidelity = await page.evaluate(async ({ id, data }) => {
-      const reference = new Image(); reference.src = document.querySelector('button[data-composition="' + id + '"] img').src.replace('.png', '@2x.png'); await reference.decode();
+      const { emailComposition } = await import('/email-compositions.mjs?v=modelos-20261111');
+      const reference = new Image(); reference.src = emailComposition(id).thumbnail.replace('.png', '@2x.png'); await reference.decode();
       const live = document.querySelector('#cardMount canvas');
       const test = document.createElement('canvas'); test.width = reference.naturalWidth; test.height = reference.naturalHeight;
       const ctx = test.getContext('2d'); ctx.drawImage(reference, 0, 0);

@@ -1,12 +1,18 @@
 import { normalizeSignature, validateSignature, signatureText } from './email-signature.mjs';
 import { motionInkPixels } from './lab-motion-ink.mjs';
+import { emailComposition, signatureLayout, paintSignature, paintNativeMark } from './email-compositions.mjs?v=modelos-20261111';
 
 // A single composition drives the preview, PNG and GIF. Native brand geometry
 // and the approved film are fitted uniformly; no editable scale per axis.
 export const CARD_FORMATS = Object.freeze({
   card: { label: 'Cartão digital', width: 480, height: 280 },
-  email: { label: 'Assinatura de e-mail', width: 480, height: 100 }
+  email: { label: 'Assinatura de e-mail', width: 360, height: 180 }
 });
+export function cardSize({ format = 'card', composition = 'm-horizontal' } = {}) {
+  if (format === 'email') { const model = emailComposition(composition); return { width: model.width, height: model.height }; }
+  if (format !== 'card') throw Error('Formato desconhecido.');
+  return { width: CARD_FORMATS.card.width, height: CARD_FORMATS.card.height };
+}
 export const CARD_THEMES = Object.freeze({
   blue: { label: 'Azul + verde', paper: '#1F3554', ink: '#F7F6F2', accent: '#8FD81B' },
   paper: { label: 'Papel + vermelho', paper: '#F7F6F2', ink: '#181818', accent: '#E22E24' }
@@ -39,6 +45,11 @@ export const CARD_MOTION = Object.freeze({
   source: '/motion/videos/m-form.mp4', duration: 10.8, fps: 20,
   crop: { x: 76, y: 192, width: 928, height: 696 }
 });
+export function containedMotionRect(crop, area, density = 1) {
+  const scale = Math.min(area.width * density / crop.width, area.height * density / crop.height);
+  const width = crop.width * scale, height = crop.height * scale;
+  return { x: (area.width * density - width) / 2, y: (area.height * density - height) / 2, width, height };
+}
 
 const canvas = (width, height) => Object.assign(document.createElement('canvas'), { width, height });
 const font = (context, size) => { context.font = '300 ' + size + 'px UniversMattar'; context.textBaseline = 'top'; };
@@ -48,8 +59,9 @@ export function cardResources() {
     await document.fonts.load('300 30px UniversMattar');
     if (!document.fonts.check('300 30px UniversMattar')) throw Error('Não foi possível carregar a fonte da marca.');
     const logo = new Image(); logo.src = '/presentation-assets/mattar-published.svg';
-    await logo.decode();
-    return { logo };
+    const m = new Image(); m.src = '/identidade/M.svg';
+    await Promise.all([logo.decode(), m.decode()]);
+    return { logo, m };
   })().catch(error => { resources = null; throw error; });
 }
 
@@ -64,74 +76,77 @@ function lines(context, text, width, size) {
   return result;
 }
 
-export function cardLayout(data, { format = 'card', context } = {}) {
+export function cardLayout(data, { format = 'card', composition = 'm-horizontal', context } = {}) {
   const value = normalizeSignature(data), compact = format === 'email';
   context ||= canvas(1, 1).getContext('2d');
-  const titleSize = compact ? 18 : 30, titleLine = compact ? 19 : 32;
-  const nameWidth = compact ? 342 : 276;
+  if (compact) return signatureLayout(value, { composition, context });
+  const titleSize = 30, titleLine = 32, nameWidth = 276;
   const name = lines(context, value.name, nameWidth, titleSize);
-  const role = lines(context, value.role, compact ? 342 : 276, compact ? 12 : 14);
+  const role = lines(context, value.role, 276, 14);
   const errors = {};
   const exceeds = (text, size, width) => { font(context, size); return context.measureText(text).width > width; };
   if (name.length > 2 || name.some(line => exceeds(line, titleSize, nameWidth))) errors.name = 'Use um nome de apresentação que ocupe até duas linhas.';
-  if (role.length > (compact ? 1 : 2) || role.some(line => exceeds(line, compact ? 12 : 14, compact ? 342 : 276))) errors.role = compact ? 'Abrevie a função para uma linha no formato de e-mail.' : 'Abrevie a função para até duas linhas.';
-  if (exceeds(value.email, compact ? 12 : 14, compact ? 342 : 432)) errors.email = 'O e-mail ultrapassa a área de leitura desta composição.';
-  if (exceeds(value.phone, compact ? 12 : 14, compact ? 205 : 255)) errors.phone = 'Abrevie o telefone sem retirar DDD ou código do país.';
+  if (role.length > 2 || role.some(line => exceeds(line, 14, 276))) errors.role = 'Abrevie a função para até duas linhas.';
+  if (exceeds(value.email, 14, 432)) errors.email = 'O e-mail ultrapassa a área de leitura desta composição.';
+  if (exceeds(value.phone, 14, 255)) errors.phone = 'Abrevie o telefone sem retirar DDD ou código do país.';
   return { value, compact, name, role, titleSize, titleLine, errors,
-    nameX: compact ? 126 : 24, nameY: compact ? (name.length > 1 ? 7 : 14) : 94,
-    roleY: compact ? (name.length > 1 ? 47 : 37) : Math.max(140, 94 + name.length * titleLine + 10),
-    motion: compact ? { x: 12, y: 5, width: 96, height: 72 } : { x: 310, y: 83, width: 148, height: 111 }
+    nameX: 24, nameY: 94,
+    roleY: Math.max(140, 94 + name.length * titleLine + 10),
+    motion: { x: 310, y: 83, width: 148, height: 111 }
   };
 }
 
-export async function createCard(data, { format = 'card', theme = 'paper', colors: customColors, density = 2 } = {}) {
+export async function createCard(data, { format = 'card', composition = 'm-horizontal', theme = 'paper', colors: customColors, density = 2 } = {}) {
   if (!CARD_FORMATS[format] || !CARD_THEMES[theme]) throw Error('Composição desconhecida.');
-  const { logo } = await cardResources();
-  const dimensions = CARD_FORMATS[format], colors = resolveCardColors(theme, customColors);
+  if (![1, 2].includes(density)) throw Error('Escolha a resolução normal ou em alta.');
+  const resources = await cardResources();
+  const dimensions = cardSize({ format, composition }), colors = resolveCardColors(theme, customColors);
+  if (format === 'email' && theme === 'paper' && customColors?.paper === undefined) colors.paper = emailComposition(composition).paper;
   const target = canvas(dimensions.width * density, dimensions.height * density);
   const context = target.getContext('2d', { willReadFrequently: true });
   context.scale(density, density);
-  const layout = cardLayout(data, { format, context });
+  const layout = cardLayout(data, { format, composition, context });
   const { value, compact } = layout;
-  context.fillStyle = colors.paper; context.fillRect(0, 0, dimensions.width, dimensions.height);
-  context.fillStyle = colors.ink;
-  const text = (label, x, y, size, align = 'left') => {
-    font(context, size); context.textAlign = align; context.fillText(label, x, y);
-  };
-  const mark = compact ? { x: 26, y: 81, width: 68 } : { x: 24, y: 22, width: 122 };
-  const markHeight = mark.width * 179.77 / 954.32;
-  const tinted = canvas(Math.ceil(mark.width * density), Math.ceil(markHeight * density));
-  const tint = tinted.getContext('2d'); tint.drawImage(logo, 0, 0, mark.width * density, markHeight * density);
-  tint.globalCompositeOperation = 'source-in'; tint.fillStyle = colors.ink; tint.fillRect(0, 0, tinted.width, tinted.height);
-  context.drawImage(tinted, mark.x, mark.y, tinted.width / density, tinted.height / density);
-  if (!compact) {
+  if (compact) {
+    paintSignature(context, layout, colors, resources, { includeM: false });
+  } else {
+    context.fillStyle = colors.paper; context.fillRect(0, 0, dimensions.width, dimensions.height);
+    context.fillStyle = colors.ink;
+    const text = (label, x, y, size, align = 'left') => { font(context, size); context.textAlign = align; context.fillText(label, x, y); };
+    paintNativeMark(context, resources.logo, { x: 24, y: 22, width: 122, height: 122 * 179.77 / 954.32 }, colors.ink);
     text('GASTROPERFORMANCE', 456, 29, 10, 'right');
     context.globalAlpha = .3; context.fillRect(24, 62, 432, .5); context.fillRect(24, 204, 432, .5); context.globalAlpha = 1;
+    layout.name.slice(0, 2).forEach((line, index) => text(line, layout.nameX, layout.nameY + index * layout.titleLine, layout.titleSize));
+    layout.role.slice(0, 2).forEach((line, index) => text(line, layout.nameX, layout.roleY + index * 18, 14));
+    text(value.email, 24, 218, 14);
+    if (value.phone) text(value.phone, 24, 244, 14);
+    text('labmattar.com', 456, 244, 14, 'right');
   }
-  layout.name.slice(0, 2).forEach((line, index) => text(line, layout.nameX, layout.nameY + index * layout.titleLine, layout.titleSize));
-  layout.role.slice(0, compact ? 1 : 2).forEach((line, index) => text(line, layout.nameX, layout.roleY + index * 18, compact ? 12 : 14));
-  text(value.email, compact ? 126 : 24, compact ? 63 : 218, compact ? 12 : 14);
-  if (value.phone) text(value.phone, compact ? 126 : 24, compact ? 82 : 244, compact ? 12 : 14);
-  text('labmattar.com', compact ? 468 : 456, compact ? 82 : 244, compact ? 12 : 14, 'right');
   const base = canvas(target.width, target.height); base.getContext('2d').drawImage(target, 0, 0);
+  if (compact && layout.motion) paintNativeMark(context, resources.m, layout.mark, colors.accent);
+  const poster = canvas(target.width, target.height); poster.getContext('2d').drawImage(target, 0, 0);
   const area = layout.motion;
-  const ink = canvas(Math.round(area.width * density), Math.round(area.height * density));
-  const inkContext = ink.getContext('2d', { willReadFrequently: true });
+  const ink = area ? canvas(Math.ceil(area.width * density), Math.ceil(area.height * density)) : null;
+  const inkContext = ink?.getContext('2d', { willReadFrequently: true });
   const rgb = colors.accent.slice(1).match(/../g).map(value => parseInt(value, 16));
   return {
-    canvas: target, base, layout, colors, format, theme, density,
+    canvas: target, base, layout, colors, format, composition, theme, density, size: dimensions, canAnimate: Boolean(area),
+    reset() { context.setTransform(1, 0, 0, 1, 0, 0); context.drawImage(poster, 0, 0); },
     draw(video) {
-      // Draw the full approved crop with a single scale, then remove its paper.
+      if (!area) return;
+      // Contain the complete crop using one scale. The new M rectangles have
+      // a different aspect ratio from the 4:3 film; stretching is forbidden.
       const c = CARD_MOTION.crop;
+      const fit = containedMotionRect(c, area, density);
       inkContext.clearRect(0, 0, ink.width, ink.height);
-      inkContext.drawImage(video, c.x, c.y, c.width, c.height, 0, 0, ink.width, ink.height);
+      inkContext.drawImage(video, c.x, c.y, c.width, c.height, fit.x, fit.y, fit.width, fit.height);
       const pixels = inkContext.getImageData(0, 0, ink.width, ink.height); motionInkPixels(pixels.data);
       for (let i = 0; i < pixels.data.length; i += 4) {
         pixels.data[i] = rgb[0]; pixels.data[i + 1] = rgb[1]; pixels.data[i + 2] = rgb[2];
       }
       inkContext.putImageData(pixels, 0, 0);
       context.setTransform(1, 0, 0, 1, 0, 0); context.drawImage(base, 0, 0);
-      context.drawImage(ink, area.x * density, area.y * density, area.width * density, area.height * density);
+      context.drawImage(ink, area.x * density, area.y * density);
     }
   };
 }
@@ -173,10 +188,17 @@ function cardPalette(colors) {
 }
 
 export async function exportCardGIF(data, options, { progress = () => {}, signal } = {}) {
+  if (signal?.aborted) throw new DOMException('Exportação cancelada.', 'AbortError');
   const { GIFEncoder, applyPalette } = await import('./vendor/gifenc/gifenc-1.0.3.mjs');
   const card = await createCard(data, options);
   const errors = { ...validateSignature(data), ...card.layout.errors };
   if (Object.keys(errors).length) throw Error(Object.values(errors)[0]);
+  if (!card.canAnimate) {
+    const gif = GIFEncoder(), context = card.canvas.getContext('2d');
+    const pixels = applyPalette(context.getImageData(0, 0, card.canvas.width, card.canvas.height).data, cardPalette(card.colors));
+    gif.writeFrame(pixels, card.canvas.width, card.canvas.height, { palette: cardPalette(card.colors), delay: 1000, repeat: -1 });
+    gif.finish(); progress(1); return new Blob([gif.bytes()], { type: 'image/gif' });
+  }
   const video = await loadCardVideo();
   const gif = GIFEncoder(), palette = cardPalette(card.colors);
   const width = card.canvas.width, height = card.canvas.height;
@@ -191,7 +213,8 @@ export async function exportCardGIF(data, options, { progress = () => {}, signal
     const frames = Math.round(CARD_MOTION.duration * CARD_MOTION.fps);
     for (let index = 0; index < frames; index++) {
       if (signal?.aborted) throw new DOMException('Exportação cancelada.', 'AbortError');
-      await seekCardVideo(video, index / CARD_MOTION.fps); card.draw(video);
+      await seekCardVideo(video, index / CARD_MOTION.fps);
+      if (index === 0 && card.format === 'email') card.reset(); else card.draw(video);
       const current = applyPalette(context.getImageData(0, 0, width, height).data, palette);
       let changed = !previous;
       const delta = new Uint8Array(current);
@@ -212,10 +235,10 @@ export async function exportCardGIF(data, options, { progress = () => {}, signal
 }
 
 const escape = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
-export function cardDocument(data, { imageURL, format = 'card' }) {
-  const value = normalizeSignature(data), size = CARD_FORMATS[format];
+export function cardDocument(data, { imageURL, format = 'card', composition = 'm-horizontal' }) {
+  const value = normalizeSignature(data), size = cardSize({ format, composition });
   const phone = value.phone.replace(/[^+\d]/g, '');
-  return '<!doctype html>\n<html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cartão MATTAR — ' + escape(value.name) + '</title><body style="margin:24px;background:#fff;color:#181818;font:14px/1.6 Arial,sans-serif"><main style="max-width:480px"><a href="https://labmattar.com/"><img src="' + escape(imageURL) + '" width="' + size.width + '" height="' + size.height + '" alt="' + escape(signatureText(value).replace(/\n+/g, ' · ')) + '" style="display:block;width:100%;height:auto;border:0"></a><p><a href="mailto:' + escape(value.email) + '">' + escape(value.email) + '</a>' + (phone ? ' · <a href="tel:' + escape(phone) + '">' + escape(value.phone) + '</a>' : '') + ' · <a href="https://labmattar.com/">labmattar.com</a></p></main></body></html>\n';
+  return '<!doctype html>\n<html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cartão MATTAR — ' + escape(value.name) + '</title><body style="margin:24px;background:#fff;color:#181818;font:14px/1.6 Arial,sans-serif"><main style="max-width:' + size.width + 'px"><a href="https://labmattar.com/"><img src="' + escape(imageURL) + '" width="' + size.width + '" height="' + size.height + '" alt="' + escape(signatureText(value).replace(/\n+/g, ' · ')) + '" style="display:block;width:100%;height:auto;border:0"></a><p><a href="mailto:' + escape(value.email) + '">' + escape(value.email) + '</a>' + (phone ? ' · <a href="tel:' + escape(phone) + '">' + escape(value.phone) + '</a>' : '') + ' · <a href="https://labmattar.com/">labmattar.com</a></p></main></body></html>\n';
 }
 
 export function cardContact(data) {

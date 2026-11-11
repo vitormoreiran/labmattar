@@ -7,6 +7,7 @@ on:
       - 'public/assinatura-email*'
       - 'public/email-signature.mjs'
       - 'public/email-card.mjs'
+      - 'public/email-compositions.mjs'
       - 'public/vendor/gifenc/**'
       - 'public/identidade/email/**'
       - 'content/email-signature*'
@@ -24,6 +25,7 @@ on:
       - 'public/assinatura-email*'
       - 'public/email-signature.mjs'
       - 'public/email-card.mjs'
+      - 'public/email-compositions.mjs'
       - 'public/vendor/gifenc/**'
       - 'public/identidade/email/**'
       - 'content/email-signature*'
@@ -52,4 +54,5 @@ jobs:
           node --check public/assinatura-email.mjs
           node --check public/email-signature.mjs
           node --check public/email-card.mjs
+          node --check public/email-compositions.mjs
           node --test tests/email-signature.test.mjs scripts/test-official-verification.mjs scripts/test-laboratory-readiness.mjs

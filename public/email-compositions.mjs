@@ -94,17 +94,14 @@ export function paintNativeMark(context, image, area, color) {
   context.drawImage(layer, 0, 0, width, height, area.x, area.y, area.width, area.height);
 }
 
-const baselines = new Map();
+// The approved artwork uses these alphabetic baselines for Univers at 13/22 px.
+// CSS line boxes use different OS font metrics on Windows and Linux. Keep the
+// baseline in the composition so the exported layout is independent of the OS.
+const TEXT_BASELINES = Object.freeze({ 13: 11, 22: 19 });
 function textBaseline(size) {
-  if (baselines.has(size)) return baselines.get(size);
-  // Measure the CSS line used in the approved PNGs. Browser font-box rounding
-  // differs from canvas fontBoundingBox metrics by up to a pixel.
-  const line = document.createElement('span'), marker = document.createElement('i');
-  line.style.cssText = 'all:initial;display:block;position:fixed;left:0;top:0;visibility:hidden;white-space:nowrap;font-family:UniversMattar;font-weight:300;font-size:' + size + 'px;line-height:1.12;pointer-events:none';
-  marker.style.cssText = 'all:initial;display:inline-block;width:0;height:0;vertical-align:baseline';
-  line.append(document.createTextNode('Hg'), marker); document.body.append(line);
-  const baseline = marker.getBoundingClientRect().top - line.getBoundingClientRect().top;
-  line.remove(); baselines.set(size, baseline); return baseline;
+  const baseline = TEXT_BASELINES[size];
+  if (baseline === undefined) throw Error('Tamanho de texto sem alinhamento definido.');
+  return baseline;
 }
 
 function paintText(context, field, colors) {
@@ -131,3 +128,4 @@ export function paintSignature(context, layout, colors, resources, { includeM = 
   if (layout.mark.family === 'mattar') paintNativeMark(context, resources.logo, layout.mark, colors.paper);
   else if (includeM) paintNativeMark(context, resources.m, layout.mark, colors.accent);
 }
+

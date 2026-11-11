@@ -92,6 +92,7 @@ try {
       });
       return { width: live.width, height: live.height, pixelMismatch: different / (live.width * live.height), checks };
     }, { id: model.id, data });
+    console.log(JSON.stringify({ composition: model.id, fidelity }));
     for (const check of fidelity.checks) {
       assert.ok(check.massRatio > .8 && check.massRatio < 1.2, model.id + '/' + check.id + ': cobertura de tinta ' + check.massRatio);
       assert.ok(check.boundError <= 2, model.id + '/' + check.id + ': posição difere ' + check.boundError + ' pixels em 2×');
@@ -155,3 +156,4 @@ try {
   const result = { status: 'passed', compositions: report, legacyCard: true, gifBytes: gif.length, mediaProbe, viewports: [1440, 390, 320], errors };
   await fs.writeFile(path.join(output, 'report.json'), JSON.stringify(result, null, 2)); console.log(JSON.stringify(result));
 } finally { await browser.close(); }
+

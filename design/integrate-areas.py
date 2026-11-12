@@ -4,6 +4,7 @@ import sys
 import json
 
 manifest=json.loads(Path("design/identity-system.json").read_text(encoding="utf-8"))
+FAVICON='<link rel="icon" href="/favicon.svg?v=m-preto-20261112" type="image/svg+xml">'
 area_ids={"introduction":"introducao","symbols":"simbolos","motion":"motion","typography":"tipografia","color":"cores","composition":"composicao","laboratory":"laboratorio","social":"redes"}
 NAV='<nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR" data-lm-text-role="detail"><a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — introdução"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a><div class="lm-nav-list" role="group" aria-label="Capítulos">'
 for chapter in manifest["sections"]:
@@ -104,7 +105,8 @@ for filename,area in areas.items():
   assert s.count('href="/manual-layout.css')==1, f"Missing shared editorial layout: {filename}"
   assert s.count('lm-manual-cover')==1, f"Exactly one canonical cover is required: {filename}"
   assert s.count('src="/manual-type-roles.js')==1, f"Missing text-role classifier: {filename}"
- s=s.replace("</head>",STYLE+"</head>",1)
+ s=re.sub(r'<link\b(?=[^>]*\brel=["\'](?:shortcut\s+)?icon["\'])[^>]*>\s*',"",s,flags=re.I)
+ s=s.replace("</head>",FAVICON+STYLE+"</head>",1)
  s=s.replace("<body>","<body>"+NAV.replace('data-area="'+area+'"','aria-current="page" data-area="'+area+'"'),1)
  p.write_text(s,encoding="utf-8")
  print(filename, "global navigation OK")

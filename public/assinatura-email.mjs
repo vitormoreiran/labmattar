@@ -1,6 +1,6 @@
 import { normalizeSignature, validateSignature, signatureText } from './email-signature.mjs';
-import { EMAIL_COMPOSITIONS, emailComposition, emailDefaultColors } from './email-compositions.mjs?v=modelos-20261111';
-import { CARD_COLORS, CARD_THEMES, cardSize, cardContrast, createCard, loadCardVideo, seekCardVideo, canvasBlob, exportCardGIF, cardDocument, cardContact } from './email-card.mjs?v=modelos-20261111';
+import { EMAIL_COMPOSITIONS, emailComposition, emailDefaultColors } from './email-compositions.mjs?v=faixa-20261111-3';
+import { CARD_COLORS, CARD_THEMES, cardSize, cardContrast, createCard, loadCardVideo, seekCardVideo, canvasBlob, exportCardGIF, cardDocument, cardContact } from './email-card.mjs?v=faixa-20261111-3';
 
 const form = document.getElementById('signatureForm');
 const fields = ['name', 'role', 'email', 'phone'];

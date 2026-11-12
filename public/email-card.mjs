@@ -1,12 +1,12 @@
 import { normalizeSignature, validateSignature, signatureText } from './email-signature.mjs';
 import { motionInkPixels } from './lab-motion-ink.mjs';
-import { emailComposition, signatureLayout, paintSignature, paintNativeMark } from './email-compositions.mjs?v=modelos-20261111';
+import { emailComposition, signatureLayout, paintSignature, paintNativeMark } from './email-compositions.mjs?v=faixa-20261111-3';
 
 // A single composition drives the preview, PNG and GIF. Native brand geometry
 // and the approved film are fitted uniformly; no editable scale per axis.
 export const CARD_FORMATS = Object.freeze({
   card: { label: 'Cartão digital', width: 480, height: 280 },
-  email: { label: 'Assinatura de e-mail', width: 360, height: 180 }
+  email: { label: 'Assinatura de e-mail', width: 480, height: 100 }
 });
 export function cardSize({ format = 'card', composition = 'm-horizontal' } = {}) {
   if (format === 'email') { const model = emailComposition(composition); return { width: model.width, height: model.height }; }
@@ -246,3 +246,4 @@ export function cardContact(data) {
   const v = text => text.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
   return ['BEGIN:VCARD', 'VERSION:3.0', 'FN:' + v(value.name), 'N:;' + v(value.name) + ';;;', 'ORG:LABMATTAR', ...(value.role ? ['TITLE:' + v(value.role)] : []), 'EMAIL;TYPE=WORK:' + v(value.email), ...(value.phone ? ['TEL;TYPE=WORK:' + v(value.phone)] : []), 'URL:https://labmattar.com/', 'END:VCARD', ''].join('\r\n');
 }
+

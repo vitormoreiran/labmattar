@@ -28,7 +28,7 @@ test('image-based offline document escapes contact text and preserves real links
  const html=cardDocument({...contact,name:'Ana & João <img src=x onerror=alert(1)>'},{imageURL:'data:image/png;base64,AAAA',format:'email'});
  assert.equal((html.match(/<img /g)||[]).length,1);assert.match(html,/Ana &amp; João &lt;img/);
  assert.match(html,/mailto:ana\+projetos@example.com/);assert.match(html,/tel:\+5511999999999/);
- assert.match(html,/width="360" height="180"/);assert.doesNotMatch(html,/<script|<svg|onerror="/);
+ assert.match(html,/width="480" height="100"/);assert.doesNotMatch(html,/<script|<svg|onerror="/);
 });
 test('vCard contains supplied contact details and escapes structural punctuation',()=>{
  const vcard=cardContact({...contact,name:'Ana; Ribeiro, Jr.'});
@@ -40,7 +40,7 @@ test('all colors are exact entries of the current manual palette',()=>{
  const allowed=Object.values({...system.colors.base,...system.colors.palette});
  for(const theme of Object.values(CARD_THEMES))for(const key of ['paper','ink','accent'])assert.ok(allowed.includes(theme[key]),theme[key]);
  for(const color of CARD_COLORS)assert.ok(allowed.includes(color.value)||color.value==='#FFFFFF',color.value);
- assert.equal(CARD_FORMATS.email.height,180);assert.equal(CARD_FORMATS.card.width/CARD_FORMATS.card.height,12/7);
+ assert.equal(CARD_FORMATS.email.height,100);assert.equal(CARD_FORMATS.card.width/CARD_FORMATS.card.height,12/7);
 });
 test('independent colors retain exact values and reject colors outside the brand',()=>{
  const selected={paper:'#5B463E',ink:'#FFFFFF',accent:'#8FD81B'};
@@ -58,20 +58,21 @@ test('approved motion and native geometry remain the sources of both image forma
  assert.equal(Math.round(CARD_MOTION.duration*1000),Math.round(entry.duration*1000));assert.equal(CARD_MOTION.crop.width/CARD_MOTION.crop.height,4/3);
 });
 
-test('four reviewed compositions retain their native export sizes and static wordmark',()=>{
+test('all four compositions use the restored email strip and preserve the static wordmark',()=>{
  assert.deepEqual(EMAIL_COMPOSITIONS.map(model=>model.id),['m-horizontal','m-compacto','mattar-faixa','m-linha']);
- assert.deepEqual(cardSize({format:'email',composition:'m-compacto'}),{width:320,height:160});
- assert.deepEqual(cardSize({format:'email',composition:'m-horizontal'}),{width:360,height:180});
+ assert.deepEqual(cardSize({format:'email',composition:'m-compacto'}),{width:480,height:100});
+ assert.deepEqual(cardSize({format:'email',composition:'m-horizontal'}),{width:480,height:100});
+ for(const model of EMAIL_COMPOSITIONS)assert.deepEqual(cardSize({format:'email',composition:model.id}),{width:480,height:100});
  assert.equal(emailComposition('mattar-faixa').motion,false);
  assert.equal(emailDefaultColors('m-linha').paper,'#FFFFFF');
  assert.throws(()=>emailComposition('historico'),/quatro composições/);
  assert.throws(()=>cardSize({format:'inexistente'}),/Formato desconhecido/);
 });
 
-test('compact offline HTML uses the selected image size instead of the former strip',()=>{
+test('offline email HTML preserves the restored strip dimensions',()=>{
  const html=cardDocument(contact,{format:'email',composition:'m-compacto',imageURL:'data:image/png;base64,AAAA'});
- assert.match(html,/width="320" height="160"/);
- assert.match(html,/max-width:320px/);
+ assert.match(html,/width="480" height="100"/);
+ assert.match(html,/max-width:480px/);
  assert.match(html,/mailto:ana\+projetos@example.com/);
 });
 
@@ -85,3 +86,4 @@ test('motion uses a uniform scale inside both native M proportions and narrow fr
  const retina=containedMotionRect(crop,{width:100,height:100*627/822},2);
  assert.equal(retina.width,200);assert.equal(retina.height,150);
 });
+

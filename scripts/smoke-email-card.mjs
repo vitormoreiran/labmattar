@@ -11,10 +11,10 @@ await fs.mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.EMAIL_BROWSER_EXECUTABLE ? { executablePath: process.env.EMAIL_BROWSER_EXECUTABLE } : {}) });
 const errors = [], report = [];
 const models = [
-  { id: 'm-horizontal', width: 360, height: 180 },
-  { id: 'm-compacto', width: 320, height: 160 },
-  { id: 'mattar-faixa', width: 360, height: 180 },
-  { id: 'm-linha', width: 360, height: 180 }
+  { id: 'm-horizontal', width: 480, height: 100 },
+  { id: 'm-compacto', width: 480, height: 100 },
+  { id: 'mattar-faixa', width: 480, height: 100 },
+  { id: 'm-linha', width: 480, height: 100 }
 ];
 const data = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
 try {
@@ -50,9 +50,9 @@ try {
     assert.equal(png.readUInt32BE(16), model.width); assert.equal(png.readUInt32BE(20), model.height);
     const alta = await fs.readFile(await download('#downloadPNGHigh', model.id + '-alta.png'));
     assert.equal(alta.readUInt32BE(16), model.width * 2); assert.equal(alta.readUInt32BE(20), model.height * 2);
-    // Compare the live raster against the exact Joana thumbnail reviewed in chat.
+    // Compare the live export against the visually checked strip reference.
     const fidelity = await page.evaluate(async ({ id, data }) => {
-      const { emailComposition } = await import('/email-compositions.mjs?v=modelos-20261111');
+      const { emailComposition } = await import('/email-compositions.mjs?v=faixa-20261111-3');
       const reference = new Image(); reference.src = emailComposition(id).thumbnail.replace('.png', '@2x.png'); await reference.decode();
       const live = document.querySelector('#cardMount canvas');
       const test = document.createElement('canvas'); test.width = reference.naturalWidth; test.height = reference.naturalHeight;
@@ -65,16 +65,30 @@ try {
       // DOM and Canvas rasterize glyph edges differently, especially across
       // Windows and Linux. Compare visible bounds and ink coverage per field,
       // rather than requiring identical antialiasing pixels.
-      const { createCard } = await import('/email-card.mjs?v=modelos-20261111');
+      const { createCard } = await import('/email-card.mjs?v=faixa-20261111-3');
       const card = await createCard(data, { format: 'email', composition: id, density: 2 });
+      const measure = live.getContext('2d');
+      const boxes = card.layout.fields.filter(f => f.label).map(f => {
+        measure.font = '300 ' + f.size + 'px UniversMattar';
+        const width = measure.measureText(f.label).width;
+        return { id: f.key + ':' + f.y, x: f.align === 'right' ? f.x - width : f.x, y: f.y, width, height: f.size * 1.12 };
+      });
+      boxes.push({ id: 'mark', ...card.layout.mark });
+      const geometryIssues = boxes.filter(b => b.x < 0 || b.y < 0 || b.x + b.width > 480 || b.y + b.height > 100).map(b => 'fora:' + b.id);
+      for (let a = 0; a < boxes.length; a++) for (let b = a + 1; b < boxes.length; b++) {
+        const p = boxes[a], q = boxes[b];
+        if (p.x < q.x + q.width && p.x + p.width > q.x && p.y < q.y + q.height && p.y + p.height > q.y) geometryIssues.push('sobreposição:' + p.id + '/' + q.id);
+      }
+      const nativeRatio = card.layout.mark.family === 'mattar' ? 954.32 / 179.77 : 822 / 627;
+      if (Math.abs(card.layout.mark.width / card.layout.mark.height - nativeRatio) > .00001) geometryIssues.push('vetor distorcido');
       const rgb = hex => hex.slice(1).match(/../g).map(value => parseInt(value, 16));
       const regions = card.layout.fields.filter(f => f.label).map(f => ({
         id: f.key + ':' + f.y, x: f.align === 'right' ? f.x - f.maxWidth : f.x, y: f.y, width: f.maxWidth, height: f.size * 1.12,
-        foreground: card.colors[f.color], background: f.color === 'paper' ? card.colors.accent : card.colors.paper,
-        // The Linux proof keeps these glyph bounds within one CSS pixel, but
-        // its light-on-red edge coverage is 25% lower than the Windows PNG.
-        // Treat that raster weight separately from position and mark geometry.
-        inkTolerance: f.color === 'paper' ? .3 : .2
+        foreground: card.colors[f.color], background: f.color === 'paper' ? card.colors.accent : card.colors.paper, align: f.align,
+        // At 12 px the Linux proof varies by about 20% in edge coverage and
+        // up to 3% in glyph advances. Check text anchors separately from width;
+        // keep all four edges of the native vector under the stricter check.
+        inkTolerance: f.color === 'paper' ? .35 : f.size === 12 ? .25 : .2
       }));
       regions.push({ id: 'mark', ...card.layout.mark, foreground: card.layout.mark.family === 'mattar' ? card.colors.paper : card.colors.accent,
         background: card.layout.mark.family === 'mattar' ? card.colors.accent : card.colors.paper });
@@ -94,22 +108,30 @@ try {
           return { mass, bounds: [left, top, right, bottom] };
         };
         const referenceInk = scan(a), liveInk = scan(b);
+        const anchor = region.align === 'right' ? 2 : 0;
         return { id: region.id, massRatio: liveInk.mass / referenceInk.mass, inkTolerance: region.inkTolerance || .2,
+          positionError: Math.max(...[anchor, 1, 3].map(i => Math.abs(liveInk.bounds[i] - referenceInk.bounds[i]))),
+          widthRatio: (liveInk.bounds[2] - liveInk.bounds[0] + 1) / (referenceInk.bounds[2] - referenceInk.bounds[0] + 1),
           boundError: Math.max(...liveInk.bounds.map((value, i) => Math.abs(value - referenceInk.bounds[i]))) };
       });
-      return { width: live.width, height: live.height, pixelMismatch: different / (live.width * live.height), checks };
+      return { width: live.width, height: live.height, pixelMismatch: different / (live.width * live.height), geometryIssues, checks };
     }, { id: model.id, data });
     console.log(JSON.stringify({ composition: model.id, fidelity }));
+    assert.deepEqual(fidelity.geometryIssues, [], model.id + ': encaixe da faixa');
     for (const check of fidelity.checks) {
       assert.ok(Math.abs(check.massRatio - 1) < check.inkTolerance, model.id + '/' + check.id + ': cobertura de tinta ' + check.massRatio);
-      assert.ok(check.boundError <= 2, model.id + '/' + check.id + ': posição difere ' + check.boundError + ' pixels em 2×');
+      if (check.id === 'mark') assert.ok(check.boundError <= 2, model.id + ': vetor difere ' + check.boundError + ' pixels em 2×');
+      else {
+        assert.ok(check.positionError <= 2, model.id + '/' + check.id + ': âncora difere ' + check.positionError + ' pixels em 2×');
+        assert.ok(Math.abs(check.widthRatio - 1) < .04, model.id + '/' + check.id + ': largura de texto difere da referência');
+      }
     }
     await page.locator('#cardMount').screenshot({ path: path.join(output, model.id + '-preview.png') });
     report.push({ composition: model.id, width: model.width, height: model.height, pngBytes: png.length, altaBytes: alta.length, fidelity });
   }
   // Long names require the intended two-line layout, without shrinking the font.
   await select('m-horizontal');
-  await page.locator('#name').fill('Maria Clara de Oliveira');
+  await page.locator('#name').fill('Maria Clara de Albuquerque e Vasconcelos Mattar');
   await page.waitForFunction(() => document.querySelector('#nameError').textContent.length > 0);
   await select('m-compacto');
   await page.waitForFunction(() => document.querySelector('#nameError').textContent === '');
@@ -127,7 +149,7 @@ try {
   const gifFile = await download('#downloadMotion', 'personalized.gif', 180000);
   const gif = await fs.readFile(gifFile);
   assert.equal(gif.subarray(0, 6).toString(), 'GIF89a');
-  assert.equal(gif.readUInt16LE(6), 320); assert.equal(gif.readUInt16LE(8), 160);
+  assert.equal(gif.readUInt16LE(6), 480); assert.equal(gif.readUInt16LE(8), 100);
   assert.ok(gif.length < 1024 * 1024, 'Email GIF exceeds one megabyte');
   let mediaProbe = null;
   if (process.env.EMAIL_SKIP_MEDIA_PROBE !== '1') {
@@ -137,7 +159,7 @@ try {
   }
   const htmlFile = await download('#downloadHTML', 'contact.html');
   const html = await fs.readFile(htmlFile, 'utf8');
-  assert.ok(html.includes('data:image/png;base64,')); assert.ok(html.includes('mailto:joana@labmattar.com')); assert.ok(html.includes('width="320" height="160"'));
+  assert.ok(html.includes('data:image/png;base64,')); assert.ok(html.includes('mailto:joana@labmattar.com')); assert.ok(html.includes('width="480" height="100"'));
   const contactFile = await download('#downloadContact', 'contact.vcf');
   assert.match(await fs.readFile(contactFile, 'utf8'), /FN:Joana Oliveira/);
   await page.locator('#resetColors').click();

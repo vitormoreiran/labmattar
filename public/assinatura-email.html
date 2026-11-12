@@ -4,10 +4,10 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
   <title>Cartão MATTAR — LABMATTAR</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assinatura-email.css?v=interface-20261112-1">
+  <link rel="stylesheet" href="/assinatura-email.css?v=previa-20261112-2">
   <link rel="stylesheet" href="/lab-tool-navigation.css">
   <script type="module" src="/lab-tool-navigation.mjs"></script>
-  <script type="module" src="/assinatura-email.mjs?v=interface-20261112-1"></script>
+  <script type="module" src="/assinatura-email.mjs?v=previa-20261112-2"></script>
 </head>
 <body>
   <a class="skip" href="#dados">Ir para os seus dados</a>
@@ -27,7 +27,7 @@
           <div class="card-mount" id="cardMount" role="img" aria-label="Prévia do cartão personalizado"></div>
           <p id="previewLoading" role="status">PREPARANDO A COMPOSIÇÃO…</p>
         </div>
-        <div class="preview-footer" id="previewFooter"><button type="button" id="togglePreview" aria-pressed="true">ANIMAR ▷</button></div>
+        <div class="preview-footer" id="previewFooter"><button type="button" id="togglePreview" aria-pressed="true">ANIMAR ▷</button><button type="button" id="openPreview" aria-haspopup="dialog" aria-controls="previewDialog">AMPLIAR ↗</button></div>
         <fieldset class="card-colors"><legend>CORES DA COMPOSIÇÃO</legend><div class="color-palette" data-color-palette="paper"><div class="color-label">Fundo <output></output></div><div class="color-options" role="group" aria-label="Cor do fundo"></div></div><div class="color-palette" data-color-palette="ink"><div class="color-label">Texto <output></output></div><div class="color-options" role="group" aria-label="Cor do texto"></div></div><div class="color-palette" data-color-palette="accent"><div class="color-label">M / faixa <output></output></div><div class="color-options" role="group" aria-label="Cor do M ou da faixa"></div></div><div class="color-footer"><p id="colorStatus" role="status" aria-live="polite"></p><button type="button" id="resetColors">RESTAURAR PADRÃO</button></div></fieldset>
       </section>
       <section class="data-panel" aria-labelledby="dados">
@@ -49,6 +49,7 @@
     </div>
     <details class="installation" open><summary>COMO INSTALAR NO GMAIL <span class="disclosure-mark" aria-hidden="true"></span></summary><div class="installation-content"><ol><li>Preencha seus dados e baixe a assinatura em PNG ou GIF.</li><li>No Gmail, abra Configurações → Ver todas as configurações → Geral → Assinatura.</li><li>Crie uma assinatura e insira o arquivo em Inserir imagem → Fazer upload.</li><li>Confira o tamanho, defina como padrão e salve. Faça um envio de teste.</li></ol><a href="https://support.google.com/mail/answer/11468381?hl=pt-BR" target="_blank" rel="noopener">AJUDA DO GMAIL ↗</a></div></details>
   </main>
+  <dialog id="previewDialog" class="preview-dialog" aria-label="Prévia ampliada"><div class="preview-dialog-header"><button type="button" id="closePreview" aria-label="Fechar prévia">×</button></div><div class="preview-dialog-scroll"><div class="preview-dialog-mount"><canvas id="zoomCanvas" role="img" aria-label="Prévia ampliada da assinatura"></canvas></div></div></dialog>
   <footer><span>LABMATTAR / COMUNICAÇÃO DO TIME</span></footer>
 </body>
 </html>

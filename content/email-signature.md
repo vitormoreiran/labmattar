@@ -23,7 +23,9 @@ Fundo, Texto e M / faixa são escolhas independentes da paleta de oito cores. O 
 
 ## Imagens, movimento e arquivos
 
-A prévia inicia fixa e mostra o M nativo no mesmo enquadramento do PNG. A opção Reproduzir motion usa o filme aprovado M + Forma. A pausa recupera o quadro fixo da assinatura. MATTAR na faixa conserva a assinatura nativa completa e não oferece motion.
+A prévia inicia fixa e mostra o M nativo no mesmo enquadramento do PNG. O botão Animar usa o filme aprovado M + Forma. A pausa recupera o quadro fixo da assinatura. MATTAR na faixa conserva a assinatura nativa completa e não oferece motion.
+
+A prévia ocupa a largura disponível sobre um fundo Preto, com resolução adicional em telas de alta densidade. Ampliar abre uma visualização maior; no celular a imagem pode ser percorrida horizontalmente. Essa ampliação pertence à interface: PNG e GIF mantêm 480 × 100 px e o PNG em alta, 960 × 200 px.
 
 O PNG em tamanho de uso tem as dimensões da tabela. PNG em alta contém duas vezes os pixels e deve ser exibido no tamanho de uso. O HTML incorpora a imagem em alta e declara as dimensões corretas de apresentação, 480 × 100 px para todas as composições. Também contém links reais de e-mail, telefone e site. Salvar contato produz vCard; Copiar contatos oferece os dados em texto.
 

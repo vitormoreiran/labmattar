@@ -1,6 +1,6 @@
 import { normalizeSignature, validateSignature, signatureText } from './email-signature.mjs';
 import { EMAIL_COMPOSITIONS, emailComposition, emailDefaultColors } from './email-compositions.mjs?v=faixa-20261111-3';
-import { CARD_COLORS, CARD_THEMES, cardSize, cardContrast, createCard, loadCardVideo, seekCardVideo, canvasBlob, exportCardGIF, cardDocument, cardContact } from './email-card.mjs?v=faixa-20261111-3';
+import { CARD_COLORS, CARD_THEMES, cardSize, cardContrast, createCard, loadCardVideo, seekCardVideo, canvasBlob, exportCardGIF, cardDocument, cardContact } from './email-card.mjs?v=previa-20261112-2';
 
 const form = document.getElementById('signatureForm');
 const fields = ['name', 'role', 'email', 'phone'];
@@ -8,6 +8,7 @@ const mount = document.getElementById('cardMount'), status = document.getElement
 const stage = document.getElementById('previewStage'), previewLoading = document.getElementById('previewLoading');
 const toggle = document.getElementById('togglePreview'), progress = document.getElementById('exportProgress');
 const picker = document.getElementById('compositionPicker');
+const previewDialog = document.getElementById('previewDialog'), zoomCanvas = document.getElementById('zoomCanvas');
 const example = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
 const params = new URLSearchParams(location.search);
 let composition = EMAIL_COMPOSITIONS.some(item => item.id === params.get('modelo')) ? params.get('modelo') : 'm-horizontal';
@@ -19,6 +20,30 @@ let colors = defaults();
 const read = () => normalizeSignature(Object.fromEntries(fields.map(key => [key, form.elements.namedItem(key).value])));
 const options = (density = 2) => ({ format, composition, colors: { ...colors }, density });
 const exportDensity = () => format === 'email' ? 1 : 2;
+// Draw extra pixels for the enlarged screen preview, independently of exports.
+const previewDensity = () => Math.min(4, Math.max(2, Math.ceil((devicePixelRatio || 1) * 2)));
+
+function syncZoom() {
+  if (!previewDialog.open || !card) return;
+  if (zoomCanvas.width !== card.canvas.width) zoomCanvas.width = card.canvas.width;
+  if (zoomCanvas.height !== card.canvas.height) zoomCanvas.height = card.canvas.height;
+  zoomCanvas.getContext('2d').drawImage(card.canvas, 0, 0);
+  zoomCanvas.style.width = Math.max(card.size.width, Math.min(card.size.width * 2, innerWidth - 96)) + 'px';
+  zoomCanvas.setAttribute('aria-label', mount.getAttribute('aria-label'));
+}
+function openPreview() {
+  if (!card || previewDialog.open) return;
+  previewDialog.showModal(); syncZoom();
+  previewDialog.querySelector('.preview-dialog-scroll').scrollLeft = 0;
+}
+document.getElementById('openPreview').addEventListener('click', openPreview);
+mount.addEventListener('click', openPreview);
+document.getElementById('closePreview').addEventListener('click', () => previewDialog.close());
+previewDialog.addEventListener('click', event => { if (event.target === previewDialog) previewDialog.close(); });
+addEventListener('resize', () => {
+  syncZoom();
+  if (card && !working && card.density !== previewDensity()) update();
+});
 
 for (const [index, model] of EMAIL_COMPOSITIONS.entries()) {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'composition-choice';
@@ -64,7 +89,6 @@ function showErrors(errors) {
 function controls() {
   const canAnimate = card ? card.canAnimate : format === 'card' || emailComposition(composition).motion;
   toggle.hidden = !canAnimate; toggle.disabled = working;
-  document.getElementById('previewFooter').hidden = !canAnimate;
   document.getElementById('downloadMotion').hidden = !canAnimate;
   document.getElementById('downloadMotion').disabled = working || !canAnimate;
   document.getElementById('downloadPNG').classList.toggle('primary', !canAnimate);
@@ -74,12 +98,12 @@ function controls() {
 function pauseMotion() {
   paused = true; video?.pause(); cancelAnimationFrame(frameHandle); frameHandle = 0;
   if (card?.format === 'email') card.reset();
-  controls();
+  syncZoom(); controls();
 }
 function animate() {
   frameHandle = 0;
   if (!paused && video && !video.paused && card?.canAnimate) {
-    card.draw(video); frameHandle = requestAnimationFrame(animate);
+    card.draw(video); syncZoom(); frameHandle = requestAnimationFrame(animate);
   }
 }
 async function ensureVideo() {
@@ -93,10 +117,10 @@ async function update() {
   picker.hidden = format !== 'email';
   for (const button of document.querySelectorAll('button[data-format]')) button.setAttribute('aria-pressed', String(button.dataset.format === format));
   for (const button of document.querySelectorAll('button[data-composition]')) button.setAttribute('aria-pressed', String(button.dataset.composition === composition));
-  stage.dataset.format = format; mount.style.width = size.width + 'px'; updateColors();
+  stage.dataset.format = format; mount.style.maxWidth = size.width * 2 + 'px'; updateColors();
   document.getElementById('downloadPNGHigh').hidden = format !== 'email';
   try {
-    const next = await createCard(isExample ? example : value, options());
+    const next = await createCard(isExample ? example : value, options(previewDensity()));
     if (format === 'card') { const source = await ensureVideo(); next.draw(source); }
     else if (!paused && video?.readyState >= 2 && next.canAnimate) next.draw(video);
     if (ticket !== generation) return;
@@ -104,7 +128,7 @@ async function update() {
     if (!card.canAnimate) pauseMotion();
     mount.replaceChildren(card.canvas); mount.setAttribute('aria-label', signatureText(isExample ? example : value).replace(/\n+/g, '. '));
     stage.dataset.composition = format === 'email' ? composition : 'card';
-    stage.dataset.ready = 'true'; controls();
+    stage.dataset.ready = 'true'; syncZoom(); controls();
     const errors = validated ? { ...validateSignature(value), ...card.layout.errors } : card.layout.errors;
     showErrors(errors);
     if (!working) say(Object.keys(errors).length && !validated ? 'O texto precisa caber na composição antes de exportar.' : '');

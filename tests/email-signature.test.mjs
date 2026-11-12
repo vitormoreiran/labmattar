@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { motionProjects } from '../tools/matriz-vetorial/src/motion-catalog.mjs';
 import { fingerprint } from '../scripts/motion-fingerprint.mjs';
 import { signatureText, validateSignature, normalizeSignature } from '../public/email-signature.mjs';
-import { CARD_FORMATS, CARD_THEMES, CARD_COLORS, CARD_MOTION, cardDocument, cardContact, resolveCardColors, cardContrast, cardSize, containedMotionRect } from '../public/email-card.mjs';
+import { CARD_FORMATS, CARD_THEMES, CARD_COLORS, CARD_MOTION, cardDocument, cardContact, resolveCardColors, cardContrast, cardSize, containedMotionRect, createCard } from '../public/email-card.mjs';
 import { EMAIL_COMPOSITIONS, emailComposition, emailDefaultColors } from '../public/email-compositions.mjs';
 const contact = { name:'Ana Ribeiro', role:'Produção e projetos', email:'ana+projetos@example.com', phone:'+55 (11) 99999-9999' };
 
@@ -85,5 +85,9 @@ test('motion uses a uniform scale inside both native M proportions and narrow fr
  for(const fit of [wide,narrow])assert.ok(Math.abs(fit.width/fit.height-4/3)<1e-12);
  const retina=containedMotionRect(crop,{width:100,height:100*627/822},2);
  assert.equal(retina.width,200);assert.equal(retina.height,150);
+});
+
+test('drawing resolution is bounded before allocating preview buffers',async()=>{
+ for(const density of [0,5,2.5,Infinity])await assert.rejects(createCard(contact,{density}),/Resolução de desenho inválida/);
 });
 

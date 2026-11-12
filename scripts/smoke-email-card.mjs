@@ -41,10 +41,18 @@ try {
     const item = await pending;
     const file = path.join(output, filename); await item.saveAs(file); return file;
   };
+  const previewWidth = await page.locator('#cardMount canvas').evaluate(c => c.getBoundingClientRect().width);
+  assert.ok(previewWidth > 700, 'Desktop preview must use the available width');
+  await page.locator('#openPreview').click();
+  assert.equal(await page.locator('#previewDialog').evaluate(d => d.open), true);
+  assert.ok(await page.locator('#zoomCanvas').evaluate(c => Math.abs(c.getBoundingClientRect().width / c.getBoundingClientRect().height - 4.8) < .005));
+  await page.keyboard.press('Escape');
+  assert.equal(await page.locator('#previewDialog').evaluate(d => d.open), false);
   for (const model of models) {
     await select(model.id);
     assert.equal(await page.locator('button[data-composition][aria-pressed=true]').count(), 1);
     assert.equal(await page.locator('#togglePreview').isHidden(), model.id === 'mattar-faixa');
+    assert.equal(await page.locator('#openPreview').isVisible(), true);
     const file = await download('#downloadPNG', model.id + '.png');
     const png = await fs.readFile(file);
     assert.equal(png.readUInt32BE(16), model.width); assert.equal(png.readUInt32BE(20), model.height);
@@ -173,6 +181,12 @@ try {
       const ratio = await page.locator('#cardMount canvas').evaluate(c => { const r = c.getBoundingClientRect(); return Math.abs(r.width / r.height - c.width / c.height); });
       assert.ok(ratio < .005, 'Prévia distorcida em ' + width + '/' + model.id);
     }
+    if (width === 320) {
+      await page.locator('#openPreview').click();
+      assert.ok(await page.locator('.preview-dialog-scroll').evaluate(node => node.scrollWidth > node.clientWidth), 'Small screens can pan the enlarged image');
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      await page.locator('#closePreview').click();
+    }
     await page.screenshot({ path: path.join(output, 'viewport-' + width + '.png'), fullPage: true });
   }
   await page.reload();
@@ -181,6 +195,16 @@ try {
   await page.goto(pathToFileURL(htmlFile).href);
   await page.waitForFunction(() => document.querySelector('img')?.complete);
   assert.ok(await page.locator('img').evaluate(image => image.naturalWidth > 0));
+  const retina = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2, acceptDownloads: true });
+  const highPage = await retina.newPage(); highPage.on('pageerror', error => errors.push(error.message));
+  await highPage.goto(origin); await highPage.waitForSelector('#previewStage[data-ready=true] canvas');
+  const sharpness = await highPage.locator('#cardMount canvas').evaluate(c => ({ buffer: c.width, shown: c.getBoundingClientRect().width }));
+  assert.ok(sharpness.buffer >= sharpness.shown * 2, 'Retina preview needs enough source pixels');
+  for (const [key, value] of Object.entries(data)) await highPage.locator('#' + key).fill(value);
+  const retinaDownload = highPage.waitForEvent('download'); await highPage.locator('#downloadPNG').click();
+  const retinaFile = path.join(output, 'retina-native.png'); await (await retinaDownload).saveAs(retinaFile);
+  const native = await fs.readFile(retinaFile); assert.equal(native.readUInt32BE(16), 480); assert.equal(native.readUInt32BE(20), 100);
+  await highPage.screenshot({ path: path.join(output, 'retina-preview.png') }); await retina.close();
   assert.deepEqual(errors, []);
   const result = { status: 'passed', compositions: report, legacyCard: true, gifBytes: gif.length, mediaProbe, viewports: [1440, 390, 320], errors };
   await fs.writeFile(path.join(output, 'report.json'), JSON.stringify(result, null, 2)); console.log(JSON.stringify(result));

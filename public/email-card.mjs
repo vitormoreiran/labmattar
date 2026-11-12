@@ -98,7 +98,7 @@ export function cardLayout(data, { format = 'card', composition = 'm-horizontal'
 
 export async function createCard(data, { format = 'card', composition = 'm-horizontal', theme = 'paper', colors: customColors, density = 2 } = {}) {
   if (!CARD_FORMATS[format] || !CARD_THEMES[theme]) throw Error('Composição desconhecida.');
-  if (![1, 2].includes(density)) throw Error('Escolha a resolução normal ou em alta.');
+  if (!Number.isInteger(density) || density < 1 || density > 4) throw Error('Resolução de desenho inválida.');
   const resources = await cardResources();
   const dimensions = cardSize({ format, composition }), colors = resolveCardColors(theme, customColors);
   if (format === 'email' && theme === 'paper' && customColors?.paper === undefined) colors.paper = emailComposition(composition).paper;

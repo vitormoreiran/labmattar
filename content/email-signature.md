@@ -25,7 +25,7 @@ Fundo, Texto e M / faixa são escolhas independentes da paleta de oito cores. O 
 
 A prévia inicia fixa e mostra o M nativo no mesmo enquadramento do PNG. O botão Animar usa o filme aprovado M + Forma. A pausa recupera o quadro fixo da assinatura. MATTAR na faixa conserva a assinatura nativa completa e não oferece motion.
 
-A prévia ocupa a largura disponível sobre um fundo Preto, com resolução adicional em telas de alta densidade. Ampliar abre uma visualização maior; no celular a imagem pode ser percorrida horizontalmente. Essa ampliação pertence à interface: PNG e GIF mantêm 480 × 100 px e o PNG em alta, 960 × 200 px.
+A prévia ocupa a largura disponível em uma área clara, sem moldura ou sombra, com resolução adicional em telas de alta densidade. Ampliar abre uma visualização maior; no celular a imagem pode ser percorrida horizontalmente. Essa ampliação pertence à interface: PNG e GIF mantêm 480 × 100 px e o PNG em alta, 960 × 200 px.
 
 O PNG em tamanho de uso tem as dimensões da tabela. PNG em alta contém duas vezes os pixels e deve ser exibido no tamanho de uso. O HTML incorpora a imagem em alta e declara as dimensões corretas de apresentação, 480 × 100 px para todas as composições. Também contém links reais de e-mail, telefone e site. Salvar contato produz vCard; Copiar contatos oferece os dados em texto.
 
@@ -62,4 +62,3 @@ A rotina histórica scripts/prepare-email-signature.mjs gera os GIFs pequenos do
 ## Verificação
 
 Os testes de contrato cobrem dimensões, cores, escape do HTML, vCard e escala uniforme do motion. O smoke de navegador cobre os quatro modelos, comparação com as miniaturas revisadas, nomes longos, PNG normal e 2×, GIF, HTML offline, cartão digital anterior, cores e telas de 320, 390 e 1440 px.
-

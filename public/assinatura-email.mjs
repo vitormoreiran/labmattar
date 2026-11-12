@@ -52,7 +52,7 @@ function updateColors() {
   if (ratio.text < 4.5) notices.push('Pouco contraste entre texto e fundo (' + ratio.text.toFixed(1).replace('.', ',') + ':1).');
   if (footer && ratio.motion < 4.5) notices.push('Pouco contraste do texto e da marca na faixa.');
   else if (!footer && ratio.motion < 3) notices.push('Pouco contraste entre a forma e o fundo.');
-  const output = document.getElementById('colorStatus'); output.textContent = notices.join(' ') || 'Contraste adequado para leitura.'; output.classList.toggle('warning', notices.length > 0);
+  const output = document.getElementById('colorStatus'); output.textContent = notices.join(' '); output.classList.toggle('warning', notices.length > 0);
 }
 function say(message, error = false) { status.textContent = message; status.classList.toggle('error', error); }
 function showErrors(errors) {
@@ -64,10 +64,11 @@ function showErrors(errors) {
 function controls() {
   const canAnimate = card ? card.canAnimate : format === 'card' || emailComposition(composition).motion;
   toggle.hidden = !canAnimate; toggle.disabled = working;
+  document.getElementById('previewFooter').hidden = !canAnimate;
   document.getElementById('downloadMotion').hidden = !canAnimate;
   document.getElementById('downloadMotion').disabled = working || !canAnimate;
   document.getElementById('downloadPNG').classList.toggle('primary', !canAnimate);
-  toggle.textContent = paused ? 'REPRODUZIR MOTION ▷' : 'PAUSAR MOTION Ⅱ';
+  toggle.textContent = paused ? 'ANIMAR ▷' : 'PAUSAR Ⅱ';
   toggle.setAttribute('aria-pressed', String(paused));
 }
 function pauseMotion() {
@@ -88,22 +89,12 @@ async function ensureVideo() {
 }
 async function update() {
   const ticket = ++generation, value = read(), isExample = !fields.some(key => value[key]), size = cardSize(options());
-  document.getElementById('exampleLabel').textContent = isExample ? 'DADOS DE EXEMPLO' : 'COM SEUS DADOS';
+  document.getElementById('exampleLabel').hidden = !isExample;
   picker.hidden = format !== 'email';
   for (const button of document.querySelectorAll('button[data-format]')) button.setAttribute('aria-pressed', String(button.dataset.format === format));
   for (const button of document.querySelectorAll('button[data-composition]')) button.setAttribute('aria-pressed', String(button.dataset.composition === composition));
-  document.getElementById('emailFormatSize').textContent = emailComposition(composition).width + ' × ' + emailComposition(composition).height;
   stage.dataset.format = format; mount.style.width = size.width + 'px'; updateColors();
-  document.getElementById('formatNote').textContent = format === 'email'
-    ? emailComposition(composition).label + ' · ' + size.width + ' × ' + size.height + ' px'
-    : 'Mais espaço para a apresentação da marca e de quem faz parte dela.';
-  document.getElementById('exportDescription').textContent = format === 'email'
-    ? 'Tamanho de uso: ' + size.width + ' × ' + size.height + ' px · Alta: ' + size.width * 2 + ' × ' + size.height * 2 + ' px'
-    : 'Cartão digital · 960 × 560 px';
   document.getElementById('downloadPNGHigh').hidden = format !== 'email';
-  document.getElementById('previewNote').textContent = format === 'email' && !emailComposition(composition).motion
-    ? 'Este modelo usa a assinatura MATTAR fixa. O PNG preserva a composição completa com seus dados.'
-    : 'O PNG mantém a composição fixa. O GIF mantém os dados visíveis enquanto o M se transforma.';
   try {
     const next = await createCard(isExample ? example : value, options());
     if (format === 'card') { const source = await ensureVideo(); next.draw(source); }
@@ -143,7 +134,6 @@ function download(blob, extension, value = read(), selection = options()) {
   anchor.href = url; anchor.download = 'mattar-' + slug + '-' + selection.format + model + '.' + extension; anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
-function sizeLabel(blob) { return blob.size < 1024 * 1024 ? Math.round(blob.size / 1024) + ' KB' : (blob.size / 1024 / 1024).toFixed(1).replace('.', ',') + ' MB'; }
 async function poster(value, selection) {
   const result = await createCard(value, selection);
   const errors = { ...validateSignature(value), ...result.layout.errors };
@@ -158,7 +148,7 @@ async function downloadPNG(high = false) {
   const value = read(), selection = options(high ? 2 : exportDensity()); busy(true);
   try {
     const blob = await poster(value, selection); download(blob, 'png', value, selection);
-    const size = cardSize(selection); say('PNG pronto · ' + size.width * selection.density + ' × ' + size.height * selection.density + ' px · ' + sizeLabel(blob) + '.');
+    say('PNG baixado.');
   } catch (error) { say(error.message, true); } finally { busy(false); }
 }
 form.addEventListener('input', update);
@@ -182,16 +172,16 @@ form.addEventListener('submit', async event => {
   if (!card?.canAnimate) { await downloadPNG(); return; }
   if (!valid() || working) return;
   const value = read(), selection = options(exportDensity()); controller = new AbortController(); busy(true); progress.value = 0;
-  say('Preparando o GIF personalizado…');
+  say('Preparando o GIF…');
   let reported = -1;
   try {
     const blob = await exportCardGIF(value, selection, { signal: controller.signal, progress: fraction => {
       progress.value = Math.round(fraction * 100);
       const step = Math.floor(fraction * 10);
-      if (step !== reported) { reported = step; say('Gerando seu GIF · ' + Math.round(fraction * 100) + '%'); }
+      if (step !== reported) { reported = step; say('Gerando GIF · ' + Math.round(fraction * 100) + '%'); }
     } });
-    download(blob, 'gif', value, selection); say('GIF personalizado pronto · ' + sizeLabel(blob) + '. Nome e contatos fazem parte da imagem.');
-  } catch (error) { say(error.name === 'AbortError' ? 'Exportação cancelada. Seus dados continuam na página.' : error.message, error.name !== 'AbortError'); }
+    download(blob, 'gif', value, selection); say('GIF baixado.');
+  } catch (error) { say(error.name === 'AbortError' ? 'Exportação cancelada.' : error.message, error.name !== 'AbortError'); }
   finally { controller = null; busy(false); }
 });
 document.getElementById('cancelExport').addEventListener('click', () => controller?.abort());
@@ -204,15 +194,15 @@ document.getElementById('downloadHTML').addEventListener('click', async () => {
     const image = await poster(value, selection);
     const imageURL = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(image); });
     download(new Blob([cardDocument(value, { ...selection, imageURL })], { type: 'text/html;charset=utf-8' }), 'html', value, selection);
-    say('Cartão HTML pronto, com a imagem incorporada e links de contato. Abre também offline.');
+    say('HTML baixado.');
   } catch (error) { say(error.message, true); } finally { busy(false); }
 });
 document.getElementById('downloadContact').addEventListener('click', () => {
-  if (!valid() || working) return; download(new Blob([cardContact(read())], { type: 'text/vcard;charset=utf-8' }), 'vcf'); say('Contato pronto para salvar na agenda.');
+  if (!valid() || working) return; download(new Blob([cardContact(read())], { type: 'text/vcard;charset=utf-8' }), 'vcf'); say('Contato baixado.');
 });
 document.getElementById('copyText').addEventListener('click', async () => {
   if (!valid() || working) return;
-  try { await navigator.clipboard.writeText(signatureText(read())); say('Contatos copiados em texto.'); }
+  try { await navigator.clipboard.writeText(signatureText(read())); say('Contatos copiados.'); }
   catch { say('O navegador bloqueou a cópia. Você pode usar os contatos do cartão HTML.', true); }
 });
 controls();

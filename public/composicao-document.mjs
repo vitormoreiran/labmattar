@@ -94,6 +94,9 @@ function captureState(state,photoCatalog){
     inkColor:enumValue(state.inkColor??"auto",CHOICES.inkColor,"cor do texto"),
     autoInkVersion:bounded(state.autoInkVersion??1,1,2,"perfil de cor automática"),
     photoContrast:bounded(state.photoContrast??20,0,80,"tratamento de leitura"),
+    photoEffect:enumValue(state.photoEffect??"auto",["auto","blur","glass"],"efeito da imagem"),
+    photoBlur:bounded(state.photoBlur??50,0,100,"intensidade do desfoque"),
+    photoGlass:bounded(state.photoGlass??50,0,100,"reflexo do vidro"),
     margin:bounded(state.margin,4,16,"margem"),
     guides:enumValue(state.guides,CHOICES.guides,"guias"),
     marker:text(state.marker,40,"marcadores"),
@@ -161,7 +164,7 @@ export function createProductionDocument({state,photoCatalog,maxEdge=3840}){
         body:{role:"body",value:s.body,visible:s.bodyMode==="visivel"},
         detail:{role:"detail",metadata:{kicker:s.kicker,footerLeft:s.footerLeft,footerRight:s.footerRight},signature:s.signature}
       },
-      media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,photoContrastPercent:s.photoContrast,focalPoint:{x:s.focusX,y:s.focusY}},
+      media:{photoAssetId:"photo:"+s.photo,photoKey:s.photo,photoContrastPercent:s.photoContrast,photoEffect:s.photoEffect,photoBlurPercent:s.photoBlur,photoGlassPercent:s.photoGlass,focalPoint:{x:s.focusX,y:s.focusY}},
       m:{maskAssetId:"identity:m-mask",content:s.mContent,presentation:s.mPresentation,
         scalePercent:s.mScale,positionYPercent:s.mPositionY,expandedPositionYPercent:s.mExpandedPositionY,caption:s.mCaption,marker:s.marker,markerFocus:s.markerFocus,legacySymbol:s.symbol}
     }],
@@ -186,7 +189,7 @@ export function readProductionDocument(doc,photoCatalog){
   const expected=dimensionsFor(page.surface?.format,doc.output.maxEdge);
   check(doc.output.width===expected.width&&doc.output.height===expected.height,"dimensões da página");
   const state={
-    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",autoInkVersion:t.autoInkVersion??1,photoContrast:media.photoContrastPercent??20,margin:page.surface.marginPercent,
+    format:page.surface.format,color:page.surface.color,inkColor:t.inkColor??"auto",autoInkVersion:t.autoInkVersion??1,photoContrast:media.photoContrastPercent??20,photoEffect:media.photoEffect??"auto",photoBlur:media.photoBlurPercent??50,photoGlass:media.photoGlassPercent??50,margin:page.surface.marginPercent,
     guides:page.surface.guides,marker:m.marker,markerFocus:m.markerFocus??"blur",textWidth:page.reading?.widthPercent,textPositionY:page.reading?.positionYPercent??50,
     titleScale:t.title?.scalePercent,titleFonts:t.title?.wordFonts??[],type:t.title?.treatment,background:page.surface.background,
     mContent:m.content,mPresentation:m.presentation,photo:media.photoKey,mScale:m.scalePercent,mPositionY:m.positionYPercent??50,mExpandedPositionY:m.expandedPositionYPercent??50,mCaption:m.caption??"",
@@ -211,6 +214,9 @@ export function verifyRoundTrip(doc,photoCatalog){
   if(doc.pages[0].text.title.wordFonts===undefined)delete normalized.pages[0].text.title.wordFonts;
   // Legacy documents preserve their 20% treatment and original automatic red ink.
   if(doc.pages[0].media.photoContrastPercent===undefined)delete normalized.pages[0].media.photoContrastPercent;
+  if(doc.pages[0].media.photoEffect===undefined)delete normalized.pages[0].media.photoEffect;
+  if(doc.pages[0].media.photoBlurPercent===undefined)delete normalized.pages[0].media.photoBlurPercent;
+  if(doc.pages[0].media.photoGlassPercent===undefined)delete normalized.pages[0].media.photoGlassPercent;
   if(doc.pages[0].text.autoInkVersion===undefined)delete normalized.pages[0].text.autoInkVersion;
   // Legacy v1 documents remain readable without a color field.
   if(doc.pages[0].text.inkColor===undefined)delete normalized.pages[0].text.inkColor;

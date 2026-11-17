@@ -119,12 +119,12 @@ function applySectionVisual(){
 function syncSectionBackground(){
   const section=currentSection();if(!section)return;
   const snapshot=bridge().snapshot(),candidate=createSection(section.id,section.name,snapshot.state,snapshot.photoCatalog).background;
-  candidate.treatment=section.background.treatment;
+  if(candidate.photoEffect==='auto')candidate.treatment=section.background.treatment;
   if(pages[current].backgroundVideo)candidate.video=copy(pages[current].backgroundVideo);
   if(candidate.mode==='photo'&&(snapshot.state.mContent==='photo'||pages.some((page,index)=>index!==current&&page.sectionId===section.id&&page.composition.pages[0].m.content==='photo')))candidate.treatment='blur';
   const changed=JSON.stringify(candidate)!==JSON.stringify(section.background);section.background=candidate;
   const expected=sectionState(snapshot.state,section);
-  if(['background','color','photo','focusX','focusY','mContent','photoContrast'].some(key=>snapshot.state[key]!==expected[key])){
+  if(['background','color','photo','focusX','focusY','mContent','photoContrast','photoEffect','photoBlur','photoGlass'].some(key=>snapshot.state[key]!==expected[key])){
     const previous=switching;switching=true;try{bridge().restore(expected);}finally{switching=previous;}
   }
   if(changed)for(let index=0;index<pages.length;index++){
@@ -139,7 +139,7 @@ function renderSectionControls(){
   try{by('labSectionRestore').hidden=!localStorage.getItem(key+'-before-section-demo');}catch{by('labSectionRestore').hidden=true;}
   if(!section)return;
   by('labSectionName').value=section.name;by('labSectionSettingsTitle').textContent='FUNDO E AJUSTES / '+section.name;
-  by('labSectionBackgroundInfo').textContent=section.background.mode==='photo'?(section.background.video?'Vídeo compartilhado / ':'Fotografia compartilhada / ')+(section.background.treatment==='blur'?'desfocada':'nítida'):'Cor compartilhada / '+section.background.color;
+  by('labSectionBackgroundInfo').textContent=section.background.mode==='photo'?(section.background.video?'Vídeo compartilhado / ':'Fotografia compartilhada / ')+(section.background.photoEffect==='glass'?'com efeito de vidro':section.background.treatment==='blur'?'desfocada':'nítida'):'Cor compartilhada / '+section.background.color;
   by('labSectionTreatment').value=section.background.treatment;
   by('labSectionTreatment').disabled=section.background.mode==='color'||pages.some(page=>page.sectionId===section.id&&page.composition.pages[0].m.content==='photo');
   const index=sections.indexOf(section);by('labSectionEarlier').disabled=index===0;by('labSectionLater').disabled=index===sections.length-1;
@@ -226,7 +226,7 @@ function initSections(){
     sections.splice(sections.indexOf(currentSection())+1,0,section);const page=blankPage(sectionState(snapshot.state,section),snapshot.photoCatalog,section.id);pages.push(page);sortSectionPages();await switchPage(pages.findIndex(item=>item.id===page.id),{capture:false});
   }));
   by('labSectionName').addEventListener('change',event=>{currentSection().name=event.target.value.trim().slice(0,120)||'Seção';commit();});
-  by('labSectionTreatment').addEventListener('change',event=>{currentSection().background.treatment=event.target.value;commit();});
+  by('labSectionTreatment').addEventListener('change',event=>{const section=currentSection();section.background.treatment=event.target.value;section.background.photoEffect='auto';const previous=switching;switching=true;try{bridge().restore(sectionState(bridge().snapshot().state,section));}finally{switching=previous;}commit();});
   by('labSectionEditBackground').addEventListener('click',()=>{setWorkspaceView('edit');by('laboratorio').querySelector('button[data-mobile-module=fundo]').click();});
   by('labPageSection').addEventListener('change',event=>{const id=event.target.value;handle(()=>moveCurrentPageToSection(id))();});
   for(const [id,delta] of [['labSectionEarlier',-1],['labSectionLater',1]])by(id).addEventListener('click',()=>{commit();const section=currentSection(),from=sections.indexOf(section),to=from+delta;if(to<0||to>=sections.length)return;sections.splice(from,1);sections.splice(to,0,section);sortSectionPages();commit();});

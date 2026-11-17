@@ -1,7 +1,7 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>LABMATTAR — Compor</title>
 <link rel="stylesheet" href="/manual-composition-layout.css">
-<link rel="stylesheet" href="/composicao-lab.css">
+<link rel="stylesheet" href="/composicao-lab.css?v=photo-effects-20261117">
 <link rel="stylesheet" href="/composicao-lab-controls.css">
 <link rel="stylesheet" href="/composicao-studio.css">
 <link rel="stylesheet" href="/composicao-editor-clean.css">
@@ -351,6 +351,14 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
             </div>
           </section>
         </div>
+        <div id="labPhotoEffects" class="lm-photo-effects">
+          <div class="lm-lab-field lm-ctrl-choice-field"><div id="labPhotoEffectTitle" class="lm-lab-field-title">Tratamento da imagem</div>
+            <select id="labPhotoEffect" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true"><option value="auto">Padrão</option><option value="blur">Desfoque</option><option value="glass">Vidro</option></select>
+            <div class="lm-ctrl-choice-grid lm-ctrl-columns-3" role="group" aria-labelledby="labPhotoEffectTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="photoEffect" data-value="auto" aria-pressed="true"><span class="lm-ctrl-name">Padrão</span></button><button type="button" class="lm-ctrl-choice" data-lab-choice="photoEffect" data-value="blur" aria-pressed="false"><span class="lm-ctrl-name">Desfoque</span></button><button type="button" class="lm-ctrl-choice" data-lab-choice="photoEffect" data-value="glass" aria-pressed="false"><span class="lm-ctrl-name">Vidro</span></button></div>
+          </div>
+          <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labPhotoBlur">Intensidade do desfoque</label><output id="labPhotoBlurValue">50%</output></div><input id="labPhotoBlur" type="range" min="0" max="100" step="1" value="50"><small class="lm-ctrl-helper">O escurecimento para leitura é ajustado separadamente.</small></div>
+          <div class="lm-lab-field" id="labPhotoGlassField"><div class="lm-lab-value-row"><label for="labPhotoGlass">Reflexo do vidro</label><output id="labPhotoGlassValue">50%</output></div><input id="labPhotoGlass" type="range" min="0" max="100" step="1" value="50"></div>
+        </div>
         <div class="lm-lab-field" id="labPhotoContrastField">
   <div class="lm-lab-value-row"><label for="labPhotoContrast">Tratamento de leitura</label><output id="labPhotoContrastValue" for="labPhotoContrast">40%</output></div>
   <input id="labPhotoContrast" type="range" min="0" max="80" step="1" value="40" aria-label="Intensidade do tratamento de leitura">
@@ -485,9 +493,10 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
         <article id="labArtboard" class="lm-lab-board" data-format="horizontal" data-guide="nenhuma" data-photo-text="false" data-m-text="false" data-state="ok" aria-label="Prévia experimental de composição LABMATTAR">
           <div class="lm-lab-photo-layer" aria-hidden="true">
             <img class="lm-lab-photo-ambient" id="labAmbientPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt="">
+            <div class="lm-lab-photo-glass" aria-hidden="true"></div>
             <div class="lm-lab-photo-contrast"></div>
             <div class="lm-lab-m-photo" id="labMask"><img id="labMaskPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
-            <div class="lm-lab-marker-photo" id="labMarkerPhotoLayer"><img class="lm-lab-marker-image" id="labMarkerPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""></div>
+            <div class="lm-lab-marker-photo" id="labMarkerPhotoLayer"><img class="lm-lab-marker-image" id="labMarkerPhoto" src="/ambiente-editorial/media/BOXDOSENTIR-64.jpg" alt=""><div class="lm-lab-photo-glass lm-lab-marker-glass" aria-hidden="true"></div></div>
           </div>
           <div class="lm-lab-m-markers" id="labMMarkers" data-marker="none" aria-hidden="true">
             <svg class="lm-lab-m-marker lm-lab-m-marker-top" viewBox="0 0 200.33 164.82" preserveAspectRatio="xMidYMin meet"><path d="M0 0H200.33L115.22 140.05C106.94 153.67 93.39 153.67 85.11 140.05Z"/></svg>
@@ -522,5 +531,5 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-mp4-1"><script src="/composicao-lab.js" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js?v=20261104-mp4-1" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs?v=20261104-mp4-1"></script>
+<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-mp4-1"><script src="/composicao-lab.js?v=photo-effects-20261117" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js?v=photo-effects-20261117" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js?v=20261104-mp4-1" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs?v=photo-effects-20261117"></script>
 </body></html>

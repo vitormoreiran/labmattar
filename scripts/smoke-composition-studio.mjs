@@ -398,6 +398,30 @@ try{
     "Returning to Elemento must restore its previous scale");
   await choose("format","horizontal");
 
+  // The editor preview uses 90% of the limiting workspace dimension,
+  // including when that requires enlarging a page above its logical size.
+  await page.setViewportSize({width:2560,height:1440});
+  for(const format of ["horizontal","vertical","quadrado","editorial"]){
+    await choose("format",format);
+    await page.waitForTimeout(120);
+    const fit=await page.evaluate(()=>{
+      const board=document.querySelector("#labArtboard"),stage=document.querySelector(".lm-lab-stage");
+      const b=board.getBoundingClientRect(),s=stage.getBoundingClientRect();
+      return {format:board.dataset.format,width:b.width,height:b.height,
+        logicalW:board.offsetWidth,logicalH:board.offsetHeight,
+        coverage:Math.max(b.width/s.width,b.height/s.height),
+        inside:b.left>=s.left&&b.top>=s.top&&b.right<=s.right+1&&b.bottom<=s.bottom+1};
+    });
+    assert(Math.abs(fit.coverage-.9)<.005,
+      "Desktop page preview must use 90% of its workspace: "+JSON.stringify(fit));
+    assert(fit.inside&&Math.abs(fit.width/fit.height-fit.logicalW/fit.logicalH)<.002,
+      "Enlarging the preview must keep every edge visible without distortion: "+JSON.stringify(fit));
+    if(format==="editorial")assert(fit.width>fit.logicalW,
+      "Large-screen preview must not be capped at the original 1000px page width");
+  }
+  await page.setViewportSize({width:1440,height:900});
+  await choose("format","horizontal");
+
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(120);
   const previewGeometry=await page.evaluate(()=>{

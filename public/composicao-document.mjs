@@ -128,7 +128,6 @@ function captureState(state,photoCatalog){
   };
   check(Number.isInteger(clean.autoInkVersion),"perfil de cor automática");
   check(CHOICES.marker.includes(clean.marker),"marcadores do M");
-  check(!(clean.background==="photo"&&clean.mContent==="solid"),"M sólido não existe sobre fotografia");
   check(Object.hasOwn(photoCatalog,clean.photo)&&safeImagePath(photoCatalog[clean.photo]),"fotografia do catálogo local");
   return clean;
 }
@@ -225,3 +224,4 @@ export function verifyRoundTrip(doc,photoCatalog){
   check(JSON.stringify(doc)===JSON.stringify(normalized),"documento alterado ou campos não reconhecidos");
   return state;
 }
+

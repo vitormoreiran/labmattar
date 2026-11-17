@@ -110,7 +110,6 @@ test("foco dos marcadores preserva a inversão da fotografia na montagem",()=>{
   const doc=generate({markerFocus:"sharp"});
   assert.equal(doc.pages[0].m.markerFocus,"sharp");
   assert.deepEqual(verifyRoundTrip(doc,photoCatalog),{...state,markerFocus:"sharp"});
-  assert.throws(()=>generate({background:"photo",mContent:"solid"}),/M sólido/);
   const legacy=generate();
   delete legacy.pages[0].m.markerFocus;
   assert.equal(verifyRoundTrip(legacy,photoCatalog).markerFocus,"blur");
@@ -146,6 +145,14 @@ test("projetos v1 sem a cor do texto preservam o contraste automático",()=>{
   assert.throws(()=>verifyRoundTrip(rogue,photoCatalog),/cor do texto/);
 });
 
+test('o material do M é independente do fundo e sobrevive ao JSON',()=>{
+  for(const background of ['photo','color'])for(const mContent of ['solid','photo','off']){
+    const doc=generate({background,mContent});
+    const restored=verifyRoundTrip(JSON.parse(JSON.stringify(doc)),photoCatalog);
+    assert.equal(restored.background,background);assert.equal(restored.mContent,mContent);
+  }
+});
+
 test('posições verticais de texto e M são independentes e sobrevivem ao JSON',()=>{
   for(const format of ['horizontal','vertical','quadrado','editorial']){
     const doc=generate({format,textPositionY:20,mPositionY:75,mExpandedPositionY:35});
@@ -162,3 +169,4 @@ test('documentos anteriores conservam o centro do texto e do M expandido',()=>{
   assert.equal(restored.textPositionY,50);assert.equal(restored.mExpandedPositionY,50);assert.equal(restored.mPositionY,15);
   assert.equal(JSON.stringify(doc),before);
 });
+

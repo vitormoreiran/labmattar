@@ -424,8 +424,8 @@ try{
       stageHeight:stage.getBoundingClientRect().height,
       boardFormat:artboard.dataset.format,boardStyle:artboard.getAttribute("style")};
   });
-  assert(previewGeometry.previewHeight>=300,
-    "Mobile studio must give its real canvas enough room instead of a 220px thumbnail: "+JSON.stringify(previewGeometry));
+  assert(previewGeometry.previewHeight>=200&&previewGeometry.previewHeight<previewGeometry.workspaceHeight*.5,
+    "Mobile studio must fit the page while reserving space for its controls: "+JSON.stringify(previewGeometry));
   // A preview must scale the complete page uniformly, including all three
   // typography roles. Screen-size minimums must not change the composition.
   for(const format of ["vertical","horizontal","quadrado","editorial"]){
@@ -574,6 +574,8 @@ try{
         frameW:fr.width,frameH:fr.height,
         stageW:sr.width,stageH:sr.height,
         previewPosition:ps.position,
+        rootPosition:getComputedStyle(document.querySelector('#laboratorio')).position,
+        inViewport:sr.top>=0&&sr.bottom<=innerHeight+1,
         previewTop:ps.top
       };
     });
@@ -584,12 +586,12 @@ try{
       "Scaled artboard must fit preview at "+vp.width+"x"+vp.height);
     assert(previewState.frameW>100&&previewState.frameH>50,
       "Scaled artboard frame must stay visible at "+vp.width+"x"+vp.height);
-    assert(previewState.previewPosition==="static",
-      "Compact preview must use normal document flow at "+vp.width+"x"+vp.height);
+    assert(previewState.rootPosition==="fixed"&&previewState.inViewport,
+      "Compact editor must keep its preview inside the viewport at "+vp.width+"x"+vp.height);
 
     const menuState=await page.evaluate(()=>{
       const menu=document.querySelector(".lm-composition-module-index");
-      const buttons=[...menu.querySelectorAll("button[data-mobile-module]")];
+      const buttons=[...menu.querySelectorAll(":scope>button[data-mobile-module]")];
       const mr=menu.getBoundingClientRect();
       return {
         menuWidth:mr.width,
@@ -598,8 +600,12 @@ try{
         labels:buttons.map(b=>b.textContent.trim())
       };
     });
-    assert(menuState.buttonCount===6&&menuState.visible,
-      "All six compact module buttons must remain fully visible at "+vp.width+"x"+vp.height);
+    assert(menuState.buttonCount===4&&menuState.visible,
+      "The four everyday tools must remain fully visible at "+vp.width+"x"+vp.height);
+    await page.locator('.lm-studio-secondary>summary').click();
+    for(const name of ['superficie','construcao'])assert(await page.locator('button[data-mobile-module="'+name+'"]').isVisible(),
+      'Secondary tool must be reachable through More: '+name);
+    await page.locator('.lm-studio-secondary>summary').click();
 
     await page.locator('button[data-mobile-module="m"]').click();
     // A photographic M must be turned off before the color-only solid option
@@ -614,8 +620,8 @@ try{
       bodyScroll:getComputedStyle(document.body).overflowY,
       htmlScroll:getComputedStyle(document.documentElement).overflowY
     }));
-    assert(scrollState.y>0,
-      "Compact editor document must scroll to controls at "+vp.width+"x"+vp.height);
+    assert(scrollState.y===0,
+      "Compact controls must scroll independently without losing the preview at "+vp.width+"x"+vp.height);
   }
 
   // Reproduce the reported saved mobile composition, not only a blank preset.

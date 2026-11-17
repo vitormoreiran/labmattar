@@ -55,6 +55,8 @@ on:
       - 'scripts/test-acervo.mjs'
       - 'scripts/smoke-acervo-ui.mjs'
       - 'scripts/smoke-composition-studio.mjs'
+      - 'scripts/smoke-lab-mobile.mjs'
+      - 'scripts/studio-test-controls.mjs'
       - 'scripts/smoke-composition-browser.mjs'
       - '.github/workflows/composition-browser.yml'
   workflow_dispatch:
@@ -119,6 +121,8 @@ jobs:
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-project-lifecycle.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-mobile.mjs
+          COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-mobile.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
@@ -145,4 +149,6 @@ jobs:
             fidelity-proof/
             proportion-proof/
             vertical-proof/
+            mobile-proof/
           if-no-files-found: ignore
+

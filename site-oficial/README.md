@@ -30,6 +30,8 @@ Sesc, Bradesco e Simpósio mantêm suas rotas. A home e o acesso atual ao capít
 
 Não edite os arquivos recuperados diretamente para corrigir o Laboratório. Edite `design/`, `public/`, `tools/` e os scripts de montagem. Se o domínio receber outra publicação por fora do GitHub, a verificação interrompe o deploy até que essa versão seja recuperada e conferida. Isso impede que um build antigo desfaça alterações publicadas por outro chat.
 
+O ajuste da galeria do capítulo 2 integrado no PR #122 fica em `public/chapter2-gallery-scale.css`. A montagem acrescenta esse complemento ao CSS do pacote final depois de conferir a base. O arquivo recuperado e seu hash original permanecem intactos; o CSS publicado mantém exatamente o conteúdo da alteração já integrada.
+
 As versões do GitHub recebem a etiqueta `github-official-<commit>`. O Cloudflare mantém o histórico; uma reversão deve escolher explicitamente a versão desejada. O workflow confere a revisão servida e a disponibilidade da home, dos três projetos e do Laboratório depois do deploy.
 
 ## Vídeo MP4 no Laboratório

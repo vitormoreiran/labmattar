@@ -1,4 +1,4 @@
-import {cp,mkdir,readdir,readFile,writeFile,stat} from 'node:fs/promises';
+import {cp,mkdir,readdir,readFile,writeFile,appendFile,stat} from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 const hash=b=>createHash('sha256').update(b).digest('hex');
@@ -15,6 +15,14 @@ export async function assembleOfficial({base,lab,presentations,output,sha='local
   let existing;try{existing=await readFile(target);}catch(error){if(error.code!=='ENOENT')throw error;}
   if(existing){if(!existing.equals(bytes))throw Error('Laboratório colide com arquivo oficial: '+relative);continue;}
   await mkdir(path.dirname(target),{recursive:true});await writeFile(target,bytes);added++;
+ }
+ // Keep the recovered archive byte-for-byte intact. The already merged
+ // Chapter 2 gallery adjustment is applied only to the assembled stylesheet.
+ const galleryOverride=path.join(lab,'chapter2-gallery-scale.css');
+ if(await stat(galleryOverride).catch(error=>{if(error.code!=='ENOENT')throw error;return null;})){
+  const stylesheet='public/assets/index-DaKY3Ax1.css';
+  if(!baseline.files[stylesheet])throw Error('Estilo da galeria não pertence à base conferida.');
+  await appendFile(path.join(output,stylesheet),await readFile(galleryOverride));
  }
  const published=[];let folders=[];try{folders=await readdir(presentations,{withFileTypes:true});}catch(error){if(error.code!=='ENOENT')throw error;}
  for(const folder of folders.filter(x=>x.isDirectory())){

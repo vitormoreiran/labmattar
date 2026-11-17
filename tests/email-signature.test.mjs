@@ -64,6 +64,7 @@ test('all four compositions use the restored email strip and preserve the static
  assert.deepEqual(cardSize({format:'email',composition:'m-horizontal'}),{width:480,height:100});
  for(const model of EMAIL_COMPOSITIONS)assert.deepEqual(cardSize({format:'email',composition:model.id}),{width:480,height:100});
  assert.equal(emailComposition('mattar-faixa').motion,false);
+ assert.equal(emailDefaultColors('m-horizontal').paper,'#FFFFFF');
  assert.equal(emailDefaultColors('m-linha').paper,'#FFFFFF');
  assert.throws(()=>emailComposition('historico'),/quatro composições/);
  assert.throws(()=>cardSize({format:'inexistente'}),/Formato desconhecido/);
@@ -85,9 +86,11 @@ test('motion uses a uniform scale inside both native M proportions and narrow fr
  for(const fit of [wide,narrow])assert.ok(Math.abs(fit.width/fit.height-4/3)<1e-12);
  const retina=containedMotionRect(crop,{width:100,height:100*627/822},2);
  assert.equal(retina.width,200);assert.equal(retina.height,150);
+ const published=containedMotionRect(CARD_MOTION.publishedCrop,{width:171*990.08/743.18,height:171});
+ assert.ok(Math.abs(published.width/published.height-CARD_MOTION.publishedCrop.width/CARD_MOTION.publishedCrop.height)<1e-12);
+ assert.ok(published.x>=0&&published.y>=0&&published.height<=171);
 });
 
 test('drawing resolution is bounded before allocating preview buffers',async()=>{
  for(const density of [0,5,2.5,Infinity])await assert.rejects(createCard(contact,{density}),/Resolução de desenho inválida/);
 });
-

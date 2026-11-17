@@ -75,7 +75,8 @@ concurrency:
 
 jobs:
   publicar:
-    runs-on: ubuntu-latest
+    # Playwright 1.58.2 does not ship Chromium for Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     environment: preview
     steps:
@@ -329,4 +330,3 @@ jobs:
             laboratorio-export-4k.png
             composition-studio-*.png
           if-no-files-found: warn
-

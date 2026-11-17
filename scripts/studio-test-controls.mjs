@@ -12,5 +12,6 @@ export async function revealInspectorOptions(page, { fine = false } = {}) {
 export async function selectInspectorModule(page, module, { fine = false } = {}) {
   const button = page.locator('button[data-mobile-module="' + module + '"]');
   if (fine || !await button.isVisible()) await revealInspectorOptions(page, { fine });
+  if (!await button.isVisible()) await revealInspectorOptions(page);
   await button.click();
 }

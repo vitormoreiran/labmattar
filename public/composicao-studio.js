@@ -12,7 +12,8 @@
   const panels=[...lab.querySelectorAll("[data-lab-panel]")];
   const inspector=lab.querySelector(".lm-lab-inspector");
   const heading=lab.querySelector(".lm-inspector-head>span");
-  let active=false;
+  let active=false,previewExpanded=false,previewZoom=1;
+  let viewportWidth=innerWidth,largestViewportHeight=innerHeight;
 
   // One composition: every module remains present in both manual and focused mode.
   for(const panel of panels)panel.hidden=false;
@@ -48,14 +49,27 @@
     toggle.setAttribute("aria-pressed",String(active));
     toggleText.textContent=active?"VOLTAR AO LABORATÓRIO":"ABRIR EDITOR";
     quickReset.hidden=!active;
+    toggle.setAttribute("aria-label",active?"Voltar ao Laboratório":"Abrir editor de composição");
+    if(!active){previewExpanded=false;previewZoom=1;lab.dataset.previewExpanded="false";}
     applyMobileModule(mobileModule);
     if(updateUrl)setUrl(active);
-    if(active)requestAnimationFrame(()=>{lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"});fitArtboard();});
+    if(active)requestAnimationFrame(()=>{
+      if(innerWidth<=1180)window.scrollTo(0,0);
+      else lab.querySelector(".lm-lab-workspace")?.scrollIntoView({block:"start"});
+      fitArtboard();
+    });
   }
 
 
   function syncViewport(){
-    document.documentElement.style.setProperty("--lm-app-h",window.innerHeight+"px");
+    const height=Math.round(window.visualViewport?.height||innerHeight);
+    if(Math.abs(innerWidth-viewportWidth)>80)largestViewportHeight=height;
+    else largestViewportHeight=Math.max(largestViewportHeight,height);
+    viewportWidth=innerWidth;
+    const typing=document.activeElement?.matches('textarea,input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=file])');
+    lab.dataset.keyboard=String(Boolean(active&&innerWidth<=1180&&typing&&height<largestViewportHeight*.75));
+    document.documentElement.style.setProperty("--lm-app-h",height+"px");
+    if(innerWidth>1180){previewExpanded=false;previewZoom=1;lab.dataset.previewExpanded="false";}
     document.body.classList.toggle("lm-phone-layout",window.innerWidth<=700);
     document.body.classList.toggle("lm-tablet-layout",window.innerWidth>700&&window.innerWidth<=1180);
   }
@@ -66,6 +80,51 @@
   const artboard=by("labArtboard");
   const artboardFrame=by("labArtboardFrame");
   const stage=lab.querySelector(".lm-lab-stage");
+
+  const previewHead=lab.querySelector(".lm-lab-preview-head");
+  const previewControls=document.createElement("div");previewControls.className="lm-studio-preview-controls";
+  const previewToggle=document.createElement("button");previewToggle.type="button";previewToggle.id="labPreviewToggle";
+  previewToggle.setAttribute("aria-controls","labArtboard");previewToggle.setAttribute("aria-expanded","false");
+  const zoomControls=document.createElement("div");zoomControls.className="lm-studio-preview-zoom";
+  const zoomOut=document.createElement("button"),zoomFit=document.createElement("button"),zoomIn=document.createElement("button");
+  for(const button of [zoomOut,zoomFit,zoomIn])button.type="button";
+  zoomOut.id="labPreviewZoomOut";zoomOut.textContent="−";zoomOut.setAttribute("aria-label","Reduzir zoom da prévia");
+  zoomFit.id="labPreviewFit";zoomFit.textContent="Ajustar";zoomFit.setAttribute("aria-label","Ajustar página à tela");
+  zoomIn.id="labPreviewZoomIn";zoomIn.textContent="+";zoomIn.setAttribute("aria-label","Aumentar zoom da prévia");
+  zoomControls.append(zoomOut,zoomFit,zoomIn);previewControls.append(previewToggle,zoomControls);previewHead?.append(previewControls);
+  by("labOpenDelivery")?.setAttribute("aria-label","Revisar e exportar");
+  function refreshPreviewControls(){
+    const compact=active&&innerWidth<=1180;
+    previewControls.hidden=!compact;zoomControls.hidden=!compact||!previewExpanded;
+    previewToggle.textContent=previewExpanded?"Voltar à edição":"Ampliar prévia";
+    previewToggle.setAttribute("aria-expanded",String(compact&&previewExpanded));
+    zoomOut.disabled=previewZoom<=1;zoomIn.disabled=previewZoom>=4;
+    lab.dataset.previewExpanded=String(compact&&previewExpanded);
+  }
+  function changePreviewZoom(value){
+    const x=Math.max(0,Math.min(1,(stage.scrollLeft+stage.clientWidth/2-artboardFrame.offsetLeft)/artboardFrame.clientWidth));
+    const y=Math.max(0,Math.min(1,(stage.scrollTop+stage.clientHeight/2-artboardFrame.offsetTop)/artboardFrame.clientHeight));
+    previewZoom=Math.max(1,Math.min(4,value));fitArtboard();
+    stage.scrollLeft=artboardFrame.offsetLeft+x*artboardFrame.clientWidth-stage.clientWidth/2;
+    stage.scrollTop=artboardFrame.offsetTop+y*artboardFrame.clientHeight-stage.clientHeight/2;
+  }
+  previewToggle.addEventListener("click",()=>{
+    previewExpanded=!previewExpanded;previewZoom=1;refreshPreviewControls();
+    fitArtboard();stage.scrollTop=0;stage.scrollLeft=0;
+  });
+  zoomOut.addEventListener("click",()=>changePreviewZoom(previewZoom/1.25));
+  zoomIn.addEventListener("click",()=>changePreviewZoom(previewZoom*1.25));
+  zoomFit.addEventListener("click",()=>{previewZoom=1;fitArtboard();stage.scrollTop=0;stage.scrollLeft=0;});
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&previewExpanded&&!document.querySelector('dialog[open],[role="dialog"][aria-modal="true"]')){
+      previewExpanded=false;previewZoom=1;fitArtboard();previewToggle.focus({preventScroll:true});
+    }
+  });
+  document.addEventListener("focusin",event=>{
+    if(event.target.matches("input,textarea"))requestAnimationFrame(()=>{syncViewport();fitArtboard();});
+  });
+  document.addEventListener("focusout",()=>setTimeout(()=>{syncViewport();fitArtboard();},150));
+
   const logicalSizes={
     horizontal:[1280,720],
     vertical:[720,1280],
@@ -76,33 +135,31 @@
   function fitArtboard(){
     if(!artboard||!artboardFrame||!stage)return;
     const format=artboard.dataset.format||"horizontal";
-    // The focused phone layout has several legacy !important grid overrides.
-    // Own the preview allocation at the same place where artboard zoom is
-    // calculated: do not let a later selector turn the page into a thumbnail.
+    const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
+    const compact=active&&innerWidth<=1180;
+    refreshPreviewControls();
     const workspace=lab.querySelector(".lm-lab-workspace");
     if(workspace){
-      if(active&&window.innerWidth<=700){
-        // Some historic rules turn this workspace back into flex. Grid
-        // tracks have NO effect unless the actual display is grid.
+      if(compact){
+        const split=innerWidth>700||(innerWidth>=560&&innerWidth>innerHeight);
         workspace.style.setProperty("display","grid","important");
-        workspace.style.setProperty("grid-template-columns","minmax(0,1fr)","important");
-        workspace.style.setProperty("grid-template-areas",'"preview" "controls"',"important");
-        workspace.style.setProperty("grid-template-rows","clamp(300px,54dvh,460px) minmax(0,1fr)","important");
-        // Old editor CSS calls this area "page", while the mobile grid calls
-        // it "preview". Make those names agree rather than creating an auto
-        // third row with a small, content-sized canvas.
+        workspace.style.setProperty("grid-template-columns",split&&!previewExpanded?'minmax(0,1fr) minmax(280px,42%)':'minmax(0,1fr)',"important");
+        workspace.style.setProperty("grid-template-areas",previewExpanded?'"preview"':split?'"preview controls"':'"preview" "controls"',"important");
+        let rows="minmax(0,1fr)";
+        if(!split&&!previewExpanded){
+          const total=workspace.clientHeight,reserved=Math.min(350,Math.max(240,total*.6));
+          const page=(workspace.clientWidth-16)*logicalH/logicalW+60;
+          const height=lab.dataset.keyboard==='true'?44:Math.max(140,Math.min(page,total-reserved));
+          rows=height+'px minmax(0,1fr)';
+        }
+        workspace.style.setProperty("grid-template-rows",rows,"important");
         lab.querySelector(".lm-lab-preview")?.style.setProperty("grid-area","preview","important");
         inspector?.style.setProperty("grid-area","controls","important");
       }else{
-        workspace.style.removeProperty("display");
-        workspace.style.removeProperty("grid-template-columns");
-        workspace.style.removeProperty("grid-template-areas");
-        workspace.style.removeProperty("grid-template-rows");
-        lab.querySelector(".lm-lab-preview")?.style.removeProperty("grid-area");
-        inspector?.style.removeProperty("grid-area");
+        for(const property of ["display","grid-template-columns","grid-template-areas","grid-template-rows"])workspace.style.removeProperty(property);
+        lab.querySelector(".lm-lab-preview")?.style.removeProperty("grid-area");inspector?.style.removeProperty("grid-area");
       }
     }
-    const [logicalW,logicalH]=logicalSizes[format]||logicalSizes.horizontal;
     artboard.style.setProperty("width",logicalW+"px","important");
     artboard.style.setProperty("height",logicalH+"px","important");
     artboard.style.setProperty("max-width","none","important");
@@ -123,7 +180,7 @@
     const fitW=Math.min(maxW,stage.clientWidth*occupancy);
     const fitH=Math.min(maxH,stage.clientHeight*occupancy);
     const fit=Math.min(fitW/logicalW,fitH/logicalH);
-    const scale=active?fit:Math.min(fit,1);
+    const scale=(active?fit:Math.min(fit,1))*(compact&&previewExpanded?previewZoom:1);
 
     // Only Title has its existing format/scale control. Corpo and Detalhe
     // come exclusively from manual-headings.css, at logical export-page size.
@@ -140,6 +197,22 @@
     artboardFrame.style.width=(logicalW*scale)+"px";
     artboardFrame.style.height=(logicalH*scale)+"px";
     artboardFrame.dataset.scale=scale.toFixed(4);
+    if(compact)artboardFrame.style.setProperty("margin-top",Math.max(0,(maxH-logicalH*scale)/2)+"px","important");
+    else artboardFrame.style.removeProperty("margin-top");
+    zoomFit.textContent="Ajustar";
+    zoomFit.title="Ajustar página à tela · "+Math.round(scale*100)+"%";
+    syncCompactActions(compact);
+    positionMoreMenu();
+    if(compact&&lab.dataset.keyboard==='true'){
+      const field=document.activeElement;
+      const panel=field?.closest('.lm-composition-module,#labPages,#labWorkflowMotion');
+      if(panel){
+        const control=field.getBoundingClientRect(),bounds=panel.getBoundingClientRect();
+        const visibleHeight=Math.min(control.height,Math.max(0,bounds.height-32));
+        if(control.top<bounds.top+16)panel.scrollTop-=bounds.top+16-control.top;
+        else if(control.top+visibleHeight>bounds.bottom-16)panel.scrollTop+=control.top+visibleHeight-bounds.bottom+16;
+      }
+    }
   }
 
   const fitObserver=new ResizeObserver(()=>fitArtboard());
@@ -184,8 +257,32 @@
     const showing=inspector.classList.toggle("lm-studio-details");
     extrasButton.setAttribute("aria-expanded",String(showing));
     extrasButton.textContent=showing?"OCULTAR AJUSTES −":"AJUSTES FINOS +";
+    if(active&&innerWidth<=1180)moduleIndex.querySelector(".lm-studio-secondary").open=false;
   });
   inspector?.querySelector(".lm-studio-secondary-tools")?.append(extrasButton);
+  const secondary=moduleIndex?.querySelector(".lm-studio-secondary");
+  const compactActions=[reset,by("labUndoReset")].filter(Boolean).map(button=>{
+    const placeholder=document.createComment("original action position");button.before(placeholder);return {button,placeholder};
+  });
+  function syncCompactActions(compact){
+    const target=secondary?.querySelector(".lm-studio-secondary-tools");
+    for(const {button,placeholder}of compactActions){
+      if(compact&&target&&button.parentElement!==target)target.append(button);
+      else if(!compact&&button.parentNode!==placeholder.parentNode)placeholder.before(button);
+    }
+  }
+  secondary?.addEventListener("click",event=>{if(active&&innerWidth<=1180&&event.target.closest('#labReset,#labUndoReset'))secondary.open=false;});
+  function positionMoreMenu(){
+    if(!secondary?.open||!active||innerWidth>1180)return;
+    const summary=secondary.querySelector("summary"),menu=secondary.querySelector(".lm-studio-secondary-tools");
+    const rect=summary.getBoundingClientRect(),height=menu.getBoundingClientRect().height;
+    const viewport=Number.parseFloat(document.documentElement.style.getPropertyValue("--lm-app-h"))||innerHeight;
+    secondary.style.setProperty("--lm-more-top",Math.max(52,Math.min(rect.bottom+4,viewport-height-8))+"px");
+    secondary.style.setProperty("--lm-more-right",Math.max(8,innerWidth-rect.right)+"px");
+  }
+  secondary?.addEventListener("toggle",()=>{if(secondary.open)requestAnimationFrame(positionMoreMenu);});
+  secondary?.addEventListener("keydown",event=>{if(event.key==="Escape"){secondary.open=false;secondary.querySelector("summary").focus();event.preventDefault();}});
+  document.addEventListener("pointerdown",event=>{if(active&&innerWidth<=1180&&secondary?.open&&!secondary.contains(event.target))secondary.open=false;});
   const mobileQuery=matchMedia("(max-width:1180px)");
   let mobileModule="fundo";
   try{
@@ -228,8 +325,10 @@
     }
 
     try{sessionStorage.setItem("labmattar-composicao-mobile-module",name)}catch{}
-    if(scroll&&mobileQuery.matches)
-      inspector.querySelector(".lm-composition-module-index")?.scrollIntoView({block:"nearest"});
+    if(active&&innerWidth<=1180){
+      if(secondary)secondary.open=false;
+      if(scroll)[...panels].find(panel=>!panel.hidden)?.scrollTo(0,0);
+    }else if(scroll&&mobileQuery.matches)inspector.querySelector(".lm-composition-module-index")?.scrollIntoView({block:"nearest"});
   }
 
   for(const button of moduleButtons)

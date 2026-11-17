@@ -1,6 +1,7 @@
 import {chromium,webkit} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
+import {revealInspectorOptions} from './studio-test-controls.mjs';
 import {createPage,createMotion,createSection,sectionState,readSequence,sequenceDocument} from '../public/lab-sequence.mjs';
 const origin=process.env.COMPOSITION_URL||'http://127.0.0.1:8765/compor.html';
 const browserName=process.env.COMPOSITION_BROWSER==='webkit'?'webkit':'chromium';
@@ -57,12 +58,14 @@ try{
   await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
   // A recuperação também não pode apagar sua cópia se a nova gravação falhar.
   await page.setViewportSize({width:390,height:844});
+  await workspace('edit');await revealInspectorOptions(page);
   await page.evaluate(()=>{const real=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='labmattar-pages-v1')throw new DOMException('Quota cheia','QuotaExceededError');return real.call(this,key,value);};});
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('recuperação foi preservada'));
   assert.deepEqual(await project(),original);
   assert(await page.evaluate(()=>Boolean(localStorage.getItem('labmattar-pages-v1-before-reset'))));
   await page.reload({waitUntil:'networkidle'});await waitReady(page);await page.waitForSelector('#labPages[data-motion-catalog="ready"]',{state:'attached'});
+  await workspace('edit');await revealInspectorOptions(page);
   await page.locator('#labUndoReset').waitFor({state:'visible'});page.once('dialog',dialog=>dialog.accept());await page.locator('#labUndoReset').click();
   await page.waitForFunction(()=>document.querySelector('#labPagesStatus').textContent.includes('anterior recuperada'));
   assert.deepEqual(await project(),original);assert.equal(await page.locator('#labPageCount').textContent(),'2 / 2');
@@ -104,3 +107,4 @@ try{
   await page.screenshot({path:dir+'/failure.png'}).catch(()=>{});
   console.error(JSON.stringify({status,proof,errors},null,2));throw error;
 }finally{await context.close();await browser.close();}
+

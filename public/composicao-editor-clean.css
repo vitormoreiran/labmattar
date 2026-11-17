@@ -2940,3 +2940,54 @@ body.lm-studio-open #laboratorio .lm-studio-secondary-tools .lm-studio-details-t
     display:block!important;
   }
 }
+
+
+/* Studio refinement: restrained controls and a fully visible tool index. */
+body.lm-studio-open #laboratorio .lm-composition-module-index{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:100%!important;max-width:100%!important;margin:0!important;
+  gap:7px!important;padding:10px 0 12px!important;
+  height:auto!important;overflow:visible!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index>button{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  box-sizing:border-box!important;min-width:0!important;width:100%!important;
+  min-height:43px!important;height:43px!important;padding:6px!important;
+  border-radius:7px!important;white-space:nowrap!important;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary{grid-column:1/-1!important}
+body.lm-studio-open #laboratorio .lm-inspector-panel-heading{
+  margin-bottom:15px!important;border-bottom:1px solid #deddd6!important;
+  padding-bottom:11px!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{
+  border-radius:9px!important;gap:4px!important;padding:4px!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice{
+  box-shadow:none!important;border-radius:7px!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice[aria-pressed=true]{
+  box-shadow:none!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-photos{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-photos .lm-ctrl-choice{
+  min-width:0!important;width:100%!important;padding:4px!important;overflow:hidden!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-photos .lm-ctrl-visual,
+body.lm-studio-open #laboratorio .lm-ctrl-mini-photo{
+  width:100%!important;height:66px!important;overflow:hidden!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-photos img{
+  width:100%!important;height:100%!important;object-fit:cover!important;
+}
+body.lm-studio-open #laboratorio #labPhotoContrastField{
+  padding-top:15px!important;border-top:1px solid #deddd6!important;
+}
+body.lm-studio-open #laboratorio #labPhotoContrastField>.lm-ctrl-choice-grid{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
+  padding-top:15px!important;
+}

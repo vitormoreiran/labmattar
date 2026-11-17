@@ -1470,7 +1470,10 @@
         window.dispatchEvent(new CustomEvent("labmattar:background-source-change",{detail:{kind:state.background==="color"?"color":"image"}}));
       if(id==="labTextWidth"||id==="labBackground"||id==="labMContent")
         rememberedReadingWidths.set(state.format,state.textWidth);
-      activePreset="";render();save();
+      activePreset="";render();
+      // A posição do M responde no próprio evento do slider, sem aguardar resize/RAF.
+      if(id==="labMPositionY"||id==="labMScale")alignMToCopy();
+      save();
     });
   }
   // A interface simples opera o mesmo estado que os controles legados.

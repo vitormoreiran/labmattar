@@ -14,18 +14,31 @@ async function choose(group,value){
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
     await selectInspectorModule(page,module,{fine:true});
-  if(group==="mContent"&&value!=="off"){
-    const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
-    if(mode==="off"){
-      await page.locator('[data-lab-choice="mPresentation"][data-value="elemento"]').click();
+  if(group==="mContent"||group==="mPresentation"){
+    if(group==="mPresentation"){
+      if(await page.locator('#labMContent').inputValue()==='off'){
+        await page.locator('#labMContent').evaluate(el=>{
+          el.value=document.getElementById('labBackground').value==='photo'?'photo':'solid';
+          el.dispatchEvent(new Event('change',{bubbles:true}));
+        });
+      }
+      await page.locator('#labMScale').fill(value==='completo'?'200':'60');
+    }else{
+      await page.locator('#labMContent').evaluate((el,v)=>{
+        el.value=v;
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      },value);
     }
-    // On photographic backgrounds the material is necessarily photography
-    // and is not offered as a redundant second decision.
-    if(value==="photo"&&await page.locator("#labBackground").inputValue()==="photo"){
-      assert(await page.locator("#labArtboard").getAttribute("data-m-content")==="photo",
-        "Photo background must activate a photo M");
-      return;
-    }
+    await page.waitForTimeout(80);return;
+  }
+  if(group==="marker"||group==="markerFocus"){
+    const id=group==="marker"?"labMarker":"labMarkerFocus";
+    await page.locator("#"+id).evaluate((input,value)=>{
+      input.value=value;
+      input.dispatchEvent(new Event("change",{bubbles:true}));
+    },value);
+    await page.waitForTimeout(80);
+    return;
   }
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
@@ -106,6 +119,7 @@ try{
     "Explicit text color must remain available over photographs and videos");
   await choose("inkColor","auto");
   await choose("mContent","photo");
+  await page.locator("#labMScale").fill("60");
   await choose("marker","both");
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),
     "M sólido não pode aparecer nas composições de fotografia");
@@ -159,8 +173,8 @@ try{
   assert(await page.locator("#labMContentField").isHidden(),
     "Sem M deve ocultar opções de material que ainda não se aplicam");
   await choose("mPresentation","elemento");
-  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
-    "M sólido deve retornar nas composições de cor");
+  assert(await page.locator("#labMContent option[value=solid]").isEnabled(),
+    "M sólido deve permanecer disponível nas composições de cor");
   await choose("mContent","solid");
   const color=await page.locator("#labArtboard").evaluate(board=>({
     effective:board.dataset.background,content:board.dataset.mContent,

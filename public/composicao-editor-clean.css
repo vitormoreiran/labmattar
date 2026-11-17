@@ -2991,3 +2991,37 @@ body.lm-studio-open #laboratorio #labPhotoContrastField>.lm-ctrl-choice-grid{
 body.lm-studio-open #laboratorio .lm-composition-module:not([hidden]){
   padding-top:15px!important;
 }
+
+/* Ferramenta M: só ativação, escala e posição. */
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPresentationField{
+  padding:0!important;border:0!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] .lm-m-enabled-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  min-height:44px;padding:4px 0;cursor:pointer;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMEnabled{
+  appearance:auto!important;accent-color:#272923;width:18px;height:18px;
+  order:2;cursor:pointer;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] .lm-lab-m-application-grid,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPresentationHint,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labOpenPhotoFromM,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMContentField,
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMExpandedPositionField{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] .lm-m-scale-field:not([hidden]),
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPositionField:not([hidden]){
+  display:grid!important;gap:9px!important;
+  border-top:1px solid #deddd6!important;padding-top:16px!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMScaleState{
+  color:#777872;display:block;text-align:right;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPositionField .lm-lab-caption-field{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPositionField .lm-lab-range-scale{
+  display:none!important;
+}

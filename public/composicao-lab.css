@@ -494,6 +494,21 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 
 #laboratorio .lm-lab-position-reset{align-self:flex-start;min-height:32px;padding:5px 10px;border:1px solid var(--line,#cbc9c4);background:transparent;color:inherit;border-radius:0;cursor:pointer}
 
+/* Um único vetor e um único eixo para qualquer escala do M.
+   200% é a geometria expandida original: altura igual à superfície. */
+.lm-lab-board .lm-lab-m-photo{
+  width:calc(max(105cqw, 100cqh * 990.08 / 743.18) * var(--lab-m-scale-factor, .3))!important;
+  height:auto!important;
+  max-width:none!important;
+  max-height:none!important;
+  left:50%!important;
+  top:var(--lab-m-y)!important;
+  transform:translate(-50%,-50%)!important;
+}
+.lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo{
+  width:calc(max(105cqw, 100cqh * 990.08 / 743.18) * var(--lab-m-scale-factor, 1))!important;
+}
+
 /* Image effect only: native marks, text and masks never enter these filters. */
 .lm-lab-board{
   --lab-photo-blur-base:clamp(18px,4.8cqw,42px);

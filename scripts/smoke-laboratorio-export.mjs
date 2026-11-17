@@ -15,18 +15,31 @@ async function choose(group,value){
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
     await selectInspectorModule(page,module,{fine:true});
-  if(group==="mContent"&&value!=="off"){
-    const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
-    if(mode==="off"){
-      await page.locator('[data-lab-choice="mPresentation"][data-value="elemento"]').click();
+  if(group==="mContent"||group==="mPresentation"){
+    if(group==="mPresentation"){
+      if(await page.locator('#labMContent').inputValue()==='off'){
+        await page.locator('#labMContent').evaluate(el=>{
+          el.value=document.getElementById('labBackground').value==='photo'?'photo':'solid';
+          el.dispatchEvent(new Event('change',{bubbles:true}));
+        });
+      }
+      await page.locator('#labMScale').fill(value==='completo'?'200':'60');
+    }else{
+      await page.locator('#labMContent').evaluate((el,v)=>{
+        el.value=v;
+        el.dispatchEvent(new Event('change',{bubbles:true}));
+      },value);
     }
-    // On photographic backgrounds the material is necessarily photography
-    // and is not offered as a redundant second decision.
-    if(value==="photo"&&await page.locator("#labBackground").inputValue()==="photo"){
-      assert(await page.locator("#labArtboard").getAttribute("data-m-content")==="photo",
-        "Photo background must activate a photo M");
-      return;
-    }
+    await page.waitForTimeout(80);return;
+  }
+  if(group==="marker"||group==="markerFocus"){
+    const id=group==="marker"?"labMarker":"labMarkerFocus";
+    await page.locator("#"+id).evaluate((input,value)=>{
+      input.value=value;
+      input.dispatchEvent(new Event("change",{bubbles:true}));
+    },value);
+    await page.waitForTimeout(80);
+    return;
   }
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);

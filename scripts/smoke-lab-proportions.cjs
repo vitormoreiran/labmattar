@@ -17,7 +17,7 @@ const output=path.resolve(process.env.PROPORTION_OUTPUT||'proportion-proof');
   for(const vw of [1440,1024,390]){
    await page.setViewportSize({width:vw,height:1000});
    for(const format of ['horizontal','vertical','quadrado','editorial'])for(const mode of ['elemento','completo'])for(const content of ['solid','photo']){
-    await page.evaluate(({original,format,mode,content})=>LabProductionBridge.restore({...original,format,mPresentation:mode,mContent:content,marker:'both',title:'',body:'',mCaption:'',signature:{preset:'none',scale:100,slots:Object.fromEntries(['tl','tr','bl','br'].map(c=>[c,{kind:'none',symbol:'M.svg',text:''}]))}}),{original,format,mode,content});
+    await page.evaluate(({original,format,mode,content})=>LabProductionBridge.restore({...original,format,mPresentation:mode,mScale:mode==='completo'?200:60,mContent:content,marker:'both',title:'',body:'',mCaption:'',signature:{preset:'none',scale:100,slots:Object.fromEntries(['tl','tr','bl','br'].map(c=>[c,{kind:'none',symbol:'M.svg',text:''}]))}}),{original,format,mode,content});
     await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
     const row=await page.evaluate(async()=>{
      const board=document.querySelector('#labArtboard'),m=document.querySelector('#labMask'),box=m.getBoundingClientRect(),style=getComputedStyle(m);
@@ -43,7 +43,7 @@ const output=path.resolve(process.env.PROPORTION_OUTPUT||'proportion-proof');
    }
   }
   await page.setViewportSize({width:1440,height:1000});
-  await page.evaluate(original=>LabProductionBridge.restore({...original,title:'',body:'',mCaption:'',mContent:'solid',marker:'both',mPresentation:'elemento'}),original);
+  await page.evaluate(original=>LabProductionBridge.restore({...original,title:'',body:'',mCaption:'',mContent:'solid',marker:'both',mScale:60,mPresentation:'elemento'}),original);
   await page.locator('#labArtboard').screenshot({path:path.join(output,'fragmentos-proporcionais.png')});
   const rejected=await page.evaluate(async original=>{
    LabProductionBridge.restore({...original,title:'',body:'',mCaption:'',background:'photo',mContent:'off',marker:'none'});

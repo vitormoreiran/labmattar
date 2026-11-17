@@ -17,7 +17,7 @@ try{
  await selectInspectorModule(page,'superficie',{fine:true});
  await page.locator('[data-lab-choice=format][data-value=editorial]').click();
  await selectInspectorModule(page,'m');
- await page.locator('[data-lab-choice=mContent][data-value=off]').click();
+ await page.locator('#labMEnabled').uncheck();
  await selectInspectorModule(page,'fundo',{fine:true});
  await page.locator('[data-lab-choice=background][data-value=photo]').click();
  assert(await page.locator('#labPhotoEffects').isVisible());

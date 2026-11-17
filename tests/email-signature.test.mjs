@@ -64,6 +64,7 @@ test('all four compositions use the restored email strip and preserve the static
  assert.deepEqual(cardSize({format:'email',composition:'m-horizontal'}),{width:480,height:100});
  for(const model of EMAIL_COMPOSITIONS)assert.deepEqual(cardSize({format:'email',composition:model.id}),{width:480,height:100});
  assert.equal(emailComposition('mattar-faixa').motion,false);
+ assert.equal(emailDefaultColors('m-horizontal').paper,'#FFFFFF');
  assert.equal(emailDefaultColors('m-linha').paper,'#FFFFFF');
  assert.throws(()=>emailComposition('historico'),/quatro composições/);
  assert.throws(()=>cardSize({format:'inexistente'}),/Formato desconhecido/);
@@ -90,4 +91,3 @@ test('motion uses a uniform scale inside both native M proportions and narrow fr
 test('drawing resolution is bounded before allocating preview buffers',async()=>{
  for(const density of [0,5,2.5,Infinity])await assert.rejects(createCard(contact,{density}),/Resolução de desenho inválida/);
 });
-

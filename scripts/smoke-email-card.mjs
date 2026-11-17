@@ -28,6 +28,20 @@ try {
   assert.deepEqual(await page.locator('button[data-composition]').allTextContents(), ['1', '2', '3', '4']);
   assert.equal(await page.locator('#compositionOptions img').count(), 0);
   assert.equal(await page.locator('[data-color-key]').count(), 24);
+  // The approved default animates only the mark; contacts stay completely still.
+  assert.equal(await page.locator('#previewStage').getAttribute('data-composition'), 'm-horizontal');
+  await page.waitForFunction(() => document.querySelector('#togglePreview').getAttribute('aria-pressed') === 'false');
+  const snapshot = () => page.locator('#cardMount canvas').evaluate(c => {
+    const left = document.createElement('canvas'); left.width = Math.floor(c.width * 330 / 480); left.height = c.height;
+    left.getContext('2d').drawImage(c, 0, 0);
+    return { full: c.toDataURL(), contacts: left.toDataURL() };
+  });
+  const moving = await snapshot();
+  await page.waitForFunction(before => document.querySelector('#cardMount canvas').toDataURL() !== before, moving.full);
+  const moved = await snapshot(); assert.equal(moved.contacts, moving.contacts, 'Motion must not move or erase contact text');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.waitForFunction(() => document.querySelector('#togglePreview').getAttribute('aria-pressed') === 'true');
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.locator('#downloadPNG').click();
   assert.equal(await page.locator('#name').getAttribute('aria-invalid'), 'true');
   for (const [key, value] of Object.entries(data)) await page.locator('#' + key).fill(value);
@@ -60,7 +74,7 @@ try {
     assert.equal(alta.readUInt32BE(16), model.width * 2); assert.equal(alta.readUInt32BE(20), model.height * 2);
     // Compare the live export against the visually checked strip reference.
     const fidelity = await page.evaluate(async ({ id, data }) => {
-      const { emailComposition } = await import('/email-compositions.mjs?v=faixa-20261111-3');
+      const { emailComposition } = await import('/email-compositions.mjs?v=simples-20261117');
       const reference = new Image(); reference.src = emailComposition(id).thumbnail.replace('.png', '@2x.png'); await reference.decode();
       const live = document.querySelector('#cardMount canvas');
       const test = document.createElement('canvas'); test.width = reference.naturalWidth; test.height = reference.naturalHeight;
@@ -73,7 +87,7 @@ try {
       // DOM and Canvas rasterize glyph edges differently, especially across
       // Windows and Linux. Compare visible bounds and ink coverage per field,
       // rather than requiring identical antialiasing pixels.
-      const { createCard } = await import('/email-card.mjs?v=faixa-20261111-3');
+      const { createCard } = await import('/email-card.mjs?v=simples-20261117');
       const card = await createCard(data, { format: 'email', composition: id, density: 2 });
       const measure = live.getContext('2d');
       const boxes = card.layout.fields.filter(f => f.label).map(f => {
@@ -87,7 +101,7 @@ try {
         const p = boxes[a], q = boxes[b];
         if (p.x < q.x + q.width && p.x + p.width > q.x && p.y < q.y + q.height && p.y + p.height > q.y) geometryIssues.push('sobreposição:' + p.id + '/' + q.id);
       }
-      const nativeRatio = card.layout.mark.family === 'mattar' ? 954.32 / 179.77 : 822 / 627;
+      const nativeRatio = card.layout.mark.family === 'mattar' ? 954.32 / 179.77 : card.layout.mark.source === 'published' ? 990.08 / 743.18 : 822 / 627;
       if (Math.abs(card.layout.mark.width / card.layout.mark.height - nativeRatio) > .00001) geometryIssues.push('vetor distorcido');
       const rgb = hex => hex.slice(1).match(/../g).map(value => parseInt(value, 16));
       const regions = card.layout.fields.filter(f => f.label).map(f => ({
@@ -96,7 +110,7 @@ try {
         // At 12 px the Linux proof varies by about 20% in edge coverage and
         // up to 3% in glyph advances. Check text anchors separately from width;
         // keep all four edges of the native vector under the stricter check.
-        inkTolerance: f.color === 'paper' ? .35 : f.size === 12 ? .25 : .2
+        inkTolerance: f.color === 'paper' ? .35 : f.size <= 12 ? .25 : .2
       }));
       regions.push({ id: 'mark', ...card.layout.mark, foreground: card.layout.mark.family === 'mattar' ? card.colors.paper : card.colors.accent,
         background: card.layout.mark.family === 'mattar' ? card.colors.accent : card.colors.paper });
@@ -151,7 +165,7 @@ try {
   const digital = await fs.readFile(await download('#downloadPNG', 'card.png'));
   assert.equal(digital.readUInt32BE(16), 960); assert.equal(digital.readUInt32BE(20), 560);
   await page.locator('button[data-format=email]').click();
-  await select('m-compacto');
+  await select('m-horizontal');
   for (const [key, value] of Object.entries({ paper: '#5B463E', ink: '#FFFFFF', accent: '#8FD81B' })) await page.locator('[data-color-key=' + key + '][data-color-value="' + value + '"]').click();
   await page.waitForFunction(() => document.querySelector('#cardMount canvas').getContext('2d').getImageData(0, 0, 1, 1).data[0] === 91);
   const gifFile = await download('#downloadMotion', 'personalized.gif', 180000);
@@ -171,7 +185,7 @@ try {
   const contactFile = await download('#downloadContact', 'contact.vcf');
   assert.match(await fs.readFile(contactFile, 'utf8'), /FN:Joana Oliveira/);
   await page.locator('#resetColors').click();
-  assert.equal(await page.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#F7F6F2');
+  assert.equal(await page.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#FFFFFF');
   assert.equal(await page.locator('#name').inputValue(), data.name);
   for (const width of [1440, 390, 320]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -209,4 +223,3 @@ try {
   const result = { status: 'passed', compositions: report, legacyCard: true, gifBytes: gif.length, mediaProbe, viewports: [1440, 390, 320], errors };
   await fs.writeFile(path.join(output, 'report.json'), JSON.stringify(result, null, 2)); console.log(JSON.stringify(result));
 } finally { await browser.close(); }
-

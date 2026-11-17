@@ -3,7 +3,7 @@ import { normalizeSignature } from './email-signature.mjs';
 // All four email compositions use the former 480 × 100 px strip. Elements are
 // recomposed at this size; native marks and contact text never stretch to fit.
 export const EMAIL_COMPOSITIONS = Object.freeze([
-  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 100, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/01-m-horizontal.png' },
+  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 100, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
   { id: 'm-compacto', label: 'M compacto', width: 480, height: 100, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
   { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 100, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
   { id: 'm-linha', label: 'M com linha', width: 480, height: 100, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
@@ -37,7 +37,7 @@ function splitName(value, context, width) {
 export function signatureLayout(data, { composition = 'm-horizontal', context }) {
   const meta = emailComposition(composition), value = normalizeSignature(data);
   const fields = [], errors = {};
-  const add = (key, label, x, y, size, maxWidth, color = 'ink', align = 'left') => {
+  const add = (key, label, x, y, size, maxWidth, color = 'ink', align = 'left', baseline) => {
     setFont(context, size);
     if (context.measureText(label).width > maxWidth) {
       errors[key] ||= key === 'name'
@@ -46,10 +46,23 @@ export function signatureLayout(data, { composition = 'm-horizontal', context })
           : key === 'phone' ? 'Confira o telefone completo ou escolha uma composição com mais espaço.'
             : 'Abrevie a função para caber em uma linha.';
     }
-    fields.push({ key, label, x, y, size, maxWidth, color, align });
+    fields.push({ key, label, x, y, size, maxWidth, color, align, baseline });
   };
   let mark, divider = null, footer = null, name;
-  if (composition === 'm-compacto') {
+  if (composition === 'm-horizontal') {
+    // Approved 960 × 200 artwork: 921 × 171 content, at half size for e-mail.
+    // Explicit baselines keep preview, PNG and GIF on the same text grid.
+    const height = 85.5, width = height * 990.08 / 743.18;
+    mark = { family: 'm', source: 'published', x: 470.5 - width, y: 7.5, width, height };
+    const textWidth = mark.x - 30;
+    const at = (key, label, baseline, size) => add(key, label, 10, baseline - size * 5 / 6, size, textWidth, 'ink', 'left', baseline);
+    name = [value.name];
+    at('name', value.name, 23, 17.5);
+    at('role', value.role, 38, 11);
+    at('email', value.email, 58, 11);
+    at('phone', value.phone, 73, 11);
+    at('website', 'labmattar.com', 88, 11);
+  } else if (composition === 'm-compacto') {
     name = splitName(value.name, context, 320);
     add('name', name[0], 20, 8, 18, 320);
     add('name', name[1], 20, 29, 18, 320);
@@ -69,19 +82,16 @@ export function signatureLayout(data, { composition = 'm-horizontal', context })
     const markHeight = 110 * 179.77 / 954.32;
     mark = { family: 'mattar', x: 20, y: 70 + (30 - markHeight) / 2, width: 110, height: markHeight };
   } else {
-    const lined = composition === 'm-linha';
     name = [value.name];
-    add('name', value.name, 20, lined ? 12 : 14, 18, lined ? 366 : 320);
-    add('role', value.role, 20, lined ? 35 : 38, 12, lined ? 366 : 320);
-    add('email', value.email, 20, lined ? 65 : 62, 12, lined ? 440 : 320);
+    add('name', value.name, 20, 12, 18, 366);
+    add('role', value.role, 20, 35, 12, 366);
+    add('email', value.email, 20, 65, 12, 440);
     add('phone', value.phone, 20, 82, 12, 240);
-    add('website', 'labmattar.com', 460, 82, 12, 100, lined ? 'accent' : 'ink', 'right');
-    mark = lined
-      ? { family: 'm', x: 410, y: 7, width: 50, height: 50 * 627 / 822 }
-      : { family: 'm', x: 370, y: 10, width: 90, height: 90 * 627 / 822 };
-    if (lined) divider = { x: 20, y: 56, width: 440 };
+    add('website', 'labmattar.com', 460, 82, 12, 100, 'accent', 'right');
+    mark = { family: 'm', x: 410, y: 7, width: 50, height: 50 * 627 / 822 };
+    divider = { x: 20, y: 56, width: 440 };
   }
-  return { value, compact: true, composition, meta, fields, errors, name, role: [value.role], titleSize: 18, titleLine: 21,
+  return { value, compact: true, composition, meta, fields, errors, name, role: [value.role], titleSize: composition === 'm-horizontal' ? 17.5 : 18, titleLine: 21,
     mark, divider, footer, motion: meta.motion ? mark : null, size: { width: meta.width, height: meta.height } };
 }
 
@@ -108,7 +118,7 @@ function textBaseline(size) {
 function paintText(context, field, colors) {
   if (!field.label) return;
   setFont(context, field.size);
-  const baseline = field.y + textBaseline(field.size);
+  const baseline = field.baseline ?? field.y + textBaseline(field.size);
   context.save();
   context.beginPath();
   context.rect(field.align === 'right' ? field.x - field.maxWidth : field.x, field.y, field.maxWidth, field.size * 1.12);
@@ -127,6 +137,5 @@ export function paintSignature(context, layout, colors, resources, { includeM = 
   }
   for (const field of layout.fields) paintText(context, field, colors);
   if (layout.mark.family === 'mattar') paintNativeMark(context, resources.logo, layout.mark, colors.paper);
-  else if (includeM) paintNativeMark(context, resources.m, layout.mark, colors.accent);
+  else if (includeM) paintNativeMark(context, layout.mark.source === 'published' ? resources.mPublished : resources.m, layout.mark, colors.accent);
 }
-

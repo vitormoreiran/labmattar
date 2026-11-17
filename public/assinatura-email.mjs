@@ -1,6 +1,6 @@
 import { normalizeSignature, validateSignature, signatureText } from './email-signature.mjs';
-import { EMAIL_COMPOSITIONS, emailComposition, emailDefaultColors } from './email-compositions.mjs?v=faixa-20261111-3';
-import { CARD_COLORS, CARD_THEMES, cardSize, cardContrast, createCard, loadCardVideo, seekCardVideo, canvasBlob, exportCardGIF, cardDocument, cardContact } from './email-card.mjs?v=previa-20261112-2';
+import { EMAIL_COMPOSITIONS, emailComposition, emailDefaultColors } from './email-compositions.mjs?v=simples-20261117';
+import { CARD_COLORS, CARD_THEMES, cardSize, cardContrast, createCard, loadCardVideo, seekCardVideo, canvasBlob, exportCardGIF, cardDocument, cardContact } from './email-card.mjs?v=simples-20261117';
 
 const form = document.getElementById('signatureForm');
 const fields = ['name', 'role', 'email', 'phone'];
@@ -14,7 +14,8 @@ const params = new URLSearchParams(location.search);
 let composition = EMAIL_COMPOSITIONS.some(item => item.id === params.get('modelo')) ? params.get('modelo') : 'm-horizontal';
 let format = params.get('formato') === 'card' ? 'card' : 'email';
 let card, video, videoPromise, generation = 0, validated = false, controller, working = false, frameHandle = 0;
-let customColors = false, paused = true;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let customColors = false, paused = !(format === 'email' && composition === 'm-horizontal' && !reducedMotion.matches);
 const defaults = () => format === 'email' ? emailDefaultColors(composition) : { paper: CARD_THEMES.paper.paper, ink: CARD_THEMES.paper.ink, accent: CARD_THEMES.paper.accent };
 let colors = defaults();
 const read = () => normalizeSignature(Object.fromEntries(fields.map(key => [key, form.elements.namedItem(key).value])));
@@ -111,6 +112,19 @@ async function ensureVideo() {
   videoPromise ||= loadCardVideo().then(source => { video = source; video.loop = true; return source; }).catch(error => { videoPromise = null; throw error; });
   return videoPromise;
 }
+async function playMotion(fromStart = false) {
+  try {
+    const source = await ensureVideo();
+    if (paused || !card?.canAnimate) return;
+    if (fromStart) await seekCardVideo(source, 0);
+    if (paused || !card?.canAnimate) return;
+    await source.play();
+    if (paused || !card?.canAnimate) { source.pause(); return; }
+    if (!frameHandle) animate();
+  } catch (error) {
+    if (!paused) { pauseMotion(); say(error.message, true); }
+  }
+}
 async function update() {
   const ticket = ++generation, value = read(), isExample = !fields.some(key => value[key]), size = cardSize(options());
   document.getElementById('exampleLabel').hidden = !isExample;
@@ -129,6 +143,7 @@ async function update() {
     mount.replaceChildren(card.canvas); mount.setAttribute('aria-label', signatureText(isExample ? example : value).replace(/\n+/g, '. '));
     stage.dataset.composition = format === 'email' ? composition : 'card';
     stage.dataset.ready = 'true'; syncZoom(); controls();
+    if (!paused && card.canAnimate) void playMotion();
     const errors = validated ? { ...validateSignature(value), ...card.layout.errors } : card.layout.errors;
     showErrors(errors);
     if (!working) say(Object.keys(errors).length && !validated ? 'O texto precisa caber na composição antes de exportar.' : '');
@@ -185,12 +200,9 @@ document.getElementById('resetColors').addEventListener('click', () => { customC
 toggle.addEventListener('click', async () => {
   if (working || !card?.canAnimate) return;
   if (!paused) { pauseMotion(); return; }
-  try {
-    const source = await ensureVideo(); await seekCardVideo(source, 0);
-    paused = false; await source.play(); animate();
-  } catch (error) { paused = true; say(error.message, true); }
-  controls();
+  paused = false; controls(); await playMotion(true);
 });
+reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) pauseMotion(); });
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if (!card?.canAnimate) { await downloadPNG(); return; }
@@ -231,4 +243,3 @@ document.getElementById('copyText').addEventListener('click', async () => {
 });
 controls();
 update();
-

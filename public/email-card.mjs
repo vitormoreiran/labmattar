@@ -1,6 +1,6 @@
 import { normalizeSignature, validateSignature, signatureText } from './email-signature.mjs';
 import { motionInkPixels } from './lab-motion-ink.mjs';
-import { emailComposition, signatureLayout, paintSignature, paintNativeMark } from './email-compositions.mjs?v=faixa-20261111-3';
+import { emailComposition, signatureLayout, paintSignature, paintNativeMark } from './email-compositions.mjs?v=simples-20261117';
 
 // A single composition drives the preview, PNG and GIF. Native brand geometry
 // and the approved film are fitted uniformly; no editable scale per axis.
@@ -60,8 +60,9 @@ export function cardResources() {
     if (!document.fonts.check('300 30px UniversMattar')) throw Error('Não foi possível carregar a fonte da marca.');
     const logo = new Image(); logo.src = '/presentation-assets/mattar-published.svg';
     const m = new Image(); m.src = '/identidade/M.svg';
-    await Promise.all([logo.decode(), m.decode()]);
-    return { logo, m };
+    const mPublished = new Image(); mPublished.src = '/ambiente-editorial/media/m-publicado.svg';
+    await Promise.all([logo.decode(), m.decode(), mPublished.decode()]);
+    return { logo, m, mPublished };
   })().catch(error => { resources = null; throw error; });
 }
 
@@ -123,7 +124,7 @@ export async function createCard(data, { format = 'card', composition = 'm-horiz
     text('labmattar.com', 456, 244, 14, 'right');
   }
   const base = canvas(target.width, target.height); base.getContext('2d').drawImage(target, 0, 0);
-  if (compact && layout.motion) paintNativeMark(context, resources.m, layout.mark, colors.accent);
+  if (compact && layout.motion) paintNativeMark(context, layout.mark.source === 'published' ? resources.mPublished : resources.m, layout.mark, colors.accent);
   const poster = canvas(target.width, target.height); poster.getContext('2d').drawImage(target, 0, 0);
   const area = layout.motion;
   const ink = area ? canvas(Math.ceil(area.width * density), Math.ceil(area.height * density)) : null;
@@ -246,4 +247,3 @@ export function cardContact(data) {
   const v = text => text.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
   return ['BEGIN:VCARD', 'VERSION:3.0', 'FN:' + v(value.name), 'N:;' + v(value.name) + ';;;', 'ORG:LABMATTAR', ...(value.role ? ['TITLE:' + v(value.role)] : []), 'EMAIL;TYPE=WORK:' + v(value.email), ...(value.phone ? ['TEL;TYPE=WORK:' + v(value.phone)] : []), 'URL:https://labmattar.com/', 'END:VCARD', ''].join('\r\n');
 }
-

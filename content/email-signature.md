@@ -4,6 +4,8 @@ Endereço principal: https://identidade.labmattar.com/assinatura-email . Acesso 
 
 As quatro composições foram reorganizadas na faixa de 480 × 100 px, retomando o tamanho anterior solicitado pelo autor. O gerador mantém os vetores nativos e as cores; os dados de exemplo mostram Joana Oliveira e não são preenchidos automaticamente no formulário.
 
+A composição 1 foi substituída pelo enquadramento aprovado em 17/11/2026: nome, função, e-mail, telefone e site em um bloco à esquerda; M à direita ocupando a altura desse bloco. O PNG em alta usa 960 × 200 px e uma área de conteúdo de 921 × 171 px, com margens brancas. A exportação de uso é a mesma arte em 480 × 100 px.
+
 | Modelo | Identificador | Tamanho de uso | PNG em alta | Movimento |
 | --- | --- | --- | --- | --- |
 | 01 / M horizontal | m-horizontal | 480 × 100 px | 960 × 200 px | M + Forma |
@@ -17,13 +19,13 @@ O Cartão digital anterior permanece disponível em 480 × 280 px, com exportaç
 
 A página inicia em Para e-mail e mostra os quatro modelos. A escolha pode ser compartilhada pelo parâmetro modelo no endereço, por exemplo ?modelo=m-compacto. O usuário escolhe o modelo, preenche nome, função, e-mail e telefone e exporta. Nome e e-mail são obrigatórios; função e telefone são opcionais. Os dados ficam apenas na página, sem gravação local ou envio a um servidor.
 
-O nome usa Univers LT Std 45 Light em 18 px; função e contatos usam 12 px. M compacto divide o nome em até duas linhas, preservando palavras inteiras. Os demais usam uma linha. Nomes, funções ou contatos que excedam a área produzem erro no campo e bloqueiam o PNG, GIF e HTML. O gerador não comprime os vetores, reduz a fonte ou corta o arquivo exportado para fazê-lo caber. Um endereço longo deve usar outro modelo com mais espaço.
+Na composição 1, o nome usa Univers LT Std 45 Light em 17,5 px; função e contatos usam 11 px, com linhas de base fixas e o site junto dos contatos. As outras três composições mantêm 18 px para nome e 12 px para função e contatos. M compacto divide o nome em até duas linhas, preservando palavras inteiras. Os demais usam uma linha. Nomes, funções ou contatos que excedam a área produzem erro no campo e bloqueiam o PNG, GIF e HTML. O gerador não comprime os vetores, reduz a fonte ou corta o arquivo exportado para fazê-lo caber. Um endereço longo deve usar outro modelo com mais espaço.
 
-Fundo, Texto e M / faixa são escolhas independentes da paleta de oito cores. O padrão usa Papel, Preto e Vermelho; M com linha inicia em Branco, Preto e Vermelho. Cores personalizadas acompanham a troca de modelo. Restaurar padrão recupera a combinação do modelo atual sem apagar os dados. O contraste considera também o texto claro sobre a faixa.
+Fundo, Texto e M / faixa são escolhas independentes da paleta de oito cores. As composições 1 e 4 iniciam em Branco, Preto e Vermelho; as demais usam Papel, Preto e Vermelho. Cores personalizadas acompanham a troca de modelo. Restaurar padrão recupera a combinação do modelo atual sem apagar os dados. O contraste considera também o texto claro sobre a faixa.
 
 ## Imagens, movimento e arquivos
 
-A prévia inicia fixa e mostra o M nativo no mesmo enquadramento do PNG. O botão Animar usa o filme aprovado M + Forma. A pausa recupera o quadro fixo da assinatura. MATTAR na faixa conserva a assinatura nativa completa e não oferece motion.
+A composição 1 abre com o filme aprovado M + Forma em reprodução silenciosa e contínua. Somente o M se transforma; os contatos permanecem imóveis. A preferência do sistema por movimento reduzido mantém a prévia fixa; a pausa também recupera o M nativo no enquadramento do PNG. O botão Animar permite iniciar novamente. MATTAR na faixa conserva a assinatura nativa completa e não oferece motion.
 
 A prévia ocupa a largura disponível em uma área clara, sem moldura ou sombra, com resolução adicional em telas de alta densidade. Ampliar abre uma visualização maior; no celular a imagem pode ser percorrida horizontalmente. Essa ampliação pertence à interface: PNG e GIF mantêm 480 × 100 px e o PNG em alta, 960 × 200 px.
 
@@ -54,6 +56,7 @@ Referência: https://support.google.com/mail/answer/11468381?hl=pt-BR .
 - public/email-signature.mjs: normalização, validação dos contatos e alternativa em texto.
 - public/identidade/email/modelos/: oito miniaturas PNG, em tamanho de uso e 2×, correspondentes às quatro faixas vigentes com Joana.
 - public/identidade/M.svg e public/presentation-assets/mattar-published.svg: vetores originais, sem alterações.
+- public/ambiente-editorial/media/m-publicado.svg: M publicado usado na composição 1, com a proporção nativa de 990,08 × 743,18; arquivo original sem alterações.
 - public/motion/videos/m-form.mp4: filme aprovado, sem alterações.
 - public/vendor/gifenc/: codificador com versão e licença já fixadas.
 

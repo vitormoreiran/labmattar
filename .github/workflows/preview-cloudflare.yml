@@ -12,6 +12,7 @@ on:
       - 'scripts/smoke-email-card.mjs'
       - '.github/workflows/preview-cloudflare.yml'
       - 'design/integrate-areas.py'
+      - 'design/validate-identity.py'
       - 'design/revise-symbols-hierarchy.py'
       - 'design/motion.html'
       - 'design/laboratorio.html'

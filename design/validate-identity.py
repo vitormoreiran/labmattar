@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import json
 
 root=Path("design")
@@ -65,7 +66,9 @@ assert 'data-backdrop="blur"' in lab_css and "data-m-content=solid" in lab_css, 
 for stale in (".lm-studio-detail", ".lm-studio-tool", ".lm-studio-image-block",
               ".lm-lab-presets", ".lm-inspector-tabs", ".lm-ctrl-preset-visual"):
  for name,stylesheet in (("studio",studio_css),("editor",clean_css),("controls",(Path("public")/"composicao-lab-controls.css").read_text(encoding="utf-8"))):
-  assert stale not in stylesheet,f"Deprecated selector {stale} returned to {name}"
+  # Match the complete CSS class: the current .lm-studio-details controls are
+  # distinct from the deprecated .lm-studio-detail interface.
+  assert re.search(re.escape(stale)+r"(?![\w-])",stylesheet) is None,f"Deprecated selector {stale} returned to {name}"
 assert 'data-image=' not in lab_css and 'data-m-mode=' not in lab_css
 assert lab_css.count('data-backdrop="blur"')>=2, "Photograph blur needs one canonical background state"
 assert composition.count('data-lab-choice="mPresentation"')==2, "Only Elemento/Completo are allowed"

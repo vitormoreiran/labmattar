@@ -1389,7 +1389,9 @@
       top=Math.max(12,top);
     }
     tour.style.left=left+"px";
-    tour.style.top=top+"px";
+    // Scrolling or a disclosure can move the target outside the viewport.
+    // The help dialog must keep its close button reachable in that case.
+    tour.style.top=Math.max(12,Math.min(window.innerHeight-height-12,top))+"px";
   };
   const queueTourPosition=()=>{
     if(tourIndex<0)return;
@@ -1569,3 +1571,4 @@
   window.addEventListener("resize",requestMeasurement,{passive:true});
   render();
 })();
+

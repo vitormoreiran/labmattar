@@ -121,10 +121,10 @@ try{
   await choose("mContent","photo");
   await page.locator("#labMScale").fill("60");
   await choose("marker","both");
-  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),
-    "M sólido não pode aparecer nas composições de fotografia");
-  assert(await page.locator("#labMContent option[value=solid]").isDisabled(),
-    "O valor sólido não pode ser selecionado por controles nativos");
+  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
+    "M de cor deve ser uma opção visível também sobre fotografia");
+  assert(await page.locator("#labMContent option[value=solid]").isEnabled(),
+    "O material de cor não pode depender do tipo de fundo");
   const photograph=async()=>page.locator("#labArtboard").evaluate(board=>{
     const ambient=board.querySelector("#labAmbientPhoto");
     const overlay=board.querySelector("#labMarkerPhotoLayer");
@@ -184,10 +184,11 @@ try{
   assert(color.effective==="color"&&color.content==="solid"&&color.photo==="none"&&color.mVisible,
     "Composição de cor permite M sólido sem introduzir fotografia");
 
-  // A project saved under the obsolete photo + solid combination is normalized.
+  // Cor do M continua independente mesmo quando a superfície troca para foto.
   await choose("background","photo");
-  assert((await page.locator("#labArtboard").getAttribute("data-m-content"))==="photo",
-    "Trocar para fotografia deve substituir M sólido por M fotográfico");
+  assert((await page.locator("#labArtboard").getAttribute("data-m-content"))==="solid",
+    "M sólido deve permanecer sólido quando o fundo muda para fotografia");
+  await choose("mContent","photo");
   await choose("marker","top");
   await choose("mContent","off");
   photo=await photograph();

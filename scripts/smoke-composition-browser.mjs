@@ -119,6 +119,7 @@ try{
     "Explicit text color must remain available over photographs and videos");
   await choose("inkColor","auto");
   await choose("mContent","photo");
+  await page.locator("#labMScale").fill("60");
   await choose("marker","both");
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),
     "M sólido não pode aparecer nas composições de fotografia");
@@ -172,8 +173,8 @@ try{
   assert(await page.locator("#labMContentField").isHidden(),
     "Sem M deve ocultar opções de material que ainda não se aplicam");
   await choose("mPresentation","elemento");
-  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
-    "M sólido deve retornar nas composições de cor");
+  assert(await page.locator("#labMContent option[value=solid]").isEnabled(),
+    "M sólido deve permanecer disponível nas composições de cor");
   await choose("mContent","solid");
   const color=await page.locator("#labArtboard").evaluate(board=>({
     effective:board.dataset.background,content:board.dataset.mContent,

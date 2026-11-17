@@ -43,6 +43,7 @@ try{
   assert.equal(await page.locator('.lm-studio-secondary').evaluate(e=>e.open),false);
   await selectInspectorModule(page,'fundo',{fine:true});
   const panel=page.locator('#labPanel-imagem');
+  assert(Math.abs((await panel.boundingBox()).width-geometry.inspector.w)<3,'Controls must fill the inspector without an implicit empty column');
   const before=await page.locator('.lm-lab-preview').boundingBox();
   await panel.evaluate(e=>e.scrollTop=e.scrollHeight);await settle(page);
   assert((await panel.evaluate(e=>e.scrollTop))>0,'Controls must have their own scroll');

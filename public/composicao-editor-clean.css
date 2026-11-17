@@ -3160,8 +3160,8 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
   }
   html body.lm-studio-open main #laboratorio .lab-workflow-switch button{height:44px!important;min-height:44px!important;padding:0 6px!important}
   html body.lm-studio-open main #laboratorio .lm-inspector-head{display:none!important}
-  html body.lm-studio-open main #laboratorio :is(#labWorkflowContext,#labSectionScope){
-    grid-row:2!important;box-sizing:border-box!important;height:24px!important;min-height:0!important;
+  html body.lm-studio-open main #laboratorio :is(#labWorkflowContext,#labSectionScope):not([hidden]){
+    grid-row:2!important;grid-column:1!important;box-sizing:border-box!important;height:24px!important;min-height:0!important;
     margin:0!important;padding:0 12px!important;display:flex!important;align-items:center!important;
     white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
   }

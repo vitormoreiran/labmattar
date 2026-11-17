@@ -328,9 +328,14 @@ try{
          fullBackdrop.display!=="none"&&fullBackdrop.samePhoto,
     "Expanded M must retain photographic background: "+JSON.stringify(fullBackdrop));
   assert(mFull.mode==="completo"&&Math.abs(mFull.mask.height-mFull.frame.height)<2 &&
-         mFull.mask.left<mFull.frame.left-10&&mFull.mask.right>mFull.frame.right+10 &&
-         Math.abs(mFull.mask.width/mFull.mask.height-990.08/743.18)<.005,
-    "M at 200% must keep the canonical ratio with portrait side bleed: "+JSON.stringify(mFull));
+         Math.abs(mFull.mask.width-mFull.frame.width)<2 &&
+         Math.abs(mFull.mask.left-mFull.frame.left)<2,
+    "M at 200% must fill the entire artboard: "+JSON.stringify(mFull));
+  const maskProof=await page.locator('#labMask').evaluate(node=>({
+    mask:getComputedStyle(node).webkitMaskImage||getComputedStyle(node).maskImage,
+    scale:node.closest('#labArtboard').querySelector('#labMScale')?.value
+  }));
+  assert(maskProof.mask.includes('data:image/svg'),"Expanded M must use a calculated aperture mask");
   assert(await page.locator("#labMScale").isEnabled(),
     "M at 200% must remain editable");
   await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-vertical.png"});
@@ -339,12 +344,17 @@ try{
     await page.locator('button[data-mobile-module="m"]').click();
     await page.locator("#labMScale").fill("200");
     const geometry=await mMeasurement(),frame=geometry.frame,mask=geometry.mask;
+    const aperture=await page.locator("#labArtboard").evaluate(board=>{
+      const g=window.LabExpandedMaskGeometry(board.offsetWidth,board.offsetHeight,50);
+      const other=window.LabExpandedMaskGeometry(board.offsetWidth*1.2,board.offsetHeight,50);
+      return {rule:g.rule,hasHoles:g.path.includes("C"),equalY:g.path===other.path};
+    });
     assert(geometry.mode==="completo" &&
-           mask.height>=frame.height-2 &&
-           mask.left<=frame.left+2 && mask.right>=frame.right-2 &&
-           Math.abs(mask.width/mask.height-990.08/743.18)<.005 &&
-           Math.abs((mask.left+mask.right)-(frame.left+frame.right))<2,
-      "Expanded M remains centered and undistorted in "+format+": "+JSON.stringify(geometry));
+           Math.abs(mask.height-frame.height)<2 &&
+           Math.abs(mask.left-frame.left)<2 &&
+           Math.abs(mask.right-frame.right)<2 &&
+           aperture.rule==="evenodd"&&aperture.hasHoles&&!aperture.equalY,
+      "Expanded M must cover the page with two invariant notches in "+format+": "+JSON.stringify({geometry,aperture}));
     const reading=await page.locator("#labArtboard").evaluate(board=>{
       const title=board.querySelector("#labRenderedTitle"),safe=board.querySelector("#labReading");
       const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right}};

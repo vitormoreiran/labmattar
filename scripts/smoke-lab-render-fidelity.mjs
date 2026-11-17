@@ -1,4 +1,5 @@
 import {chromium,webkit} from 'playwright';
+import {selectInspectorModule} from './studio-test-controls.mjs';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
@@ -76,7 +77,7 @@ try{
   });
   const videoState={...base,format:'quadrado',title:'',mContent:'off',background:'photo',focusX:0,focusY:100,photoContrast:40};
   const videoPage=makePage('video',videoState);videoPage.backgroundVideo={id:'video-reference',provider:'public',projectId:'fidelity123',fileId:'video12345',name:'Referência de vídeo',mimeType:'video/mp4',frameSeconds:0};
-  await page.evaluate(doc=>window.LabPages.load(doc),sequenceDocument('Quadro de referência',[videoPage],null,signature));await page.locator('[data-workspace-view=edit]').click();await page.locator('[data-mobile-module=fundo]').click();
+  await page.evaluate(doc=>window.LabPages.load(doc),sequenceDocument('Quadro de referência',[videoPage],null,signature));await page.locator('[data-workspace-view=edit]').click();await selectInspectorModule(page,'fundo',{fine:true});
   await page.waitForFunction(()=>document.querySelector('#labAmbientVideo')?.readyState>=2&&!document.querySelector('#labBackgroundFrame').disabled);
   await page.locator('#labBackgroundFrame').fill('1.25');await page.locator('#labBackgroundFrame').press('Tab');
   await page.waitForFunction(()=>[...document.querySelectorAll('video.lm-lab-background-video')].every(v=>v.paused&&!v.seeking&&Math.abs(v.currentTime-1.25)<.001));

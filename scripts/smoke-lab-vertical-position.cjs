@@ -3,12 +3,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs/promises'),path=r
 const base=process.env.COMPOSITION_URL||'http://127.0.0.1:8765/compor.html';
 const output=path.resolve(process.env.VERTICAL_OUTPUT||'vertical-proof');
 (async()=>{
+ const {revealInspectorOptions}=await import('./studio-test-controls.mjs');
  await fs.mkdir(output,{recursive:true});
  const browser=await chromium.launch({headless:true,...(process.env.COMPOSITION_EXECUTABLE_PATH?{executablePath:process.env.COMPOSITION_EXECUTABLE_PATH}:{})});
  try{
   const context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true}),page=await context.newPage(),errors=[],proof=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
-  await page.goto(base+'?studio=1#laboratorio',{waitUntil:'domcontentloaded'});await page.waitForSelector('#labPages[data-ready=true]',{state:'attached'});await page.evaluate(()=>document.fonts.ready);
+  await page.goto(base+'?studio=1#laboratorio',{waitUntil:'domcontentloaded'});await page.waitForSelector('#labPages[data-ready=true]',{state:'attached'});await page.evaluate(()=>document.fonts.ready);await revealInspectorOptions(page,{fine:true});
   const settle=async()=>{await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(r)))));await page.waitForTimeout(50);};
   const initial=await page.evaluate(()=>LabProductionBridge.snapshot());
   const signature={preset:'none',scale:100,slots:Object.fromEntries(['tl','tr','bl','br'].map(c=>[c,{kind:'none',symbol:'M.svg',text:''}]))};
@@ -35,7 +36,7 @@ const output=path.resolve(process.env.VERTICAL_OUTPUT||'vertical-proof');
   }),{fixture,signature});
   await page.evaluate(doc=>LabPages.load(doc),project);await settle();assert.deepEqual(await page.evaluate(()=>LabPages.create()),project);
   await page.reload({waitUntil:'domcontentloaded'});await page.waitForSelector('#labPages[data-ready=true]',{state:'attached'});await settle();assert.deepEqual(await page.evaluate(()=>LabPages.create()),project);
-  await page.locator('button[data-mobile-module=texto]').click();await page.screenshot({path:path.join(output,'controle-texto.png')});await page.locator('button[data-mobile-module=m]').click();await page.screenshot({path:path.join(output,'controle-m.png')});
+  await revealInspectorOptions(page,{fine:true});await page.locator('button[data-mobile-module=texto]').click();await page.screenshot({path:path.join(output,'controle-texto.png')});await page.locator('button[data-mobile-module=m]').click();await page.screenshot({path:path.join(output,'controle-m.png')});
   async function download(type,name){
    if(!await page.locator('#labDeliveryDialog').isVisible())await page.locator('#labOpenDelivery').click();
    await page.locator('[data-delivery-format='+type+']').click();if(type!=='mp4')await page.locator('#labExportSize').selectOption('1920');

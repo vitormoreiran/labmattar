@@ -277,8 +277,12 @@ try{
   assert(marked.marker==="true"&&marked.background==="photo"&&
     marked.source===marked.overlay&&marked.mask.includes("data:image/svg"),
     "Marcador em fotografia recorta a mesma imagem, sem bloco de cor: "+JSON.stringify(marked));
-  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isHidden(),
-    "M sólido deve estar oculto quando o fundo for fotografia");
+  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
+    "M de cor deve permanecer disponível quando o fundo for fotografia");
+  await choose("mContent","solid");
+  assert(await page.locator("#labArtboard").getAttribute("data-m-content")==="solid",
+    "A seleção de cor deve renderizar o M sólido sem alterar o fundo");
+  await choose("mContent","photo");
   await choose("markerFocus","sharp");
   assert(await page.locator("#labArtboard").getAttribute("data-backdrop")==="blur",
     "Marcador nítido deve inverter a nitidez do restante da fotografia");

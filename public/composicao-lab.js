@@ -204,9 +204,6 @@
     result.mExpandedPositionY=result.mPositionY;
     result.signature=sanitizeSignature(data.signature,data);
     result.autoInkVersion=data.autoInkVersion===2?2:1;
-    // Saved projects made before this rule may contain a solid M on a photo.
-    // Normalize that impossible combination before rendering or exporting.
-    if(result.background==="photo"&&result.mContent==="solid")result.mContent="photo";
     return result;
   }
   let state=copy(presets[defaultPreset]);
@@ -275,14 +272,12 @@
     by("labColor").disabled=state.background==="photo";
     by("labInkColor").disabled=false;
     by("labMarker").disabled=fullM;
-    by("labMContentField").hidden=!mActive||state.background==="photo";
+    by("labMContentField").hidden=!mActive;
     by("labOpenPhotoFromM").hidden=!(mActive&&backgroundPhoto);
-    // A solid M is a color-only treatment. Do not offer or restore it
-    // on photographic surfaces, including legacy saved projects.
+    // M material is independent from the surface: color or image in every format.
     const solidChoice=document.querySelector('[data-lab-choice="mContent"][data-value="solid"]');
-    const solidAllowed=state.background==="color";
-    if(solidChoice)solidChoice.hidden=!solidAllowed;
-    by("labMContent").querySelector('option[value="solid"]').disabled=!solidAllowed;
+    if(solidChoice)solidChoice.hidden=false;
+    by("labMContent").querySelector('option[value="solid"]').disabled=false;
     const focusField=by("labMarkerFocusField");
     if(focusField)focusField.hidden=!(markerActive&&backgroundPhoto);
     by("labMarkerFocus").disabled=!(markerActive&&backgroundPhoto);
@@ -1558,7 +1553,7 @@
   enabled?.addEventListener("change",()=>{
     if(state.mContent!=="off")lastMContent=state.mContent;
     const select=by("labMContent");
-    select.value=enabled.checked?(state.background==="photo"?"photo":lastMContent==="off"?"solid":lastMContent):"off";
+    select.value=enabled.checked?(lastMContent==="off"?(state.background==="photo"?"photo":"solid"):lastMContent):"off";
     select.dispatchEvent(new Event("change",{bubbles:true}));
   });
   document.querySelectorAll("[data-lab-preset]").forEach(b=>

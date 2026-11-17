@@ -3025,3 +3025,24 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPo
 body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMPositionField .lm-lab-range-scale{
   display:none!important;
 }
+
+
+/* The M is a geometry, not a photograph-only object. Give the author
+   a compact material choice while retaining scale and vertical position. */
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMContentField:not([hidden]){
+  display:block!important;
+  margin:12px 0 0!important;
+  padding:12px 0 0!important;
+  border-top:1px solid #deddd6!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMContentField .lm-ctrl-choice-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:5px!important;
+  padding:4px!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMContentField .lm-ctrl-choice{
+  display:flex!important;
+  min-height:43px!important;
+  width:100%!important;
+}

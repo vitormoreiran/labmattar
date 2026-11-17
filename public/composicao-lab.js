@@ -166,7 +166,7 @@
   // The expanded M leads new studies. Legacy defaults remain available to
   // sanitize older projects without changing their authored presentation.
   const defaultPreset='expandido';
-  presets.expandido={...presets.mascara,mPresentation:'completo',guides:'nenhuma',bodyMode:'oculto'};
+  presets.expandido={...presets.mascara,mScale:200,mPositionY:50,mExpandedPositionY:50,mContinuousVersion:1,mPresentation:'completo',guides:'nenhuma',bodyMode:'oculto'};
   let activePreset=defaultPreset,frame=0;
   const copy=v=>({...v});
   function sanitize(data){
@@ -1474,7 +1474,6 @@
     });
   }
   // A interface simples opera o mesmo estado que os controles legados.
-  let lastMContent=state.mContent==="off"?"solid":state.mContent;
   const enabled=by("labMEnabled");
   enabled?.addEventListener("change",()=>{
     if(state.mContent!=="off")lastMContent=state.mContent;

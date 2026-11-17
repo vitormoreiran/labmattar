@@ -1,4 +1,5 @@
 import {chromium} from 'playwright';
+import {selectInspectorModule} from './studio-test-controls.mjs';
 import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {execFileSync} from 'node:child_process';
@@ -51,7 +52,7 @@ try{
   await page.locator('#labMotionFrame').fill('0.6');
   assert.equal(await page.locator('#labMotionPreview').textContent(),'VER MOVIMENTO');
   await page.screenshot({path:path.join(output,'controls-motion-desktop.png')});
-  await page.locator('[data-workspace-view=edit]').click();await page.locator('button[data-mobile-module=superficie]').click();
+  await page.locator('[data-workspace-view=edit]').click();await selectInspectorModule(page,'superficie');
   assert.ok(await page.locator('#labFormatTitle').isVisible());
   await page.screenshot({path:path.join(output,'controls-edit-desktop.png')});
   report.steps.push('Motion catalog, insertion and static frame');

@@ -1,4 +1,5 @@
 import {chromium,webkit} from "playwright";
+import {revealInspectorOptions,selectInspectorModule} from './studio-test-controls.mjs';
 
 const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
 const engine=process.env.COMPOSITION_BROWSER==="webkit"?webkit:chromium;
@@ -13,7 +14,7 @@ async function choose(group,value){
   const module={format:"superficie",background:"fundo",color:"fundo",mContent:"m",
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
-    await page.locator('button[data-mobile-module="'+module+'"]').click();
+    await selectInspectorModule(page,module,{fine:true});
   if(group==="mContent"&&value!=="off"){
     const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
     if(mode==="off"){
@@ -55,6 +56,13 @@ try{
       group+" choices must show function labels, not editorial filler");
   }
   await page.screenshot({path:"laboratorio-interface-desktop.png"});
+  assert((await page.locator('.lm-composition-module-index>button').allTextContents()).join('|')==='IMAGEM|TEXTO|M|ASSINAR',
+    'The four everyday tools must remain visible in order');
+  assert(await page.locator('.lm-studio-secondary').evaluate(element=>!element.open),
+    'Secondary controls start collapsed');
+  await revealInspectorOptions(page,{fine:true});
+  assert(await page.locator('.lm-studio-details-toggle').getAttribute('aria-expanded')==='true',
+    'Advanced controls must be reachable through Mais opções and Ajustes finos');
   // One decision for placement; contextual options never become dead cards.
   await page.locator('button[data-mobile-module="m"]').click();
   assert(await page.locator(".lm-lab-m-application-grid .lm-ctrl-choice").count()===3,
@@ -218,6 +226,9 @@ try{
     logicalHeight:parseFloat(getComputedStyle(el).height)
   }));
 
+  // Measure the compact everyday menu after exercising its optional controls.
+  if(await page.locator('.lm-studio-secondary').evaluate(element=>element.open))
+    await page.locator('.lm-studio-secondary>summary').click();
   await page.setViewportSize({width:1440,height:900});
   await page.waitForTimeout(120);
   const desktopLayout=await page.evaluate(()=>{

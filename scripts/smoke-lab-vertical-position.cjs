@@ -26,9 +26,12 @@ const output=path.resolve(process.env.VERTICAL_OUTPUT||'vertical-proof');
    await page.locator('button[data-mobile-module=m]').click();await input('labMPositionY',20);const upper=await geometry();await input('labMPositionY',80);const lower=await geometry();assert(upper.m.y<lower.m.y);assert(Math.abs(upper.copy.y-lower.copy.y)<.1);assert(Math.abs(upper.m.h-lower.m.h)<.1);assert(Math.abs(upper.m.w-lower.m.w)<.1);
    await input('labMScale',200);
    await input('labMPositionY',30);const expanded=await geometry();
-   assert(expanded.m.center<.5,format+' não moveu o M expandido para cima');
+   const upperAperture=await page.locator('#labMask').evaluate(node=>node.style.webkitMaskImage);
+   assert(Math.abs(expanded.m.center-.5)<.002,format+' M expandido deve preencher a superfície');
    await page.locator('[data-lab-center=mPositionY]').click();await settle();
-   assert(Math.abs((await geometry()).m.center-.5)<.002,format+' não centralizou o M expandido');
+   const centeredAperture=await page.locator('#labMask').evaluate(node=>node.style.webkitMaskImage);
+   assert(upperAperture!==centeredAperture,format+' centralizar deve mover os recortes centrais');
+   assert(Math.abs((await geometry()).m.center-.5)<.002,format+' M expandido deve manter a superfície preenchida');
    proof.push({format,top:rows[0].copy.y,center:rows[1].copy.y,bottom:rows[2].copy.y,gap:rows[0].gap,expandedCenter:expanded.m.center});
   }
   const project=await page.evaluate(({fixture,signature})=>import('/lab-sequence.mjs').then(({createPage,createSection,sectionState,sequenceDocument})=>{

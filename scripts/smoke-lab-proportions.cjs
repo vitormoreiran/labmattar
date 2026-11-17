@@ -24,7 +24,16 @@ const output=path.resolve(process.env.PROPORTION_OUTPUT||'proportion-proof');
      const markers=[...document.querySelectorAll('#labMMarkers svg')].filter(s=>getComputedStyle(s).display!=='none').map(s=>{const t=s.querySelector('path').getScreenCTM();return {sx:Math.hypot(t.a,t.b),sy:Math.hypot(t.c,t.d)};});
      return {vw:innerWidth,format:board.dataset.format,mode:board.dataset.mPresentation,content:board.dataset.mContent,ratio:box.width/box.height,mask:style.maskSize,markers};
     });
-    assert(Math.abs(row.ratio/(990.08/743.18)-1)<.001,'M fora da proporção: '+JSON.stringify(row));assert.equal(row.mask,'contain');
+    if(mode==='elemento'){
+      assert(Math.abs(row.ratio/(990.08/743.18)-1)<.001,'Elemento M fora da proporção: '+JSON.stringify(row));
+      assert.equal(row.mask,'contain');
+    }else{
+      assert(Math.abs(row.ratio-(format==='horizontal'?16/9:format==='vertical'?9/16:format==='quadrado'?1:row.ratio))<.01,
+        'M expandido deve ocupar toda a superfície: '+JSON.stringify(row));
+      const holes=await page.evaluate(()=>window.LabExpandedMaskGeometry(document.querySelector('#labArtboard').offsetWidth,document.querySelector('#labArtboard').offsetHeight,50));
+      assert.equal(holes.rule,'evenodd');
+      assert(holes.path.includes('C'),'Os dois recortes devem conservar as curvas vetoriais.');
+    }
     for(const marker of row.markers)assert(Math.abs(marker.sx-marker.sy)<1e-6,'Fragmento distorcido: '+JSON.stringify(row));
     proof.push(row);
     if(vw===1440&&mode==='elemento'){

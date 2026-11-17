@@ -83,10 +83,15 @@ try{
     'Expanded M must remain adjustable');
   const vertical=page.locator('#labMPositionY');
   assert(await vertical.isVisible(),'M has one vertical position control at every scale');
-  const centered=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().top);
+  const centered=await page.locator('#labMask').evaluate(n=>({
+    top:n.getBoundingClientRect().top,mask:n.style.webkitMaskImage
+  }));
   await vertical.fill('80');
-  const moved=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().top);
-  assert(moved>centered,'Vertical position must move the same expanded M');
+  const moved=await page.locator('#labMask').evaluate(n=>({
+    top:n.getBoundingClientRect().top,mask:n.style.webkitMaskImage
+  }));
+  assert(Math.abs(moved.top-centered.top)<1&&moved.mask!==centered.mask,
+    'Vertical position must move the apertures while the expanded M still fills the page');
   await page.locator('#labMPositionField [data-lab-center="mPositionY"]').click();
   assert(await vertical.inputValue()==='50','Center action must restore 50 percent');
   await scale.fill('95');

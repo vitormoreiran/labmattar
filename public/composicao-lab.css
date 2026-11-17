@@ -521,3 +521,29 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 .lm-lab-board[data-backdrop="blur"][data-photo-effect="glass"] .lm-lab-photo-layer>.lm-lab-photo-glass,
 .lm-lab-board[data-marker-focus="blur"][data-photo-effect="glass"] .lm-lab-marker-glass{display:block}
 body.lm-studio-open .lm-lab-inspector[data-mobile-module="m"] #labPhotoEffects{display:none!important}
+
+
+/* Expanded M occupies the entire surface. Only the canonical top/bottom
+   notches are transparent; the photographic/solid material covers all else.
+   Its mask-image is calculated in composicao-lab.js without stretching the notches. */
+.lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo{
+  inset:0!important;
+  left:0!important;
+  top:0!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  aspect-ratio:auto!important;
+  transform:none!important;
+  border-radius:0!important;
+  -webkit-mask-position:center!important;
+  mask-position:center!important;
+}
+.lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo img,
+.lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo video{
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}

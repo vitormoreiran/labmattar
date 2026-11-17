@@ -107,7 +107,7 @@ function captureState(state,photoCatalog){
     mPresentation:enumValue(state.mPresentation,CHOICES.mPresentation,"apresentação do M"),
     photo:text(state.photo,30,"foto"),
     mScale:bounded(state.mScale,0,200,"escala do M"),
-    mContinuousVersion:state.mContinuousVersion===1?1:undefined,
+    ...(state.mContinuousVersion===1?{mContinuousVersion:1}:{}),
     mPositionY:bounded(state.mPositionY??50,0,100,"posição vertical do M"),
     mExpandedPositionY:bounded(state.mExpandedPositionY??50,0,100,"posição vertical do M expandido"),
     mCaption:text(state.mCaption??"",100,"legenda do elemento"),

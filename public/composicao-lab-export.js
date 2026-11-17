@@ -262,8 +262,14 @@
     const maskNode=board.querySelector("#labMask");
     let maskVector=null;
     if(isVisible(maskNode)){
-      const box=rectangle(maskNode,frame),shapes=await vector(maskUrl,box);
-      maskVector={...shapes[0],paths:shapes.flatMap(shape=>shape.paths)};
+      const box=rectangle(maskNode,frame);
+      if(board.dataset.mPresentation==="completo"&&window.LabExpandedMaskGeometry){
+        const expanded=window.LabExpandedMaskGeometry(frame.width,frame.height,Number(document.getElementById("labMPositionY")?.value??50));
+        maskVector={kind:"vector",viewBox:expanded.viewBox,box:expanded.box,paths:[{d:expanded.path}],rule:"evenodd"};
+      }else{
+        const shapes=await vector(maskUrl,box);
+        maskVector={...shapes[0],paths:shapes.flatMap(shape=>shape.paths)};
+      }
       if(board.dataset.mContent==="solid")items.push({...maskVector,color:getComputedStyle(maskNode).backgroundColor});
       else{
         const filter=getComputedStyle(maskNode).filter;

@@ -43,3 +43,11 @@ O renderizador usa as mesmas camadas, fontes, máscaras e enquadramentos do PNG/
 Use Chrome ou Edge atualizado com WebCodecs/H.264 disponível. Mantenha a aba aberta durante a renderização. **Cancelar vídeo** interrompe a codificação e preserva o projeto; falhas de mídia ou codec não geram arquivo parcial. A exportação é processada no navegador e não publica a apresentação. PDF, PNG e HTML seguem disponíveis.
 
 Validação: smoke-lab-video.mjs baixa MP4 reais em quatro formatos, verifica H.264/30 fps/ausência de áudio/duração com ffprobe, compara o quadro final com a cena nativa e testa sequência com motion e vídeo de fundo, cancelamento e formatos incompatíveis.
+
+## Prévia e tratamento da imagem
+
+No editor aberto em tela cheia, a página ocupa até 90% da dimensão disponível no desktop. O encaixe usa uma escala única, inclusive acima de 100%, sem alterar as dimensões lógicas, a tipografia ou as exportações. No celular e no tablet, a prévia continua usando o espaço útil inteiro.
+
+Em **Editar página → Imagem → Foto ou vídeo**, escolha **Padrão**, **Desfoque** ou **Vidro**. Padrão mantém a aparência dos projetos anteriores. Desfoque preserva as cores da mídia; Vidro acrescenta uma difusão mais luminosa e um reflexo suave. Ajuste **Intensidade do desfoque** de 0 a 100%; no modo Vidro, **Reflexo do vidro** regula a luz separadamente. **Tratamento de leitura** continua controlando apenas o véu preto sobre a imagem.
+
+Os efeitos pertencem à fotografia e ao vídeo; não deformam M, símbolos ou textos. São salvos no projeto e compartilhados pelo fundo da seção. PNG, PDF e MP4 usam as mesmas camadas do renderizador; o HTML conserva o filtro e o reflexo, inclusive no fundo de vídeo. O modo Vidro é uma difusão luminosa, sem refração geométrica do conteúdo.

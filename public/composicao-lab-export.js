@@ -81,6 +81,13 @@
     }
     return box;
   }
+  function drawPhotoGlass(ctx,frame){
+    const strength=Number(getComputedStyle(board).getPropertyValue('--lab-glass-strength'))||0;
+    if(board.dataset.photoEffect!=='glass'||strength<=0)return;
+    const gradient=ctx.createLinearGradient(0,0,0,frame.height);
+    for(const [at,alpha] of [[0,.36],[.45,.05],[.75,0],[1,.16]])gradient.addColorStop(at,'rgba(255,255,255,'+alpha+')');
+    ctx.save();ctx.globalAlpha=strength;ctx.fillStyle=gradient;ctx.fillRect(0,0,frame.width,frame.height);ctx.restore();
+  }
   function drawBackground(ctx,frame){
     const css=getComputedStyle(board);
     ctx.fillStyle=css.backgroundColor==="rgba(0, 0, 0, 0)"?
@@ -102,6 +109,7 @@
     }
     drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));
     ctx.restore();
+    if(board.dataset.backdrop==="blur")drawPhotoGlass(ctx,frame);
     const scrim=board.querySelector(".lm-lab-photo-contrast");
     if(isVisible(scrim)){
       const s=getComputedStyle(scrim);
@@ -202,6 +210,7 @@
       const m=new DOMMatrixReadOnly(style.transform);ctx.translate(cx,cy);ctx.transform(m.a,m.b,m.c,m.d,0,0);ctx.translate(-cx,-cy);
     }
     drawCover(ctx,img,box.x,box.y,box.w,box.h,focal(img));ctx.restore();
+    if(board.dataset.markerFocus==="blur")drawPhotoGlass(ctx,frame);
   }
   async function captureScene({edge=Number(sizeSelect.value),ask=true,live=false}={}){
     const {vectorTransform,drawFittedImage}=await import('./lab-geometry.mjs');
@@ -237,7 +246,10 @@
     const css=getComputedStyle(board),background=css.backgroundColor==="rgba(0, 0, 0, 0)"?css.getPropertyValue("--lab-bg"):css.backgroundColor;
     const hasVideo=board.dataset.videoBackground==="true";
     const focusX=parseFloat(board.style.getPropertyValue('--lab-focus-x')),focusY=parseFloat(board.style.getPropertyValue('--lab-focus-y'));
-    const videoVisual=hasVideo?{backdrop:board.dataset.backdrop,markerFocus:board.dataset.markerFocus,
+    const customPhoto=board.dataset.photoEffect!=="auto"||Math.abs(Number(css.getPropertyValue('--lab-photo-blur-multiplier'))-1)>.0001;
+    const photoVisual=customPhoto?{filter:getComputedStyle(byPhoto('ambient')).filter,markerFilter:getComputedStyle(byPhoto('marker')).filter,glassStrength:Number(css.getPropertyValue('--lab-glass-strength'))||0}:null;
+    function byPhoto(layer){return board.querySelector(layer==='ambient'?(hasVideo?'#labAmbientVideo':'#labAmbientPhoto'):(hasVideo?'#labMarkerVideo':'#labMarkerPhoto'));}
+    const videoVisual=hasVideo?{...(photoVisual?{photoVisual}:{}),backdrop:board.dataset.backdrop,markerFocus:board.dataset.markerFocus,
       focusX:Number.isFinite(focusX)?focusX:50,
       focusY:Number.isFinite(focusY)?focusY:50,
       contrast:board.dataset.photoText==="true"||board.dataset.sectionPhotoText==="true",mContrast:board.dataset.mText==="true",contrastOpacity:Number(getComputedStyle(board).getPropertyValue("--lab-photo-contrast"))}:null;
@@ -332,7 +344,7 @@
         }
       }
     }
-    return {width:frame.width,height:frame.height,outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),...(backgroundFrame.frameSeconds!==undefined?{backgroundFrameSeconds:backgroundFrame.frameSeconds}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
+    return {width:frame.width,height:frame.height,...(photoVisual?{photoVisual}:{}),outputWidth:width,outputHeight:height,items,...(live?{media}:{}),...(videoVisual?{videoVisual}:{}),...(backgroundFrame.frameSeconds!==undefined?{backgroundFrameSeconds:backgroundFrame.frameSeconds}:{}),sectionBackground:window.LabPages?.sectionBackground?.(),warnings:[...new Set(warnings)],rasterized};
     }finally{await backgroundFrame.restore();}
   }
   async function rasterize(){

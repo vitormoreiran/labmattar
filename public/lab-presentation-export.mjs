@@ -116,8 +116,11 @@ function animatedBackground(scene,video){
   if(!scene.videoVisual)throw Error('Quadro de vídeo de fundo indisponível para exportação.');
   const v=scene.videoVisual,source='private:'+esc(video.id),pos=v.focusX+'% '+v.focusY+'%';
   const backdrop=v.backdrop==='blur'?' is-blurred':'',marker=v.markerFocus==='blur'?' is-blurred':'';
+  const visual=v.photoVisual;
+  const effectStyle=filter=>visual?'filter:'+esc(filter.replace(/blur\(([\d.]+)px\)/g,(_,n)=>'blur('+(Number(n)/scene.width*100)+'cqw)'))+';':'';
+  const sheen='<div class="bg-photo-glass" style="opacity:'+Number(visual?.glassStrength||0)+'"></div>';
   const parts=[
-    '<video autoplay muted loop playsinline class="bg-video-base'+backdrop+'" data-asset="'+source+'" style="object-position:'+pos+'"></video>',
+    '<video autoplay muted loop playsinline class="bg-video-base'+backdrop+'" data-asset="'+source+'" style="'+effectStyle(visual?.filter||'none')+'object-position:'+pos+'"></video>'+ (v.backdrop==='blur'?sheen:''),
     '<div class="bg-video-contrast" style="opacity:'+(v.contrast?1:0)+'"></div>'
   ];
   const m=scene.items.find(op=>op.layer==='video-bg-m');
@@ -131,12 +134,12 @@ function animatedBackground(scene,video){
   if(markers.length){
     const mask=markerMask(scene,markers);
     parts.push('<div class="bg-video-markers" style="-webkit-mask-image:url('+mask+');mask-image:url('+mask+'")>'+
-      '<video autoplay muted loop playsinline class="bg-video-marker'+marker+'" data-asset="'+source+'" style="object-position:'+pos+'"></video></div>');
+      '<video autoplay muted loop playsinline class="bg-video-marker'+marker+'" data-asset="'+source+'" style="'+effectStyle(visual?.markerFilter||'none')+'object-position:'+pos+'"></video>'+(v.markerFocus==='blur'?sheen:'')+'</div>');
   }
   return '<div class="animated-background" aria-hidden="true" style="--photo-contrast:'+Number(v.contrastOpacity??.2)+'">'+parts.join('')+'</div>';
 }
 
-export const animatedBackgroundCSS=":is(.page-art,.story-art) .animated-background{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}\n:is(.page-art,.story-art) .animated-background video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}\n:is(.page-art,.story-art) .animated-background .is-blurred{inset:-7%;width:114%;height:114%;filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);transform:scale(1.045)}\n:is(.page-art,.story-art) .bg-video-contrast,:is(.page-art,.story-art) .bg-video-m-contrast{position:absolute;inset:0;background:rgba(0,0,0,var(--photo-contrast,.2));pointer-events:none}\n:is(.page-art,.story-art) .bg-video-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-m{position:absolute;z-index:2;overflow:hidden;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;filter:drop-shadow(0 2px 10px rgba(0,0,0,.08))}\n:is(.page-art,.story-art) .bg-video-m-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-markers{position:absolute;inset:0;z-index:3;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}";
+export const animatedBackgroundCSS=".bg-photo-glass{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,.36),rgba(255,255,255,.05) 45%,rgba(255,255,255,0) 75%,rgba(255,255,255,.16))}\n:is(.page-art,.story-art) .animated-background{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}\n:is(.page-art,.story-art) .animated-background video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}\n:is(.page-art,.story-art) .animated-background .is-blurred{inset:-7%;width:114%;height:114%;filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);transform:scale(1.045)}\n:is(.page-art,.story-art) .bg-video-contrast,:is(.page-art,.story-art) .bg-video-m-contrast{position:absolute;inset:0;background:rgba(0,0,0,var(--photo-contrast,.2));pointer-events:none}\n:is(.page-art,.story-art) .bg-video-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-m{position:absolute;z-index:2;overflow:hidden;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;filter:drop-shadow(0 2px 10px rgba(0,0,0,.08))}\n:is(.page-art,.story-art) .bg-video-m-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-markers{position:absolute;inset:0;z-index:3;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}";
 export async function webDocument(scenes,project,catalog,fonts){
   if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes,animatedBackground,animatedBackgroundCSS,motionInkPixels,installMotionInk});
   const used=new Set(scenes.flatMap(scene=>scene.motions.map(motion=>motion.assetId))),videos={},videoTypes={};

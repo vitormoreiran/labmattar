@@ -40,8 +40,8 @@ assert 'id="labArtboard"' not in laboratory_index, "The composition editor must 
 assert 'id="contraste"' in construction and "AJUSTÁVEL" in construction and "40%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in construction and 'id="laboratorio"' in composition
-assert 'href="/composicao-lab.css"' in composition
-assert 'src="/composicao-lab.js"' in composition
+assert re.search(r'href="/composicao-lab\.css(?:\?v=[A-Za-z0-9_-]+)?"', composition)
+assert re.search(r'src="/composicao-lab\.js(?:\?v=[A-Za-z0-9_-]+)?"', composition)
 assert 'href="/composicao-lab-controls.css"' in composition, "Illustrated control stylesheet missing"
 assert 'href="/composicao-studio.css"' in composition, "Viewport studio stylesheet missing"
 assert 'href="/composicao-editor-clean.css"' in composition, "Focused editor treatment missing"
@@ -51,7 +51,7 @@ studio_js=(Path("public")/"composicao-studio.js").read_text(encoding="utf-8")
 lab_css=(Path("public")/"composicao-lab.css").read_text(encoding="utf-8")
 lab_js=(Path("public")/"composicao-lab.js").read_text(encoding="utf-8")
 
-assert 'src="/composicao-studio.js"' in composition, "Viewport studio behavior missing"
+assert re.search(r'src="/composicao-studio\.js(?:\?v=[A-Za-z0-9_-]+)?"', composition), "Viewport studio behavior missing"
 assert 'id="labStudioToggle"' in composition, "Focused editing entry must be visible"
 assert "lm-unified-studio" in studio_js and "lm-studio-open" in studio_js
 assert "data-studio-tool" not in studio_js, "Focused mode must not build a second tool architecture"

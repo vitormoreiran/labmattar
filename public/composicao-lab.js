@@ -41,7 +41,7 @@
     return result;
   }
   const defaultMetadata={
-    photoContrast:40,autoInkVersion:2,mPositionY:50,mExpandedPositionY:50,textPositionY:50,mCaption:"",titleFonts:[],
+    photoContrast:40,photoEffect:"auto",photoBlur:50,photoGlass:50,autoInkVersion:2,mPositionY:50,mExpandedPositionY:50,textPositionY:50,mCaption:"",titleFonts:[],
     kicker:"LABMATTAR / 2026",
     footerLeft:"GASTROPERFORMANCE & FOOD DESIGN",
     footerRight:"LABMATTAR / IDENTIDADE VISUAL",
@@ -74,14 +74,14 @@
     }
   };
   const fields={
-    format:"labFormat",color:"labColor",inkColor:"labInkColor",photoContrast:"labPhotoContrast",margin:"labMargin",guides:"labGuides",
+    format:"labFormat",color:"labColor",inkColor:"labInkColor",photoContrast:"labPhotoContrast",photoEffect:"labPhotoEffect",photoBlur:"labPhotoBlur",photoGlass:"labPhotoGlass",margin:"labMargin",guides:"labGuides",
     marker:"labMarker",markerFocus:"labMarkerFocus",textWidth:"labTextWidth",
     titleScale:"labTitleScale",type:"labType",background:"labBackground",mContent:"labMContent",photo:"labPhoto",
     mScale:"labMScale",mPositionY:"labMPositionY",mExpandedPositionY:"labMExpandedPositionY",textPositionY:"labTextPositionY",mCaption:"labMCaption",mPresentation:"labMPresentation",focusX:"labFocusX",
     focusY:"labFocusY",symbol:"labSymbol",title:"labTitleInput",
     body:"labBodyInput",bodyMode:"labBodyMode"
   };
-  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","mPositionY","mExpandedPositionY","textPositionY"]);
+  const numeric=new Set(["margin","textWidth","titleScale","mScale","focusX","focusY","photoContrast","photoBlur","photoGlass","mPositionY","mExpandedPositionY","textPositionY"]);
   // Approved digital colors from design/identity-system.json (no free-picker).
   const palette=Object.freeze({
     neutral:"#F7F6F2",white:"#FFFFFF",black:"#181818",
@@ -246,6 +246,11 @@
     const mActive=state.mContent!=="off";
     const backgroundPhoto=state.background==="photo"||state.mContent==="photo";
     const activeImage=backgroundPhoto;
+    by("labPhotoEffects").hidden=!activeImage;
+    by("labPhotoEffect").disabled=!activeImage;
+    by("labPhotoBlur").disabled=!activeImage;
+    by("labPhotoGlassField").hidden=!activeImage||state.photoEffect!=="glass";
+    by("labPhotoGlass").disabled=!activeImage||state.photoEffect!=="glass";
     const backdropContext=by("labBackdropContext");
     if(backdropContext)backdropContext.textContent=backgroundPhoto?
       markerActive?"Mesma fotografia, duas nitidezes. Os marcadores recortam a variante escolhida; o restante recebe a variante oposta.":
@@ -434,6 +439,10 @@
     board.dataset.background=effectiveBackground;
     board.dataset.backdrop=backdrop;
     board.dataset.backgroundRequested=state.background;
+    if(!markerActive&&effectiveBackground==="photo"&&state.photoEffect!=="auto")board.dataset.backdrop="blur";
+    board.dataset.photoEffect=state.photoEffect;
+    board.style.setProperty("--lab-photo-blur-multiplier",String(state.photoBlur/50));
+    board.style.setProperty("--lab-glass-strength",String(state.photoEffect==="glass"?state.photoGlass/100:0));
     board.dataset.markerBlur=String(markerActive&&effectiveBackground==="photo");
     board.dataset.markerFocus=state.markerFocus;
     board.dataset.mContent=state.mContent;
@@ -1041,6 +1050,15 @@
     labInkColor:["Cor do texto",
       "Aplica a mesma cor a Título, Corpo e Detalhe, sem criar novos tratamentos tipográficos.",
       "Padrão mantém o contraste recomendado. Se houver contraste baixo, a exportação pede confirmação como estudo."],
+    labPhotoEffect:["Tratamento da imagem",
+      "Padrão conserva a aparência anterior. Desfoque preserva as cores; Vidro acrescenta difusão luminosa e um reflexo suave.",
+      "O tratamento afeta somente a fotografia ou o vídeo. M, textos e símbolos mantêm a geometria original."],
+    labPhotoBlur:["Intensidade do desfoque",
+      "Ajuste de 0% a 100%, independentemente do véu preto usado para leitura.",
+      "Com seções ativas, o tratamento acompanha todas as páginas da mesma seção."],
+    labPhotoGlass:["Reflexo do vidro",
+      "Controla a luz suave da superfície, sem mudar a intensidade do desfoque.",
+      "O efeito permanece na camada fotográfica; texto, M e símbolos não são deformados."],
     labPhotoContrast:["Tratamento de leitura",
       "Ajusta a camada preta sobre a fotografia ou o vídeo quando há texto sobre a imagem.",
       "Novas composições começam em 40%. Ajuste de 0% a 80% e confirme a leitura no enquadramento e tamanho finais."],
@@ -1447,6 +1465,9 @@
     scale.append(min,max);
     input.insertAdjacentElement("afterend",scale);
   }
+  by("labPhotoBlur").addEventListener("input",()=>{
+    if(by("labPhotoEffect").value==="auto")by("labPhotoEffect").value="blur";
+  });
   for(const id of Object.values(fields)){
     const el=by(id);
     el.addEventListener(el.tagName==="TEXTAREA"||el.type==="range"||el.type==="text"?"input":"change",()=>{

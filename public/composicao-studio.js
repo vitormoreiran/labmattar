@@ -116,7 +116,14 @@
     const verticalPadding=parseFloat(stageStyle.paddingTop)+parseFloat(stageStyle.paddingBottom);
     const maxW=Math.max(1,stage.clientWidth-horizontalPadding);
     const maxH=Math.max(1,stage.clientHeight-verticalPadding);
-    const scale=Math.min(maxW/logicalW,maxH/logicalH,1);
+    // In the full editor, use the available workspace even above 100% zoom.
+    // Reserve 5% on each side on desktop; smaller screens keep their full
+    // usable preview. A single scale preserves every element's proportions.
+    const occupancy=active&&window.innerWidth>1180?.9:1;
+    const fitW=Math.min(maxW,stage.clientWidth*occupancy);
+    const fitH=Math.min(maxH,stage.clientHeight*occupancy);
+    const fit=Math.min(fitW/logicalW,fitH/logicalH);
+    const scale=active?fit:Math.min(fit,1);
 
     // Only Title has its existing format/scale control. Corpo and Detalhe
     // come exclusively from manual-headings.css, at logical export-page size.

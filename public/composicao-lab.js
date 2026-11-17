@@ -673,8 +673,58 @@
     return {ok,adjusted:false,lowLegibility:false,emergency:!ok,requested,applied:requested};
   }
 
+  // Expanded M is a full-page surface with only its two canonical notches cut out.
+  // Original SVG: 990.08 x 743.18. Scale the central profiles uniformly to height;
+  // never stretch their X coordinates to the page aspect ratio.
+  const expandedMGeometry=(width,height,position=50)=>{
+    const w=Math.max(1,width),h=Math.max(1,height),scale=h/743.18;
+    const cx=w/2,dy=(Number(position)-50)/50*h*.16;
+    const X=n=>Number((cx+(n-495.04)*scale).toFixed(4));
+    const Y=n=>Number((n*scale+dy).toFixed(4));
+    const top=[
+      "M",X(350.84),Y(-1200),"L",X(639.25),Y(-1200),"L",X(639.25),Y(0),
+      "C",X(623.31),Y(0),X(603.49),Y(11.15),X(595.21),Y(24.77),
+      "L",X(510.10),Y(164.82),
+      "C",X(501.82),Y(178.44),X(488.27),Y(178.44),X(479.99),Y(164.82),
+      "L",X(394.88),Y(24.77),
+      "C",X(386.60),Y(11.15),X(366.78),Y(0),X(350.84),Y(0),"Z"
+    ].join(" ");
+    const bottom=[
+      "M",X(284.17),Y(743.18),
+      "C",X(300.11),Y(743.18),X(323.84),Y(735.70),X(336.90),Y(726.56),
+      "L",X(471.30),Y(632.48),
+      "C",X(484.36),Y(623.34),X(505.73),Y(623.34),X(518.79),Y(632.48),
+      "L",X(653.19),Y(726.56),
+      "C",X(666.25),Y(735.70),X(689.98),Y(743.18),X(705.92),Y(743.18),
+      "L",X(705.92),Y(1900),"L",X(284.17),Y(1900),"Z"
+    ].join(" ");
+    return {
+      path:`M 0 0 H ${w} V ${h} H 0 Z ${top} ${bottom}`,
+      box:{x:0,y:0,w,h},viewBox:[0,0,w,h],rule:"evenodd"
+    };
+  };
+  window.LabExpandedMaskGeometry=expandedMGeometry;
+  function syncExpandedMMask(){
+    const mask=by("labMask");
+    if(state.mContent==="off"||state.mPresentation!=="completo"){
+      mask.style.removeProperty("mask-image");
+      mask.style.removeProperty("-webkit-mask-image");
+      return;
+    }
+    const g=expandedMGeometry(board.offsetWidth,board.offsetHeight,state.mPositionY);
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${g.viewBox[2]} ${g.viewBox[3]}"><path fill="white" fill-rule="evenodd" d="${g.path}"/></svg>`;
+    const url=`url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+    mask.style.setProperty("mask-image",url);
+    mask.style.setProperty("-webkit-mask-image",url);
+    mask.style.setProperty("mask-size","100% 100%");
+    mask.style.setProperty("-webkit-mask-size","100% 100%");
+    mask.style.setProperty("mask-repeat","no-repeat");
+    mask.style.setProperty("-webkit-mask-repeat","no-repeat");
+  }
+
   function alignMToCopy(){
-    if(state.mContent==="off")return;
+    syncExpandedMMask();
+    if(state.mContent==="off"||state.mPresentation==="completo")return;
     // Eixo horizontal fixo e deslocamento vertical responsivo à área visível.
     const mask=by("labMask"),caption=by("labMCaptionPreview");
     const height=board.offsetHeight,pad=board.offsetWidth*state.margin/100;

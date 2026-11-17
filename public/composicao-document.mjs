@@ -109,7 +109,7 @@ function captureState(state,photoCatalog){
     mScale:bounded(state.mScale,0,200,"escala do M"),
     ...(state.mContinuousVersion===1?{mContinuousVersion:1}:{}),
     mPositionY:bounded(state.mPositionY??50,0,100,"posição vertical do M"),
-    mExpandedPositionY:bounded(state.mExpandedPositionY??50,0,100,"posição vertical do M expandido"),
+    mExpandedPositionY:bounded(state.mContinuousVersion===1?(state.mPositionY??50):(state.mExpandedPositionY??50),0,100,"posição vertical do M expandido"),
     mCaption:text(state.mCaption??"",100,"legenda do elemento"),
     focusX:bounded(state.focusX,0,100,"foco horizontal"),
     focusY:bounded(state.focusY,0,100,"foco vertical"),

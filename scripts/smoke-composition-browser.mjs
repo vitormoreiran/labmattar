@@ -22,7 +22,7 @@ async function choose(group,value){
           el.dispatchEvent(new Event('change',{bubbles:true}));
         });
       }
-      await page.locator('#labMScale').fill(value==='completo'?'200':'60');
+      await page.locator('#labMScale').fill(value==='completo'?'100':'30');
     }else{
       await page.locator('#labMContent').evaluate((el,v)=>{
         el.value=v;

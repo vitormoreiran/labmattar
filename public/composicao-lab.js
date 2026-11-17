@@ -163,6 +163,10 @@
   const formatRatio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
   const mAspect=990.08/743.18;
   const maxMScale=()=>200;
+  // Escala editorial: 0–99 = elemento; 100 = superfície expandida.
+  // Os valores internos de 0–200 são preservados para não alterar projetos salvos.
+  const displayedMScale=value=>value>=200?100:Math.min(99,Math.round(value*99/199));
+  const storedMScale=value=>value>=100?200:Math.round(value*199/99);
   // The expanded M leads new studies. Legacy defaults remain available to
   // sanitize older projects without changing their authored presentation.
   const defaultPreset='expandido';
@@ -240,7 +244,7 @@
   function syncInputs(){
     for(const [key,id] of Object.entries(fields)){
       const input=by(id);if(numeric.has(key))input.step=Number.isInteger(state[key])?'1':'any';
-      input.value=String(state[key]);
+      input.value=String(key==='mScale'?displayedMScale(state[key]):state[key]);
     }
     const markerActive=state.marker!=="none" && !(state.mContent!=="off"&&state.mPresentation==="completo");
     const mActive=state.mContent!=="off";
@@ -289,10 +293,10 @@
     setFieldVisible("labMScale",mActive);
     setFieldVisible("labMarker",!fullM);
     for(const key of numeric){
-      by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
+      by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=(key==='mScale'?displayedMScale(state[key]):state[key])+"%";
       const precision=by("labPrecision-"+key);
       if(precision){
-        precision.value=state[key];
+        precision.value=key==='mScale'?displayedMScale(state[key]):state[key];
         precision.min=by(fields[key]).min;precision.max=by(fields[key]).max;
         precision.step=by(fields[key]).step;
         precision.disabled=by(fields[key]).disabled;
@@ -352,7 +356,7 @@
     const next={...state};
     for(const [key,id] of Object.entries(fields)){
       const value=by(id).value;
-      next[key]=numeric.has(key)?Number(value):value;
+      next[key]=numeric.has(key)?(key==='mScale'?storedMScale(Number(value)):Number(value)):value;
     }
     state=sanitize(next);
   }
@@ -417,12 +421,12 @@
   }
   function render(){
     const mMax=maxMScale(state.format);
-    // Uma régua contínua: 0% (sem área) a 200% (altura máxima do M).
-    mScaleRange={format:state.format,min:0,max:200};
+    // 0–99%: vetor inteiro; 100%: fundo completo com dois vazados.
+    mScaleRange={format:state.format,min:0,max:100};
     const mScaleInput=by("labMScale");
-    mScaleInput.min="0";mScaleInput.max="200";
+    mScaleInput.min="0";mScaleInput.max="100";
     const mPrecision=by("labPrecision-mScale");
-    if(mPrecision){mPrecision.min="0";mPrecision.max="200";}
+    if(mPrecision){mPrecision.min="0";mPrecision.max="100";}
     state.mPresentation=state.mScale>=200?"completo":"elemento";
     state.mExpandedPositionY=state.mPositionY;
     syncInputs();
@@ -453,6 +457,7 @@
     board.style.setProperty("--lab-text-width",state.textWidth+"%");
     board.style.setProperty("--lab-m-size",state.mScale+"%");
     board.style.setProperty("--lab-m-scale-factor",String(state.mScale/200));
+    board.style.setProperty("--lab-m-element-fraction",String(state.mScale/199));
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
     board.style.setProperty("--lab-photo-contrast",String(state.photoContrast/100));

@@ -74,7 +74,7 @@ try{
     'Scale must remain editable in M tool');
   await scale.fill('60');
   const small=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().width);
-  await scale.fill('200');
+  await scale.fill('100');
   const expanded=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().width);
   assert(expanded>small*2,'M must grow continuously to expanded state');
   assert(await page.locator('#labArtboard').getAttribute('data-m-presentation')==='completo',
@@ -94,7 +94,7 @@ try{
     'Vertical position must move the apertures while the expanded M still fills the page');
   await page.locator('#labMPositionField [data-lab-center="mPositionY"]').click();
   assert(await vertical.inputValue()==='50','Center action must restore 50 percent');
-  await scale.fill('95');
+  await scale.fill('99');
   assert(await page.locator('#labArtboard').getAttribute('data-m-presentation')==='elemento',
     'Reducing scale must recover the entire M element');
   await toggle.uncheck();
@@ -321,7 +321,7 @@ try{
   assert(mElement.mode==="elemento"&&mElement.mask.height<mElement.frame.height &&
          await page.locator("#labMask").isVisible(),
     "Smaller M must remain an intact element: "+JSON.stringify(mElement));
-  await page.locator("#labMScale").fill("200");
+  await page.locator("#labMScale").fill("100");
   const mFull=await mMeasurement();
   const fullBackdrop=await page.locator("#labArtboard").evaluate(el=>{
     const ambient=el.querySelector(".lm-lab-photo-ambient");
@@ -347,7 +347,7 @@ try{
   for(const format of ["horizontal","quadrado","editorial","vertical"]){
     await choose("format",format);
     await page.locator('button[data-mobile-module="m"]').click();
-    await page.locator("#labMScale").fill("200");
+    await page.locator("#labMScale").fill("100");
     const geometry=await mMeasurement(),frame=geometry.frame,mask=geometry.mask;
     const aperture=await page.locator("#labArtboard").evaluate(board=>{
       const g=window.LabExpandedMaskGeometry(board.offsetWidth,board.offsetHeight,50);

@@ -295,8 +295,9 @@ try{
   await choose("background","color");
   await choose("mContent","off");
   await choose("mContent","solid");
-  assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
-    "M sólido deve existir em composição de cor");
+  assert(await page.locator('#labMEnabled').isVisible()&&
+         await page.locator('#labArtboard').getAttribute('data-m-content')==='solid',
+    "M sólido deve estar ativo na composição de cor");
   await choose("mContent","off");
   // Mesmo vetor, escala contínua e clipping consistente em cada formato.
   await choose("mContent","photo");
@@ -560,10 +561,10 @@ try{
     // A photographic M must be turned off before the color-only solid option
     // is available. This is a deliberate product rule, not a visual failure.
     await choose("mContent","off");
-    await choose("mPresentation","elemento");
-    const mButton=page.locator('[data-lab-choice="mContent"][data-value="solid"]');
+    await page.locator('button[data-mobile-module="m"]').click();
+    const mButton=page.locator('#labMEnabled');
     await mButton.scrollIntoViewIfNeeded();
-    await mButton.click();
+    await mButton.check();
     const scrollState=await page.evaluate(()=>({
       y:window.scrollY,
       bodyScroll:getComputedStyle(document.body).overflowY,

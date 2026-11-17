@@ -144,8 +144,43 @@
   requestAnimationFrame(fitArtboard);
 
   const moduleButtons=[...lab.querySelectorAll("[data-mobile-module]")];
+  // Four everyday gestures; format and guides are secondary, not a competing tool.
+  const moduleIndex=inspector?.querySelector(".lm-composition-module-index");
+  const primaryOrder=["fundo","texto","m","assinatura"];
+  if(moduleIndex&&!moduleIndex.querySelector(".lm-studio-secondary")){
+    const secondary=document.createElement("details");
+    secondary.className="lm-studio-secondary";
+    const summary=document.createElement("summary");
+    summary.textContent="FORMATO E GUIAS";
+    secondary.append(summary);
+    const secondaryTools=document.createElement("div");
+    secondaryTools.className="lm-studio-secondary-tools";
+    secondary.append(secondaryTools);
+    const labels={fundo:"IMAGEM",texto:"TEXTO",m:"M",assinatura:"ASSINAR",superficie:"SUPERFÍCIE",construcao:"CONSTRUÇÃO"};
+    for(const name of primaryOrder){
+      const button=moduleButtons.find(item=>item.dataset.mobileModule===name);
+      if(button){button.textContent=labels[name];moduleIndex.append(button);}
+    }
+    for(const name of ["superficie","construcao"]){
+      const button=moduleButtons.find(item=>item.dataset.mobileModule===name);
+      if(button){button.textContent=labels[name];secondaryTools.append(button);}
+    }
+    moduleIndex.append(secondary);
+  }
+  // Keep technical fields reachable without making them a mandatory step.
+  const extrasButton=document.createElement("button");
+  extrasButton.type="button";
+  extrasButton.className="lm-studio-details-toggle";
+  extrasButton.textContent="AJUSTES FINOS +";
+  extrasButton.setAttribute("aria-expanded","false");
+  extrasButton.addEventListener("click",()=>{
+    const showing=inspector.classList.toggle("lm-studio-details");
+    extrasButton.setAttribute("aria-expanded",String(showing));
+    extrasButton.textContent=showing?"OCULTAR AJUSTES −":"AJUSTES FINOS +";
+  });
+  inspector?.querySelector(".lm-inspector-head")?.append(extrasButton);
   const mobileQuery=matchMedia("(max-width:1180px)");
-  let mobileModule="superficie";
+  let mobileModule="fundo";
   try{
     const saved=sessionStorage.getItem("labmattar-composicao-mobile-module");
     if(moduleButtons.some(b=>b.dataset.mobileModule===saved))mobileModule=saved;
@@ -155,6 +190,7 @@
     if(!moduleButtons.some(b=>b.dataset.mobileModule===name))return;
     mobileModule=name;
     inspector.dataset.mobileModule=name;
+    if(["superficie","construcao"].includes(name))moduleIndex?.querySelector(".lm-studio-secondary")?.setAttribute("open","");
     const activeButton=moduleButtons.find(button=>button.dataset.mobileModule===name);
     const activeLabel=(activeButton?.textContent||name).trim();
     inspector.dataset.activeLabel=activeLabel;

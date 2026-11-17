@@ -21,6 +21,19 @@ export async function createPDF(scenes,fonts){
   });
   doc.registerFont('UniversMattar',Buffer.from(fonts.UniversMattar));
   doc.registerFont('PerpetuaMattar',Buffer.from(fonts.PerpetuaMattar));
+  const imageSources=new Map();
+  async function pdfImages(ops){
+    return Promise.all(ops.map(async op=>{
+      if(op.kind==='group')return {...op,items:await pdfImages(op.items)};
+      if(op.kind!=='image'||!op.source.startsWith('data:image/webp;'))return op;
+      if(!imageSources.has(op.source))imageSources.set(op.source,(async()=>{
+        const image=new Image();image.src=op.source;await image.decode();
+        const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+        canvas.getContext('2d').drawImage(image,0,0);return canvas.toDataURL('image/png');
+      })());
+      return {...op,source:await imageSources.get(op.source)};
+    }));
+  }
   function draw(ops){for(const op of ops){
     doc.save();
     if(op.kind==='rect')doc.fillColor(color(op.color)).rect(op.x,op.y,op.w,op.h).fill();
@@ -43,8 +56,9 @@ export async function createPDF(scenes,fonts){
   try{
     for(const scene of scenes){
       doc.addPage({size:[scene.width*.75,scene.height*.75],margin:0});
-      doc.save().scale(.75).rect(0,0,scene.width,scene.height).clip();draw(scene.items);doc.restore();
+      doc.save().scale(.75).rect(0,0,scene.width,scene.height).clip();draw(await pdfImages(scene.items));doc.restore();
     }
     doc.end();return await output;
   }catch(error){doc.end();throw error;}
 }
+

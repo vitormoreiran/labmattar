@@ -1,4 +1,5 @@
 import {createProductionDocument,verifyRoundTrip,signatureOf} from './composicao-document.mjs';
+import {normalizeImageAssets,normalizeGallery} from './lab-gallery-model.mjs';
 export const SEQUENCE_KIND='labmattar.presentation';
 export const SEQUENCE_VERSION=1;
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -134,21 +135,22 @@ export function privateClipUrl(clip){
     safe.provider==='local'?'/api/acervo/local-placeholder?id='+encodeURIComponent(safe.fileId):
     '/api/acervo/media?provider='+safe.provider+'&id='+encodeURIComponent(safe.fileId);
 }
-export function createPage({id,name,state,photoCatalog,maxEdge=3840,motions=[],clips=[],backgroundVideo=null}){
+export function createPage({id,name,state,photoCatalog,maxEdge=3840,motions=[],clips=[],backgroundVideo=null,gallery=null}){
   return {id,name,composition:createProductionDocument({state,photoCatalog,maxEdge}),
     motions:clone(motions),clips:clips.map(normalizeClip),
-    ...(backgroundVideo?{backgroundVideo:normalizeBackgroundVideo(backgroundVideo)}:{})};
+    ...(backgroundVideo?{backgroundVideo:normalizeBackgroundVideo(backgroundVideo)}:{}),...(gallery?{gallery:clone(gallery)}:{})};
 }
 export function readSequence(value,photoCatalog,motionCatalog){
   if(value?.schemaVersion===2)return readSectionSequence(value,photoCatalog,motionCatalog);
   check(value?.kind===SEQUENCE_KIND&&value.schemaVersion===SEQUENCE_VERSION,'versão da sequência');
   title(value.name);
   check(Array.isArray(value.pages)&&value.pages.length>0&&value.pages.length<=100,'quantidade de páginas');
-  check(['kind,name,pages,schemaVersion','kind,name,pages,schemaVersion,signature'].includes(Object.keys(value).sort().join(',')),'campos da sequência');
+  check(['kind,name,pages,schemaVersion','kind,name,pages,schemaVersion,signature'].includes(Object.keys(value).filter(key=>key!=='imageAssets').sort().join(',')),'campos da sequência');
+  const imageAssets=normalizeImageAssets(value.imageAssets);
   const pageIds=new Set(),catalog={...photoCatalog};
   const pages=value.pages.map(page=>{
     check(page&&identifier(page.id)&&!pageIds.has(page.id),'identificador de página repetido');pageIds.add(page.id);
-    const keys=Object.keys(page).sort().join(',');
+    const keys=Object.keys(page).filter(key=>key!=='gallery').sort().join(',');
     check(['composition,id,motions,name','clips,composition,id,motions,name',
       'backgroundVideo,composition,id,motions,name',
       'backgroundVideo,clips,composition,id,motions,name'].includes(keys),'campos da página');
@@ -166,21 +168,24 @@ export function readSequence(value,photoCatalog,motionCatalog){
     check(new Set(clips.map(clip=>clip.id)).size===clips.length,'vídeo repetido na página');
     const backgroundVideo=page.backgroundVideo?normalizeBackgroundVideo(page.backgroundVideo):null;
     check(!backgroundVideo||page.composition.pages[0].surface.background==='photo','vídeo de fundo exige superfície de imagem');
+    const gallery=normalizeGallery(page.gallery,imageAssets);
     return {id:page.id,name:page.name,composition:clone(page.composition),motions,clips,
-      ...(backgroundVideo?{backgroundVideo}:{}),state};
+      ...(backgroundVideo?{backgroundVideo}:{}),...(gallery?{gallery}:{}),state};
   });
   const signature=value.signature===undefined?null:signatureOf(value.signature);
   if(signature)check(pages.every(page=>JSON.stringify(page.state.signature)===JSON.stringify(signature)),"assinatura deve ser única no documento");
-  return {name:value.name,pages,photoCatalog:catalog,...(signature?{signature}:{})};
+  return {name:value.name,pages,photoCatalog:catalog,...(signature?{signature}:{}),...(imageAssets.length?{imageAssets}:{})};
 }
-export function sequenceDocument(name,pages,sections=null,signature=null){
-  if(sections)return {kind:SEQUENCE_KIND,schemaVersion:2,name,...(signature?{signature:signatureOf(signature)}:{}),sections:clone(sections),pages:pages.map(({id,name,composition,motions,sectionId,clips=[],backgroundVideo=null})=>({id,name,composition:clone(composition),motions:clone(motions),sectionId,...(clips.length?{clips:clips.map(normalizeClip)}:{}),...(backgroundVideo?{backgroundVideo:normalizeBackgroundVideo(backgroundVideo)}:{})}))};
-  return {kind:SEQUENCE_KIND,schemaVersion:SEQUENCE_VERSION,name,...(signature?{signature:signatureOf(signature)}:{}),
-    pages:pages.map(({id,name,composition,motions,clips=[],backgroundVideo=null})=>({
-      id,name,composition:clone(composition),motions:clone(motions),
-      ...(clips.length?{clips:clips.map(normalizeClip)}:{}),
-      ...(backgroundVideo?{backgroundVideo:normalizeBackgroundVideo(backgroundVideo)}:{})
-    }))};
+export function sequenceDocument(name,pages,sections=null,signature=null,imageAssets=[]){
+  const assets=normalizeImageAssets(imageAssets);
+  const materialized=pages.map(({id,name,composition,motions,sectionId,clips=[],backgroundVideo=null,gallery=null})=>({
+    id,name,composition:clone(composition),motions:clone(motions),...(sections?{sectionId}:{}),
+    ...(clips.length?{clips:clips.map(normalizeClip)}:{}),
+    ...(backgroundVideo?{backgroundVideo:normalizeBackgroundVideo(backgroundVideo)}:{}),
+    ...(gallery?{gallery:normalizeGallery(gallery,assets)}:{})
+  }));
+  return {kind:SEQUENCE_KIND,schemaVersion:sections?2:SEQUENCE_VERSION,name,...(signature?{signature:signatureOf(signature)}:{}),
+    ...(sections?{sections:clone(sections)}:{}),pages:materialized,...(assets.length?{imageAssets:assets}:{})};
 }
 export function movePage(pages,index,delta){
   const target=index+delta;if(target<0||target>=pages.length)return index;
@@ -201,15 +206,15 @@ export function hasSectionText(sectionId,pages){
   return pages.filter(page=>page.sectionId===sectionId).some(page=>{
     const {text,m}=page.composition.pages[0];
     const caption=m.content!=='off'&&m.presentation==='elemento'&&m.caption?.trim();
-    return Boolean(caption||text.title.value.trim()||(text.body.visible&&text.body.value.trim())||Object.values(text.detail.signature.slots).some(slot=>['text','symbol-label'].includes(slot.kind)&&slot.text.trim()));
+    return Boolean(caption||page.gallery?.items.some(item=>item.caption.trim())||text.title.value.trim()||(text.body.visible&&text.body.value.trim())||Object.values(text.detail.signature.slots).some(slot=>['text','symbol-label'].includes(slot.kind)&&slot.text.trim()));
   });
 }
 function readSectionSequence(value,photoCatalog,motionCatalog){
-  check(value.kind===SEQUENCE_KIND&&['kind,name,pages,schemaVersion,sections','kind,name,pages,schemaVersion,sections,signature'].includes(Object.keys(value).sort().join(',')),'campos da apresentação por seções');
+  check(value.kind===SEQUENCE_KIND&&['kind,name,pages,schemaVersion,sections','kind,name,pages,schemaVersion,sections,signature'].includes(Object.keys(value).filter(key=>key!=='imageAssets').sort().join(',')),'campos da apresentação por seções');
   check(Array.isArray(value.sections)&&value.sections.length>0&&value.sections.length<=30,'quantidade de seções');
   check(Array.isArray(value.pages),'páginas da apresentação');
-  const stripped=value.pages.map(page=>{check(page&&['composition,id,motions,name,sectionId','clips,composition,id,motions,name,sectionId','backgroundVideo,composition,id,motions,name,sectionId','backgroundVideo,clips,composition,id,motions,name,sectionId'].includes(Object.keys(page).sort().join(',')),'campos da página de seção');const {sectionId,...rest}=page;return rest;});
-  const base=readSequence({kind:SEQUENCE_KIND,schemaVersion:1,name:value.name,pages:stripped,...(value.signature?{signature:value.signature}:{})},photoCatalog,motionCatalog);
+  const stripped=value.pages.map(page=>{check(page&&['composition,id,motions,name,sectionId','clips,composition,id,motions,name,sectionId','backgroundVideo,composition,id,motions,name,sectionId','backgroundVideo,clips,composition,id,motions,name,sectionId'].includes(Object.keys(page).filter(key=>key!=='gallery').sort().join(',')),'campos da página de seção');const {sectionId,...rest}=page;return rest;});
+  const base=readSequence({kind:SEQUENCE_KIND,schemaVersion:1,name:value.name,pages:stripped,...(value.signature?{signature:value.signature}:{}),...(value.imageAssets?{imageAssets:value.imageAssets}:{})},photoCatalog,motionCatalog);
   const ids=new Set();
   const sections=value.sections.map(section=>{
     check(section&&identifier(section.id)&&!ids.has(section.id),'identificador de seção repetido');ids.add(section.id);title(section.name);
@@ -247,3 +252,4 @@ export function applyDocumentSignature(pages,signature,photoCatalog){
     return {...page,composition:createProductionDocument({state:{...state,signature:clean},photoCatalog:catalog,maxEdge:page.composition.output.maxEdge})};
   });
 }
+

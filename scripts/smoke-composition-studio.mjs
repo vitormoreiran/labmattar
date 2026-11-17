@@ -298,29 +298,24 @@ try{
   assert(await page.locator('[data-lab-choice="mContent"][data-value="solid"]').isVisible(),
     "M sólido deve existir em composição de cor");
   await choose("mContent","off");
-  // One published M; Completo fits 100% of every surface's vertical height.
-  // Elemento retains the manually adjusted scale in all four formats.
+  // Mesmo vetor, escala contínua e clipping consistente em cada formato.
   await choose("mContent","photo");
   await choose("format","vertical");
   assert(await page.locator("#labTextWidth").inputValue()==="100",
-    "Vertical must use the whole reading width inside the established margins, not crop the last word");
+    "Vertical must preserve full reading width");
   await page.locator('button[data-mobile-module="m"]').click();
-  assert(await page.locator("#labMPresentationField").isVisible(),
-    "M appearance controls must be accessible across canvas formats");
-  await choose("mPresentation","elemento");
   const mMeasurement=async()=>page.locator("#labArtboard").evaluate(board=>{
     const b=board.getBoundingClientRect(),m=board.querySelector("#labMask").getBoundingClientRect();
     return {mode:board.dataset.mPresentation,
       frame:{left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height},
       mask:{left:m.left,right:m.right,top:m.top,bottom:m.bottom,width:m.width,height:m.height}};
   });
+  await page.locator("#labMScale").fill("70");
   const mElement=await mMeasurement();
-  const savedScale=await page.locator("#labMScale").inputValue();
-  assert(mElement.mode==="elemento"&&mElement.mask.width>50 &&
-         mElement.mask.width<mElement.frame.width &&
+  assert(mElement.mode==="elemento"&&mElement.mask.height<mElement.frame.height &&
          await page.locator("#labMask").isVisible(),
-    "Elemento must preserve the visible, aligned variable-size M: "+JSON.stringify(mElement));
-  await choose("mPresentation","completo");
+    "Smaller M must remain an intact element: "+JSON.stringify(mElement));
+  await page.locator("#labMScale").fill("200");
   const mFull=await mMeasurement();
   const fullBackdrop=await page.locator("#labArtboard").evaluate(el=>{
     const ambient=el.querySelector(".lm-lab-photo-ambient");
@@ -330,56 +325,42 @@ try{
   });
   assert(fullBackdrop.mode==="blur"&&fullBackdrop.filter.includes("blur(")&&
          fullBackdrop.display!=="none"&&fullBackdrop.samePhoto,
-    "Completo in 9:16 keeps the SAME blurred photograph below the full-height M: "+JSON.stringify(fullBackdrop));
-  await page.locator("#labArtboard").screenshot({path:"laboratorio-fundo-blur-completo.png"});
-  assert(await page.locator("#labMask").isVisible(),
-    "M must remain visible when the background is a solid color");
-  assert(mFull.mode==="completo" && Math.abs(mFull.mask.height-mFull.frame.height)<2 &&
+    "Expanded M must retain photographic background: "+JSON.stringify(fullBackdrop));
+  assert(mFull.mode==="completo"&&Math.abs(mFull.mask.height-mFull.frame.height)<2 &&
          mFull.mask.left<mFull.frame.left-10&&mFull.mask.right>mFull.frame.right+10 &&
          Math.abs(mFull.mask.width/mFull.mask.height-990.08/743.18)<.005,
-    "Complete M should cover portrait height with symmetric side bleed and no deformation: "+JSON.stringify(mFull));
-  assert(await page.locator("#labMScale").isDisabled() && await page.locator("#labMarker").isDisabled(),
-    "Manual scale and duplicate end markers must be inactive in Completo");
-  assert((await page.locator("#labMScale").inputValue())===savedScale,
-    "Completo must not overwrite Elemento's saved scale");
-  assert(await page.evaluate(()=>(()=>{const saved=JSON.parse(localStorage.getItem("labmattar-pages-v1"));return saved.document.pages[saved.current].composition.pages[0].m.presentation;})())==="completo",
-    "M appearance must persist in the same saved editor state");
+    "M at 200% must keep the canonical ratio with portrait side bleed: "+JSON.stringify(mFull));
+  assert(await page.locator("#labMScale").isEnabled(),
+    "M at 200% must remain editable");
   await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-vertical.png"});
-  // Complete M uses EXACTLY 100% of the canvas height for all four formats;
-  // the original vector ratio is fixed, so horizontal can have free side space.
   for(const format of ["horizontal","quadrado","editorial","vertical"]){
     await choose("format",format);
     await page.locator('button[data-mobile-module="m"]').click();
-    assert(await page.locator("#labMPresentationField").isVisible(),
-      "M mode chooser must remain available in "+format);
-    const geometry=await mMeasurement();
-    const frame=geometry.frame, mask=geometry.mask;
+    await page.locator("#labMScale").fill("200");
+    const geometry=await mMeasurement(),frame=geometry.frame,mask=geometry.mask;
     assert(geometry.mode==="completo" &&
            Math.abs(mask.height-frame.height)<2 &&
            Math.abs(mask.width/mask.height-990.08/743.18)<.005 &&
            Math.abs((mask.left+mask.right)-(frame.left+frame.right))<2,
-      "M Completo must have 100% canvas height, canonical aspect and a centered axis in "+format+": "+JSON.stringify(geometry));
+      "Expanded M remains centered and undistorted in "+format+": "+JSON.stringify(geometry));
     const reading=await page.locator("#labArtboard").evaluate(board=>{
-      const title=board.querySelector("#labRenderedTitle");
-      const copy=board.querySelector("#labCopy");
-      const safe=board.querySelector("#labReading");
-      const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}};
-      return {title:rect(title),copy:rect(copy),safe:rect(safe),
+      const title=board.querySelector("#labRenderedTitle"),safe=board.querySelector("#labReading");
+      const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right}};
+      return {title:rect(title),safe:rect(safe),
         fragments:[...title.querySelectorAll(".lm-lab-title-line")].map(span=>({
-          text:span.textContent,scroll:span.scrollWidth,width:span.clientWidth
+          scroll:span.scrollWidth,width:span.clientWidth
         }))};
     });
     assert(reading.fragments.every(line=>line.scroll<=line.width+2) &&
            reading.title.left>=reading.safe.left-2 &&
            reading.title.right<=reading.safe.right+2,
-      "The existing Title must wrap at word boundaries without clipping in "+format+": "+JSON.stringify(reading));
+      "Title must remain readable in "+format+": "+JSON.stringify(reading));
     await page.locator("#labArtboard").screenshot({path:"laboratorio-m-completo-"+format+".png"});
   }
-  await choose("format","vertical");
-  await choose("mPresentation","elemento");
-  assert((await page.locator("#labMScale").inputValue())===savedScale &&
+  await page.locator("#labMScale").fill("70");
+  assert((await mMeasurement()).mode==="elemento" &&
          await page.locator("#labMScale").isEnabled(),
-    "Returning to Elemento must restore its previous scale");
+    "Reducing scale must return to element without switching modes");
   await choose("format","horizontal");
 
   await page.setViewportSize({width:390,height:844});

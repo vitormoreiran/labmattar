@@ -151,7 +151,7 @@
     const secondary=document.createElement("details");
     secondary.className="lm-studio-secondary";
     const summary=document.createElement("summary");
-    summary.textContent="FORMATO E GUIAS";
+    summary.textContent="MAIS OPÇÕES";
     secondary.append(summary);
     const secondaryTools=document.createElement("div");
     secondaryTools.className="lm-studio-secondary-tools";
@@ -178,7 +178,7 @@
     extrasButton.setAttribute("aria-expanded",String(showing));
     extrasButton.textContent=showing?"OCULTAR AJUSTES −":"AJUSTES FINOS +";
   });
-  inspector?.querySelector(".lm-inspector-head")?.append(extrasButton);
+  inspector?.querySelector(".lm-studio-secondary-tools")?.append(extrasButton);
   const mobileQuery=matchMedia("(max-width:1180px)");
   let mobileModule="fundo";
   try{

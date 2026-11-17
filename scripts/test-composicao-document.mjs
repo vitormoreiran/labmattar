@@ -12,7 +12,7 @@ const photoCatalog={
   "151":"/ambiente-editorial/media/BOXDOSENTIR-151.jpg"
 };
 const state={
-  format:"horizontal",color:"neutral",inkColor:"auto",photoContrast:20,autoInkVersion:1,margin:7,guides:"margens",
+  format:"horizontal",color:"neutral",inkColor:"auto",photoContrast:20,photoEffect:"auto",photoBlur:50,photoGlass:50,autoInkVersion:1,margin:7,guides:"margens",
   marker:"both",textWidth:61,titleScale:100,type:"alternada",
   background:"photo",mContent:"photo",mPresentation:"elemento",photo:"64",markerFocus:"blur",
   mScale:60,mPositionY:50,mExpandedPositionY:50,textPositionY:50,mCaption:"",titleFonts:[],focusX:45,focusY:55,symbol:"M.svg",

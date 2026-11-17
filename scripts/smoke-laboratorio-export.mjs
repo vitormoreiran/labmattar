@@ -211,7 +211,8 @@ try{
       play:{left:play.left,right:play.right,top:play.top},viewport:innerWidth};
   });
   assert(mobile.exportBar.left>=0&&mobile.exportBar.right<=mobile.viewport&&
-    mobile.play.right<=mobile.viewport&&mobile.play.left-mobile.exportBar.right>=2,
+    mobile.play.left>=0&&mobile.play.right<=mobile.viewport&&
+    Math.max(mobile.play.left-mobile.exportBar.right,mobile.exportBar.left-mobile.play.right)>=2,
     "Export and Play must remain visible without overlapping on mobile: "+JSON.stringify(mobile));
   await page.screenshot({path:"laboratorio-export-controles-mobile.png"});
   assert(errors.length===0,"Browser errors: "+errors.join("; "));
@@ -219,3 +220,4 @@ try{
 }finally{
   await browser.close();
 }
+

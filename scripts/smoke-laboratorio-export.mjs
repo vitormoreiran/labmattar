@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import {selectInspectorModule} from './studio-test-controls.mjs';
 import { readFile, copyFile } from "node:fs/promises";
 
 const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
@@ -13,7 +14,7 @@ async function choose(group,value){
   const module={format:"superficie",background:"fundo",color:"fundo",inkColor:"texto",mContent:"m",
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
-    await page.locator('button[data-mobile-module="'+module+'"]').click();
+    await selectInspectorModule(page,module,{fine:true});
   if(group==="mContent"&&value!=="off"){
     const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
     if(mode==="off"){

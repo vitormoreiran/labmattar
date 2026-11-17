@@ -1,4 +1,5 @@
 import {chromium,webkit} from "playwright";
+import {selectInspectorModule} from './studio-test-controls.mjs';
 
 const engine=process.env.COMPOSITION_BROWSER==="webkit"?webkit:chromium;
 const base=process.env.COMPOSITION_URL||"http://127.0.0.1:8765/compor.html";
@@ -24,7 +25,7 @@ const chooseCorner=async name=>page.locator('[data-signature-corner="'+name+'"]'
 try{
   await page.goto(base+"?studio=1#laboratorio",{waitUntil:"load",timeout:60000});
   await page.evaluate(()=>document.fonts.ready);
-  await page.locator('button[data-mobile-module="assinatura"]').click();
+  await selectInspectorModule(page,'assinatura',{fine:true});
   assert(await page.locator("#labPanel-assinatura").isVisible(),"Assinatura needs its own inspector panel");
   assert(await page.locator("#labPanel-imagem").isHidden(),"Signature must not expose image and M controls");
   assert(await page.locator("#labSignatureKind").isVisible(),"Corner content type must be editable");
@@ -79,7 +80,7 @@ try{
     saved?.slots?.bl?.symbol==="vaso_09.svg","Composition must persist as the same editor draft");
 
   for(const format of ["vertical","horizontal","quadrado","editorial"]){
-    await page.locator('button[data-mobile-module="superficie"]').click();
+    await selectInspectorModule(page,'superficie');
     await page.locator('[data-lab-choice="format"][data-value="'+format+'"]').click();
     await page.waitForTimeout(110);
     const geometry=await frame().evaluate(board=>{

@@ -2777,3 +2777,166 @@ body.lm-studio-open #laboratorio #labOpenPhotoFromM{
 body.lm-studio-open #laboratorio #labOpenPhotoFromM:hover{color:#181818}
 body.lm-studio-open #laboratorio .lm-lab-m-flow{gap:0!important}
 body.lm-studio-open #laboratorio #labMContentField .lm-ctrl-choice-grid{gap:5px!important}
+
+
+/* Editor simplificado | quatro gestos essenciais, parametros sob demanda.
+   Somente o modo de edicao em tela cheia; sem mudar o modelo de dados. */
+body.lm-studio-open #laboratorio .lm-composition-module-index{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-auto-rows:auto!important;
+  gap:6px!important;
+  padding:11px 7px 12px!important;
+  align-items:stretch!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index>button{
+  min-width:0!important;
+  width:100%!important;
+  height:58px!important;
+  min-height:58px!important;
+  padding:8px 2px!important;
+  font-size:11px!important;
+  letter-spacing:.025em!important;
+  border-radius:9px!important;
+  line-height:1.15!important;
+  white-space:normal!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index>button[aria-pressed=false]{
+  background:#ecebe6!important;
+  color:#393a35!important;
+  border:1px solid transparent!important;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary{
+  grid-column:1/-1!important;
+  padding:3px 0 0;
+  min-width:0;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary summary{
+  cursor:pointer;
+  list-style:none;
+  padding:9px 4px 6px;
+  border-top:1px solid #deddd6;
+  font-size:11px;
+  letter-spacing:.055em;
+  color:#65665e;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary summary::-webkit-details-marker{display:none}
+body.lm-studio-open #laboratorio .lm-studio-secondary summary::after{
+  content:"+";
+  float:right;
+  font-size:16px;
+  line-height:10px;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary[open] summary::after{content:"−"}
+body.lm-studio-open #laboratorio .lm-studio-secondary-tools{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:7px;
+  padding:6px 0 5px;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary-tools button{
+  min-height:39px!important;
+  height:auto!important;
+  border:1px solid #deddd5!important;
+  border-radius:7px!important;
+  font-size:11px!important;
+  background:#fff!important;
+  padding:7px 5px!important;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary-tools button[aria-pressed=true]{
+  background:#262923!important;color:white!important;
+}
+body.lm-studio-open #laboratorio .lm-inspector-head{
+  justify-content:space-between!important;
+  gap:8px!important;
+}
+body.lm-studio-open #laboratorio .lm-studio-details-toggle{
+  font-size:10px!important;
+  letter-spacing:.04em;
+  padding:6px 0!important;
+  min-height:28px!important;
+  border:0!important;
+  color:#555850!important;
+  background:transparent!important;
+  cursor:pointer;
+  white-space:nowrap;
+}
+body.lm-studio-open #laboratorio .lm-inspector-panel-heading{
+  margin-bottom:12px!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-helper,
+body.lm-studio-open #laboratorio .lm-control-effect,
+body.lm-studio-open #laboratorio .lm-lab-fit-info,
+body.lm-studio-open #laboratorio .lm-title-word-field{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector:not(.lm-studio-details) .lm-marker-field,
+body.lm-studio-open #laboratorio .lm-lab-inspector:not(.lm-studio-details) .lm-ctrl-focus-field,
+body.lm-studio-open #laboratorio .lm-lab-inspector:not(.lm-studio-details) .lm-lab-range-scale,
+body.lm-studio-open #laboratorio .lm-lab-inspector:not(.lm-studio-details) #labMPositionField,
+body.lm-studio-open #laboratorio .lm-lab-inspector:not(.lm-studio-details) .lm-m-scale-field{
+  display:none!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector.lm-studio-details .lm-title-word-field{
+  display:grid!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector.lm-studio-details .lm-ctrl-helper,
+body.lm-studio-open #laboratorio .lm-lab-inspector.lm-studio-details .lm-lab-fit-info{
+  display:block!important;
+}
+body.lm-studio-open #laboratorio .lm-lab-inspector.lm-studio-details .lm-m-scale-field:not([hidden]){
+  display:grid!important;
+}
+body.lm-studio-open #laboratorio .lm-ctrl-choice-grid{border-radius:10px!important}
+body.lm-studio-open #laboratorio .lm-ctrl-choice{border-radius:8px!important}
+body.lm-studio-open #laboratorio .lm-ctrl-photos .lm-ctrl-visual,
+body.lm-studio-open #laboratorio .lm-ctrl-mini-photo{height:64px!important}
+body.lm-studio-open #laboratorio .lm-ctrl-photos .lm-ctrl-choice{min-height:90px!important}
+body.lm-studio-open #laboratorio .lm-lab-inspector .lm-composition-module:not([hidden]){
+  padding-top:12px!important;
+}
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-composition-module-index>button{
+    height:48px!important;min-height:48px!important;font-size:10px!important;
+  }
+  body.lm-studio-open #laboratorio .lm-studio-details-toggle{
+    display:block!important;
+  }
+}
+
+
+/* Accommodate the new four-tool index in legacy fixed-height inspector grids. */
+body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
+  grid-template-rows:48px auto minmax(0,1fr)!important;
+}
+body.lm-studio-open #laboratorio .lm-composition-module-index{
+  box-sizing:border-box!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  grid-auto-flow:row!important;
+}
+body.lm-studio-open #laboratorio .lm-studio-secondary-tools .lm-studio-details-toggle{
+  grid-column:1/-1;
+  width:100%!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:8px!important;
+  text-align:left;
+  border-radius:7px!important;
+  background:#ecebe6!important;
+}
+@media(max-width:850px){
+  body.lm-studio-open #laboratorio .lm-composition-module-index{
+    position:relative!important;
+    top:auto!important;
+    margin:0!important;
+    width:100%!important;
+    padding:8px 0!important;
+    overflow:visible!important;
+  }
+  body.lm-studio-open #laboratorio .lm-lab-workspace .lm-lab-inspector{
+    display:block!important;
+  }
+}

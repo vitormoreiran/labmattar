@@ -32,6 +32,15 @@ async function choose(group,value){
     }
     await page.waitForTimeout(80);return;
   }
+  if(group==="marker"||group==="markerFocus"){
+    const id=group==="marker"?"labMarker":"labMarkerFocus";
+    await page.locator("#"+id).evaluate((input,value)=>{
+      input.value=value;
+      input.dispatchEvent(new Event("change",{bubbles:true}));
+    },value);
+    await page.waitForTimeout(80);
+    return;
+  }
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
 }

@@ -81,7 +81,7 @@ try{
    await page.setViewportSize({width:390,height:480});await settle(page);
    assert.equal(await page.locator('#laboratorio').getAttribute('data-keyboard'),'true');
    const input=await page.locator('#labTitleInput').boundingBox();
-   assert(input.y>=48&&input.y+input.height<=480,'Focused text must stay reachable with keyboard');
+   assert(input.y>=48&&input.y+input.height<=480,'Focused text must stay reachable with keyboard: '+JSON.stringify(input));
    await page.locator('#labTitleInput').blur();await page.setViewportSize({width,height});await page.waitForTimeout(180);
    await page.locator('#labStudioToggle').tap();assert(!await page.locator('body').evaluate(e=>e.classList.contains('lm-studio-open')));
    assert.equal(await page.locator('.lm-lab-mini-actions #labReset').count(),1,'Leaving compact mode must restore original actions');

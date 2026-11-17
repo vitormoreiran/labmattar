@@ -203,6 +203,16 @@
     zoomFit.title="Ajustar página à tela · "+Math.round(scale*100)+"%";
     syncCompactActions(compact);
     positionMoreMenu();
+    if(compact&&lab.dataset.keyboard==='true'){
+      const field=document.activeElement;
+      const panel=field?.closest('.lm-composition-module,#labPages,#labWorkflowMotion');
+      if(panel){
+        const control=field.getBoundingClientRect(),bounds=panel.getBoundingClientRect();
+        const visibleHeight=Math.min(control.height,Math.max(0,bounds.height-32));
+        if(control.top<bounds.top+16)panel.scrollTop-=bounds.top+16-control.top;
+        else if(control.top+visibleHeight>bounds.bottom-16)panel.scrollTop+=control.top+visibleHeight-bounds.bottom+16;
+      }
+    }
   }
 
   const fitObserver=new ResizeObserver(()=>fitArtboard());

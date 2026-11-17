@@ -497,7 +497,7 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
 /* Um único vetor e um único eixo para qualquer escala do M.
    200% é a geometria expandida original: altura igual à superfície. */
 .lm-lab-board .lm-lab-m-photo{
-  width:calc(100cqh * 990.08 / 743.18 * var(--lab-m-scale-factor, .3))!important;
+  width:calc(max(105cqw, 100cqh * 990.08 / 743.18) * var(--lab-m-scale-factor, .3))!important;
   height:auto!important;
   max-width:none!important;
   max-height:none!important;
@@ -506,5 +506,5 @@ body.lm-studio-open #laboratorio .lm-studio-launch #labMotionPlay{
   transform:translate(-50%,-50%)!important;
 }
 .lm-lab-board[data-m-presentation="completo"] .lm-lab-m-photo{
-  width:calc(100cqh * 990.08 / 743.18 * var(--lab-m-scale-factor, 1))!important;
+  width:calc(max(105cqw, 100cqh * 990.08 / 743.18) * var(--lab-m-scale-factor, 1))!important;
 }

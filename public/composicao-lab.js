@@ -162,11 +162,11 @@
   };
   const formatRatio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
   const mAspect=990.08/743.18;
-  const maxMScale=format=>Math.min(95,Math.floor(100*mAspect/formatRatio[format]));
+  const maxMScale=()=>200;
   // The expanded M leads new studies. Legacy defaults remain available to
   // sanitize older projects without changing their authored presentation.
   const defaultPreset='expandido';
-  presets.expandido={...presets.mascara,mPresentation:'completo',guides:'nenhuma',bodyMode:'oculto'};
+  presets.expandido={...presets.mascara,mScale:200,mPositionY:50,mExpandedPositionY:50,mContinuousVersion:1,mPresentation:'completo',guides:'nenhuma',bodyMode:'oculto'};
   let activePreset=defaultPreset,frame=0;
   const copy=v=>({...v});
   function sanitize(data){
@@ -177,7 +177,7 @@
       if(numeric.has(key)){
         // O projeto aceita 1–140%. O controle anterior pode pertencer a outro
         // formato; seus limites DOM não podem truncar o valor restaurado.
-        const val=Number(value),min=key==='mScale'?1:Number(el.min),max=key==='mScale'?140:Number(el.max);
+        const val=Number(value),min=key==='mScale'?0:Number(el.min),max=key==='mScale'?200:Number(el.max);
         if(Number.isFinite(val))result[key]=Math.max(min,Math.min(max,val));
       }else if(key==="title"||key==="body"||key==="mCaption"){
         if(typeof value==="string")result[key]=value.slice(0,Number(el.maxLength)>0?el.maxLength:400);
@@ -190,6 +190,14 @@
     }
     result.titleFonts=Array.isArray(data.titleFonts)?data.titleFonts.slice(0,(result.title.match(/\S+/g)||[]).length).map(f=>["univers","perpetua"].includes(f)?f:null):[];
     if(data.photoContrast===undefined)result.photoContrast=20;
+    // M antigo expandido não tinha escala editável; conservar sua aparência ao migrar.
+    if(data.mContinuousVersion!==1&&result.mPresentation==='completo'){
+      result.mScale=200;
+      result.mPositionY=Number.isFinite(Number(data.mExpandedPositionY))?Number(data.mExpandedPositionY):50;
+    }
+    result.mContinuousVersion=1;
+    result.mPresentation=result.mScale>=200?'completo':'elemento';
+    result.mExpandedPositionY=result.mPositionY;
     result.signature=sanitizeSignature(data.signature,data);
     result.autoInkVersion=data.autoInkVersion===2?2:1;
     // Saved projects made before this rule may contain a solid M on a photo.
@@ -248,7 +256,7 @@
     by("labMPresentationField").hidden=false;
     // Choosing Elemento or Completo also enables the M from "Sem M".
     by("labMPresentation").disabled=false;
-    by("labMScale").disabled=!mActive||fullM;
+    by("labMScale").disabled=!mActive;
     by("labMPresentationHint").textContent=!mActive?
       "Selecione Expandido ou Elemento para aplicar o M.":
       fullM?
@@ -273,7 +281,7 @@
     // Markers are independent of the central M, except in Completo.
     setFieldVisible("labColor",state.background==="color");
     for(const id of ["labPhoto","labFocalPreview","labFocusX","labFocusY","labPhotoContrast"])setFieldVisible(id,activeImage);
-    setFieldVisible("labMScale",mActive&&!fullM);
+    setFieldVisible("labMScale",mActive);
     setFieldVisible("labMarker",!fullM);
     for(const key of numeric){
       by("lab"+key.charAt(0).toUpperCase()+key.slice(1)+"Value").textContent=state[key]+"%";
@@ -404,20 +412,14 @@
   }
   function render(){
     const mMax=maxMScale(state.format);
-    // An inactive scale control must not overwrite an Elemento value stored
-    // for another surface merely because Completo is selected now.
-    if(!mScaleRange||mScaleRange.format!==state.format)mScaleRange={format:state.format,min:Math.floor(Math.min(45,state.mScale)),max:Math.ceil(Math.max(mMax,state.mScale))};
-    mScaleRange.min=Math.min(mScaleRange.min,Math.floor(state.mScale));mScaleRange.max=Math.max(mScaleRange.max,mMax,Math.ceil(state.mScale));
-    const visibleMax=mScaleRange.max;
+    // Uma régua contínua: 0% (sem área) a 200% (altura máxima do M).
+    mScaleRange={format:state.format,min:0,max:200};
     const mScaleInput=by("labMScale");
-    mScaleInput.min=String(mScaleRange.min);
-    mScaleInput.max=String(visibleMax);
+    mScaleInput.min="0";mScaleInput.max="200";
     const mPrecision=by("labPrecision-mScale");
-    if(mPrecision)mPrecision.max=String(visibleMax);
-    let scaleNote=by('labMScaleNote');
-    if(!scaleNote){scaleNote=document.createElement('small');scaleNote.id='labMScaleNote';scaleNote.className='lm-ctrl-helper';mScaleInput.closest('.lm-m-scale-field').append(scaleNote);}
-    scaleNote.textContent='Escala do projeto preservada. Faixa de referência para Elemento neste formato: 45–'+mMax+'%.';
-    scaleNote.hidden=state.mScale>=45&&state.mScale<=mMax;
+    if(mPrecision){mPrecision.min="0";mPrecision.max="200";}
+    state.mPresentation=state.mScale>=200?"completo":"elemento";
+    state.mExpandedPositionY=state.mPositionY;
     syncInputs();
     board.dataset.format=state.format;
     board.dataset.mPresentation=state.mPresentation;
@@ -441,6 +443,7 @@
     board.style.setProperty("--lab-pad",state.margin+"%");
     board.style.setProperty("--lab-text-width",state.textWidth+"%");
     board.style.setProperty("--lab-m-size",state.mScale+"%");
+    board.style.setProperty("--lab-m-scale-factor",String(state.mScale/200));
     board.style.setProperty("--lab-focus-x",state.focusX+"%");
     board.style.setProperty("--lab-focus-y",state.focusY+"%");
     board.style.setProperty("--lab-photo-contrast",String(state.photoContrast/100));
@@ -468,8 +471,10 @@
     // One canonical signature is assembled separately from the M image mask.
     window.LabSignatureComposer?.render(state.signature);
     const caption=by("labMCaptionPreview");caption.textContent=state.mCaption;caption.hidden=state.mContent==="off"||state.mPresentation!=="elemento"||!state.mCaption.trim();
-    by("labMPositionField").hidden=state.mContent==="off"||state.mPresentation!=="elemento";
-    by("labMExpandedPositionField").hidden=state.mContent==="off"||state.mPresentation!=="completo";
+    by("labMPositionField").hidden=state.mContent==="off";
+    by("labMExpandedPositionField").hidden=true;
+    const toggle=by("labMEnabled");if(toggle)toggle.checked=state.mContent!=="off";
+    const stateLabel=by("labMScaleState");if(stateLabel)stateLabel.textContent=state.mScale>=200?"EXPANDIDO":state.mScale>=140?"AMPLIADO":"ELEMENTO";
     // Do not carry the previous composition's fitted size into this one.
     title.style.removeProperty("font-size");
     body.style.removeProperty("font-size");
@@ -661,18 +666,22 @@
 
   function alignMToCopy(){
     if(state.mContent==="off")return;
+    // Eixo horizontal fixo e deslocamento vertical responsivo à área visível.
+    const mask=by("labMask"),caption=by("labMCaptionPreview");
+    const height=board.offsetHeight,pad=board.offsetWidth*state.margin/100;
+    const mHeight=mask.offsetHeight;
+    const room=Math.max(0,height-2*pad-mHeight);
+    const displacement=room>0?(state.mPositionY-50)/100*room:
+      (state.mPositionY-50)/50*height*.16;
+    const center=height/2+displacement;
     board.style.setProperty("--lab-m-x","50%");
-    if(state.mPresentation==="completo"){board.style.setProperty("--lab-m-y",state.mExpandedPositionY+"%");return;}
-    const mask=by("labMask"),caption=by("labMCaptionPreview"),pad=board.offsetWidth*state.margin/100;
-    const gap=board.offsetWidth*.012,captionHeight=caption.hidden?0:caption.offsetHeight+gap;
-    let bottom=board.offsetHeight-pad;
-    if(captionHeight)for(const slot of board.querySelectorAll(".lm-lab-signature-slot[data-corner=bl],.lm-lab-signature-slot[data-corner=br]")){if(slot.offsetHeight)bottom=Math.min(bottom,slot.offsetTop+pad-gap);}
-    const room=Math.max(0,bottom-pad-mask.offsetHeight-captionHeight);
-    const center=room?pad+mask.offsetHeight/2+room*state.mPositionY/100:board.offsetHeight/2-captionHeight/2;
     board.style.setProperty("--lab-m-y",center+"px");
-    if(!caption.hidden){caption.style.left=(mask.offsetLeft-mask.offsetWidth/2)+"px";
+    if(!caption.hidden){
+      const gap=board.offsetWidth*.012;
+      caption.style.left=(mask.offsetLeft-mask.offsetWidth/2)+"px";
       caption.style.width=Math.min(mask.offsetWidth,board.offsetWidth-2*pad)+"px";
-      caption.style.top=(center+mask.offsetHeight/2+gap)+"px";}
+      caption.style.top=(center+mHeight/2+gap)+"px";
+    }
   }
 
   function alignTextBlock(){
@@ -1464,6 +1473,14 @@
       activePreset="";render();save();
     });
   }
+  // A interface simples opera o mesmo estado que os controles legados.
+  const enabled=by("labMEnabled");
+  enabled?.addEventListener("change",()=>{
+    if(state.mContent!=="off")lastMContent=state.mContent;
+    const select=by("labMContent");
+    select.value=enabled.checked?(state.background==="photo"?"photo":lastMContent==="off"?"solid":lastMContent):"off";
+    select.dispatchEvent(new Event("change",{bubbles:true}));
+  });
   document.querySelectorAll("[data-lab-preset]").forEach(b=>
     b.addEventListener("click",()=>applyPreset(b.dataset.labPreset)));
   by("labTitleWordsReset").addEventListener("click",()=>{state.titleFonts=[];renderTitleLines();syncTitleWords();requestMeasurement();save();});

@@ -340,7 +340,8 @@ try{
     await page.locator("#labMScale").fill("200");
     const geometry=await mMeasurement(),frame=geometry.frame,mask=geometry.mask;
     assert(geometry.mode==="completo" &&
-           Math.abs(mask.height-frame.height)<2 &&
+           mask.height>=frame.height-2 &&
+           mask.left<=frame.left+2 && mask.right>=frame.right-2 &&
            Math.abs(mask.width/mask.height-990.08/743.18)<.005 &&
            Math.abs((mask.left+mask.right)-(frame.left+frame.right))<2,
       "Expanded M remains centered and undistorted in "+format+": "+JSON.stringify(geometry));

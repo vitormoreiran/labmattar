@@ -681,9 +681,13 @@ try{
   await page.locator("#labOverviewHelp").click();
   assert(await page.locator("#labHelp-overview").isVisible(),
     "Normal Laboratory page must launch the same guided help");
+  await page.waitForFunction(()=>{const r=document.getElementById("labTourClose").getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight;});
+  const tourCloseBounds=await page.locator("#labTourClose").boundingBox();
+  assert(tourCloseBounds&&tourCloseBounds.y>=0&&tourCloseBounds.y+tourCloseBounds.height<=720,"Normal-page help must keep Fechar inside the compact viewport");
   await page.locator("#labTourClose").click();
   assert(errors.length===0,"Browser errors: "+errors.join(" / "));
   console.log("LABMATTAR unified composition studio OK");
 }finally{
   await browser.close();
 }
+

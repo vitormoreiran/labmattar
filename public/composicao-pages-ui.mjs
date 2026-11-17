@@ -1,4 +1,6 @@
 import {installMotionInk} from './lab-motion-ink.mjs';
+import {normalizeImageAssets,normalizeGallery} from './lab-gallery-model.mjs';
+import {installGalleryEditor} from './lab-gallery-ui.mjs';
 import {lowContrastPages} from './lab-application-rules.mjs';
 import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,SEQUENCE_KIND,privatePhotoCatalog,createSection,sectionState,hasSectionText,applyDocumentSignature} from './lab-sequence.mjs';
 import {createProductionDocument,verifyRoundTrip} from './composicao-document.mjs';
@@ -9,24 +11,25 @@ const board=by('labArtboard'),bridge=()=>window.LabProductionBridge;
 const key='labmattar-pages-v1';
 const uid=prefix=>prefix+'-'+crypto.randomUUID();
 const notify=(message,error=false)=>{by('labPagesStatus').textContent=message;by('labPagesStatus').dataset.state=error?'error':'idle';by('labExportStatus').textContent=message;by('labExportStatus').dataset.state=error?'error':busy?'busy':'idle';};
+let imageAssets=[],galleryEditor=null;
 let documentSignature=null,sections=null,pages=[],current=0,name='Apresentação LABMATTAR',catalog=null,catalogLoading=false,switching=false,busy=false,timer=0,enabled=false,still=true,selectedMotion='',selectedClip='',clipsPlaying=true;
 const panel=by('labPages');
 // Inicializar após as variáveis do módulo, sem depender de uma requisição
 // assíncrona para escapar das declarações ainda não inicializadas abaixo.
 if(board&&panel)queueMicrotask(()=>init().catch(error=>notify(error.message,true)));
-function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],backgroundVideo=null){
+function nativePage(id=uid('page'),pageName='Página 1',motions=[],clips=[],backgroundVideo=null,gallery=null){
   const {state,photoCatalog}=bridge().snapshot();
-  const result=createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions,clips,backgroundVideo});
+  const result=createPage({id,name:pageName,state,photoCatalog,maxEdge:Number(by('labExportSize').value),motions,clips,backgroundVideo,gallery});
   if(sections)result.sectionId=pages[current]?.sectionId||sections[0].id;return result;
 }
 function commit(){
   if(switching||busy||!pages.length)return {deferred:true};
-  clearTimeout(timer);if(sections)syncSectionBackground();const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[],old.backgroundVideo||null);
+  clearTimeout(timer);if(sections)syncSectionBackground();const old=pages[current];pages[current]=nativePage(old.id,old.name,old.motions,old.clips||[],old.backgroundVideo||null,old.gallery||null);
   pages=applyDocumentSignature(pages,documentSignature,bridge().snapshot().photoCatalog);
-  const result=persistProjectDraft(localStorage,key,{document:sequenceDocument(name,pages,sections,documentSignature),current,enabled});
+  const result=persistProjectDraft(localStorage,key,{document:sequenceDocument(name,pages,sections,documentSignature,imageAssets),current,enabled});
   by('labSaveState').textContent=result.message;by('labSaveState').dataset.state=result.ok?'success':'error';
   if(!result.ok)notify(result.message,true);
-  renderPages();applySectionVisual();
+  renderPages();applySectionVisual();galleryEditor?.render();
   return result;
 }
 let pageListKey='',deliveryFormat='pdf',videoAbort=null;
@@ -167,7 +170,7 @@ function enableSections(){
   if(sections)return;
   if(pages.length>30)throw Error('A conversão cria uma seção por página e aceita até 30 páginas. O projeto atual foi preservado.');
   commit();const snapshot=bridge().snapshot(),next=pagesToSections(pages,snapshot.photoCatalog,()=>uid('section'));
-  readSequence(sequenceDocument(name,next.pages,next.sections,documentSignature),snapshot.photoCatalog,catalog);
+  readSequence(sequenceDocument(name,next.pages,next.sections,documentSignature,imageAssets),snapshot.photoCatalog,catalog);
   pages=next.pages;sections=next.sections;enabled=true;commit();notify('Seções ativadas. As páginas existentes conservaram seus fundos. Use Seção desta página para agrupar.');
 }
 function resetAvailability(){
@@ -177,7 +180,7 @@ function resetAvailability(){
 function backupBeforeReset(){
   if(deliveryBusy())return false;
   commit();
-  const result=persistProjectDraft(localStorage,key+'-before-reset',{document:sequenceDocument(name,pages,sections,documentSignature),current,enabled});
+  const result=persistProjectDraft(localStorage,key+'-before-reset',{document:sequenceDocument(name,pages,sections,documentSignature,imageAssets),current,enabled});
   if(!result.ok){notify('Não foi possível guardar a cópia de recuperação. Baixe o projeto JSON antes de restaurar.',true);return false;}
   resetAvailability();return true;
 }
@@ -202,7 +205,7 @@ function confirmSectionAction(message,label='CONTINUAR'){
 }
 async function sectionDemo(){
   if(!await confirmSectionAction('Abrir o ensaio com duas seções e seis páginas? Uma cópia do projeto atual será guardada neste navegador para restaurar depois.','ABRIR ENSAIO'))return;
-  commit();if(!localStorage.getItem(key+'-before-section-demo'))localStorage.setItem(key+'-before-section-demo',JSON.stringify(sequenceDocument(name,pages,sections,documentSignature)));
+  commit();if(!localStorage.getItem(key+'-before-section-demo'))localStorage.setItem(key+'-before-section-demo',JSON.stringify(sequenceDocument(name,pages,sections,documentSignature,imageAssets)));
   const snapshot=bridge().snapshot(),nextSections=[],nextPages=[];
   const titles=['UM INÍCIO\nEM COMUM','O QUE NOS\nAPROXIMA','UMA IDEIA\nEM MOVIMENTO','O PROJETO\nGANHA FORMA','CONTEÚDO\nEM SEQUÊNCIA','UM NOVO\nPERCURSO'];
   const bodies=['Uma imagem permanece enquanto a narrativa avança.','Role para percorrer as páginas desta seção.','O mesmo fundo reúne momentos diferentes de leitura.','Uma nova seção traz outra imagem e outro conjunto de páginas.','Os textos usam a entrada do sistema de identidade.','Ao voltar a rolagem, você revisita o conteúdo com a mesma organização.'];
@@ -356,6 +359,7 @@ function renderBackgroundVideo(){
   }else apply(backgroundVideoUrl(background));
 }
 function renderMotions(){
+  galleryEditor?.render();
   const layer=by('labPageMotions');
   for(const video of layer.querySelectorAll('video')){video.motionInk?.dispose();video.pause();video.removeAttribute('src');video.load();}
   layer.replaceChildren();
@@ -533,14 +537,14 @@ async function openLibrary(){
 async function load(document,{currentIndex=0}={}){
   const validated=readSequence(document,bridge().snapshot().photoCatalog,catalog);
   switching=true;
-  try{registerPhotos(validated.photoCatalog);sections=validated.sections||null;pages=validated.pages.map(({state,...page})=>page);documentSignature=copy(validated.signature||validated.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,validated.photoCatalog);name=validated.name;current=0;enabled=true;}
+  try{imageAssets=validated.imageAssets||[];registerPhotos(validated.photoCatalog);sections=validated.sections||null;pages=validated.pages.map(({state,...page})=>page);documentSignature=copy(validated.signature||validated.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,validated.photoCatalog);name=validated.name;current=0;enabled=true;}
   finally{switching=false;}
   await switchPage(Math.max(0,Math.min(Number(currentIndex)||0,pages.length-1)),{capture:false});
 }
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);
   switching=true;
-  try{sections=null;documentSignature=copy(state.signature);registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[],clips:[]}];current=0;enabled=false;}
+  try{imageAssets=[];sections=null;documentSignature=copy(state.signature);registerPhotos(photoCatalog);bridge().restore(state);pages=[{id:uid('page'),name:'Página 1',composition:copy(document),motions:[],clips:[]}];current=0;enabled=false;}
   finally{switching=false;}
   await switchPage(0,{capture:false});
 }
@@ -639,7 +643,7 @@ async function exportSequence(type){
     if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
   }
   let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
-  commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections,documentSignature);
+  commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections,documentSignature,imageAssets);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);
   const active=pages[current];busy=true;switching=true;panel.setAttribute('aria-busy','true');
   const lab=by('laboratorio'),previousInert=lab.inert;lab.inert=true;
@@ -684,26 +688,47 @@ async function loadMotionCatalog(){
   try{
     const next=await fetchMotionCatalog();
     // Só liberar renderização após conferir hashes de todas as referências.
-    readSequence(sequenceDocument(name,pages,sections,documentSignature),bridge().snapshot().photoCatalog,next);
+    readSequence(sequenceDocument(name,pages,sections,documentSignature,imageAssets),bridge().snapshot().photoCatalog,next);
     catalog=next;panel.dataset.motionCatalog='ready';return true;
   }catch(error){catalog=null;panel.dataset.motionCatalog='unavailable';notify('Páginas disponíveis / Motion: '+error.message,true);return false;}
   finally{catalogLoading=false;renderMotions();}
 }
 async function init(){
   pages=[nativePage()];documentSignature=copy(bridge().snapshot().state.signature);
-  window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages,sections,documentSignature);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,getSignature:()=>copy(documentSignature),setSignature:signature=>{documentSignature=copy(signature);pages=applyDocumentSignature(pages,signature,bridge().snapshot().photoCatalog);enabled=true;notify("Assinatura atualizada em todas as páginas do documento.");},
+  window.LabPages={create:()=>{commit();const doc=sequenceDocument(name,pages,sections,documentSignature,imageAssets);readSequence(doc,bridge().snapshot().photoCatalog,catalog);return doc;},load,loadComposition,captureMotions,captureImages:(width,height)=>galleryEditor?.capture(width,height)||[],getSignature:()=>copy(documentSignature),setSignature:signature=>{documentSignature=copy(signature);pages=applyDocumentSignature(pages,signature,bridge().snapshot().photoCatalog);enabled=true;notify("Assinatura atualizada em todas as páginas do documento.");},
     validate:document=>readSequence(document,bridge().snapshot().photoCatalog,catalog),
     validateComposition:document=>verifyRoundTrip(document,privatePhotoCatalog(document,bridge().snapshot().photoCatalog)),
-    hasSequence:()=>Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo),
+    hasSequence:()=>Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo||page.gallery),
     sectionBackground:currentSectionBackground,applySectionVisual,prepareBackgroundFrame,
     persist:commit,backupBeforeReset,undoReset,reloadMotionCatalog:loadMotionCatalog,
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');
     if(saved){const result=readSequence(saved.document,bridge().snapshot().photoCatalog,catalog);
-      switching=true;sections=result.sections||null;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);documentSignature=copy(result.signature||result.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,result.photoCatalog);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
+      switching=true;imageAssets=result.imageAssets||[];sections=result.sections||null;registerPhotos(result.photoCatalog);pages=result.pages.map(({state,...page})=>page);documentSignature=copy(result.signature||result.pages[0].state.signature);pages=applyDocumentSignature(pages,documentSignature,result.photoCatalog);name=result.name;enabled=saved.enabled;current=Math.min(Number(saved.current)||0,pages.length-1);
       bridge().restore({...result.pages[current].state,signature:documentSignature});by('labExportSize').value=String(pages[current].composition.output.maxEdge);switching=false;await settled();}
   }catch{switching=false;let recovered=false;try{localStorage.setItem(key+'-recovery',localStorage.getItem(key)||'');recovered=true;}catch{}notify('O rascunho anterior não pôde ser reaberto.'+(recovered?' Uma cópia de recuperação foi preservada neste navegador.':' Abra seu projeto JSON para recuperar a sequência.'),true);}
+  galleryEditor=installGalleryEditor({board,container:by('labPanel-imagem'),
+    getState:()=>({pageId:pages[current]?.id,gallery:pages[current]?.gallery||null,assets:imageAssets,state:bridge().snapshot().state}),
+    onError:message=>notify(message,true),
+    onChange:async({pageId,gallery,assets,create})=>{
+      if(deliveryBusy())throw Error('Conclua a exportação antes de alterar as imagens.');
+      commit();let target=pages.find(page=>page.id===pageId);if(!target)throw Error('A página selecionada já não existe.');
+      const merged=new Map(imageAssets.map(asset=>[asset.id,asset]));for(const asset of assets)merged.set(asset.id,asset);
+      const nextAssets=normalizeImageAssets([...merged.values()]),nextGallery=normalizeGallery(gallery,nextAssets);
+      const source=verifyRoundTrip(target.composition,privatePhotoCatalog(target.composition,bridge().snapshot().photoCatalog));
+      if(create&&!target.gallery&&(source.title.trim()||(source.bodyMode==='visivel'&&source.body.trim()))){
+        if(pages.length>=100)throw Error('Esta sequência já tem 100 páginas.');
+        const state={...source,title:'',titleFonts:[],body:'',bodyMode:'oculto',mContent:'off',mCaption:''};
+        const created=createPage({id:uid('page'),name:'Imagens',state,photoCatalog:bridge().snapshot().photoCatalog,maxEdge:target.composition.output.maxEdge,gallery:nextGallery,backgroundVideo:target.backgroundVideo||null});
+        if(sections)created.sectionId=target.sectionId;const index=pages.indexOf(target)+1;pages.splice(index,0,created);imageAssets=nextAssets;enabled=true;await switchPage(index,{capture:false});
+      }else{
+        imageAssets=nextAssets;if(nextGallery)target.gallery=nextGallery;else delete target.gallery;
+        const used=new Set(pages.flatMap(page=>page.gallery?.items.map(item=>item.assetId)||[]));imageAssets=imageAssets.filter(asset=>used.has(asset.id));
+        enabled=true;commit();galleryEditor?.render();
+      }
+      notify('Imagens da página atualizadas.');
+    }});
   initSections();
   initDelivery();
   const initialView=new URLSearchParams(location.search).get('workspace');
@@ -823,3 +848,4 @@ async function init(){
   resetAvailability();
   loadMotionCatalog();
 }
+

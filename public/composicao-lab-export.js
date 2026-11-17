@@ -307,6 +307,9 @@
       const v=svg.viewBox.baseVal,d=svg.querySelector("path")?.getAttribute("d");
       if(d)items.push({kind:"vector",viewBox:[v.x,v.y,v.width,v.height],paths:[{d}],box:rectangle(svg,frame),alignY:svg.classList.contains('lm-lab-m-marker-top')?0:1,color:getComputedStyle(svg).color});
     }
+    items.push(...await window.LabPages?.captureImages?.(frame.width,frame.height)||[]);
+    const galleryLayer=board.querySelector('#labGalleryLayer');
+    if(galleryLayer)items.push(...words(galleryLayer,frame).map(op=>({...op,layer:'gallery-caption'})));
     const motions=await window.LabPages?.captureMotions?.(frame.width,frame.height)||[];
     for(const motion of motions){
       items.push(motion);
@@ -385,3 +388,4 @@
   window.LabExportPNG={capture:rasterize,dimensions,isExporting:()=>exporting};
   window.LabRenderer={capture:captureScene};
 })();
+

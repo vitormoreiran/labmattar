@@ -10,7 +10,7 @@ const pages = [
 const styles = [
   'public/manual-layout.css', 'public/manual-symbols.css', 'public/composicao-regras.css', 'public/composicao-demo.css', 'public/manual-composition-layout.css', 'public/composicao-lab.css',
   'public/composicao-lab-controls.css', 'public/composicao-studio.css',
-  'public/composicao-editor-clean.css', 'public/laboratorio-index.css', 'public/motion.css', 'public/redes.css'
+  'public/composicao-gallery.css', 'public/composicao-editor-clean.css', 'public/laboratorio-index.css', 'public/motion.css', 'public/redes.css'
 ];
 // Font faces, scales, tracking, leading and casing belong to the shared CSS.
 // Preserve font-size:0 only where an invisible control label is replaced
@@ -49,3 +49,4 @@ for (const token of ['--lm-type-title-size','--lm-type-body-size','--lm-type-det
   assert.ok(canonical.includes(token),'Missing canonical token '+token);
 }
 console.log('Typography sources OK: '+audited+' manual files; three roles, zero conflicting declarations.');
+

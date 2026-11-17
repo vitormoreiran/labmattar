@@ -277,8 +277,8 @@
           const shadow=pixels(frame.width,frame.height,frame,ctx=>{
             const shape=new Path2D(),{scale,x,y}=vectorTransform(maskVector);
             for(const path of maskVector.paths)shape.addPath(new Path2D(path.d),new DOMMatrix([scale,0,0,scale,x,y]));
-            ctx.filter=filter.replace(/(-?[\d.]+)px/g,(_,n)=>(Number(n)*frame.outputScale)+"px");ctx.fillStyle="#000000";ctx.fill(shape);
-            ctx.filter="none";ctx.globalCompositeOperation="destination-out";ctx.fill(shape);ctx.globalCompositeOperation="source-over";
+            ctx.filter=filter.replace(/(-?[\d.]+)px/g,(_,n)=>(Number(n)*frame.outputScale)+"px");ctx.fillStyle="#000000";ctx.fill(shape,maskVector.rule||"nonzero");
+            ctx.filter="none";ctx.globalCompositeOperation="destination-out";ctx.fill(shape,maskVector.rule||"nonzero");ctx.globalCompositeOperation="source-over";
           });items.push({kind:"image",source:shadow,x:0,y:0,w:frame.width,h:frame.height});rasterized.push("sombra fotográfica do M");
         }
         const source=pixels(box.w,box.h,frame,ctx=>{

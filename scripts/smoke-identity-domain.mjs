@@ -28,7 +28,8 @@ try {
   const card = await context.newPage(); card.on('pageerror', error => errors.push(error.message));
   await card.goto(IDENTITY_ORIGIN + '/assinatura-email');
   await card.waitForSelector('#previewStage[data-ready=true] canvas', { timeout: 60000 });
-  assert.equal(await card.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#F7F6F2');
+  assert.equal(await card.locator('#previewStage').getAttribute('data-composition'), 'm-horizontal');
+  assert.equal(await card.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#FFFFFF');
   assert.equal(await card.locator('.installation').getAttribute('open'), '');
   assert.deepEqual(errors, []);
   const report = { origin: IDENTITY_ORIGIN, introduction: true, overview: true, composition: true, matrix: true, card: true, errors };

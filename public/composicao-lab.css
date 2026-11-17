@@ -547,3 +547,18 @@ body.lm-studio-open .lm-lab-inspector[data-mobile-module="m"] #labPhotoEffects{d
   height:100%!important;
   object-fit:cover!important;
 }
+
+
+/* M element ends at 99%. Its entire outline stays visible inside the
+   composition, independent of portrait or landscape format. At 100% the
+   full-bleed surface mask takes over; the apertures retain their vector shape. */
+.lm-lab-board[data-m-presentation="elemento"] .lm-lab-m-photo{
+  width:calc(min(86cqw, 119.936cqh) * var(--lab-m-element-fraction, .30))!important;
+  height:auto!important;
+  aspect-ratio:990.08/743.18!important;
+  left:50%!important;
+  top:var(--lab-m-y)!important;
+  transform:translate(-50%,-50%)!important;
+  max-width:none!important;
+  max-height:none!important;
+}

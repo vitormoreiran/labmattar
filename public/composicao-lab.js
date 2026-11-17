@@ -707,8 +707,9 @@
   function syncExpandedMMask(){
     const mask=by("labMask");
     if(state.mContent==="off"||state.mPresentation!=="completo"){
-      mask.style.removeProperty("mask-image");
-      mask.style.removeProperty("-webkit-mask-image");
+      for(const prop of ["mask-image","-webkit-mask-image","mask-size",
+        "-webkit-mask-size","mask-repeat","-webkit-mask-repeat"])
+        mask.style.removeProperty(prop);
       return;
     }
     const g=expandedMGeometry(board.offsetWidth,board.offsetHeight,state.mPositionY);

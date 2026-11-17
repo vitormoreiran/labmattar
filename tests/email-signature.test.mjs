@@ -86,6 +86,9 @@ test('motion uses a uniform scale inside both native M proportions and narrow fr
  for(const fit of [wide,narrow])assert.ok(Math.abs(fit.width/fit.height-4/3)<1e-12);
  const retina=containedMotionRect(crop,{width:100,height:100*627/822},2);
  assert.equal(retina.width,200);assert.equal(retina.height,150);
+ const published=containedMotionRect(CARD_MOTION.publishedCrop,{width:171*990.08/743.18,height:171});
+ assert.ok(Math.abs(published.width/published.height-CARD_MOTION.publishedCrop.width/CARD_MOTION.publishedCrop.height)<1e-12);
+ assert.ok(published.x>=0&&published.y>=0&&published.height<=171);
 });
 
 test('drawing resolution is bounded before allocating preview buffers',async()=>{

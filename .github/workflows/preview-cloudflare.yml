@@ -61,6 +61,7 @@ on:
       - 'scripts/smoke-symbols-browser.mjs'
       - 'scripts/smoke-matrix-browser.mjs'
       - 'scripts/smoke-composition-studio.mjs'
+      - 'scripts/smoke-identity-review.mjs'
       - 'scripts/studio-test-controls.mjs'
       - 'scripts/acervo-api.mjs'
       - 'scripts/test-acervo.mjs'

@@ -15,18 +15,14 @@ async function choose(group,value){
     marker:"m",markerFocus:"m",mPresentation:"m",photo:"fundo",type:"texto",bodyMode:"texto"}[group];
   if(module&&await page.locator("body").evaluate(el=>el.classList.contains("lm-studio-open")))
     await selectInspectorModule(page,module,{fine:true});
-  if(group==="mContent"&&value!=="off"){
-    const mode=await page.locator("#labArtboard").getAttribute("data-m-content");
-    if(mode==="off"){
-      await page.locator('[data-lab-choice="mPresentation"][data-value="elemento"]').click();
-    }
-    // On photographic backgrounds the material is necessarily photography
-    // and is not offered as a redundant second decision.
-    if(value==="photo"&&await page.locator("#labBackground").inputValue()==="photo"){
-      assert(await page.locator("#labArtboard").getAttribute("data-m-content")==="photo",
-        "Photo background must activate a photo M");
-      return;
-    }
+  if(group==="mContent"||group==="marker"||group==="mPresentation"){
+    const id=group==="mContent"?"labMContent":group==="marker"?"labMarker":"labMPresentation";
+    await page.locator("#"+id).evaluate((el,next)=>{
+      el.value=next;
+      el.dispatchEvent(new Event("change",{bubbles:true}));
+    },value);
+    await page.waitForTimeout(80);
+    return;
   }
   await page.locator('[data-lab-choice="'+group+'"][data-value="'+value+'"]').click();
   await page.waitForTimeout(80);
@@ -63,43 +59,40 @@ try{
   await revealInspectorOptions(page,{fine:true});
   assert(await page.locator('.lm-studio-details-toggle').getAttribute('aria-expanded')==='true',
     'Advanced controls must be reachable through Mais opções and Ajustes finos');
-  // One decision for placement; contextual options never become dead cards.
+  // O M é uma única figura escalável, com ativação e deslocamento.
   await page.locator('button[data-mobile-module="m"]').click();
-  assert(await page.locator(".lm-lab-m-application-grid .lm-ctrl-choice").count()===3,
-    "M must offer exactly Sem M, Elemento and Completo as primary applications");
-  await choose("mContent","off");
-  assert(await page.locator("#labMContentField").isHidden()&&
-         await page.locator(".lm-m-scale-field").isHidden()&&
-         await page.locator(".lm-marker-field").isVisible(),
-    "Sem M keeps optional end markers but hides material and scale");
-  await choose("mPresentation","elemento");
-  assert(await page.locator("#labMContentField").isVisible()&&
-         await page.locator(".lm-m-scale-field").isVisible(),
-    "Elemento reveals exactly material and scale on a color surface");
-  await choose("marker","top");
-  await choose("mPresentation","completo");
-  assert(await page.locator(".lm-m-scale-field").isHidden()&&
-         await page.locator(".lm-marker-field").isHidden(),
-    "Completo must not display unavailable marker and scale controls");
-  await choose("mPresentation","elemento");
-  assert(await page.locator(".lm-marker-field").isVisible()&&
-         await page.locator("#labMarker").inputValue()==="top",
-    "Element profile must preserve the author's previous marker choice");
-  await choose("mContent","photo");
-  assert(await page.locator("#labOpenPhotoFromM").isVisible()&&
-         await page.locator(".lm-photo-library-field").isHidden(),
-    "Photograph library belongs to Fundo, not the M properties");
-  await page.locator("#labOpenPhotoFromM").click();
-  assert(await page.locator('.lm-lab-inspector[data-mobile-module="fundo"]').count()===1&&
-         await page.locator(".lm-photo-library-field").isVisible()&&
-         await page.locator("#labFocalPreview").isVisible(),
-    "Edit image must open the only photograph library in Fundo");
-  await choose("background","photo");
-  await page.locator('button[data-mobile-module="m"]').click();
-  assert(await page.locator("#labMContentField").isHidden(),
-    "Photographic background determines the M material automatically");
-  await choose("marker","none");
-  await choose("mContent","off");
+  const toggle=page.locator('#labMEnabled');
+  assert(await toggle.isVisible(),'M must expose a single enabled switch');
+  await toggle.uncheck();
+  assert(await page.locator('#labArtboard').getAttribute('data-m-content')==='off',
+    'Switch must remove M without modifying authored page');
+  await toggle.check();
+  assert(await page.locator('#labArtboard').getAttribute('data-m-content')!=='off',
+    'Switch must restore M using existing material');
+  const scale=page.locator('#labMScale');
+  assert(await scale.isVisible()&&!await scale.isDisabled(),
+    'Scale must remain editable in M tool');
+  await scale.fill('60');
+  const small=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().width);
+  await scale.fill('200');
+  const expanded=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().width);
+  assert(expanded>small*2,'M must grow continuously to expanded state');
+  assert(await page.locator('#labArtboard').getAttribute('data-m-presentation')==='completo',
+    'Maximum scale must reach the expanded M');
+  assert(await scale.isVisible()&&!await scale.isDisabled(),
+    'Expanded M must remain adjustable');
+  const vertical=page.locator('#labMPositionY');
+  assert(await vertical.isVisible(),'M has one vertical position control at every scale');
+  const centered=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().top);
+  await vertical.fill('80');
+  const moved=await page.locator('#labMask').evaluate(n=>n.getBoundingClientRect().top);
+  assert(moved>centered,'Vertical position must move the same expanded M');
+  await page.locator('#labMPositionField [data-lab-center="mPositionY"]').click();
+  assert(await vertical.inputValue()==='50','Center action must restore 50 percent');
+  await scale.fill('95');
+  assert(await page.locator('#labArtboard').getAttribute('data-m-presentation')==='elemento',
+    'Reducing scale must recover the entire M element');
+  await toggle.uncheck();
   await choose("background","color");
   // Reproduce the exact text entrance used in the normative Typography chapter.
   // Playback must be reversible and must never mutate authored or editable text.
@@ -148,18 +141,9 @@ try{
     "Changing a tool must stop playback and unblock direct editing");
   await choose("mContent","off");
   await choose("bodyMode","oculto");
-  const presentationHelp=page.locator('[data-lab-help="labMPresentation"]');
-  assert(await presentationHelp.count()===1,
-    "The M mode explanation must be available through a real help button");
   await page.locator('button[data-mobile-module="m"]').click();
-  await presentationHelp.click();
-  assert(await page.locator("#labHelp-labMPresentation").isVisible(),
-    "The M presentation help must open on demand");
-  assert((await page.locator("#labHelp-labMPresentation").textContent()).includes("100% da altura"),
-    "Help must explain the functional difference between Elemento and Completo");
-  await presentationHelp.click();
-  assert(await page.locator("#labHelp-labMPresentation").isHidden(),
-    "Help must close without changing the composition");
+  assert(await page.locator('#labMEnabled').isVisible(),
+    'M tool must stay simple and accessible after editing other panels');
   // Seven operational help cards replace the static construction prose.
   const tourTrigger=page.locator("#labTourStudioHelp");
   assert(await tourTrigger.isVisible(),"Focused editor must expose Dúvidas in its own toolbar");

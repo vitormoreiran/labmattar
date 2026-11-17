@@ -185,3 +185,12 @@ html body.lm-studio-open .lm-lab-prep-label{font-size:0!important}
   margin-bottom:clamp(32px,8vw,46px)!important;
  }
 }
+
+/* Editable UI fields use Corpo on touch screens so iOS keeps the viewport
+ * stable while typing. The logical artboard retains its own three roles. */
+@media(max-width:1180px){
+ html body.lm-studio-open main #laboratorio .lm-lab-inspector :is(input[type=text],input[type=number],input[type=email],input[type=tel],textarea,select){
+  font-size:var(--lm-type-body-size)!important;
+ }
+}
+

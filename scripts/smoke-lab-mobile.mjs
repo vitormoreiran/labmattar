@@ -76,7 +76,7 @@ try{
    await selectInspectorModule(page,'texto',{fine:true});
    const editText=page.locator('[data-lab-more="texto"]');if(!await editText.evaluate(e=>e.open))await editText.locator(':scope>summary').tap();
    await page.locator('#labTitleInput').focus();
-   assert.equal(await page.locator('#labTitleInput').evaluate(e=>getComputedStyle(e).fontSize),'16px');
+   assert((await page.locator('#labTitleInput').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)))>=16,'Typing must not trigger iOS viewport zoom');
    await page.setViewportSize({width:390,height:480});await settle(page);
    assert.equal(await page.locator('#laboratorio').getAttribute('data-keyboard'),'true');
    const input=await page.locator('#labTitleInput').boundingBox();

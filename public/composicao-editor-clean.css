@@ -3093,7 +3093,7 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
     width:44px!important;min-width:44px!important;padding:0!important;display:grid!important;place-items:center!important;
   }
   html body.lm-studio-open main #laboratorio :is(#labStudioQuickReset,.lab-tools-label,.lm-studio-help-label,#labMotionPlayText,#labMotionStatus,#labStudioToggleText,.lm-studio-launch-symbol){display:none!important}
-  html body.lm-studio-open main #laboratorio #labStudioToggle::after{content:"×"!important;display:block!important;color:#181818!important;font:300 25px/1 UniversMattar,sans-serif}
+  html body.lm-studio-open main #laboratorio #labStudioToggle::after{content:""!important;display:block!important;width:13px;height:13px;background:linear-gradient(45deg,transparent 46%,#181818 47%,#181818 53%,transparent 54%),linear-gradient(-45deg,transparent 46%,#181818 47%,#181818 53%,transparent 54%)}
   html body.lm-studio-open main #laboratorio .lab-delivery-launch{flex:0 1 120px!important;min-width:82px!important;width:auto!important;margin:0!important}
   html body.lm-studio-open main #laboratorio #labOpenDelivery{
     display:flex!important;align-items:center!important;justify-content:center!important;
@@ -3102,7 +3102,7 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
     background:#181818!important;color:#fff!important;border:1px solid #181818!important;
   }
   html body.lm-studio-open main #laboratorio #labOpenDelivery>span{display:none!important}
-  html body.lm-studio-open main #laboratorio #labOpenDelivery::after{content:"EXPORTAR";font:300 11px/1 UniversMattar,sans-serif;color:inherit}
+  html body.lm-studio-open main #laboratorio #labOpenDelivery::after{content:"EXPORTAR";color:inherit}
   html body.lm-studio-open main #laboratorio .lm-lab-workspace{
     position:relative!important;inset:auto!important;box-sizing:border-box!important;
     width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
@@ -3123,16 +3123,18 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
   }
   html body.lm-studio-open main #laboratorio .lm-lab-preview-head>span:not(#labFormatLabel),
   html body.lm-studio-open main #laboratorio .lm-lab-preview-foot{display:none!important}
-  html body.lm-studio-open main #laboratorio #labFormatLabel{font-size:10px!important;margin:0!important;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  html body.lm-studio-open main #laboratorio #labFormatLabel{margin:0!important;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   html body.lm-studio-open main #laboratorio .lm-studio-preview-controls,
   html body.lm-studio-open main #laboratorio .lm-studio-preview-zoom{display:flex;align-items:center;gap:3px;flex:0 0 auto}
   html body.lm-studio-open main #laboratorio .lm-studio-preview-controls{margin-left:auto}
   html body.lm-studio-open main #laboratorio .lm-studio-preview-controls button{
     appearance:none;min-height:44px;min-width:44px;padding:0 9px;margin:0;border:0;border-radius:0;
-    background:transparent;color:#181818;font:300 11px/1.1 UniversMattar,sans-serif;white-space:nowrap;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+    background:transparent;color:#181818;white-space:nowrap;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   }
   html body.lm-studio-open main #laboratorio .lm-studio-preview-controls button:disabled{opacity:.35}
-  html body.lm-studio-open main #laboratorio :is(#labPreviewZoomIn,#labPreviewZoomOut){font-size:23px}
+  html body.lm-studio-open main #laboratorio :is(#labPreviewZoomIn,#labPreviewZoomOut){font-size:0!important}
+  html body.lm-studio-open main #laboratorio :is(#labPreviewZoomIn,#labPreviewZoomOut)::after{content:"";display:block;width:14px;height:14px;background:linear-gradient(#181818,#181818) center/14px 1px no-repeat}
+  html body.lm-studio-open main #laboratorio #labPreviewZoomIn::after{background:linear-gradient(#181818,#181818) center/14px 1px no-repeat,linear-gradient(#181818,#181818) center/1px 14px no-repeat}
   html body.lm-studio-open main #laboratorio .lm-lab-stage{
     position:relative!important;display:block!important;box-sizing:border-box!important;
     width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
@@ -3156,11 +3158,11 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
     grid-row:1!important;position:relative!important;inset:auto!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
     height:44px!important;min-height:44px!important;padding:0 8px!important;margin:0!important;gap:0!important;z-index:4!important;
   }
-  html body.lm-studio-open main #laboratorio .lab-workflow-switch button{height:44px!important;min-height:44px!important;padding:0 6px!important;font-size:11px!important}
+  html body.lm-studio-open main #laboratorio .lab-workflow-switch button{height:44px!important;min-height:44px!important;padding:0 6px!important}
   html body.lm-studio-open main #laboratorio .lm-inspector-head{display:none!important}
   html body.lm-studio-open main #laboratorio :is(#labWorkflowContext,#labSectionScope){
     grid-row:2!important;box-sizing:border-box!important;height:24px!important;min-height:0!important;
-    margin:0!important;padding:0 12px!important;font-size:10px!important;line-height:24px!important;
+    margin:0!important;padding:0 12px!important;display:flex!important;align-items:center!important;
     white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
   }
   html body.lm-studio-open main #laboratorio #labSectionScope:not([hidden]){display:block!important;z-index:2;background:#fafaf9}
@@ -3173,7 +3175,7 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
   html body.lm-studio-open main #laboratorio .lm-composition-module-index>button{
     position:static!important;display:flex!important;align-items:center!important;justify-content:center!important;
     box-sizing:border-box!important;width:100%!important;min-width:0!important;height:44px!important;min-height:44px!important;
-    padding:0 3px!important;font-size:11px!important;gap:3px!important;white-space:nowrap!important;
+    padding:0 3px!important;gap:3px!important;white-space:nowrap!important;
   }
   html body.lm-studio-open main #laboratorio .lm-composition-module-index>button::before{display:none!important}
   html body.lm-studio-open main #laboratorio .lm-studio-secondary{
@@ -3184,7 +3186,7 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
     margin:0!important;padding:0!important;font-size:0!important;border:1px solid transparent!important;border-radius:7px;background:transparent;
   }
   html body.lm-studio-open main #laboratorio .lm-studio-secondary>summary::after,
-  html body.lm-studio-open main #laboratorio .lm-studio-secondary[open]>summary::after{content:"···"!important;float:none!important;font:300 20px/1 UniversMattar,sans-serif!important}
+  html body.lm-studio-open main #laboratorio .lm-studio-secondary[open]>summary::after{content:""!important;float:none!important;width:18px;height:6px;background:radial-gradient(circle at 2px 3px,#181818 1px,transparent 1.5px),radial-gradient(circle at 9px 3px,#181818 1px,transparent 1.5px),radial-gradient(circle at 16px 3px,#181818 1px,transparent 1.5px)}
   html body.lm-studio-open main #laboratorio .lm-studio-secondary[open]>summary,
   html body.lm-studio-open main #laboratorio .lm-studio-secondary:has(button[aria-pressed=true])>summary{border-color:#181818!important}
   html body.lm-studio-open main #laboratorio .lm-studio-secondary .lm-studio-secondary-tools{
@@ -3194,7 +3196,7 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
     padding:8px!important;gap:6px!important;overflow:auto!important;z-index:2200!important;
     background:#fafaf9!important;border:1px solid #d9d9d3!important;box-shadow:0 8px 24px #0002;
   }
-  html body.lm-studio-open main #laboratorio .lm-studio-secondary .lm-studio-secondary-tools>button{height:44px!important;min-height:44px!important;padding:6px!important;font-size:11px!important}
+  html body.lm-studio-open main #laboratorio .lm-studio-secondary .lm-studio-secondary-tools>button{height:44px!important;min-height:44px!important;padding:6px!important}
   html body.lm-studio-open main #laboratorio .lm-lab-inspector[data-workspace-context=edit]>.lm-composition-module:not([hidden]){
     grid-row:4!important;position:relative!important;display:block!important;box-sizing:border-box!important;
     width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
@@ -3208,10 +3210,10 @@ body.lm-studio-open #laboratorio .lm-lab-inspector[data-mobile-module=m] #labMCo
     display:none!important;
   }
   html body.lm-studio-open main #laboratorio .lm-lab-mini-actions button{height:44px!important;min-height:44px!important;white-space:nowrap!important}
-  html body.lm-studio-open main #laboratorio #labSaveState{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px!important}
+  html body.lm-studio-open main #laboratorio #labSaveState{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   html body.lm-studio-open main #laboratorio .lm-lab-inspector:is([data-workspace-context=pages],[data-workspace-context=motion]){grid-template-rows:44px minmax(0,1fr)!important}
   html body.lm-studio-open main #laboratorio :is(#labPages,#labWorkflowMotion):not([hidden]){grid-row:2!important;position:relative!important;height:100%!important;min-height:0!important;margin:0!important;padding:14px 12px!important;overflow:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important}
-  html body.lm-studio-open main #laboratorio .lm-lab-inspector :is(input[type=text],input[type=number],input[type=email],input[type=tel],textarea,select){font-size:16px!important;min-height:44px!important}
+  html body.lm-studio-open main #laboratorio .lm-lab-inspector :is(input[type=text],input[type=number],input[type=email],input[type=tel],textarea,select){min-height:44px!important}
   html body.lm-studio-open main #laboratorio .lm-lab-inspector .lm-ctrl-columns-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   html body.lm-studio-open main #laboratorio .lm-lab-inspector [hidden]{display:none!important}
   html body.lm-studio-open main #laboratorio[data-preview-expanded=true] .lm-lab-inspector{display:none!important}

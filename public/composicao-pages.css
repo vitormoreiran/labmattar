@@ -41,6 +41,9 @@
 #laboratorio .lab-workflow-context{grid-column:1/-1;padding:14px 16px 0;overflow-wrap:anywhere}
 #laboratorio .lm-lab-inspector:is([data-workspace-context=pages],[data-workspace-context=motion])>:is(.lm-inspector-head,.lm-composition-module-index,.lm-inspector-panel,.lm-lab-mini-actions,.lab-workflow-context){display:none!important}
 #laboratorio .lab-workflow-helper{margin:0;opacity:.7;line-height:1.5}
+/* A workspace owns its panel. Focused mobile editor rules must not place an
+   image/text panel over Pages or Motion, even when that editor panel is active. */
+html body.lm-studio-open main #laboratorio .lm-lab-inspector:is([data-workspace-context=pages],[data-workspace-context=motion])>.lm-inspector-panel:not(#labPages):not(#labWorkflowMotion){display:none!important;pointer-events:none!important}
 #laboratorio .lab-page-list{display:grid;gap:7px;margin:8px 0 14px}
 #laboratorio .lab-page-list button{display:flex;align-items:center;gap:13px;text-align:left;padding:12px;background:none;color:inherit;font:inherit;border:1px solid #c9c8c2;cursor:pointer;min-width:0}
 #laboratorio .lab-page-list button[aria-pressed=true]{border-color:#181818;background:#eeece5;box-shadow:inset 3px 0 #181818}

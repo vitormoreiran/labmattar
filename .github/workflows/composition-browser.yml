@@ -3,6 +3,15 @@ name: Validar Laboratorio de Composicao
 on:
   pull_request:
     paths:
+      - 'public/lab-story-*.mjs'
+      - 'public/presentation-models/**'
+      - 'scripts/test-lab-story-presets.mjs'
+      - 'public/composicao-story.css'
+      - 'public/composicao-pages.css'
+      - 'public/lab-presentation-export.mjs'
+      - 'tools/laboratorio-export/publication.mjs'
+      - 'scripts/test-lab-story.mjs'
+      - 'scripts/smoke-lab-story.mjs'
       - 'public/lab-gallery-model.mjs'
       - 'public/lab-gallery-ui.mjs'
       - 'public/composicao-gallery.css'
@@ -74,14 +83,14 @@ permissions:
 jobs:
   browser:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Validar contrato de documento v1
-        run: node --test scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
+        run: node --test scripts/test-lab-story-presets.mjs scripts/test-lab-story.mjs scripts/test-chapter4-publication.mjs scripts/test-lab-sequence.mjs scripts/test-lab-section-web.mjs scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
@@ -118,6 +127,8 @@ jobs:
       - name: Testar composicoes no navegador
         run: |
           python3 -m http.server 8765 --directory public > /tmp/composicao-http.log 2>&1 &
+          COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-story.mjs
+          STORY_SKIP_PDF=1 COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-story.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-gallery.mjs
           COMPOSITION_BROWSER=webkit COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-gallery.mjs
           COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-mobile.mjs
@@ -160,6 +171,8 @@ jobs:
             vertical-proof/
             mobile-proof/
             gallery-proof/
+            story-proof/
           if-no-files-found: ignore
+
 
 

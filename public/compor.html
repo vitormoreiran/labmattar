@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="/composicao-lab-signature.css">
 <link rel="stylesheet" href="/composicao-lab-export.css">
 <link rel="stylesheet" href="/composicao-pages.css">
+<link rel="stylesheet" href="/lab-project-templates.css">
 <link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19">
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
@@ -82,6 +83,7 @@ html body > nav.lm-site-nav a:focus-visible { outline:1px solid currentColor; ou
       <button type="button" id="labTourStudioHelp" class="lm-studio-help" aria-label="Abrir ajuda guiada e dúvidas do Laboratório" aria-controls="labHelp-overview" aria-expanded="false"><span aria-hidden="true">?</span><span class="lm-studio-help-label">DÚVIDAS</span></button>
       <button type="button" class="lm-lab-motion-play" id="labMotionPlay" aria-controls="labArtboard" aria-label="Reproduzir entrada dos textos" title="Reproduzir a entrada de Título, Corpo e Detalhe"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path fill="currentColor" d="M1 0.5 9 5 1 9.5Z"/></svg><span id="labMotionPlayText">ENTRADA</span></button>
       <span id="labMotionStatus" class="lm-lab-motion-status" role="status" aria-live="polite"></span>
+      <button type="button" id="labNewProject" aria-haspopup="dialog" aria-controls="labProjectTemplates" disabled>NOVO PROJETO</button>
       <div class="lm-lab-export-tools lab-delivery-launch" role="group" aria-label="Finalizar apresentação"><button type="button" id="labOpenDelivery" aria-haspopup="dialog" aria-controls="labDeliveryDialog"><span class="lab-delivery-step" aria-hidden="true">02</span><span>REVISAR E EXPORTAR</span><span aria-hidden="true">→</span></button></div>
       <button type="button" id="labStudioToggle" aria-pressed="false" aria-controls="labArtboard">
         <span id="labStudioToggleText">ABRIR EDITOR</span><span class="lm-studio-launch-symbol" aria-hidden="true">↗</span>
@@ -135,7 +137,7 @@ html body > nav.lm-site-nav a:focus-visible { outline:1px solid currentColor; ou
               <label for="labSectionName">Nome da seção atual</label><input id="labSectionName" maxlength="120">
               <p id="labSectionBackgroundInfo" class="detail"></p><button id="labSectionEditBackground" type="button">EDITAR FUNDO COMPARTILHADO →</button>
               <label for="labSectionTreatment">Tratamento do fundo</label><select id="labSectionTreatment"><option value="photo">Nítido</option><option value="blur">Desfocado</option></select>
-              <div class="lab-section-actions"><button id="labSectionEarlier" type="button">SUBIR SEÇÃO</button><button id="labSectionLater" type="button">DESCER SEÇÃO</button><button id="labSectionDelete" type="button">EXCLUIR SEÇÃO</button></div>
+              <div class="lab-section-actions"><button id="labSectionDuplicate" type="button">DUPLICAR SEÇÃO</button><button id="labSectionEarlier" type="button">SUBIR SEÇÃO</button><button id="labSectionLater" type="button">DESCER SEÇÃO</button><button id="labSectionDelete" type="button">EXCLUIR SEÇÃO</button></div>
             </div></details>
           </div><select id="labPageSelect" hidden aria-hidden="true" tabindex="-1"><option value="0">01 / Página 1</option></select><div id="labPageList" class="lab-page-list" aria-label="Ordem das páginas"></div>
           <div id="labPageSectionField" hidden><label for="labPageSection">Seção desta página / mover</label><select id="labPageSection"></select></div><label for="labPageName">Nome da página selecionada</label><input id="labPageName" maxlength="120" value="Página 1">
@@ -197,11 +199,12 @@ html body > nav.lm-site-nav a:focus-visible { outline:1px solid currentColor; ou
         <div class="lm-inspector-panel-heading"><span>SUPERFÍCIE</span></div>
 
         <div class="lm-lab-fields lm-inspector-primary"><div class="lm-lab-field lm-ctrl-choice-field"><div id="labFormatTitle" class="lm-lab-field-title">Proporção da superfície</div><select id="labFormat" class="lm-ctrl-native-select" tabindex="-1" aria-hidden="true">
-          <option value="horizontal">Horizontal / 16:9</option><option value="vertical">Vertical / 9:16</option><option value="quadrado">Quadrado / 1:1</option><option value="editorial">Editorial / √2:1</option>
+          <option value="horizontal">Horizontal / 16:9</option><option value="vertical">Vertical / 9:16</option><option value="quadrado">Quadrado / 1:1</option><option value="editorial">Editorial / √2:1</option><option value="a4">A4 / 210 × 297 mm</option>
         </select><div class="lm-ctrl-choice-grid lm-ctrl-columns-2" role="group" aria-labelledby="labFormatTitle"><button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="horizontal" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="horizontal"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Horizontal</span><span class="lm-ctrl-meta">16:9</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="vertical" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="vertical"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Vertical</span><span class="lm-ctrl-meta">9:16</span></button>
 <button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="quadrado" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="quadrado"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Quadrado</span><span class="lm-ctrl-meta">1:1</span></button>
-<button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="editorial" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="editorial"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Editorial</span><span class="lm-ctrl-meta">√2:1</span></button></div><small class="lm-ctrl-helper">O formato muda; a estrutura se recompõe.</small></div>
+<button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="editorial" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="editorial"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">Editorial</span><span class="lm-ctrl-meta">√2:1</span></button>
+<button type="button" class="lm-ctrl-choice" data-lab-choice="format" data-value="a4" aria-pressed="false"><span class="lm-ctrl-visual" aria-hidden="true"><span class="lm-ctrl-mini-sheet" data-shape="vertical"><i></i><i></i><i></i></span></span><span class="lm-ctrl-name">A4</span><span class="lm-ctrl-meta">210 × 297 mm</span></button></div><small class="lm-ctrl-helper">O formato muda; a estrutura se recompõe.</small></div>
         <div class="lm-lab-field"><div class="lm-lab-value-row"><label for="labMargin">Margem de leitura</label><output id="labMarginValue" for="labMargin">7%</output></div><input id="labMargin" type="range" min="4" max="16" value="7" step="1"><div class="lm-control-effect" data-control-effect="margin" aria-hidden="true"><span class="lm-control-effect-canvas"><i></i><i></i><i></i></span><span class="lm-control-effect-text">A margem protege a área de leitura.</span></div></div>
         </div>
         <details class="lm-inspector-more" data-lab-more="pagina">
@@ -249,7 +252,7 @@ html body > nav.lm-site-nav a:focus-visible { outline:1px solid currentColor; ou
           <div class="lm-lab-fields lm-inspector-extra"><div class="lm-lab-field"><label for="labTitleInput">Título <span class="lm-ctrl-subtitle">/ quebras por linha</span></label><textarea id="labTitleInput" rows="3" maxlength="140" spellcheck="true">PRÁTICAS
 MATERIAIS
 E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
-        <div class="lm-lab-field"><label for="labBodyInput">Corpo / texto de leitura</label><textarea id="labBodyInput" rows="4" maxlength="380" spellcheck="true">Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</textarea></div></div>
+        <div class="lm-lab-field"><label for="labBodyInput">Corpo / texto de leitura</label><textarea id="labBodyInput" rows="4" maxlength="2600" spellcheck="true">Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</textarea></div></div>
         </details>
       </section>
       <section class="lm-inspector-panel lm-composition-module" id="labPanel-imagem" data-lab-panel="imagem" data-module="imagem-m">
@@ -531,5 +534,39 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
+<dialog id="labProjectTemplates" class="lab-template-dialog" aria-labelledby="labTemplateHeading">
+  <header><h2 id="labTemplateHeading">Novo projeto</h2><button type="button" id="labTemplateClose" aria-label="Fechar modelos">×</button></header>
+  <div class="lab-template-grid">
+    <button type="button" data-project-template="essential">
+      <svg viewBox="0 0 80 52" aria-hidden="true"><path d="M22 4h50v32M8 12h54v35H8zM17 31h27m-27 6h18"/><circle cx="19" cy="22" r="3" fill="#e22e24" stroke="none"/></svg>
+      <strong>Apresentação essencial</strong><span>16:9 · Abertura e conteúdo</span>
+    </button>
+    <button type="button" data-project-template="editorial">
+      <svg viewBox="0 0 80 52" aria-hidden="true"><path d="M6 7h68v38H6zM11 32l15-15 11 11 7-6 10 10M11 37h32m-32 4h20"/><path d="M57 13h11v10H57zm0 14h11v10H57z" fill="currentColor"/></svg>
+      <strong>Apresentação editorial</strong><span>16:9 · Texto, áreas e galeria</span>
+    </button>
+    <button type="button" data-project-template="formal">
+      <svg viewBox="0 0 80 52" aria-hidden="true"><path d="M24 3h32v46H24zM30 13h15m-15 9h20m-20 5h20m-20 5h20m-20 10h10"/></svg>
+      <strong>Documento formal</strong><span>A4 · Texto e assinatura</span>
+    </button>
+    <button type="button" data-project-template="social">
+      <svg viewBox="0 0 80 52" aria-hidden="true"><path d="M7 13h30v30H7zm37-10h25v45H44zM13 34l7-8 10 8m19-8 7-8 8 8m-15 10h14"/></svg>
+      <strong>Post e story</strong><span>1:1 ou 9:16 · Uma peça</span>
+    </button>
+  </div>
+  <fieldset id="labSocialFormats" hidden>
+    <legend>Formato da peça</legend>
+    <button type="button" data-project-template="social" data-social-format="quadrado">Post quadrado · 1:1</button>
+    <button type="button" data-project-template="social" data-social-format="vertical">Story vertical · 9:16</button>
+  </fieldset>
+  <footer><button type="button" data-project-template="blank">Começar em branco</button></footer>
+  <div id="labTemplateReplace" hidden>
+    <p>Salve uma cópia editável do projeto atual antes de abrir o novo.</p>
+    <button type="button" id="labTemplateBack">Voltar</button>
+    <button type="button" id="labTemplateSave">Salvar JSON e criar</button>
+  </div>
+  <p id="labTemplateStatus" role="status" aria-live="polite"></p>
+</dialog>
+
 <link rel="stylesheet" href="/composicao-acervo.css?v=20261104-mp4-1"><script src="/composicao-lab.js?v=photo-effects-20261117" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js?v=photo-effects-20261117" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js?v=20261104-mp4-1" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs?v=photo-effects-20261117"></script>
 </body></html>

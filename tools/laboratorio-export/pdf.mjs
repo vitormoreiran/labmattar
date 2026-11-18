@@ -55,8 +55,9 @@ export async function createPDF(scenes,fonts){
   }}
   try{
     for(const scene of scenes){
-      doc.addPage({size:[scene.width*.75,scene.height*.75],margin:0});
-      doc.save().scale(.75).rect(0,0,scene.width,scene.height).clip();draw(await pdfImages(scene.items));doc.restore();
+      const size=scene.printSize||[scene.width*.75,scene.height*.75];
+      doc.addPage({size,margin:0});
+      doc.save().scale(size[0]/scene.width,size[1]/scene.height).rect(0,0,scene.width,scene.height).clip();draw(await pdfImages(scene.items));doc.restore();
     }
     doc.end();return await output;
   }catch(error){doc.end();throw error;}

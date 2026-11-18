@@ -5,7 +5,7 @@
 export const DOCUMENT_KIND="labmattar.composition";
 export const SCHEMA_VERSION=1;
 export const OFFICIAL_M_MASK="/ambiente-editorial/media/m-publicado.svg";
-const FORMATS={horizontal:[16,9],vertical:[9,16],quadrado:[1,1],editorial:[Math.SQRT2,1]};
+const FORMATS={horizontal:[16,9],vertical:[9,16],quadrado:[1,1],editorial:[Math.SQRT2,1],a4:[210,297]};
 const CHOICES={
   color:["neutral","white","black","beige","green","red","blue","brown"],
   inkColor:["auto","neutral","white","black","beige","green","red","blue","brown"],
@@ -119,7 +119,7 @@ function captureState(state,photoCatalog){
     symbol:enumValue(state.symbol,CHOICES.symbol,"símbolo"),
     title:text(state.title,140,"Título"),
     titleFonts:wordFonts(state.titleFonts??[],state.title),
-    body:text(state.body,380,"Corpo"),
+    body:text(state.body,2600,"Corpo"),
     bodyMode:enumValue(state.bodyMode,CHOICES.bodyMode,"visibilidade do Corpo"),
     kicker:text(state.kicker,80,"identificação superior"),
     footerLeft:text(state.footerLeft,100,"identificação inferior esquerda"),

@@ -129,7 +129,8 @@
     horizontal:[1280,720],
     vertical:[720,1280],
     quadrado:[900,900],
-    editorial:[1000,707]
+    editorial:[1000,707],
+    a4:[840,1188]
   };
 
   function fitArtboard(){
@@ -186,7 +187,7 @@
     // come exclusively from manual-headings.css, at logical export-page size.
     // The preview zoom must never generate a separate hierarchy.
     const pageRatio=Math.min(1,logicalW/900);
-    const title=104*pageRatio*(Number(by("labTitleScale")?.value||100)/100);
+    const title=(format==="a4"?48:104)*pageRatio*(Number(by("labTitleScale")?.value||100)/100);
     artboard.style.setProperty("--lm-type-title-size",title.toFixed(3)+"px");
     artboard.style.removeProperty("--lm-type-body-size");
     artboard.style.removeProperty("--lm-type-detail-size");

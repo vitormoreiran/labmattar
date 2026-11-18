@@ -1,5 +1,6 @@
 import {motionInkPixels,installMotionInk} from './lab-motion-ink.mjs';
 import {sectionWebDocument} from './lab-section-web.mjs';
+import {storyWebDocument} from './lab-story-web.mjs';
 import {sceneSvg,escapeMarkup as esc} from './lab-scene.mjs';
 import {vectorTransform} from './lab-geometry.mjs';
 const bytesCache=new Map(),frameCache=new Map();
@@ -141,6 +142,7 @@ function animatedBackground(scene,video){
 
 export const animatedBackgroundCSS=".bg-photo-glass{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to bottom,rgba(255,255,255,.36),rgba(255,255,255,.05) 45%,rgba(255,255,255,0) 75%,rgba(255,255,255,.16))}\n:is(.page-art,.story-art) .animated-background{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}\n:is(.page-art,.story-art) .animated-background video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;max-width:none}\n:is(.page-art,.story-art) .animated-background .is-blurred{inset:-7%;width:114%;height:114%;filter:blur(clamp(18px,4.8cqw,42px)) brightness(.72) saturate(.86);transform:scale(1.045)}\n:is(.page-art,.story-art) .bg-video-contrast,:is(.page-art,.story-art) .bg-video-m-contrast{position:absolute;inset:0;background:rgba(0,0,0,var(--photo-contrast,.2));pointer-events:none}\n:is(.page-art,.story-art) .bg-video-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-m{position:absolute;z-index:2;overflow:hidden;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;filter:drop-shadow(0 2px 10px rgba(0,0,0,.08))}\n:is(.page-art,.story-art) .bg-video-m-contrast{z-index:1}\n:is(.page-art,.story-art) .bg-video-markers{position:absolute;inset:0;z-index:3;-webkit-mask-position:center;mask-position:center;-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}";
 export async function webDocument(scenes,project,catalog,fonts){
+  if(project.story)return storyWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes,animatedBackground,animatedBackgroundCSS,motionInkPixels,installMotionInk});
   if(project.schemaVersion===2)return sectionWebDocument(scenes,project,catalog,fonts,{resource,base64,motionBytes,privateVideoBytes,animatedBackground,animatedBackgroundCSS,motionInkPixels,installMotionInk});
   const used=new Set(scenes.flatMap(scene=>scene.motions.map(motion=>motion.assetId))),videos={},videoTypes={};
   for(const id of used){const asset=catalog.find(asset=>asset.id===id);videos[id]=base64(await motionBytes(asset));}

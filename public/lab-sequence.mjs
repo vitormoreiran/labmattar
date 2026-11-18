@@ -1,5 +1,6 @@
 import {createProductionDocument,verifyRoundTrip,signatureOf} from './composicao-document.mjs';
 import {normalizeImageAssets,normalizeGallery} from './lab-gallery-model.mjs';
+import {normalizeStory} from './lab-story-model.mjs';
 export const SEQUENCE_KIND='labmattar.presentation';
 export const SEQUENCE_VERSION=1;
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -145,7 +146,7 @@ export function readSequence(value,photoCatalog,motionCatalog){
   check(value?.kind===SEQUENCE_KIND&&value.schemaVersion===SEQUENCE_VERSION,'versão da sequência');
   title(value.name);
   check(Array.isArray(value.pages)&&value.pages.length>0&&value.pages.length<=100,'quantidade de páginas');
-  check(['kind,name,pages,schemaVersion','kind,name,pages,schemaVersion,signature'].includes(Object.keys(value).filter(key=>key!=='imageAssets').sort().join(',')),'campos da sequência');
+  check(['kind,name,pages,schemaVersion','kind,name,pages,schemaVersion,signature'].includes(Object.keys(value).filter(key=>!['imageAssets','story'].includes(key)).sort().join(',')),'campos da sequência');
   const imageAssets=normalizeImageAssets(value.imageAssets);
   const pageIds=new Set(),catalog={...photoCatalog};
   const pages=value.pages.map(page=>{
@@ -174,9 +175,11 @@ export function readSequence(value,photoCatalog,motionCatalog){
   });
   const signature=value.signature===undefined?null:signatureOf(value.signature);
   if(signature)check(pages.every(page=>JSON.stringify(page.state.signature)===JSON.stringify(signature)),"assinatura deve ser única no documento");
-  return {name:value.name,pages,photoCatalog:catalog,...(signature?{signature}:{}),...(imageAssets.length?{imageAssets}:{})};
+  const story=normalizeStory(value.story,pages);
+  return {name:value.name,pages,photoCatalog:catalog,...(signature?{signature}:{}),...(imageAssets.length?{imageAssets}:{}),...(story?{story}:{})};
 }
-export function sequenceDocument(name,pages,sections=null,signature=null,imageAssets=[]){
+export function sequenceDocument(name,pages,sections=null,signature=null,imageAssets=[],story=null){
+  check(!sections||!story,'o modelo editorial não usa fundos compartilhados do formato legado');
   const assets=normalizeImageAssets(imageAssets);
   const materialized=pages.map(({id,name,composition,motions,sectionId,clips=[],backgroundVideo=null,gallery=null})=>({
     id,name,composition:clone(composition),motions:clone(motions),...(sections?{sectionId}:{}),
@@ -185,7 +188,7 @@ export function sequenceDocument(name,pages,sections=null,signature=null,imageAs
     ...(gallery?{gallery:normalizeGallery(gallery,assets)}:{})
   }));
   return {kind:SEQUENCE_KIND,schemaVersion:sections?2:SEQUENCE_VERSION,name,...(signature?{signature:signatureOf(signature)}:{}),
-    ...(sections?{sections:clone(sections)}:{}),pages:materialized,...(assets.length?{imageAssets:assets}:{})};
+    ...(sections?{sections:clone(sections)}:{}),pages:materialized,...(assets.length?{imageAssets:assets}:{}),...(story?{story:normalizeStory(story,materialized)}:{})};
 }
 export function movePage(pages,index,delta){
   const target=index+delta;if(target<0||target>=pages.length)return index;

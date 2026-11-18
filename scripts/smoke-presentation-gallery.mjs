@@ -14,5 +14,17 @@ try{
  await page.locator('.lm-lab-presentation-actions a[href*="modelo=poiesis"]').click();await page.locator('.lab-section-confirm [data-section-confirm]').waitFor();await page.evaluate(()=>document.fonts.ready);const prior=await page.evaluate(()=>window.LabPages.create());await page.locator('.lab-section-confirm').getByRole('button',{name:'CANCELAR',exact:true}).click();await page.waitForFunction(()=>!new URL(location.href).searchParams.has('modelo'));assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),prior);
  await page.goto(origin+'/laboratorio.html#apresentacoes');await page.locator('.lm-lab-presentation-actions a[href*="modelo=poiesis"]').click();await page.locator('.lab-section-confirm [data-section-confirm]').click();await page.waitForFunction(()=>window.LabPages.create().name==='Poiésis');await page.waitForFunction(()=>!new URL(location.href).searchParams.has('modelo'));assert.equal(await page.locator('[data-story-topic]').count(),10);
  await page.reload();await page.waitForFunction(()=>document.getElementById('labPages')?.dataset.ready==='true');assert.equal(await page.locator('.lab-section-confirm').count(),0);assert.equal(await page.evaluate(()=>window.LabPages.create().name),'Poiésis');
+
+ // Project choices do not occupy the page sequence. Opening another topic keeps only one unfolded.
+ assert.equal(await page.locator('#labSequenceName').inputValue(),'Poiésis');
+ assert.equal(await page.locator('#labDownloadDocument').isVisible(),true);assert.equal(await page.locator('#labReviewDelivery').isVisible(),true);
+ assert.equal(await page.locator('[data-story-topic][open]').count(),1);
+ await page.locator('[data-story-topic]>summary').nth(1).click();await page.waitForFunction(()=>document.querySelectorAll('[data-story-topic][open]').length===1);
+ await page.locator('[data-story-topic]>summary').nth(2).click();await page.waitForFunction(()=>document.querySelectorAll('[data-story-topic][open]').length===1);
+ await page.screenshot({path:out+'/pages-organized.png'});
+ const edited=await page.evaluate(()=>window.LabPages.create());await page.locator('#labProjectOpen').click();assert.equal(await page.locator('#labStoryPresets article').count(),3);assert.equal(await page.locator('#labStoryPresets a').count(),3);
+ await page.screenshot({path:out+'/project-chooser.png'});await page.locator('#labProjectDialog').getByRole('button',{name:'Fechar projetos'}).click();assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),edited);
+ await page.setViewportSize({width:390,height:844});await page.locator('#labProjectOpen').click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:out+'/project-chooser-mobile.png'});
+ await page.locator('#labProjectDialog').getByRole('button',{name:'Fechar projetos'}).click();await page.screenshot({path:out+'/pages-organized-mobile.png'});
  assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await fs.writeFile(out+'/report.json',JSON.stringify({presentations:3,images:86,readyPages:true,directModelLink:true,cancelPreservesDraft:true,reloadPreservesEditing:true,mobile:true,errors,failed},null,2));console.log('Three ready presentations, assets and direct editing links passed.');
 }finally{await browser.close();}

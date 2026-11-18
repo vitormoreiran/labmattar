@@ -38,7 +38,7 @@ try{
   await page.waitForSelector('#labPages[data-ready="true"]',{state:'attached'});
   if(!await page.locator('body').evaluate(body=>body.classList.contains('lm-studio-open')))await page.locator('#labStudioToggle').click();
   await surface();assert.equal(await page.locator('#labPageSelect option').count(),1);
-  await page.locator('.lab-project-settings>summary').click();
+  
   await page.locator('#labSequenceName').fill('MATTAR </script><script>window.injected=true</script>');
   await page.locator('#labSequenceName').press('Tab');
   await state({title:'PÁGINA UM',body:'Uma sequência editável.',bodyMode:'visivel',mContent:'off',background:'color',guides:'nenhuma'});

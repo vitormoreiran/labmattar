@@ -124,7 +124,7 @@ try{
   // Same authoring state must also be reversible as a versioned document.
   // This does not assert the Matriz motion renderer is already connected.
   await page.locator('[data-workspace-view=pages]').click();
-  await page.locator('.lab-project-settings>summary').click();
+  
   assert(await page.locator("#labDownloadDocument").isVisible(),
     "The document action must be accessible next to the page sequence");
   const authored=await page.evaluate(()=>window.LabProductionBridge.snapshot().state);

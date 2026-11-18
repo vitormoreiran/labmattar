@@ -6,7 +6,7 @@ import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,crea
 import {createProductionDocument,verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs?v=20261118-apresentacoes';
 import {persistProjectDraft,pagesToSections,fetchMotionCatalog} from './lab-project-lifecycle.mjs';
-import {installStoryEditor} from './lab-story-ui.mjs';
+import {installStoryEditor} from './lab-story-ui.mjs?v=20261118-paginas-organizadas';
 import {createStoryTemplate,syncStoryReading} from './lab-story-project.mjs';
 import {storyLabel} from './lab-story-model.mjs';
 import {STORY_PRESETS,loadStoryPreset} from './lab-story-presets.mjs';
@@ -60,6 +60,7 @@ function openDelivery(){
   if(deliveryBusy())return;commit();renderDelivery();by('labVideoProgress').hidden=true;by('labVideoProgress').value=0;by('labExportStatus').textContent='';by('labExportStatus').dataset.state='idle';by('labDeliveryDialog').showModal();
 }
 function initDelivery(){
+  by('labProjectPreview').addEventListener('click',()=>by('labPresentation').click());
   by('labOpenDelivery').addEventListener('click',openDelivery);by('labReviewDelivery').addEventListener('click',openDelivery);
   by('labDeliveryClose').addEventListener('click',closeDelivery);by('labDeliveryBack').addEventListener('click',closeDelivery);
   by('labDeliveryDialog').addEventListener('cancel',event=>{event.preventDefault();closeDelivery();});
@@ -551,8 +552,8 @@ async function load(document,{currentIndex=0}={}){
 async function openStoryPreset(id){
   const preset=STORY_PRESETS.find(item=>item.id===id);if(!preset)throw Error('Modelo de apresentação não encontrado.');
   const project=await loadStoryPreset(id);if(deliveryBusy())throw Error('Conclua a operação atual antes de abrir o modelo.');
-  if(!await confirmSectionAction('Abrir '+preset.name+'? O projeto atual será substituído. Salve o JSON antes de trocar se quiser guardar suas alterações.','ABRIR MODELO'))return;
-  await load(project);setWorkspaceView('pages');commit();notify(preset.name+' aberto. Use Editar seção para alterar o conteúdo e Ver apresentação para assistir.');
+  if(!await confirmSectionAction('Abrir '+preset.name+'? O projeto atual será substituído. Salve o JSON antes de trocar se quiser guardar suas alterações.','ABRIR CÓPIA'))return;
+  await load(project);setWorkspaceView('pages');commit();notify(preset.name+' aberto como cópia editável. Use Editar seção para alterar textos e fotos.');
 }
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);

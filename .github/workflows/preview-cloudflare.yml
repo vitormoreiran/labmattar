@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - 'public/presentation-models/**'
+      - 'public/composicao-story.css'
+      - 'scripts/test-lab-story-presets.mjs'
       - 'public/lab-gallery-model.mjs'
       - 'public/lab-gallery-ui.mjs'
       - 'public/composicao-gallery.css'
@@ -350,5 +353,6 @@ jobs:
             laboratorio-export-4k.png
             composition-studio-*.png
           if-no-files-found: warn
+
 
 

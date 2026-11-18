@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'public/lab-story-*.mjs'
+      - 'public/presentation-models/**'
+      - 'scripts/test-lab-story-presets.mjs'
       - 'public/composicao-story.css'
       - 'public/composicao-pages.css'
       - 'public/lab-presentation-export.mjs'
@@ -88,7 +90,7 @@ jobs:
         with:
           node-version: '22'
       - name: Validar contrato de documento v1
-        run: node --test scripts/test-lab-story.mjs scripts/test-chapter4-publication.mjs scripts/test-lab-sequence.mjs scripts/test-lab-section-web.mjs scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
+        run: node --test scripts/test-lab-story-presets.mjs scripts/test-lab-story.mjs scripts/test-chapter4-publication.mjs scripts/test-lab-sequence.mjs scripts/test-lab-section-web.mjs scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2

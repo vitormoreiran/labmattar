@@ -9,6 +9,7 @@ import {persistProjectDraft,pagesToSections,fetchMotionCatalog} from './lab-proj
 import {installStoryEditor} from './lab-story-ui.mjs';
 import {createStoryTemplate,syncStoryReading} from './lab-story-project.mjs';
 import {storyLabel} from './lab-story-model.mjs';
+import {STORY_PRESETS,loadStoryPreset} from './lab-story-presets.mjs';
 const by=id=>document.getElementById(id),copy=value=>JSON.parse(JSON.stringify(value));
 const board=by('labArtboard'),bridge=()=>window.LabProductionBridge;
 const key='labmattar-pages-v1';
@@ -740,7 +741,8 @@ async function init(){
     getContext:()=>({pageId:pages[current]?.id,...bridge().snapshot()}),beforeEdit:commit,isBusy:deliveryBusy,onError:message=>notify(message,true),confirmAction:confirmSectionAction,
     selectPage:id=>switchPage(pages.findIndex(page=>page.id===id)),
     applyProject:async(project,selectedId=pages[current]?.id)=>{await load(project,{currentIndex:Math.max(0,project.pages.findIndex(page=>page.id===selectedId))});commit();notify('Seções, textos e imagens atualizados. Salve o projeto JSON para guardar o modelo.');},
-    createTemplate:async()=>{if((enabled||pages.length>1)&&!await confirmSectionAction('Criar uma apresentação com abertura, introdução, experiência, cinco atos, detalhes e encerramento? O projeto atual terá uma cópia de recuperação.','CRIAR MODELO'))return;if(!backupBeforeReset())return;const snapshot=bridge().snapshot(),signature={preset:'navigation',scale:100,slots:{tl:{kind:'brand',symbol:'M.svg',text:''},tr:{kind:'symbol',symbol:'M.svg',text:''},bl:{kind:'symbol',symbol:'vaso_03.svg',text:''},br:{kind:'text',symbol:'M.svg',text:String(new Date().getFullYear())}}};await load(createStoryTemplate({...snapshot,signature}));setWorkspaceView('pages');commit();notify('Modelo aberto. Edite cada seção e adicione as fotos na ordem de entrada.');}
+    createTemplate:async()=>{if((enabled||pages.length>1)&&!await confirmSectionAction('Criar uma apresentação com abertura, introdução, experiência, cinco atos, detalhes e encerramento? O projeto atual terá uma cópia de recuperação.','CRIAR MODELO'))return;if(!backupBeforeReset())return;const snapshot=bridge().snapshot(),signature={preset:'navigation',scale:100,slots:{tl:{kind:'brand',symbol:'M.svg',text:''},tr:{kind:'symbol',symbol:'M.svg',text:''},bl:{kind:'symbol',symbol:'vaso_03.svg',text:''},br:{kind:'text',symbol:'M.svg',text:String(new Date().getFullYear())}}};await load(createStoryTemplate({...snapshot,signature}));setWorkspaceView('pages');commit();notify('Modelo aberto. Edite cada seção e adicione as fotos na ordem de entrada.');},
+    openPreset:async id=>{const preset=STORY_PRESETS.find(item=>item.id===id);if(!preset)return;const project=await loadStoryPreset(id);if(deliveryBusy())throw Error('Conclua a operação atual antes de abrir o modelo.');if(!await confirmSectionAction('Abrir '+preset.name+'? O projeto atual será substituído. Salve o JSON antes de trocar se quiser guardar suas alterações.','ABRIR MODELO'))return;await load(project);setWorkspaceView('pages');commit();notify(preset.name+' aberto. Use Editar seção para alterar o conteúdo e Ver apresentação para assistir.');}
   });
   initSections();
   initDelivery();

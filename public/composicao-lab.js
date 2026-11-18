@@ -158,9 +158,9 @@
   }
   const formatNames={
     horizontal:"HORIZONTAL / 16:9",vertical:"VERTICAL / 9:16",
-    quadrado:"QUADRADO / 1:1",editorial:"EDITORIAL / √2:1"
+    quadrado:"QUADRADO / 1:1",editorial:"EDITORIAL / √2:1",a4:"A4 / 210 × 297 mm"
   };
-  const formatRatio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2};
+  const formatRatio={horizontal:16/9,vertical:9/16,quadrado:1,editorial:Math.SQRT2,a4:210/297};
   const mAspect=990.08/743.18;
   const maxMScale=()=>200;
   // Escala editorial: 0–99 = elemento; 100 = superfície expandida.
@@ -217,7 +217,7 @@
   // The editorial sheet is wide but shorter than the other formats: its default
   // reading column needs room for authored title groups and visible body/footer.
   // The user may still narrow the column; overflow remains a validation error.
-  const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90};
+  const formatReadingWidths={horizontal:61,vertical:100,quadrado:90,editorial:90,a4:100};
   const rememberedReadingWidths=new Map([[state.format,state.textWidth]]);
   const rememberedMScales=new Map([[state.format,state.mScale]]);
   let mScaleRange=null;
@@ -885,7 +885,7 @@
    */
   const inlineEditors=[
     {key:"title",el:title,limit:140,multiline:true},
-    {key:"body",el:body,limit:380,multiline:true},
+    {key:"body",el:body,limit:2600,multiline:true},
     {key:"kicker",el:kicker,limit:80,multiline:false},
     {key:"footerLeft",el:footerLeft,limit:100,multiline:false},
     {key:"footerRight",el:footerRight,limit:100,multiline:false}

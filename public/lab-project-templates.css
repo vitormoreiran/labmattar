@@ -1,0 +1,24 @@
+.lab-template-dialog {
+  box-sizing: border-box;
+  width: min(640px, calc(100% - 28px));
+  max-height: calc(100dvh - 28px);
+  padding: clamp(16px, 4vw, 32px);
+  border: 1px solid #cbc9c4;
+  background: #f7f6f2;
+  color: #181818;
+  font: 300 15px/1.4 UniversMattar, Arial, sans-serif;
+}
+.lab-template-dialog::backdrop { background: #18181888; }
+.lab-template-dialog header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.lab-template-dialog h2 { margin: 0; font: inherit; font-size: 27px; }
+.lab-template-dialog button { color: inherit; font: inherit; background: white; border: 1px solid #cbc9c4; padding: 8px 12px; cursor: pointer; }
+.lab-template-dialog button:hover { border-color: currentColor; }
+.lab-template-dialog button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.lab-template-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.lab-template-dialog .lab-template-grid button { display: grid; gap: 4px; text-align: left; padding: 12px; }
+.lab-template-grid svg { width: 64px; height: 42px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.lab-template-grid span { font-size: 13px; color: #45433e; }
+.lab-template-dialog footer { margin-top: 12px; }
+.lab-template-dialog fieldset { margin-top: 16px; border: 1px solid #cbc9c4; }
+.lab-template-dialog [hidden], #labTemplateStatus:empty { display: none; }
+.lab-template-dialog #labTemplateSave { background: #181818; color: white; }

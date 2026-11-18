@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {createTemplateProject} from '../public/lab-project-templates.mjs';
 import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,createBackgroundVideo,backgroundVideoUrl,readSequence,sequenceDocument,movePage,createSection,sectionState,hasSectionText} from '../public/lab-sequence.mjs';
 const photos={'64':'/ambiente-editorial/media/BOXDOSENTIR-64.jpg'};
 const state={format:'horizontal',color:'neutral',margin:7,guides:'nenhuma',marker:'none',markerFocus:'blur',
@@ -142,3 +143,27 @@ test('vídeo selecionado é fundo da página, não elemento livre',()=>{
 test('o vídeo é único na seção e sobrevive ao JSON v2',()=>{const section=createSection('s-video','Vídeo', {...state,background:'photo'},photos),video=createBackgroundVideo({kind:'video',provider:'google',id:'videoFile1234',name:'Fundo.mp4',mimeType:'video/mp4'},'bg-1');section.background.video=video;const pages=['p1','p2'].map(id=>({...createPage({id,name:id,state:sectionState(state,section),photoCatalog:photos,backgroundVideo:video}),sectionId:section.id}));const doc=sequenceDocument('Vídeo compartilhado',pages,[section]),parsed=readSequence(doc,photos,[asset]);assert.deepEqual(sequenceDocument(parsed.name,parsed.pages,parsed.sections),doc);const bad=clone(doc);delete bad.pages[1].backgroundVideo;assert.throws(()=>readSequence(bad,photos,[asset]),/diverge do fundo compartilhado/);});
 
 test('a ordem dos campos do vídeo não muda a validade nem altera o JSON recebido',()=>{const section=createSection('s-order','Ordem',{...state,background:'photo'},photos),video=createBackgroundVideo({kind:'video',provider:'public',projectId:'sectionproject123',id:'sectionvideo123',name:'Fundo.mp4',mimeType:'video/mp4'},'bg-order');section.background.video={id:video.id,provider:video.provider,projectId:video.projectId,fileId:video.fileId,name:video.name,mimeType:video.mimeType,frameSeconds:0};const page={...createPage({id:'p-order',name:'Ordem',state:sectionState(state,section),photoCatalog:photos,backgroundVideo:video}),sectionId:section.id};const doc=sequenceDocument('Ordem',[page],[section]),before=JSON.stringify(doc);readSequence(doc,photos,[asset]);assert.equal(JSON.stringify(doc),before);});
+
+test('modelos geram projetos nativos independentes e sem conteúdo de demonstração',()=>{
+  const source={state,photoCatalog:photos};
+  let index=0;
+  const id=prefix=>prefix+'-template-'+(++index);
+  const cases=[
+    ['essential',undefined,'horizontal',2],
+    ['editorial',undefined,'horizontal',4],
+    ['formal',undefined,'a4',1],
+    ['social','quadrado','quadrado',1],
+    ['social','vertical','vertical',1],
+    ['blank',undefined,'horizontal',1]
+  ];
+  for(const [kind,choice,format,count] of cases){
+    const project=createTemplateProject(kind,source,id,choice);
+    const restored=readSequence(clone(project),photos,[]);
+    assert.equal(restored.pages.length,count);
+    assert.ok(restored.pages.every(page=>page.state.format===format&&!page.state.title&&!page.state.body));
+    assert.equal(restored.sections?.length??0,kind==='editorial'?2:0);
+    const next=createTemplateProject(kind,source,id,choice);
+    assert.notEqual(project.pages[0].id,next.pages[0].id);
+  }
+  assert.equal(state.title,'PRIMEIRA PÁGINA');
+});

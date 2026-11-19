@@ -25,3 +25,19 @@ Serializar escritas assíncronas da Mesa. Antes, duas revisões do mesmo projeto
 - Avaliar robustez do IndexedDB: ciclo de vida, quota, reversões e opções de backup.
 - Investigar falhas observáveis da Matriz (interface/roteiros/renderização) sem confundir com os bloqueios dos hashes.
 - Inventariar dependências dos arquivos antes de sugerir arquivamento/remoção.
+
+## Diagnóstico preliminar da Matriz (sem alteração de geometria)
+- A Matriz opera como aplicativo separado em `tools/matriz-vetorial/src/app.js`, com as chaves `mattar-spatial-current-v2` e `mattar-spatial-projects-v2` em localStorage.
+- Não usa automaticamente a biblioteca IndexedDB da Mesa. Os dois sistemas não compartilham um armazenamento canônico de autoria.
+- O próprio README da Matriz declara JSON portátil e salvos locais. O catálogo de oito roteiros públicos vem de `scripts/prepare-motion.mjs`, que valida hash do roteiro, renderizador, vídeo e pôster antes de publicar.
+- O bloqueio de hash é de publicação, não deve bloquear edição livre de estudos locais. A opção `--allow-pending-exports` existe para revisão local; não é substituta de publicação aprovada.
+- Não confundir editor de contornos legado com Matriz atual; revisar primeiro carregamento, seleção, mudança de destino, prévia, persistência e exportação em navegador real.
+
+## Separação de verificações desejada (a implementar após medir cobertura)
+- `edit`: nenhuma compilação/deploy ao salvar no navegador.
+- `check:project`: formato, persistência, operações de documento e prévia local.
+- `check:motion`: geometria e render para alterações na Matriz.
+- `release`: integridade dos assets, hashes, compatibilidade e versão servida. Não reduzir proteções do domínio oficial.
+
+## Observação de segurança dos dados
+O IndexedDB e o localStorage funcionam apenas no mesmo perfil/origem do navegador. A opção confirmada pelo usuário implica armazenamento dentro do Laboratório, mas sincronização entre dispositivos, backup remoto e persistência após limpeza dos dados do navegador exigem backend e autenticação ainda não confirmados. Não declarar esta etapa como resolvida.

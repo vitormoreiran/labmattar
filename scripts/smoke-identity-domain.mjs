@@ -18,8 +18,8 @@ try {
   assert.equal(await page.locator('a.lm-lab-tool').count(), 3);
   assert.equal(await page.locator('#labArtboard').count(), 0);
   await page.screenshot({ path: output + '/laboratorio.png', fullPage: true });
-  await page.locator('a.lm-lab-tool[href^="/compor.html"]').click();
-  await page.waitForFunction(() => window.LabPages && window.LabRenderer, null, { timeout: 60000 });
+  await page.locator('a.lm-lab-tool[href^="/montar.html"]').click();
+  await page.waitForFunction(() => window.LabDesk?.ready, null, { timeout: 60000 });
   assert.equal(new URL(page.url()).origin, IDENTITY_ORIGIN);
   const matrix = await context.newPage(); matrix.on('pageerror', error => errors.push(error.message));
   await matrix.goto(IDENTITY_ORIGIN + '/motion/matriz/index.html');

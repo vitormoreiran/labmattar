@@ -3,10 +3,10 @@ import { normalizeSignature } from './email-signature.mjs';
 // All four email compositions use the former 480 × 100 px strip. Elements are
 // recomposed at this size; native marks and contact text never stretch to fit.
 export const EMAIL_COMPOSITIONS = Object.freeze([
-  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 120, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
-  { id: 'm-compacto', label: 'M compacto', width: 480, height: 120, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
-  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 120, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
-  { id: 'm-linha', label: 'M com linha', width: 480, height: 120, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
+  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 176, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
+  { id: 'm-compacto', label: 'M compacto', width: 480, height: 176, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
+  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 176, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
+  { id: 'm-linha', label: 'M com linha', width: 480, height: 176, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
 ].map(Object.freeze));
 
 export function emailComposition(id = EMAIL_COMPOSITIONS[0].id) {
@@ -132,43 +132,33 @@ function paintText(context, field, colors) {
   context.restore();
 }
 
+const SOCIAL_MARKS = Object.freeze({
+  instagram: 'M7.03.084c-1.277.06-2.149.264-2.911.563-.789.308-1.458.72-2.123 1.388-.665.668-1.075 1.337-1.38 2.127-.295.764-.496 1.637-.552 2.914-.056 1.278-.069 1.688-.063 4.947.006 3.259.021 3.667.083 4.947.061 1.277.264 2.148.564 2.911.308.789.72 1.457 1.388 2.123.668.665 1.336 1.074 2.128 1.38.763.295 1.636.496 2.913.552 1.277.056 1.688.069 4.946.063 3.258-.006 3.668-.021 4.948-.081 1.28-.061 2.147-.265 2.91-.563.789-.309 1.458-.72 2.123-1.388.665-.668 1.074-1.338 1.38-2.128.295-.763.496-1.636.552-2.912.056-1.281.069-1.69.063-4.948-.006-3.258-.021-3.667-.082-4.947-.061-1.28-.264-2.149-.563-2.912-.308-.789-.72-1.457-1.388-2.123C21.298 1.33 20.628.921 19.838.617 19.074.321 18.202.12 16.924.065 15.647.009 15.236-.005 11.977.001 8.718.008 8.31.022 7.03.084m.14 21.693c-1.17-.051-1.805-.245-2.229-.408-.56-.216-.96-.477-1.382-.895-.422-.418-.681-.819-.9-1.378-.164-.423-.362-1.058-.417-2.228-.059-1.264-.072-1.644-.079-4.848-.007-3.204.005-3.583.061-4.848.05-1.169.245-1.805.408-2.228.216-.561.476-.96.895-1.382.419-.422.818-.681 1.378-.9.423-.165 1.058-.361 2.227-.417 1.266-.06 1.645-.072 4.848-.079 3.203-.007 3.583.005 4.85.061 1.169.051 1.805.245 2.228.408.561.216.96.475 1.382.895.422.419.682.818.9 1.379.166.422.362 1.056.417 2.226.06 1.266.074 1.645.08 4.848.005 3.203-.006 3.583-.061 4.848-.051 1.17-.245 1.806-.408 2.229-.216.56-.476.96-.895 1.381-.419.422-.818.681-1.378.9-.422.165-1.058.362-2.226.417-1.266.06-1.645.072-4.849.079-3.205.007-3.583-.006-4.848-.061M16.953 5.586A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.442M5.839 12.012c.007 3.403 2.771 6.156 6.173 6.149 3.403-.006 6.157-2.77 6.151-6.173-.007-3.403-2.771-6.156-6.174-6.15-3.403.007-6.156 2.771-6.15 6.174M8 12.008a4 4 0 1 1 4.008 3.992A4 4 0 0 1 8 12.008',
+  whatsapp: 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z',
+  linkedin: 'M20.452 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.94v5.666H9.356V9h3.413v1.561h.049c.476-.9 1.637-1.852 3.37-1.852 3.602 0 4.267 2.37 4.267 5.455v6.288ZM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124ZM7.114 20.452H3.56V9h3.554v11.452ZM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.226.792 24 1.771 24h20.451C23.2 24 24 23.226 24 22.271V1.729C24 .774 23.2 0 22.225 0Z',
+  youtube: 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'
+});
+
 function paintChannelFooter(context, footer, colors) {
   if (!footer || (!footer.links.length && !footer.privacy)) return;
   context.save();
-  context.fillStyle = colors.paper;
-  context.fillRect(0, 100, 480, 20);
-  context.globalAlpha = .26; context.fillStyle = colors.ink;
-  context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
-
+  context.fillStyle = colors.paper; context.fillRect(0, 100, 480, 76);
+  context.globalAlpha = .28; context.fillStyle = colors.ink; context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
   let x = 12;
-  const y = 104;
   for (const key of footer.links) {
-    context.strokeStyle = colors.accent; context.lineWidth = 1.15;
-    if (key === 'instagram') {
-      context.beginPath(); context.roundRect(x, y, 12, 12, 3); context.stroke();
-      context.beginPath(); context.arc(x + 6, y + 6, 2.8, 0, Math.PI * 2); context.stroke();
-      context.fillStyle = colors.accent; context.beginPath(); context.arc(x + 9.15, y + 2.9, .7, 0, Math.PI * 2); context.fill();
-    } else if (key === 'whatsapp') {
-      context.beginPath(); context.arc(x + 6, y + 5.7, 5, 0, Math.PI * 2); context.stroke();
-      context.beginPath(); context.moveTo(x + 3.8, y + 9.5); context.lineTo(x + 2.2, y + 12); context.lineTo(x + 5.2, y + 10.7); context.stroke();
-      context.beginPath(); context.moveTo(x + 5.1, y + 3.7); context.lineTo(x + 8.2, y + 7.6); context.lineTo(x + 9.6, y + 6.2); context.stroke();
-    } else if (key === 'linkedin') {
-      context.beginPath(); context.roundRect(x, y, 12, 12, 1.8); context.stroke();
-      context.fillStyle = colors.accent; setFont(context, 7.3); context.fillText('in', x + 2, y + 9.1);
-    } else {
-      context.beginPath(); context.roundRect(x, y + 1.5, 13, 9, 2.3); context.stroke();
-      context.fillStyle = colors.accent; context.beginPath();
-      context.moveTo(x + 5.4, y + 3.8); context.lineTo(x + 5.4, y + 8.2); context.lineTo(x + 9, y + 6); context.closePath(); context.fill();
-    }
-    x += 18;
+    const mark = SOCIAL_MARKS[key]; if (!mark) continue;
+    context.save(); context.translate(x, 105); context.scale(.5, .5);
+    context.fillStyle = colors.accent; context.fill(new Path2D(mark)); context.restore();
+    x += 17;
   }
-
-  context.fillStyle = colors.ink;
-  context.globalAlpha = .72; setFont(context, 6.4);
-  context.fillText('CANAIS', x + 2, 112.2);
+  context.fillStyle = colors.ink; context.globalAlpha = .73; setFont(context, 6.2);
+  context.fillText('Esta mensagem e seus anexos podem conter dados pessoais e informações confidenciais, destinados exclusivamente aos seus destinatários.', 12, 127);
+  context.fillText('Se recebida por engano, não utilize, acesse, copie ou divulgue o conteúdo; avise o remetente e elimine esta mensagem.', 12, 138);
+  context.fillText('O tratamento de dados observa a LGPD, com medidas de segurança adequadas e apenas pelo período e para as finalidades necessárias.', 12, 149);
+  context.fillText('Consulte a Política de Privacidade para informações sobre coleta, cookies, seus direitos e os canais de contato.', 12, 160);
   if (footer.privacy) {
-    context.globalAlpha = 1; context.fillStyle = colors.accent; setFont(context, 6.4);
-    context.textAlign = 'right'; context.fillText('POLÍTICA DE PRIVACIDADE · PT', 470, 112.2);
+    context.globalAlpha = 1; context.fillStyle = colors.accent; setFont(context, 6.3);
+    context.fillText('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT', 12, 171);
   }
   context.restore();
 }

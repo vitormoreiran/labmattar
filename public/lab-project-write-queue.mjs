@@ -8,3 +8,8 @@ export function createProjectWriteQueue(write){
     return pending;
   };
 }
+
+// A completion for a previously opened project must not change the active project.
+export function isActiveProjectSave(activeProjectId,savedProjectId){
+  return Boolean(activeProjectId)&&activeProjectId===savedProjectId;
+}

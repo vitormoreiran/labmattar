@@ -11,10 +11,10 @@ await fs.mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.EMAIL_BROWSER_EXECUTABLE ? { executablePath: process.env.EMAIL_BROWSER_EXECUTABLE } : {}) });
 const errors = [], report = [];
 const models = [
-  { id: 'm-horizontal', width: 480, height: 100 },
-  { id: 'm-compacto', width: 480, height: 100 },
-  { id: 'mattar-faixa', width: 480, height: 100 },
-  { id: 'm-linha', width: 480, height: 100 }
+  { id: 'm-horizontal', width: 480, height: 126 },
+  { id: 'm-compacto', width: 480, height: 126 },
+  { id: 'mattar-faixa', width: 480, height: 126 },
+  { id: 'm-linha', width: 480, height: 126 }
 ];
 const data = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
 try {
@@ -188,7 +188,7 @@ try {
   assert.equal(await page.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#FFFFFF');
   assert.equal(await page.locator('#name').inputValue(), data.name);
   for (const width of [1440, 390, 320]) {
-    await page.setViewportSize({ width, height: 1000 });
+    await page.setViewportSize({ width, height: 1260 });
     for (const model of models) {
       await select(model.id);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
@@ -209,7 +209,7 @@ try {
   await page.goto(pathToFileURL(htmlFile).href);
   await page.waitForFunction(() => document.querySelector('img')?.complete);
   assert.ok(await page.locator('img').evaluate(image => image.naturalWidth > 0));
-  const retina = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 2, acceptDownloads: true });
+  const retina = await browser.newContext({ viewport: { width: 1440, height: 1260 }, deviceScaleFactor: 2, acceptDownloads: true });
   const highPage = await retina.newPage(); highPage.on('pageerror', error => errors.push(error.message));
   await highPage.goto(origin); await highPage.waitForSelector('#previewStage[data-ready=true] canvas');
   const sharpness = await highPage.locator('#cardMount canvas').evaluate(c => ({ buffer: c.width, shown: c.getBoundingClientRect().width }));

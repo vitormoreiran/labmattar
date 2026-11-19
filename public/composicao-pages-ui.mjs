@@ -704,7 +704,7 @@ async function deskThumbnail(id){
   if(deliveryBusy())throw Error('Aguarde a operação atual.');
   const index=pages.findIndex(page=>page.id===id);if(index<0)throw Error('Página não encontrada.');
   const original=current,state=copy(bridge().snapshot().state);busy=true;switching=true;
-  try{current=index;const photoCatalog=privatePhotoCatalog(pages[index].composition,bridge().snapshot().photoCatalog);registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[index].composition,photoCatalog));await settled();applySectionVisual();renderMotions();await settled();const scene=await window.LabRenderer.capture({edge:640,ask:false});const canvas=await sceneCanvas(scene,640);return canvas.toDataURL('image/webp',.86);}
+  try{current=index;const photoCatalog=privatePhotoCatalog(pages[index].composition,bridge().snapshot().photoCatalog);registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[index].composition,photoCatalog));await settled();applySectionVisual();renderMotions();renderBackgroundVideo();await settled();const scene=await window.LabRenderer.capture({edge:1920,ask:false});const canvas=await sceneCanvas(scene,640);return canvas.toDataURL('image/webp',.86);}
   finally{current=original;bridge().restore(state);await settled();applySectionVisual();renderMotions();renderBackgroundVideo();switching=false;busy=false;}
 }
 

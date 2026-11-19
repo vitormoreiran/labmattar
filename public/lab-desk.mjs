@@ -4,11 +4,13 @@ import {storyTopic} from './lab-story-model.mjs';
 import {addStoryTopic,removeStoryPhoto,createStoryTemplate} from './lab-story-project.mjs';
 import {pageRows,pageFingerprint,fullCatalog,changeContent,duplicatePage,moveSelected} from './lab-desk-model.mjs';
 import {libraryList,librarySave} from './lab-project-library.mjs';
+import {createProjectWriteQueue} from './lab-project-write-queue.mjs';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const frame=$('engine'),hadDraft=Boolean(localStorage.getItem('labmattar-pages-v1'));
-let api,host,documentValue,rows=[],selectedId='',currentKey='',records=[],view='all',filter='',panel='content',mode='desk',loading=true,inputTimer,saveTimer,readTimer,pendingText=false,fieldKey='',history=[],queue=Promise.resolve(),saveQueue=Promise.resolve(),thumbTimer,thumbPending=new Map();
+let api,host,documentValue,rows=[],selectedId='',currentKey='',records=[],view='all',filter='',panel='content',mode='desk',loading=true,inputTimer,saveTimer,readTimer,pendingText=false,fieldKey='',history=[],queue=Promise.resolve(),thumbTimer,thumbPending=new Map();
 const placeholder='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><rect width="640" height="360" fill="%23eeefeb"/><text x="320" y="184" text-anchor="middle" fill="%23767873" font-family="Arial,sans-serif" font-size="18">Preparando prévia…</text></svg>'.replaceAll('%23','#'));
 const thumbs=new Map(),knownThumbs=new Map(),formatName={horizontal:'Horizontal / 16:9',vertical:'Vertical / 9:16',quadrado:'Quadrado / 1:1',editorial:'Editorial'};
+const writeProject=createProjectWriteQueue(librarySave);
 const row=()=>rows.find(p=>p.id===selectedId)||rows[0];
 const context=()=>host.LabProductionBridge.snapshot();
 function toast(text,error=false){$('toast').textContent=text;$('toast').dataset.error=String(error);$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',6500);}
@@ -21,9 +23,7 @@ async function saveCurrent(){
   // Capture the identity and content before async storage begins. Older writes
   // must never complete after a newer revision of the same project.
   const record={id:currentKey,name:documentValue.name,document:documentValue,currentPageId:selectedId,updatedAt:Date.now()};
-  const write=saveQueue.catch(()=>{}).then(()=>librarySave(record));
-  saveQueue=write;
-  await write;
+  await writeProject(record);
   records=records.filter(p=>p.id!==record.id);
   records.push(record);
   localStorage.setItem('labmattar-desk-active-v1',record.id);

@@ -4,6 +4,7 @@ const browser=await engine.launch({headless:true,...(engine===chromium&&process.
 async function waitPresentation(page){
  try{await page.waitForFunction(()=>['ready','error'].includes(document.getElementById('presentationPreview').dataset.state),null,{timeout:180000});}
  catch(error){const state=await page.evaluate(()=>({preview:document.getElementById('presentationPreview').dataset.state,status:document.getElementById('presentationStatus').textContent,native:document.getElementById('engine').contentWindow.document.getElementById('labExportStatus').textContent,busy:document.getElementById('engine').contentWindow.LabPages.isBusy()}));console.error(JSON.stringify(state));await page.screenshot({path:out+'/present-failure.png'});throw error;}
+ if(await page.locator('#presentationPreview').getAttribute('data-state')==='error'){console.error(JSON.stringify(await page.evaluate(()=>document.getElementById('engine').contentWindow.LabPages.lastExportError)));await page.screenshot({path:out+'/present-error.png'});}
  assert.equal(await page.locator('#presentationPreview').getAttribute('data-state'),'ready',await page.locator('#presentationStatus').textContent());
 }
 try{

@@ -695,7 +695,11 @@ async function exportSequence(type,options={}){
     window.LabPages.lastExport={schemaVersion:1,renderer:'labmattar-scene-v1',type,maxEdge:Number(by('labExportSize').value),pages:scenes.map(scene=>({id:scene.id,name:scene.name,width:scene.width,height:scene.height,outputWidth:scene.outputWidth,outputHeight:scene.outputHeight,rasterized:scene.rasterized})),warnings};
     notify(`${pages.length} página${pages.length>1?'s':''} / ${type==='pdf'?'PDF':type==='html'?'SITE HTML':'APRESENTAÇÃO'} concluído.`);
     return previewDocument;
-  }catch(error){preview?.close();notify('Exportação não concluída: '+error.message,true);}
+  }catch(error){
+    const rect=selector=>{const element=board.querySelector(selector);if(!element)return null;const box=element.getBoundingClientRect(),css=getComputedStyle(element);return {x:box.x,y:box.y,width:box.width,height:box.height,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth,hidden:element.hidden,visibility:css.visibility,font:css.fontSize};};
+    window.LabPages.lastExportError={page:current+1,name:pages[current].name,status:by('labStatus').textContent,fit:by('labTitleFitInfo').textContent,board:{width:board.offsetWidth,height:board.offsetHeight,...board.getBoundingClientRect().toJSON()},copy:rect('.lm-lab-copy'),reading:rect('#labReading'),title:rect('#labTitle'),body:rect('#labBody'),footer:rect('.lm-lab-bottom'),kicker:rect('.lm-lab-kicker')};
+    preview?.close();notify('Exportação não concluída / página '+(current+1)+': '+error.message,true);
+  }
   finally{
     current=original;bridge().restore(originalState);await settled();selectedMotion=active.motions[0]?.id||'';renderMotions();renderBackgroundVideo();renderPages();
     lab.inert=previousInert;switching=false;busy=false;panel.removeAttribute('aria-busy');commit();

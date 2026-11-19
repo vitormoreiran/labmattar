@@ -164,7 +164,7 @@ function paintChannelFooter(context, footer, colors) {
   context.fillText('CANAIS', x + 2, 112.2);
   if (footer.privacy) {
     context.globalAlpha = 1; context.fillStyle = colors.accent; setFont(context, 6.4);
-    context.fillText('POLÍTICA DE PRIVACIDADE · PT', 470, 112.2);
+    context.textAlign = 'right'; context.fillText('POLÍTICA DE PRIVACIDADE · PT', 470, 112.2);
   }
   context.restore();
 }

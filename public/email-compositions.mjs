@@ -3,10 +3,10 @@ import { normalizeSignature } from './email-signature.mjs';
 // All four email compositions use the former 480 × 100 px strip. Elements are
 // recomposed at this size; native marks and contact text never stretch to fit.
 export const EMAIL_COMPOSITIONS = Object.freeze([
-  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 126, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
-  { id: 'm-compacto', label: 'M compacto', width: 480, height: 126, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
-  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 126, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
-  { id: 'm-linha', label: 'M com linha', width: 480, height: 126, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
+  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 152, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
+  { id: 'm-compacto', label: 'M compacto', width: 480, height: 152, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
+  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 152, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
+  { id: 'm-linha', label: 'M com linha', width: 480, height: 152, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
 ].map(Object.freeze));
 
 export function emailComposition(id = EMAIL_COMPOSITIONS[0].id) {
@@ -135,18 +135,33 @@ function paintText(context, field, colors) {
 function paintChannelFooter(context, footer, colors) {
   if (!footer || (!footer.links.length && !footer.privacy)) return;
   context.save();
-  context.globalAlpha = .25; context.fillStyle = colors.ink; context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
-  let x = 10, y = 107;
+  context.fillStyle = colors.paper; context.fillRect(0, 100, 480, 52);
+  context.globalAlpha = .3; context.fillStyle = colors.ink; context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
+  let x = 12, y = 110;
   for (const key of footer.links) {
-    context.strokeStyle = colors.accent; context.lineWidth = 1.25;
-    if (key === 'instagram') { context.strokeRect(x, y, 10, 10); context.beginPath(); context.arc(x + 5, y + 5, 2.2, 0, Math.PI * 2); context.stroke(); }
-    else if (key === 'whatsapp') { context.beginPath(); context.arc(x + 5, y + 5, 4.3, 0, Math.PI * 2); context.stroke(); context.beginPath(); context.moveTo(x + 2.5, y + 8.3); context.lineTo(x + 1, y + 10.5); context.lineTo(x + 4, y + 9.4); context.stroke(); }
-    else { context.strokeRect(x, y, 10, 10); context.fillStyle = colors.accent; setFont(context, 7); context.fillText('in', x + 1.6, y + 7.5); }
-    x += 16;
+    context.strokeStyle = colors.accent; context.lineWidth = 1.35;
+    if (key === 'instagram') {
+      context.beginPath(); context.roundRect(x, y, 13, 13, 3); context.stroke();
+      context.beginPath(); context.arc(x + 6.5, y + 6.5, 3, 0, Math.PI * 2); context.stroke();
+      context.fillStyle = colors.accent; context.beginPath(); context.arc(x + 10.1, y + 3.1, .85, 0, Math.PI * 2); context.fill();
+    } else if (key === 'whatsapp') {
+      context.beginPath(); context.arc(x + 6.5, y + 6.5, 5.4, 0, Math.PI * 2); context.stroke();
+      context.beginPath(); context.moveTo(x + 3.5, y + 10.4); context.lineTo(x + 2, y + 13); context.lineTo(x + 5.1, y + 11.5); context.stroke();
+      context.beginPath(); context.moveTo(x + 5.1, y + 4); context.lineTo(x + 8.2, y + 8.1); context.lineTo(x + 9.8, y + 6.6); context.stroke();
+    } else {
+      context.beginPath(); context.roundRect(x, y, 13, 13, 1.4); context.stroke();
+      context.fillStyle = colors.accent; setFont(context, 8); context.fillText('in', x + 2.1, y + 9.8);
+    }
+    x += 19;
   }
-  const labelX = x + (footer.links.length ? 2 : 0);
-  if (footer.privacy) { context.fillStyle = colors.ink; setFont(context, 7); context.fillText('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT', labelX, 110); }
-  context.fillStyle = colors.ink; context.globalAlpha = .62; setFont(context, 6); context.fillText('LGPD · mensagem confidencial', labelX, 120); context.restore();
+  context.fillStyle = colors.ink; setFont(context, 7.5);
+  context.fillText(footer.links.length ? 'CANAIS DE COMUNICAÇÃO' : 'PRIVACIDADE E CONFIDENCIALIDADE', x + 2, 120);
+  context.globalAlpha = .68; setFont(context, 6.6);
+  context.fillText('Esta mensagem pode conter dados pessoais e conteúdo confidencial.', 12, 134);
+  context.fillText('Se recebida por engano, não utilize, copie ou divulgue: avise o remetente e exclua-a.', 12, 143);
+  context.globalAlpha = 1; context.fillStyle = colors.accent; setFont(context, 6.5);
+  context.fillText(footer.privacy ? 'PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT' : 'TRATAMENTO DE DADOS CONFORME LGPD', 12, 150);
+  context.restore();
 }
 
 export function paintSignature(context, layout, colors, resources, { includeM = true } = {}) {

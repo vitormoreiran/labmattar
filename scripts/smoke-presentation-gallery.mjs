@@ -21,6 +21,8 @@ try{
  assert.equal(await page.locator('[data-story-topic][open]').count(),1);
  await page.locator('[data-story-topic]>summary').nth(1).click();await page.waitForFunction(()=>document.querySelectorAll('[data-story-topic][open]').length===1);
  await page.locator('[data-story-topic]>summary').nth(2).click();await page.waitForFunction(()=>document.querySelectorAll('[data-story-topic][open]').length===1);
+ const photoLayout=await page.locator('[data-story-topic][open] .lab-story-photo-select').evaluateAll(buttons=>buttons.map(button=>{const image=button.querySelector('img').getBoundingClientRect(),label=button.querySelector('span').getBoundingClientRect(),box=button.getBoundingClientRect();return {imageRatio:image.width/image.height,labelWidth:label.width,labelHeight:label.height,below:label.top>=image.bottom-1,inside:label.right<=box.right+1};}));
+ assert(photoLayout.length>0);for(const item of photoLayout){assert(Math.abs(item.imageRatio-1.5)<.03);assert(item.labelWidth>40&&item.labelHeight<30,'Photo labels must fit on one readable line');assert(item.below&&item.inside,'Photo labels sit below, within their button');}
  await page.screenshot({path:out+'/pages-organized.png'});
  const edited=await page.evaluate(()=>window.LabPages.create());await page.locator('#labProjectOpen').click();assert.equal(await page.locator('#labStoryPresets article').count(),3);assert.equal(await page.locator('#labStoryPresets a').count(),3);
  await page.screenshot({path:out+'/project-chooser.png'});await page.locator('#labProjectDialog').getByRole('button',{name:'Fechar projetos'}).click();assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),edited);

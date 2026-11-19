@@ -70,7 +70,7 @@ export function installStoryEditor({panel,list,getProject,getContext,beforeEdit,
   const selected=project.story.topics.find(topic=>topic.pageIds.includes(current));if(current!==lastSelected){expandedId=selected?.id;lastSelected=current;}
   for(const [index,topic]of project.story.topics.entries()){
    const view=storyTopic(project,topic.id),group=el('details',{class:'lab-story-group','data-story-topic':topic.id,'data-current':String(topic.id===selected?.id)}),head=el('summary'),label=el('span',{class:'lab-story-topic-label'});
-   label.append(el('span',{class:'detail'},String(index).padStart(2,'0')+' / '+STORY_ROLES[topic.role]),el('span',{},storyLabel(project,topic.id)),el('small',{class:'detail'},view.photos.length+' foto'+(view.photos.length===1?'':'s')));
+   label.append(el('span',{},storyLabel(project,topic.id)),el('span',{class:'detail'},String(index).padStart(2,'0')+' / '+STORY_ROLES[topic.role]+' · '+view.photos.length+' foto'+(view.photos.length===1?'':'s')));
    head.append(label);group.append(head);group.open=topic.id===expandedId;group.addEventListener('toggle',()=>{if(group.open){expandedId=topic.id;for(const other of list.querySelectorAll('details[data-story-topic]'))if(other!==group)other.open=false;}else if(expandedId===topic.id)expandedId=null;});
    const content=el('div',{class:'lab-story-topic-content'}),edit=el('button',{type:'button','data-story-edit':topic.id},'EDITAR TEXTO E FOTOS');edit.onclick=()=>open(topic.id);content.append(edit);
    const photoGrid=el('div',{class:'lab-story-photo-grid'});

@@ -46,7 +46,7 @@
 
 /* Ready presentations and editable projects share one visible entry. */
 .lm-lab-index-links{display:flex;flex-wrap:wrap;gap:16px 28px}
-.lm-lab-index-links a,.lm-lab-tools-heading>a{text-underline-offset:6px}
+.lm-lab-index-links a,.lm-lab-presentation-jump a{text-underline-offset:6px}
 html body main #apresentacoes{padding-block:24px!important;scroll-margin-top:56px}
 html body main #apresentacoes .eyebrow{margin:0 0 12px!important}
 html body main #apresentacoes .lm-lab-presentations-title{margin:0 0 12px!important;min-height:0}
@@ -62,7 +62,6 @@ html body main #apresentacoes .lm-lab-presentations-lead{margin:0 0 28px!importa
 .lm-lab-presentation-actions .lm-lab-presentation-watch{padding:13px 16px;background:#181818;color:#f7f6f2;text-decoration:none;border:1px solid #181818}
 .lm-lab-presentation-actions .lm-lab-presentation-watch:hover{background:#f7f6f2;color:#181818}
 .lm-lab-presentation a:focus-visible{outline:2px solid #181818;outline-offset:5px}
-.lm-lab-tools-heading{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:24px}
-.lm-lab-tools-heading .eyebrow{margin:0}
+.lm-lab-presentation-jump{margin:0 0 24px}.lm-lab-presentation-jump a{color:inherit;text-underline-offset:5px}
 @media(max-width:1000px){.lm-lab-presentation-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){.lm-lab-presentation-grid{grid-template-columns:1fr;gap:46px}.lm-lab-presentation h3{min-height:0}}

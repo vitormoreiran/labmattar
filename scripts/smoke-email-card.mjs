@@ -11,10 +11,10 @@ await fs.mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.EMAIL_BROWSER_EXECUTABLE ? { executablePath: process.env.EMAIL_BROWSER_EXECUTABLE } : {}) });
 const errors = [], report = [];
 const models = [
-  { id: 'm-horizontal', width: 480, height: 126 },
-  { id: 'm-compacto', width: 480, height: 126 },
-  { id: 'mattar-faixa', width: 480, height: 126 },
-  { id: 'm-linha', width: 480, height: 126 }
+  { id: 'm-horizontal', width: 480, height: 152 },
+  { id: 'm-compacto', width: 480, height: 152 },
+  { id: 'mattar-faixa', width: 480, height: 152 },
+  { id: 'm-linha', width: 480, height: 152 }
 ];
 const data = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999', instagram: 'https://instagram.com/labmattar', whatsapp: 'https://wa.me/5511999999999', linkedin: 'https://linkedin.com/company/labmattar', privacyUrl: 'https://labmattar.com/politica-de-privacidade' };
 try {
@@ -59,7 +59,7 @@ try {
   assert.ok(previewWidth > 700, 'Desktop preview must use the available width');
   await page.locator('#openPreview').click();
   assert.equal(await page.locator('#previewDialog').evaluate(d => d.open), true);
-  assert.ok(await page.locator('#zoomCanvas').evaluate(c => Math.abs(c.getBoundingClientRect().width / c.getBoundingClientRect().height - 480 / 126) < .005));
+  assert.ok(await page.locator('#zoomCanvas').evaluate(c => Math.abs(c.getBoundingClientRect().width / c.getBoundingClientRect().height - 480 / 152) < .005));
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#previewDialog').evaluate(d => d.open), false);
   for (const model of models) {
@@ -171,7 +171,7 @@ try {
   const gifFile = await download('#downloadMotion', 'personalized.gif', 180000);
   const gif = await fs.readFile(gifFile);
   assert.equal(gif.subarray(0, 6).toString(), 'GIF89a');
-  assert.equal(gif.readUInt16LE(6), 480); assert.equal(gif.readUInt16LE(8), 126);
+  assert.equal(gif.readUInt16LE(6), 480); assert.equal(gif.readUInt16LE(8), 152);
   assert.ok(gif.length < 1024 * 1024, 'Email GIF exceeds one megabyte');
   let mediaProbe = null;
   if (process.env.EMAIL_SKIP_MEDIA_PROBE !== '1') {
@@ -181,14 +181,14 @@ try {
   }
   const htmlFile = await download('#downloadHTML', 'contact.html');
   const html = await fs.readFile(htmlFile, 'utf8');
-  assert.ok(html.includes('data:image/png;base64,')); assert.ok(html.includes('mailto:joana@labmattar.com')); assert.ok(html.includes('width="480" height="126"')); assert.ok(html.includes('https://instagram.com/labmattar')); assert.ok(html.includes('https://wa.me/5511999999999')); assert.ok(html.includes('https://linkedin.com/company/labmattar')); assert.ok(html.includes('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT'));
+  assert.ok(html.includes('data:image/png;base64,')); assert.ok(html.includes('mailto:joana@labmattar.com')); assert.ok(html.includes('width="480" height="152"')); assert.ok(html.includes('https://instagram.com/labmattar')); assert.ok(html.includes('https://wa.me/5511999999999')); assert.ok(html.includes('https://linkedin.com/company/labmattar')); assert.ok(html.includes('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT'));
   const contactFile = await download('#downloadContact', 'contact.vcf');
   assert.match(await fs.readFile(contactFile, 'utf8'), /FN:Joana Oliveira/);
   await page.locator('#resetColors').click();
   assert.equal(await page.locator('[data-color-key=paper][aria-pressed=true]').getAttribute('data-color-value'), '#FFFFFF');
   assert.equal(await page.locator('#name').inputValue(), data.name);
   for (const width of [1440, 390, 320]) {
-    await page.setViewportSize({ width, height: 1260 });
+    await page.setViewportSize({ width, height: 1520 });
     for (const model of models) {
       await select(model.id);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
@@ -209,7 +209,7 @@ try {
   await page.goto(pathToFileURL(htmlFile).href);
   await page.waitForFunction(() => document.querySelector('img')?.complete);
   assert.ok(await page.locator('img').evaluate(image => image.naturalWidth > 0));
-  const retina = await browser.newContext({ viewport: { width: 1440, height: 1260 }, deviceScaleFactor: 2, acceptDownloads: true });
+  const retina = await browser.newContext({ viewport: { width: 1440, height: 1520 }, deviceScaleFactor: 2, acceptDownloads: true });
   const highPage = await retina.newPage(); highPage.on('pageerror', error => errors.push(error.message));
   await highPage.goto(origin); await highPage.waitForSelector('#previewStage[data-ready=true] canvas');
   const sharpness = await highPage.locator('#cardMount canvas').evaluate(c => ({ buffer: c.width, shown: c.getBoundingClientRect().width }));
@@ -217,7 +217,7 @@ try {
   for (const [key, value] of Object.entries(data)) await highPage.locator('#' + key).fill(value);
   const retinaDownload = highPage.waitForEvent('download'); await highPage.locator('#downloadPNG').click();
   const retinaFile = path.join(output, 'retina-native.png'); await (await retinaDownload).saveAs(retinaFile);
-  const native = await fs.readFile(retinaFile); assert.equal(native.readUInt32BE(16), 480); assert.equal(native.readUInt32BE(20), 126);
+  const native = await fs.readFile(retinaFile); assert.equal(native.readUInt32BE(16), 480); assert.equal(native.readUInt32BE(20), 152);
   await highPage.screenshot({ path: path.join(output, 'retina-preview.png') }); await retina.close();
   assert.deepEqual(errors, []);
   const result = { status: 'passed', compositions: report, legacyCard: true, gifBytes: gif.length, mediaProbe, viewports: [1440, 390, 320], errors };

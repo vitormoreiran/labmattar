@@ -80,6 +80,8 @@ function initDelivery(){
 function setWorkspaceView(view){
   const inspector=by('laboratorio').querySelector('.lm-lab-inspector');
   inspector.dataset.workspaceContext=view;
+  by('labWorkflowContext').hidden=view!=='edit';
+  applySectionVisual();
   by('labPages').hidden=view!=='pages';by('labWorkflowMotion').hidden=view!=='motion';
   for(const button of document.querySelectorAll('button[data-workspace-view]'))button.setAttribute('aria-pressed',String(button.dataset.workspaceView===view));
 }
@@ -125,7 +127,7 @@ function applySectionVisual(){
   if(!background){delete board.dataset.sectionActive;delete board.dataset.sectionPhotoText;by('labSectionScope').hidden=true;return;}
   board.dataset.sectionActive='true';board.dataset.sectionPhotoText=String(background.mode==='photo'&&background.hasText);
   board.dataset.backdrop=background.mode==='color'?'color':background.treatment;
-  by('labSectionScope').hidden=false;by('labSectionScope').textContent='Fundo da seção '+currentSection().name+' / compartilhado por '+pages.filter(page=>page.sectionId===background.id).length+' páginas.';
+  by('labSectionScope').hidden=by('laboratorio').querySelector('.lm-lab-inspector').dataset.workspaceContext!=='edit';by('labSectionScope').textContent='Fundo da seção '+currentSection().name+' / compartilhado por '+pages.filter(page=>page.sectionId===background.id).length+' páginas.';
 }
 function syncSectionBackground(){
   const section=currentSection();if(!section)return;

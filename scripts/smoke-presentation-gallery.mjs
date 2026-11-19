@@ -27,6 +27,6 @@ try{
  const edited=await page.evaluate(()=>window.LabPages.create());await page.locator('#labProjectOpen').click();assert.equal(await page.locator('#labStoryPresets article').count(),3);assert.equal(await page.locator('#labStoryPresets a').count(),3);
  await page.screenshot({path:out+'/project-chooser.png'});await page.locator('#labProjectDialog').getByRole('button',{name:'Fechar projetos'}).click();assert.deepEqual(await page.evaluate(()=>window.LabPages.create()),edited);
  await page.setViewportSize({width:390,height:844});await page.locator('#labProjectOpen').click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.screenshot({path:out+'/project-chooser-mobile.png'});
- await page.locator('#labProjectDialog').getByRole('button',{name:'Fechar projetos'}).click();await page.screenshot({path:out+'/pages-organized-mobile.png'});
+ await page.locator('#labProjectDialog').getByRole('button',{name:'Fechar projetos'}).click();assert.equal(await page.locator('#labWorkflowContext').isVisible(),false,'Page context cannot overlap the Pages heading on mobile');await page.screenshot({path:out+'/pages-organized-mobile.png'});
  assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);await fs.writeFile(out+'/report.json',JSON.stringify({presentations:3,images:86,readyPages:true,directModelLink:true,cancelPreservesDraft:true,reloadPreservesEditing:true,mobile:true,errors,failed},null,2));console.log('Three ready presentations, assets and direct editing links passed.');
 }finally{await browser.close();}

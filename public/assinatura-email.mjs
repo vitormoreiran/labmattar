@@ -20,7 +20,15 @@ let customColors = false, paused = !(format === 'email' && composition === 'm-ho
 const defaults = () => format === 'email' ? emailDefaultColors(composition) : { paper: CARD_THEMES.paper.paper, ink: CARD_THEMES.paper.ink, accent: CARD_THEMES.paper.accent };
 let colors = defaults();
 const read = () => normalizeSignature(Object.fromEntries(fields.map(key => [key, form.elements.namedItem(key).value])));
-const readChannels = () => Object.fromEntries(['instagram', 'whatsapp', 'linkedin', 'youtube', 'privacyUrl'].map(key => [key, form.elements.namedItem(key).value.trim()]));
+const readChannels = () => {
+  const channels = {};
+  for (const key of ['instagram', 'whatsapp', 'linkedin', 'youtube']) {
+    const toggle = form.elements.namedItem('show' + key[0].toUpperCase() + key.slice(1));
+    channels[key] = toggle?.checked ? (form.elements.namedItem(key).value.trim() || true) : '';
+  }
+  channels.privacyUrl = form.elements.namedItem('privacyUrl').value.trim();
+  return channels;
+};
 const options = (density = 2, channels = readChannels()) => ({ format, composition, colors: { ...colors }, channels, density });
 const exportDensity = () => format === 'email' ? 1 : 2;
 // Draw extra pixels for the enlarged screen preview, independently of exports.

@@ -16,7 +16,7 @@ const models = [
   { id: 'mattar-faixa', width: 480, height: 126 },
   { id: 'm-linha', width: 480, height: 126 }
 ];
-const data = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
+const data = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999', instagram: 'https://instagram.com/labmattar', whatsapp: 'https://wa.me/5511999999999', linkedin: 'https://linkedin.com/company/labmattar', privacyUrl: 'https://labmattar.com/politica-de-privacidade' };
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 }, acceptDownloads: true });
   page.setDefaultTimeout(30000);
@@ -181,7 +181,7 @@ try {
   }
   const htmlFile = await download('#downloadHTML', 'contact.html');
   const html = await fs.readFile(htmlFile, 'utf8');
-  assert.ok(html.includes('data:image/png;base64,')); assert.ok(html.includes('mailto:joana@labmattar.com')); assert.ok(html.includes('width="480" height="100"'));
+  assert.ok(html.includes('data:image/png;base64,')); assert.ok(html.includes('mailto:joana@labmattar.com')); assert.ok(html.includes('width="480" height="126"')); assert.ok(html.includes('https://instagram.com/labmattar')); assert.ok(html.includes('https://wa.me/5511999999999')); assert.ok(html.includes('https://linkedin.com/company/labmattar')); assert.ok(html.includes('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT'));
   const contactFile = await download('#downloadContact', 'contact.vcf');
   assert.match(await fs.readFile(contactFile, 'utf8'), /FN:Joana Oliveira/);
   await page.locator('#resetColors').click();

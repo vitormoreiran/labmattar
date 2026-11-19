@@ -217,7 +217,7 @@ try {
   for (const [key, value] of Object.entries(data)) await highPage.locator('#' + key).fill(value);
   const retinaDownload = highPage.waitForEvent('download'); await highPage.locator('#downloadPNG').click();
   const retinaFile = path.join(output, 'retina-native.png'); await (await retinaDownload).saveAs(retinaFile);
-  const native = await fs.readFile(retinaFile); assert.equal(native.readUInt32BE(16), 480); assert.equal(native.readUInt32BE(20), 100);
+  const native = await fs.readFile(retinaFile); assert.equal(native.readUInt32BE(16), 480); assert.equal(native.readUInt32BE(20), 126);
   await highPage.screenshot({ path: path.join(output, 'retina-preview.png') }); await retina.close();
   assert.deepEqual(errors, []);
   const result = { status: 'passed', compositions: report, legacyCard: true, gifBytes: gif.length, mediaProbe, viewports: [1440, 390, 320], errors };

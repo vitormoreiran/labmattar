@@ -43,7 +43,7 @@ async function exportProject(){await flushText();await saveCurrent();const json=
 async function present(){
  if(loading)return;
  const dialog=$('presentationPreview');
- if(!dialog.open)dialog.showModal();
+ if(!dialog.open){dialog.show();$('closePresentation').focus();}
  if(previewBusy)return;
  previewBusy=true;dialog.dataset.state='loading';
  $('presentationTitle').textContent=documentValue.name;
@@ -59,10 +59,12 @@ async function present(){
   await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>{cleanup();reject(Error('A apresentação não terminou de abrir.'));},30000);const cleanup=()=>{clearTimeout(timeout);$('presentationFrame').removeEventListener('load',loaded);};const loaded=()=>{cleanup();resolve();};$('presentationFrame').addEventListener('load',loaded,{once:true});$('presentationFrame').src=previewURL;});
   if(!dialog.open)return;
   $('presentationStatus').hidden=true;$('presentationFrame').hidden=false;dialog.dataset.state='ready';
+  dialog.close();dialog.showModal();
  }catch(error){dialog.dataset.state='error';$('presentationStatus').textContent='Não foi possível abrir a apresentação. '+error.message;throw error;}
  finally{previewBusy=false;}
 }
 function closePresentation(){
+ if($('presentationPreview').open)return;
  $('presentationFrame').src='about:blank';$('presentationFrame').hidden=true;
  if(previewURL){URL.revokeObjectURL(previewURL);previewURL='';}
  clearTimeout(thumbTimer);thumbTimer=setTimeout(renderThumb,180);
@@ -75,7 +77,7 @@ for(const b of document.querySelectorAll('[data-view]'))b.onclick=()=>{view=b.da
 for(const b of document.querySelectorAll('[data-panel]'))b.onclick=()=>run(async()=>{await flushText();panel=b.dataset.panel;fieldKey='';for(const x of document.querySelectorAll('[data-panel]'))x.setAttribute('aria-pressed',String(x===b));renderInspector();});
 $('inspectorFields').oninput=e=>{if(!e.target.matches('textarea'))return;pendingText=true;$('saveState').textContent='Salvando conteúdo…';clearTimeout(inputTimer);inputTimer=setTimeout(()=>run(flushText),450);};$('inspectorFields').onclick=e=>{const b=e.target.closest('[data-config]');if(b)run(()=>configure(b.dataset.config));};
 $('configure').onclick=$('largePreview').onclick=$('enlarge').onclick=()=>run(()=>configure());$('returnToPages').onclick=()=>run(backToPages);$('save').onclick=()=>run(exportProject);$('export').onclick=()=>run(async()=>{await flushText();await native(async()=>{await api.selectPage(selectedId);setMode('export');});host.document.getElementById('labOpenDelivery').click();});
-$('present').onclick=()=>run(present);$('closePresentation').onclick=()=>$('presentationPreview').close();$('presentationPreview').addEventListener('close',closePresentation);
+$('present').onclick=()=>run(present);$('closePresentation').onclick=()=>$('presentationPreview').close();$('presentationPreview').addEventListener('close',closePresentation);$('presentationPreview').addEventListener('keydown',event=>{if(previewBusy&&event.key==='Tab'){event.preventDefault();$('closePresentation').focus();}if(previewBusy&&event.key==='Escape')$('presentationPreview').close();});
 for(const [id,delta]of [['back',-1],['forward',1]])$(id).onclick=()=>run(async()=>{await flushText();await native(async()=>{const moved=moveSelected(api.snapshot().document,selectedId,delta,context().photoCatalog);await apply(moved.document,moved.id);});});
 $('duplicate').onclick=()=>run(async()=>{await flushText();await native(async()=>{const result=duplicatePage(api.snapshot().document,selectedId,context().photoCatalog);await apply(result.document,result.id);});});
 $('undo').onclick=()=>run(async()=>{await flushText();const before=history.pop();if(!before)return;await native(()=>api.load(before.document,{currentIndex:before.document.pages.findIndex(p=>p.id===before.id)}));api.persist();read();fieldKey='';render();await saveCurrent();});

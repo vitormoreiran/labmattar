@@ -10,7 +10,7 @@ const toggle = document.getElementById('togglePreview'), progress = document.get
 const picker = document.getElementById('compositionPicker');
 const previewDialog = document.getElementById('previewDialog'), zoomCanvas = document.getElementById('zoomCanvas');
 const example = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
-const exampleChannels = { instagram: true, whatsapp: true, linkedin: true, privacyUrl: true };
+const exampleChannels = { instagram: true, whatsapp: true, linkedin: true, youtube: true, privacyUrl: true };
 const params = new URLSearchParams(location.search);
 let composition = EMAIL_COMPOSITIONS.some(item => item.id === params.get('modelo')) ? params.get('modelo') : 'm-horizontal';
 let format = params.get('formato') === 'card' ? 'card' : 'email';
@@ -20,7 +20,7 @@ let customColors = false, paused = !(format === 'email' && composition === 'm-ho
 const defaults = () => format === 'email' ? emailDefaultColors(composition) : { paper: CARD_THEMES.paper.paper, ink: CARD_THEMES.paper.ink, accent: CARD_THEMES.paper.accent };
 let colors = defaults();
 const read = () => normalizeSignature(Object.fromEntries(fields.map(key => [key, form.elements.namedItem(key).value])));
-const readChannels = () => Object.fromEntries(['instagram', 'whatsapp', 'linkedin', 'privacyUrl'].map(key => [key, form.elements.namedItem(key).value.trim()]));
+const readChannels = () => Object.fromEntries(['instagram', 'whatsapp', 'linkedin', 'youtube', 'privacyUrl'].map(key => [key, form.elements.namedItem(key).value.trim()]));
 const options = (density = 2, channels = readChannels()) => ({ format, composition, colors: { ...colors }, channels, density });
 const exportDensity = () => format === 'email' ? 1 : 2;
 // Draw extra pixels for the enlarged screen preview, independently of exports.

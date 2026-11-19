@@ -3,10 +3,10 @@ import { normalizeSignature } from './email-signature.mjs';
 // All four email compositions use the former 480 × 100 px strip. Elements are
 // recomposed at this size; native marks and contact text never stretch to fit.
 export const EMAIL_COMPOSITIONS = Object.freeze([
-  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 100, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
-  { id: 'm-compacto', label: 'M compacto', width: 480, height: 100, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
-  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 100, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
-  { id: 'm-linha', label: 'M com linha', width: 480, height: 100, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
+  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 126, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
+  { id: 'm-compacto', label: 'M compacto', width: 480, height: 126, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
+  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 126, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
+  { id: 'm-linha', label: 'M com linha', width: 480, height: 126, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
 ].map(Object.freeze));
 
 export function emailComposition(id = EMAIL_COMPOSITIONS[0].id) {
@@ -34,7 +34,7 @@ function splitName(value, context, width) {
   return candidates[0].lines;
 }
 
-export function signatureLayout(data, { composition = 'm-horizontal', context }) {
+export function signatureLayout(data, { composition = 'm-horizontal', context, channels = {} }) {
   const meta = emailComposition(composition), value = normalizeSignature(data);
   const fields = [], errors = {};
   const add = (key, label, x, y, size, maxWidth, color = 'ink', align = 'left', baseline) => {
@@ -91,7 +91,11 @@ export function signatureLayout(data, { composition = 'm-horizontal', context })
     mark = { family: 'm', x: 410, y: 7, width: 50, height: 50 * 627 / 822 };
     divider = { x: 20, y: 56, width: 440 };
   }
-  return { value, compact: true, composition, meta, fields, errors, name, role: [value.role], titleSize: composition === 'm-horizontal' ? 17.5 : 18, titleLine: 21,
+  const channelFooter = {
+    links: ['instagram', 'whatsapp', 'linkedin'].filter(key => Boolean(channels[key])),
+    privacy: Boolean(channels.privacyUrl)
+  };
+  return { value, compact: true, composition, meta, fields, errors, name, role: [value.role], titleSize: composition === 'm-horizontal' ? 17.5 : 18, titleLine: 21, channelFooter,
     mark, divider, footer, motion: meta.motion ? mark : null, size: { width: meta.width, height: meta.height } };
 }
 
@@ -128,6 +132,23 @@ function paintText(context, field, colors) {
   context.restore();
 }
 
+function paintChannelFooter(context, footer, colors) {
+  if (!footer || (!footer.links.length && !footer.privacy)) return;
+  context.save();
+  context.globalAlpha = .25; context.fillStyle = colors.ink; context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
+  let x = 10, y = 107;
+  for (const key of footer.links) {
+    context.strokeStyle = colors.accent; context.lineWidth = 1.25;
+    if (key === 'instagram') { context.strokeRect(x, y, 10, 10); context.beginPath(); context.arc(x + 5, y + 5, 2.2, 0, Math.PI * 2); context.stroke(); }
+    else if (key === 'whatsapp') { context.beginPath(); context.arc(x + 5, y + 5, 4.3, 0, Math.PI * 2); context.stroke(); context.beginPath(); context.moveTo(x + 2.5, y + 8.3); context.lineTo(x + 1, y + 10.5); context.lineTo(x + 4, y + 9.4); context.stroke(); }
+    else { context.strokeRect(x, y, 10, 10); context.fillStyle = colors.accent; setFont(context, 7); context.fillText('in', x + 1.6, y + 7.5); }
+    x += 16;
+  }
+  const labelX = x + (footer.links.length ? 2 : 0);
+  if (footer.privacy) { context.fillStyle = colors.ink; setFont(context, 7); context.fillText('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT', labelX, 110); }
+  context.fillStyle = colors.ink; context.globalAlpha = .62; setFont(context, 6); context.fillText('LGPD · mensagem confidencial', labelX, 120); context.restore();
+}
+
 export function paintSignature(context, layout, colors, resources, { includeM = true } = {}) {
   context.fillStyle = colors.paper; context.fillRect(0, 0, layout.size.width, layout.size.height);
   if (layout.footer) { const f = layout.footer; context.fillStyle = colors.accent; context.fillRect(f.x, f.y, f.width, f.height); }
@@ -136,6 +157,7 @@ export function paintSignature(context, layout, colors, resources, { includeM = 
     context.fillRect(d.x, d.y, d.width, .5); context.restore();
   }
   for (const field of layout.fields) paintText(context, field, colors);
+  paintChannelFooter(context, layout.channelFooter, colors);
   if (layout.mark.family === 'mattar') paintNativeMark(context, resources.logo, layout.mark, colors.paper);
   else if (includeM) paintNativeMark(context, layout.mark.source === 'published' ? resources.mPublished : resources.m, layout.mark, colors.accent);
 }

@@ -80,10 +80,10 @@ function lines(context, text, width, size) {
   return result;
 }
 
-export function cardLayout(data, { format = 'card', composition = 'm-horizontal', context } = {}) {
+export function cardLayout(data, { format = 'card', composition = 'm-horizontal', context, channels } = {}) {
   const value = normalizeSignature(data), compact = format === 'email';
   context ||= canvas(1, 1).getContext('2d');
-  if (compact) return signatureLayout(value, { composition, context });
+  if (compact) return signatureLayout(value, { composition, context, channels });
   const titleSize = 30, titleLine = 32, nameWidth = 276;
   const name = lines(context, value.name, nameWidth, titleSize);
   const role = lines(context, value.role, 276, 14);
@@ -100,7 +100,7 @@ export function cardLayout(data, { format = 'card', composition = 'm-horizontal'
   };
 }
 
-export async function createCard(data, { format = 'card', composition = 'm-horizontal', theme = 'paper', colors: customColors, density = 2 } = {}) {
+export async function createCard(data, { format = 'card', composition = 'm-horizontal', theme = 'paper', colors: customColors, channels, density = 2 } = {}) {
   if (!CARD_FORMATS[format] || !CARD_THEMES[theme]) throw Error('Composição desconhecida.');
   if (!Number.isInteger(density) || density < 1 || density > 4) throw Error('Resolução de desenho inválida.');
   const resources = await cardResources();
@@ -109,7 +109,7 @@ export async function createCard(data, { format = 'card', composition = 'm-horiz
   const target = canvas(dimensions.width * density, dimensions.height * density);
   const context = target.getContext('2d', { willReadFrequently: true });
   context.scale(density, density);
-  const layout = cardLayout(data, { format, composition, context });
+  const layout = cardLayout(data, { format, composition, context, channels });
   const { value, compact } = layout;
   if (compact) {
     paintSignature(context, layout, colors, resources, { includeM: false });

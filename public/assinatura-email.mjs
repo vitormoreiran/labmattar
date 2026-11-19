@@ -10,6 +10,7 @@ const toggle = document.getElementById('togglePreview'), progress = document.get
 const picker = document.getElementById('compositionPicker');
 const previewDialog = document.getElementById('previewDialog'), zoomCanvas = document.getElementById('zoomCanvas');
 const example = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
+const exampleChannels = { instagram: true, whatsapp: true, linkedin: true, privacyUrl: true };
 const params = new URLSearchParams(location.search);
 let composition = EMAIL_COMPOSITIONS.some(item => item.id === params.get('modelo')) ? params.get('modelo') : 'm-horizontal';
 let format = params.get('formato') === 'card' ? 'card' : 'email';
@@ -20,7 +21,7 @@ const defaults = () => format === 'email' ? emailDefaultColors(composition) : { 
 let colors = defaults();
 const read = () => normalizeSignature(Object.fromEntries(fields.map(key => [key, form.elements.namedItem(key).value])));
 const readChannels = () => Object.fromEntries(['instagram', 'whatsapp', 'linkedin', 'privacyUrl'].map(key => [key, form.elements.namedItem(key).value.trim()]));
-const options = (density = 2) => ({ format, composition, colors: { ...colors }, density });
+const options = (density = 2, channels = readChannels()) => ({ format, composition, colors: { ...colors }, channels, density });
 const exportDensity = () => format === 'email' ? 1 : 2;
 // Draw extra pixels for the enlarged screen preview, independently of exports.
 const previewDensity = () => Math.min(4, Math.max(2, Math.ceil((devicePixelRatio || 1) * 2)));
@@ -135,7 +136,7 @@ async function update() {
   stage.dataset.format = format; mount.style.maxWidth = size.width * 2 + 'px'; updateColors();
   document.getElementById('downloadPNGHigh').hidden = format !== 'email';
   try {
-    const next = await createCard(isExample ? example : value, options(previewDensity()));
+    const next = await createCard(isExample ? example : value, options(previewDensity(), isExample ? exampleChannels : readChannels()));
     if (format === 'card') { const source = await ensureVideo(); next.draw(source); }
     else if (!paused && video?.readyState >= 2 && next.canAnimate) next.draw(video);
     if (ticket !== generation) return;

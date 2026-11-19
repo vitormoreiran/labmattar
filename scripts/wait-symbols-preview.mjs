@@ -23,7 +23,7 @@ try {
   const labReady=laboratory.status()===200&&
     tools.ready&&
     await page.locator('a[href="/motion/matriz/index.html"]').count()===1&&
-    await page.locator('a[href="/compor.html?studio=1#laboratorio"]').count()===1&&
+    await page.locator('a[href="/montar.html"]').count()===1&&
     await page.locator('#labArtboard').count()===0;
   const compositionTool=await page.goto(base+'/compor.html?publication='+stamp,{waitUntil:'domcontentloaded',timeout:30000});
   const compositionReady=compositionTool.status()===200&&

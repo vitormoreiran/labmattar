@@ -35,7 +35,7 @@ for page in ("manual.html","tipografia.html","cores.html","composicao.html","lab
 construction=(Path("public")/"composicao.html").read_text(encoding="utf-8")
 laboratory_index=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
 composition=(Path("public")/"compor.html").read_text(encoding="utf-8")
-assert 'href="/motion/matriz/index.html"' in laboratory_index and 'href="/compor.html?studio=1#laboratorio"' in laboratory_index, "Laboratory index must present both official instruments"
+assert 'href="/motion/matriz/index.html"' in laboratory_index and 'href="/montar.html"' in laboratory_index, "Laboratory index must present both official instruments"
 assert 'id="labArtboard"' not in laboratory_index, "The composition editor must not be embedded in the Laboratory index"
 assert 'id="contraste"' in construction and "AJUSTÁVEL" in construction and "40%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"

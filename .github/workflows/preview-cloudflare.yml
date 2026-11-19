@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - 'public/montar.html'
+      - 'scripts/test-lab-desk.mjs'
+      - 'scripts/smoke-lab-desk.mjs'
       - 'public/apresentacoes/**'
       - 'scripts/test-presentation-gallery.mjs'
       - 'scripts/smoke-presentation-gallery.mjs'

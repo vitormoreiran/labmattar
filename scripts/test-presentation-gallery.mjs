@@ -4,7 +4,7 @@ const source=new URL('../public/',import.meta.url);
 test('overview apresenta os três projetos com acesso separado para assistir e editar',async()=>{
  const html=await fs.readFile(new URL('../design/laboratorio.html',import.meta.url),'utf8');
  assert(html.includes('id="apresentacoes"'));assert.equal((html.match(/class="lm-lab-presentation"/g)||[]).length,3);assert.equal((html.match(/class="lm-lab-tool"/g)||[]).length,3);
- for(const preset of STORY_PRESETS){assert(html.includes('href="/apresentacoes/'+preset.id+'/"'));assert(html.includes('&amp;modelo='+preset.id+'#laboratorio'));await fs.access(new URL('presentation-models/covers/'+preset.id+'.webp',source));}
+ for(const preset of STORY_PRESETS){assert(html.includes('href="/apresentacoes/'+preset.id+'/"'));assert(html.includes('/montar.html?modelo='+preset.id));await fs.access(new URL('presentation-models/covers/'+preset.id+'.webp',source));}
 });
 test('apresentações prontas preservam projetos completos e todos os arquivos de mídia',async()=>{
  const counts=[];for(const preset of STORY_PRESETS){

@@ -1,3 +1,4 @@
+import {sceneCanvas} from './lab-scene.mjs';
 import {installMotionInk} from './lab-motion-ink.mjs';
 import {normalizeImageAssets,normalizeGallery} from './lab-gallery-model.mjs';
 import {installGalleryEditor} from './lab-gallery-ui.mjs';
@@ -35,6 +36,7 @@ function commit(){
   by('labSaveState').textContent=result.message;by('labSaveState').dataset.state=result.ok?'success':'error';
   if(!result.ok)notify(result.message,true);
   renderPages();applySectionVisual();galleryEditor?.render();
+  window.dispatchEvent(new CustomEvent('labmattar:pages-commit'));
   return result;
 }
 let pageListKey='',deliveryFormat='pdf',videoAbort=null;
@@ -650,7 +652,7 @@ async function exportVideo(){
     }
   }
 }
-async function exportSequence(type){
+async function exportSequence(type,options={}){
   if(deliveryBusy())return;
   if(type==='mp4')return exportVideo();
   if(!catalog&&pages.some(page=>page.motions.length)){notify('Recarregue o catálogo Motion antes de exportar os motions preservados.',true);return;}
@@ -658,7 +660,7 @@ async function exportSequence(type){
   if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length||page.backgroundVideo)){
     if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
   }
-  let preview=null;if(type==='preview'){preview=window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
+  let preview=null;if(type==='preview'){preview=options.previewWindow||window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
   commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections,documentSignature,imageAssets,story);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);
   const active=pages[current];busy=true;switching=true;panel.setAttribute('aria-busy','true');
@@ -698,6 +700,14 @@ async function exportSequence(type){
     by('labExportStatus').setAttribute('data-state',by('labExportStatus').dataset.state==='busy'?'idle':by('labExportStatus').dataset.state);
   }
 }
+async function deskThumbnail(id){
+  if(deliveryBusy())throw Error('Aguarde a operação atual.');
+  const index=pages.findIndex(page=>page.id===id);if(index<0)throw Error('Página não encontrada.');
+  const original=current,state=copy(bridge().snapshot().state);busy=true;switching=true;
+  try{current=index;const photoCatalog=privatePhotoCatalog(pages[index].composition,bridge().snapshot().photoCatalog);registerPhotos(photoCatalog);bridge().restore(verifyRoundTrip(pages[index].composition,photoCatalog));await settled();applySectionVisual();renderMotions();renderBackgroundVideo();await settled();const scene=await window.LabRenderer.capture({edge:1920,ask:false});const canvas=await sceneCanvas(scene,640);return canvas.toDataURL('image/webp',.86);}
+  finally{current=original;bridge().restore(state);await settled();applySectionVisual();renderMotions();renderBackgroundVideo();switching=false;busy=false;}
+}
+
 async function loadMotionCatalog(){
   if(catalogLoading)return false;
   catalogLoading=true;panel.dataset.motionCatalog='loading';renderMotionControls();
@@ -717,6 +727,9 @@ async function init(){
     hasSequence:()=>Boolean(story)||Boolean(sections)||enabled||pages.length>1||pages.some(page=>page.motions.length||(page.clips||[]).length||page.backgroundVideo||page.gallery),
     sectionBackground:currentSectionBackground,applySectionVisual,prepareBackgroundFrame,
     persist:commit,backupBeforeReset,undoReset,reloadMotionCatalog:loadMotionCatalog,
+    snapshot:()=>({document:copy(sequenceDocument(name,pages,sections,documentSignature,imageAssets,story)),currentPageId:pages[current]?.id,busy:deliveryBusy()}),
+    selectPage:id=>switchPage(pages.findIndex(page=>page.id===id)),
+    workspace:setWorkspaceView,thumbnail:deskThumbnail,isBusy:deliveryBusy,
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');

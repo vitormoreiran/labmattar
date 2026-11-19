@@ -1,7 +1,7 @@
 // Switching tools opens a separate tab, preserving the current editor/draft.
 export const LABORATORY_TOOLS = Object.freeze([
   { id: 'matrix', label: 'Matriz Vetorial', href: '/motion/matriz/index.html', description: 'Geometria e movimento' },
-  { id: 'composition', label: 'Composição', href: '/compor.html?studio=1&workspace=pages#laboratorio', description: 'Páginas e apresentações' },
+  { id: 'composition', label: 'Composição', href: '/montar.html', description: 'Páginas e apresentações' },
   { id: 'email', label: 'Cartão MATTAR', href: '/assinatura-email.html?origem=laboratorio', description: 'Assinatura de e-mail e contato' }
 ]);
 let toolMenuCount = 0;

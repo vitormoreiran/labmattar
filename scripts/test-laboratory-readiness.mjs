@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { checkLaboratoryLinks } from './laboratory-readiness.mjs';
 const base = 'https://labmattar.com';
-const tools = ['/motion/matriz/index.html', '/compor.html?studio=1#laboratorio', '/assinatura-email.html?origem=laboratorio'];
+const tools = ['/motion/matriz/index.html', '/montar.html', '/assinatura-email.html?origem=laboratorio'];
 test('the three published tools match the navigation, including workspace queries', () => {
   assert.equal(checkLaboratoryLinks(tools, base).ready, true);
   assert.equal(checkLaboratoryLinks(tools.map(href => new URL(href, base).href), base).ready, true);

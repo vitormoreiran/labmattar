@@ -80,8 +80,8 @@ export function addStoryTopic(input,afterId,role,baseCatalog){
  const previous=topicsOf(project).find(topic=>topic.id===afterId)||topicsOf(project).at(-1),source=project.pages.find(page=>page.id===previous.photoPageIds[0]),state=stateOf(source,catalog),page=createPage({id:uid('story-photo'),name:STORY_ROLES[role],state:{...state,title:STORY_ROLES[role].toLocaleUpperCase('pt-BR'),titleFonts:[],body:'',bodyMode:'oculto'},photoCatalog:catalog,maxEdge:source.composition.output.maxEdge});
  const topic={id:uid('topic'),role,pageIds:[page.id],photoPageIds:[page.id],captionPageIds:[],joins:{}};project.pages.push(page);topicsOf(project).splice(topicsOf(project).indexOf(previous)+1,0,topic);flatten(project);actTitles(project,catalog);return checked(project,catalog);
 }
-export function createStoryTemplate({state,photoCatalog,name='Nova apresentação',signature=state.signature}){
- const roles=['cover','introduction','experience',...Array(5).fill('act'),'details','closing'],pages=[],topics=[];let act=0;
+export function createStoryTemplate({state,photoCatalog,name='Nova apresentação',signature=state.signature,minimal=false}){
+ const roles=minimal?['cover','introduction']:['cover','introduction','experience',...Array(5).fill('act'),'details','closing'],pages=[],topics=[];let act=0;
  for(const role of roles){const title=role==='cover'?name:role==='act'?'ATO '+(++act)+':\nTÍTULO DO ATO':STORY_ROLES[role].toLocaleUpperCase('pt-BR');
   const page=createPage({id:uid('story-photo'),name:role==='act'?'Ato '+act:STORY_ROLES[role],state:{...state,format:'horizontal',background:'photo',mContent:'off',marker:'none',guides:'nenhuma',photoContrast:45,photoEffect:'auto',photoBlur:0,photoGlass:0,title,titleFonts:[],type:role==='act'?'alternada':'perpetua',titleScale:75,textWidth:70,textPositionY:50,margin:9,inkColor:'white',body:'',bodyMode:'oculto',signature},photoCatalog,maxEdge:1920});pages.push(page);topics.push({id:uid('topic'),role,pageIds:[page.id],photoPageIds:[page.id],captionPageIds:[],joins:{}});
  }

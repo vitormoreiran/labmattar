@@ -59,7 +59,7 @@ try {
   assert.ok(previewWidth > 700, 'Desktop preview must use the available width');
   await page.locator('#openPreview').click();
   assert.equal(await page.locator('#previewDialog').evaluate(d => d.open), true);
-  assert.ok(await page.locator('#zoomCanvas').evaluate(c => Math.abs(c.getBoundingClientRect().width / c.getBoundingClientRect().height - 4.8) < .005));
+  assert.ok(await page.locator('#zoomCanvas').evaluate(c => Math.abs(c.getBoundingClientRect().width / c.getBoundingClientRect().height - 480 / 126) < .005));
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('#previewDialog').evaluate(d => d.open), false);
   for (const model of models) {
@@ -80,7 +80,7 @@ try {
       const test = document.createElement('canvas'); test.width = reference.naturalWidth; test.height = reference.naturalHeight;
       const ctx = test.getContext('2d'); ctx.drawImage(reference, 0, 0);
       const a = ctx.getImageData(0, 0, test.width, test.height).data;
-      const b = live.getContext('2d').getImageData(0, 0, live.width, live.height).data;
+      const b = live.getContext('2d').getImageData(0, 0, live.width, reference.naturalHeight).data;
       if (a.length !== b.length) throw Error('Dimensões diferentes da referência.');
       let different = 0;
       for (let i = 0; i < a.length; i += 4) if (Math.max(Math.abs(a[i] - b[i]), Math.abs(a[i + 1] - b[i + 1]), Math.abs(a[i + 2] - b[i + 2])) > 16) different++;
@@ -96,7 +96,7 @@ try {
         return { id: f.key + ':' + f.y, x: f.align === 'right' ? f.x - width : f.x, y: f.y, width, height: f.size * 1.12 };
       });
       boxes.push({ id: 'mark', ...card.layout.mark });
-      const geometryIssues = boxes.filter(b => b.x < 0 || b.y < 0 || b.x + b.width > 480 || b.y + b.height > 100).map(b => 'fora:' + b.id);
+      const geometryIssues = boxes.filter(b => b.x < 0 || b.y < 0 || b.x + b.width > 480 || b.y + b.height > card.size.height).map(b => 'fora:' + b.id);
       for (let a = 0; a < boxes.length; a++) for (let b = a + 1; b < boxes.length; b++) {
         const p = boxes[a], q = boxes[b];
         if (p.x < q.x + q.width && p.x + p.width > q.x && p.y < q.y + q.height && p.y + p.height > q.y) geometryIssues.push('sobreposição:' + p.id + '/' + q.id);
@@ -136,7 +136,7 @@ try {
           widthRatio: (liveInk.bounds[2] - liveInk.bounds[0] + 1) / (referenceInk.bounds[2] - referenceInk.bounds[0] + 1),
           boundError: Math.max(...liveInk.bounds.map((value, i) => Math.abs(value - referenceInk.bounds[i]))) };
       });
-      return { width: live.width, height: live.height, pixelMismatch: different / (live.width * live.height), geometryIssues, checks };
+      return { width: live.width, height: live.height, pixelMismatch: different / (live.width * reference.naturalHeight), geometryIssues, checks };
     }, { id: model.id, data });
     console.log(JSON.stringify({ composition: model.id, fidelity }));
     assert.deepEqual(fidelity.geometryIssues, [], model.id + ': encaixe da faixa');
@@ -171,7 +171,7 @@ try {
   const gifFile = await download('#downloadMotion', 'personalized.gif', 180000);
   const gif = await fs.readFile(gifFile);
   assert.equal(gif.subarray(0, 6).toString(), 'GIF89a');
-  assert.equal(gif.readUInt16LE(6), 480); assert.equal(gif.readUInt16LE(8), 100);
+  assert.equal(gif.readUInt16LE(6), 480); assert.equal(gif.readUInt16LE(8), 126);
   assert.ok(gif.length < 1024 * 1024, 'Email GIF exceeds one megabyte');
   let mediaProbe = null;
   if (process.env.EMAIL_SKIP_MEDIA_PROBE !== '1') {

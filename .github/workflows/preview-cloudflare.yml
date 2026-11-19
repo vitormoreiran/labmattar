@@ -79,6 +79,7 @@ on:
       - 'vite.matrix.config.ts'
       - 'scripts/smoke-symbols-browser.mjs'
       - 'scripts/smoke-matrix-browser.mjs'
+      - 'scripts/smoke-matrix-current.mjs'
       - 'scripts/smoke-composition-studio.mjs'
       - 'scripts/smoke-identity-review.mjs'
       - 'scripts/studio-test-controls.mjs'
@@ -239,6 +240,9 @@ jobs:
           done
           cat /tmp/manual-http.log
           exit 1
+      - name: Validar Matriz Vetorial atual no navegador
+        shell: bash
+        run: MATRIX_URL=http://127.0.0.1:8765/motion/matriz/index.html node scripts/smoke-matrix-current.mjs
       - name: Validar os quatro modelos de assinatura
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-email-card.mjs

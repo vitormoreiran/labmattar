@@ -15,8 +15,7 @@ try{
  await page.locator('.app .topbar').waitFor({timeout:30000});
  await page.locator('[data-action="inspector-scope"][data-value="project"]').click();
  await page.locator('#project-speed').waitFor();
- await page.locator('#project-speed').fill('1.5');
- await page.locator('#project-speed').dispatchEvent('change');
+ await page.locator('#project-speed').evaluate(el=>{el.value='1.5';el.dispatchEvent(new Event('change',{bubbles:true}));});
  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('mattar-spatial-current-v2')||'{}').speed===1.5);
  await page.reload({waitUntil:'networkidle'});
  await page.locator('[data-action="inspector-scope"][data-value="project"]').click();

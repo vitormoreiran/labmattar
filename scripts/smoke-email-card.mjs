@@ -21,8 +21,8 @@ try {
   await page.goto(origin);
   await page.waitForSelector('#previewStage[data-ready=true] canvas');
   assert.equal(await page.title(), 'Cartão MATTAR — LABMATTAR');
-  assert.equal(await page.locator('button[data-composition]').count(), 4);
-  assert.deepEqual(await page.locator('button[data-composition]').allTextContents(), ['1', '2', '3', '4']);
+  assert.equal(await page.locator('button[data-composition]').count(), 1);
+  assert.deepEqual(await page.locator('button[data-composition]').allTextContents(), ['1']);
   assert.equal(await page.locator('#compositionOptions img').count(), 0);
   assert.equal(await page.locator('[data-color-key]').count(), 24);
   // The approved default animates only the mark; contacts stay completely still.

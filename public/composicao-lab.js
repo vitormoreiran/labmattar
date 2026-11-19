@@ -539,6 +539,7 @@
     }
   });
   window.LabProductionBridge={
+    measure,
     snapshot:()=>({state:JSON.parse(JSON.stringify(state)),photoCatalog:{...photos}}),
     restore:next=>{
       state=sanitize(next);

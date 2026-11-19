@@ -236,6 +236,7 @@
       }));
     }
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    window.LabProductionBridge?.measure?.();
     if(board.dataset.state!=="ok"||board.getAttribute("aria-invalid")==="true")
       throw Error("A composição apresenta conflitos de leitura. Corrija antes de exportar.");
     if(![1920,3840].includes(edge))throw Error("Resolução não reconhecida.");

@@ -26,8 +26,12 @@ async function saveCurrent(){
   await writeProject(record);
   records=records.filter(p=>p.id!==record.id);
   records.push(record);
-  localStorage.setItem('labmattar-desk-active-v1',record.id);
-  $('saveState').textContent='Rascunho salvo neste navegador';
+  // An older project's write may finish after switching to another one.
+  // Only the project currently open may update the active marker and UI.
+  if(currentKey===record.id){
+    localStorage.setItem('labmattar-desk-active-v1',record.id);
+    $('saveState').textContent='Rascunho salvo neste navegador';
+  }
   renderProjects();
 }
 function scheduleSave(){clearTimeout(saveTimer);$('saveState').textContent='Salvando rascunho local…';saveTimer=setTimeout(()=>run(saveCurrent),400);}

@@ -243,6 +243,7 @@ const emailIcon = (kind, color) => {
   const common = 'width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + color + '" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
   if (kind === 'instagram') return '<svg ' + common + '><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.8h.01"/></svg>';
   if (kind === 'whatsapp') return '<svg ' + common + '><path d="M20.2 11.7a8.1 8.1 0 0 1-11.9 7.1L4 20l1.2-4.1A8.1 8.1 0 1 1 20.2 11.7Z"/><path d="M8.7 8.5c.2-.5.5-.5.7-.5h.6c.2 0 .4.1.5.4l.7 1.7c.1.2.1.4 0 .6l-.5.7c.5 1 1.3 1.8 2.3 2.3l.7-.5c.2-.1.4-.1.6 0l1.7.7c.3.1.4.3.4.5v.6c0 .3 0 .5-.5.7-.5.2-1.3.3-2.4-.2-2.1-.9-3.7-2.5-4.6-4.6-.5-1.1-.4-1.9-.2-2.4Z"/></svg>';
+  if (kind === 'youtube') return '<svg ' + common + '><rect x="3" y="5.5" width="18" height="13" rx="4"/><path d="m10 9 5 3-5 3Z"/></svg>';
   return '<svg ' + common + '><rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M8.5 10v6M8.5 7.5v.1M12 16v-3.4a2.6 2.6 0 0 1 5.2 0V16M12 12a2.6 2.6 0 0 1 2.6-2.3"/></svg>';
 };
 const safeEmailUrl = value => {
@@ -252,7 +253,7 @@ const safeEmailUrl = value => {
 export function cardDocument(data, { imageURL, format = 'card', composition = 'm-horizontal', colors = {}, channels = {} }) {
   const value = normalizeSignature(data), size = cardSize({ format, composition });
   const phone = value.phone.replace(/[^+\d]/g, ''), accent = colors.accent || '#E22E24';
-  const channelLinks = [['instagram', 'Instagram'], ['whatsapp', 'WhatsApp'], ['linkedin', 'LinkedIn']]
+  const channelLinks = [['instagram', 'Instagram'], ['whatsapp', 'WhatsApp'], ['linkedin', 'LinkedIn'], ['youtube', 'YouTube']]
     .map(([key, label]) => { const href = safeEmailUrl(channels[key] || ''); return href ? '<a href="' + escape(href) + '" title="' + label + '" aria-label="' + label + '" style="display:inline-block;margin-right:10px;text-decoration:none;vertical-align:middle">' + emailIcon(key, accent) + '</a>' : ''; }).join('');
   const privacyHref = safeEmailUrl(channels.privacyUrl || '');
   const privacyLink = privacyHref ? '<a href="' + escape(privacyHref) + '" style="color:#626058;text-decoration:underline">PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT</a>' : 'PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT';

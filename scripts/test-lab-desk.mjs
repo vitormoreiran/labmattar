@@ -30,3 +30,7 @@ test('as 86 miniaturas correspondem exatamente aos documentos nativos publicados
  const manifest=JSON.parse(await fs.readFile(new URL('../public/presentation-models/thumbs/manifest.json',import.meta.url)));let count=0;
  for(const item of manifest.projects){const doc=JSON.parse(await fs.readFile(new URL('../public/presentation-models/'+item.id+'.labmattar.json',import.meta.url)));assert.equal(item.pages.length,doc.pages.length);for(const page of item.pages){const native=doc.pages.find(p=>p.id===page.id);assert(native);assert.equal(page.fingerprint,pageFingerprint(native));await fs.access(new URL('../public'+page.image,import.meta.url));count++;}}assert.equal(count,86);
 });
+
+test('páginas avulsas editam título e corpo mantendo o formato e as proporções',()=>{
+ const story=model(),doc={...story,story:undefined,pages:[clone(story.pages[0])]};delete doc.story;const before=clone(doc),id=doc.pages[0].id;const next=changeContent(doc,id,{title:'OUTRO TÍTULO',body:'Texto da página'},photos);assert.equal(pageRows(next)[0].title,'OUTRO TÍTULO');assert.equal(pageRows(next)[0].body,'Texto da página');assert.deepEqual(next.pages[0].composition.pages[0].m,doc.pages[0].composition.pages[0].m);assert.deepEqual(next.pages[0].composition.pages[0].surface,doc.pages[0].composition.pages[0].surface);assert.deepEqual(doc,before);readSequence(next,photos,[]);
+});

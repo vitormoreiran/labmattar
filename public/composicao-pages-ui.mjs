@@ -729,7 +729,7 @@ async function init(){
     persist:commit,backupBeforeReset,undoReset,reloadMotionCatalog:loadMotionCatalog,
     snapshot:()=>({document:copy(sequenceDocument(name,pages,sections,documentSignature,imageAssets,story)),currentPageId:pages[current]?.id,busy:deliveryBusy()}),
     selectPage:id=>switchPage(pages.findIndex(page=>page.id===id)),
-    workspace:setWorkspaceView,thumbnail:deskThumbnail,
+    workspace:setWorkspaceView,thumbnail:deskThumbnail,isBusy:deliveryBusy,
     export:exportSequence,kind:SEQUENCE_KIND};
   try{
     const saved=JSON.parse(localStorage.getItem(key)||'null');

@@ -41,6 +41,7 @@ try {
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.locator('#downloadPNG').click();
   assert.equal(await page.locator('#name').getAttribute('aria-invalid'), 'true');
+  await page.locator('.channel-links summary').click();
   for (const [key, value] of Object.entries(data)) await page.locator('#' + key).fill(value);
   const select = async id => {
     await page.locator('button[data-composition=' + id + ']').click();

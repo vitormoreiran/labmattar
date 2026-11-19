@@ -92,7 +92,7 @@ export function signatureLayout(data, { composition = 'm-horizontal', context, c
     divider = { x: 20, y: 56, width: 440 };
   }
   const channelFooter = {
-    links: ['instagram', 'whatsapp', 'linkedin'].filter(key => Boolean(channels[key])),
+    links: ['instagram', 'whatsapp', 'linkedin', 'youtube'].filter(key => Boolean(channels[key])),
     privacy: Boolean(channels.privacyUrl)
   };
   return { value, compact: true, composition, meta, fields, errors, name, role: [value.role], titleSize: composition === 'm-horizontal' ? 17.5 : 18, titleLine: 21, channelFooter,
@@ -152,9 +152,13 @@ function paintChannelFooter(context, footer, colors) {
       context.beginPath(); context.arc(x + 6, y + 5.7, 5, 0, Math.PI * 2); context.stroke();
       context.beginPath(); context.moveTo(x + 3.8, y + 9.5); context.lineTo(x + 2.2, y + 12); context.lineTo(x + 5.2, y + 10.7); context.stroke();
       context.beginPath(); context.moveTo(x + 5.1, y + 3.7); context.lineTo(x + 8.2, y + 7.6); context.lineTo(x + 9.6, y + 6.2); context.stroke();
-    } else {
+    } else if (key === 'linkedin') {
       context.beginPath(); context.roundRect(x, y, 12, 12, 1.8); context.stroke();
       context.fillStyle = colors.accent; setFont(context, 7.3); context.fillText('in', x + 2, y + 9.1);
+    } else {
+      context.beginPath(); context.roundRect(x, y + 1.5, 13, 9, 2.3); context.stroke();
+      context.fillStyle = colors.accent; context.beginPath();
+      context.moveTo(x + 5.4, y + 3.8); context.lineTo(x + 5.4, y + 8.2); context.lineTo(x + 9, y + 6); context.closePath(); context.fill();
     }
     x += 18;
   }

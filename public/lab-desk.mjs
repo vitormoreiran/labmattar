@@ -4,7 +4,7 @@ import {storyTopic} from './lab-story-model.mjs';
 import {addStoryTopic,removeStoryPhoto,createStoryTemplate} from './lab-story-project.mjs';
 import {pageRows,pageFingerprint,fullCatalog,changeContent,duplicatePage,moveSelected} from './lab-desk-model.mjs';
 import {libraryList,librarySave} from './lab-project-library.mjs';
-import {createProjectWriteQueue} from './lab-project-write-queue.mjs';
+import {createProjectWriteQueue,isActiveProjectSave} from './lab-project-write-queue.mjs';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const frame=$('engine'),hadDraft=Boolean(localStorage.getItem('labmattar-pages-v1'));
 let api,host,documentValue,rows=[],selectedId='',currentKey='',records=[],view='all',filter='',panel='content',mode='desk',loading=true,inputTimer,saveTimer,readTimer,pendingText=false,fieldKey='',history=[],queue=Promise.resolve(),thumbTimer,thumbPending=new Map();
@@ -28,7 +28,7 @@ async function saveCurrent(){
   records.push(record);
   // An older project's write may finish after switching to another one.
   // Only the project currently open may update the active marker and UI.
-  if(currentKey===record.id){
+  if(isActiveProjectSave(currentKey,record.id)){
     localStorage.setItem('labmattar-desk-active-v1',record.id);
     $('saveState').textContent='Rascunho salvo neste navegador';
   }

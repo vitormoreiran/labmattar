@@ -28,7 +28,7 @@ test('image-based offline document escapes contact text and preserves real links
  const html=cardDocument({...contact,name:'Ana & João <img src=x onerror=alert(1)>'},{imageURL:'data:image/png;base64,AAAA',format:'email'});
  assert.equal((html.match(/<img /g)||[]).length,1);assert.match(html,/Ana &amp; João &lt;img/);
  assert.match(html,/mailto:ana\+projetos@example.com/);assert.match(html,/tel:\+5511999999999/);
- assert.match(html,/width="480" height="152"/);assert.doesNotMatch(html,/<script|<svg|onerror="/);
+ assert.match(html,/width="480" height="120"/);assert.doesNotMatch(html,/<script|<svg|onerror="/);
 });
 test('vCard contains supplied contact details and escapes structural punctuation',()=>{
  const vcard=cardContact({...contact,name:'Ana; Ribeiro, Jr.'});
@@ -60,9 +60,9 @@ test('approved motion and native geometry remain the sources of both image forma
 
 test('all four compositions use the restored email strip and preserve the static wordmark',()=>{
  assert.deepEqual(EMAIL_COMPOSITIONS.map(model=>model.id),['m-horizontal','m-compacto','mattar-faixa','m-linha']);
- assert.deepEqual(cardSize({format:'email',composition:'m-compacto'}),{width:480,height:152});
- assert.deepEqual(cardSize({format:'email',composition:'m-horizontal'}),{width:480,height:152});
- for(const model of EMAIL_COMPOSITIONS)assert.deepEqual(cardSize({format:'email',composition:model.id}),{width:480,height:152});
+ assert.deepEqual(cardSize({format:'email',composition:'m-compacto'}),{width:480,height:120});
+ assert.deepEqual(cardSize({format:'email',composition:'m-horizontal'}),{width:480,height:120});
+ for(const model of EMAIL_COMPOSITIONS)assert.deepEqual(cardSize({format:'email',composition:model.id}),{width:480,height:120});
  assert.equal(emailComposition('mattar-faixa').motion,false);
  assert.equal(emailDefaultColors('m-horizontal').paper,'#FFFFFF');
  assert.equal(emailDefaultColors('m-linha').paper,'#FFFFFF');
@@ -72,19 +72,19 @@ test('all four compositions use the restored email strip and preserve the static
 
 test('offline email HTML preserves the restored strip dimensions',()=>{
  const html=cardDocument(contact,{format:'email',composition:'m-compacto',imageURL:'data:image/png;base64,AAAA'});
- assert.match(html,/width="480" height="152"/);
+ assert.match(html,/width="480" height="120"/);
  assert.match(html,/max-width:480px/);
  assert.match(html,/mailto:ana\+projetos@example.com/);
 });
 
 test('motion uses a uniform scale inside both native M proportions and narrow frames',()=>{
  const crop={width:928,height:696};
- const wide=containedMotionRect(crop,{width:100,height:152*627/822});
+ const wide=containedMotionRect(crop,{width:100,height:120*627/822});
  assert.equal(wide.width,100);assert.equal(wide.height,75);assert.ok(wide.y>0);
  const narrow=containedMotionRect(crop,{width:40,height:20});
  assert.equal(narrow.height,20);assert.ok(narrow.x>0);
  for(const fit of [wide,narrow])assert.ok(Math.abs(fit.width/fit.height-4/3)<1e-12);
- const retina=containedMotionRect(crop,{width:100,height:152*627/822},2);
+ const retina=containedMotionRect(crop,{width:100,height:120*627/822},2);
  assert.equal(retina.width,200);assert.equal(retina.height,150);
  const published=containedMotionRect(CARD_MOTION.publishedCrop,{width:171*990.08/743.18,height:171});
  assert.ok(Math.abs(published.width/published.height-CARD_MOTION.publishedCrop.width/CARD_MOTION.publishedCrop.height)<1e-12);

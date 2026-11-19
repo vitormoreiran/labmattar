@@ -19,6 +19,7 @@ let customColors = false, paused = !(format === 'email' && composition === 'm-ho
 const defaults = () => format === 'email' ? emailDefaultColors(composition) : { paper: CARD_THEMES.paper.paper, ink: CARD_THEMES.paper.ink, accent: CARD_THEMES.paper.accent };
 let colors = defaults();
 const read = () => normalizeSignature(Object.fromEntries(fields.map(key => [key, form.elements.namedItem(key).value])));
+const readChannels = () => Object.fromEntries(['instagram', 'whatsapp', 'linkedin', 'privacyUrl'].map(key => [key, form.elements.namedItem(key).value.trim()]));
 const options = (density = 2) => ({ format, composition, colors: { ...colors }, density });
 const exportDensity = () => format === 'email' ? 1 : 2;
 // Draw extra pixels for the enlarged screen preview, independently of exports.
@@ -229,7 +230,7 @@ document.getElementById('downloadHTML').addEventListener('click', async () => {
   try {
     const image = await poster(value, selection);
     const imageURL = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.onerror = reject; reader.readAsDataURL(image); });
-    download(new Blob([cardDocument(value, { ...selection, imageURL })], { type: 'text/html;charset=utf-8' }), 'html', value, selection);
+    download(new Blob([cardDocument(value, { ...selection, imageURL, channels: readChannels() })], { type: 'text/html;charset=utf-8' }), 'html', value, selection);
     say('HTML baixado.');
   } catch (error) { say(error.message, true); } finally { busy(false); }
 });

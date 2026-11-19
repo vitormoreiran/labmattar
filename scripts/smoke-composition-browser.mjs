@@ -51,7 +51,7 @@ try{
   const landingHtml=await landing.text();
   assert(landing.status()===200 &&
     landingHtml.includes('href="/motion/matriz/index.html"') &&
-    landingHtml.includes('href="/compor.html?studio=1#laboratorio"') &&
+    landingHtml.includes('href="/montar.html"') &&
     landingHtml.includes('href="/assinatura-email.html?origem=laboratorio"') &&
     landingHtml.includes('CARTÃO MATTAR') &&
     !landingHtml.includes('id="labArtboard"'),

@@ -89,7 +89,7 @@ try {
             'The Laboratory index must show the Matrix, Compor and Cartão MATTAR');
           assert.equal(await areaPage.locator('a.lm-lab-tool[href="/motion/matriz/index.html"]').count(),1,
             'Matrix preview must open the current spatial Matrix');
-          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/compor.html?studio=1#laboratorio"]').count(),1,
+          assert.equal(await areaPage.locator('a.lm-lab-tool[href="/montar.html"]').count(),1,
             'Compor preview must open the separate composition editor');
           assert.equal(await areaPage.locator('a.lm-lab-tool[href="/assinatura-email.html?origem=laboratorio"]').count(),1,
             'Cartão MATTAR preview must open the personalized signature tool');

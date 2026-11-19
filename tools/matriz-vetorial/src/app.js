@@ -800,7 +800,7 @@ async function handleClick(event) {
     return;
   }
 }
-async async function handleChange(event) {
+async function handleChange(event) {
   if (state.exporting) return;
   const e = event.target;
   if (e.id === "project-speed") {

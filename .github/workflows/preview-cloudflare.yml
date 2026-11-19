@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
+      - 'public/apresentacoes/**'
+      - 'scripts/test-presentation-gallery.mjs'
+      - 'scripts/smoke-presentation-gallery.mjs'
       - 'public/presentation-models/**'
       - 'public/composicao-story.css'
       - 'scripts/test-lab-story-presets.mjs'
@@ -212,6 +215,10 @@ jobs:
         run: |
           python3 -m pip install --quiet pypdf==6.10.0
           if ! command -v pdftoppm >/dev/null || ! command -v ffmpeg >/dev/null; then
+            # Avoid the regional mirror that downloaded 64 MB at 69 kB/s.
+            if [ -f /etc/apt/apt-mirrors.txt ]; then
+              echo "https://archive.ubuntu.com/ubuntu" | sudo tee /etc/apt/apt-mirrors.txt >/dev/null
+            fi
             sudo apt-get update -qq -o Acquire::Retries=1 -o Acquire::http::Timeout=15
             sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
           fi

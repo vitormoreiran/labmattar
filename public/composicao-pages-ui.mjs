@@ -6,7 +6,7 @@ import {createPage,createMotion,motionBox,createClip,clipBox,privateClipUrl,crea
 import {createProductionDocument,verifyRoundTrip} from './composicao-document.mjs';
 import {motionFrame,officialFonts,webDocument,download} from './lab-presentation-export.mjs?v=20261118-apresentacoes';
 import {persistProjectDraft,pagesToSections,fetchMotionCatalog} from './lab-project-lifecycle.mjs';
-import {installStoryEditor} from './lab-story-ui.mjs';
+import {installStoryEditor} from './lab-story-ui.mjs?v=20261118-paginas-organizadas';
 import {createStoryTemplate,syncStoryReading} from './lab-story-project.mjs';
 import {storyLabel} from './lab-story-model.mjs';
 import {STORY_PRESETS,loadStoryPreset} from './lab-story-presets.mjs';
@@ -60,6 +60,7 @@ function openDelivery(){
   if(deliveryBusy())return;commit();renderDelivery();by('labVideoProgress').hidden=true;by('labVideoProgress').value=0;by('labExportStatus').textContent='';by('labExportStatus').dataset.state='idle';by('labDeliveryDialog').showModal();
 }
 function initDelivery(){
+  by('labProjectPreview').addEventListener('click',()=>by('labPresentation').click());
   by('labOpenDelivery').addEventListener('click',openDelivery);by('labReviewDelivery').addEventListener('click',openDelivery);
   by('labDeliveryClose').addEventListener('click',closeDelivery);by('labDeliveryBack').addEventListener('click',closeDelivery);
   by('labDeliveryDialog').addEventListener('cancel',event=>{event.preventDefault();closeDelivery();});
@@ -548,6 +549,12 @@ async function load(document,{currentIndex=0}={}){
   finally{switching=false;}
   await switchPage(Math.max(0,Math.min(Number(currentIndex)||0,pages.length-1)),{capture:false});
 }
+async function openStoryPreset(id){
+  const preset=STORY_PRESETS.find(item=>item.id===id);if(!preset)throw Error('Modelo de apresentação não encontrado.');
+  const project=await loadStoryPreset(id);if(deliveryBusy())throw Error('Conclua a operação atual antes de abrir o modelo.');
+  if(!await confirmSectionAction('Abrir '+preset.name+'? O projeto atual será substituído. Salve o JSON antes de trocar se quiser guardar suas alterações.','ABRIR CÓPIA'))return;
+  await load(project);setWorkspaceView('pages');commit();notify(preset.name+' aberto como cópia editável. Use Editar seção para alterar textos e fotos.');
+}
 async function loadComposition(document){
   const photoCatalog=privatePhotoCatalog(document,bridge().snapshot().photoCatalog),state=verifyRoundTrip(document,photoCatalog);
   switching=true;
@@ -740,9 +747,9 @@ async function init(){
     getProject:()=>({kind:SEQUENCE_KIND,schemaVersion:1,name,pages,signature:documentSignature,...(imageAssets.length?{imageAssets}:{}),...(story?{story}:{})}),
     getContext:()=>({pageId:pages[current]?.id,...bridge().snapshot()}),beforeEdit:commit,isBusy:deliveryBusy,onError:message=>notify(message,true),confirmAction:confirmSectionAction,
     selectPage:id=>switchPage(pages.findIndex(page=>page.id===id)),
-    applyProject:async(project,selectedId=pages[current]?.id)=>{await load(project,{currentIndex:Math.max(0,project.pages.findIndex(page=>page.id===selectedId))});commit();notify('Seções, textos e imagens atualizados. Salve o projeto JSON para guardar o modelo.');},
-    createTemplate:async()=>{if((enabled||pages.length>1)&&!await confirmSectionAction('Criar uma apresentação com abertura, introdução, experiência, cinco atos, detalhes e encerramento? O projeto atual terá uma cópia de recuperação.','CRIAR MODELO'))return;if(!backupBeforeReset())return;const snapshot=bridge().snapshot(),signature={preset:'navigation',scale:100,slots:{tl:{kind:'brand',symbol:'M.svg',text:''},tr:{kind:'symbol',symbol:'M.svg',text:''},bl:{kind:'symbol',symbol:'vaso_03.svg',text:''},br:{kind:'text',symbol:'M.svg',text:String(new Date().getFullYear())}}};await load(createStoryTemplate({...snapshot,signature}));setWorkspaceView('pages');commit();notify('Modelo aberto. Edite cada seção e adicione as fotos na ordem de entrada.');},
-    openPreset:async id=>{const preset=STORY_PRESETS.find(item=>item.id===id);if(!preset)return;const project=await loadStoryPreset(id);if(deliveryBusy())throw Error('Conclua a operação atual antes de abrir o modelo.');if(!await confirmSectionAction('Abrir '+preset.name+'? O projeto atual será substituído. Salve o JSON antes de trocar se quiser guardar suas alterações.','ABRIR MODELO'))return;await load(project);setWorkspaceView('pages');commit();notify(preset.name+' aberto. Use Editar seção para alterar o conteúdo e Ver apresentação para assistir.');}
+    applyProject:async(project,selectedId=pages[current]?.id)=>{await load(project,{currentIndex:Math.max(0,project.pages.findIndex(page=>page.id===selectedId))});commit();notify('Seções, textos e imagens atualizados. Salve o projeto JSON para guardar suas alterações.');},
+    createTemplate:async()=>{if((enabled||pages.length>1)&&!await confirmSectionAction('Criar uma apresentação com abertura, introdução, experiência, cinco atos, detalhes e encerramento? O projeto atual terá uma cópia de recuperação.','CRIAR APRESENTAÇÃO'))return;if(!backupBeforeReset())return;const snapshot=bridge().snapshot(),signature={preset:'navigation',scale:100,slots:{tl:{kind:'brand',symbol:'M.svg',text:''},tr:{kind:'symbol',symbol:'M.svg',text:''},bl:{kind:'symbol',symbol:'vaso_03.svg',text:''},br:{kind:'text',symbol:'M.svg',text:String(new Date().getFullYear())}}};await load(createStoryTemplate({...snapshot,signature}));setWorkspaceView('pages');commit();notify('Apresentação criada. Edite cada seção e adicione as fotos na ordem de entrada.');},
+    openPreset:openStoryPreset
   });
   initSections();
   initDelivery();
@@ -862,5 +869,7 @@ async function init(){
   panel.dataset.ready='true';
   resetAvailability();
   loadMotionCatalog();
+  const modelId=new URLSearchParams(location.search).get('modelo');
+  if(modelId)openStoryPreset(modelId).catch(error=>notify(error.message,true)).finally(()=>{const url=new URL(location.href);url.searchParams.delete('modelo');history.replaceState(null,'',url);});
 }
 

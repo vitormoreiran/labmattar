@@ -74,9 +74,11 @@
     <aside class="lm-lab-inspector" aria-label="Parâmetros do estudo de composição">
       <nav class="lab-workflow-switch" aria-label="Organizar e editar a apresentação"><button type="button" data-workspace-view="pages" aria-pressed="false" aria-controls="labPages">PÁGINAS</button><button type="button" data-workspace-view="edit" aria-pressed="true">EDITAR PÁGINA</button><button type="button" data-workspace-view="motion" aria-pressed="false" aria-controls="labWorkflowMotion">MOTION</button></nav>
         <section id="labPages" class="lab-pages lab-workflow-panel" hidden aria-label="Páginas da apresentação" data-ready="false">
-          <div class="lab-pages-heading"><span>01 / MONTAR AS PÁGINAS</span><output id="labPageCount">1 / 1</output></div>
+          <div class="lab-pages-heading"><span>PROJETO ATUAL</span><output id="labPageCount">1 / 1</output></div>
           
-          <p class="lab-workflow-helper">Organize as seções e suas páginas. Cada seção mantém um fundo durante a leitura.</p>
+          <label for="labSequenceName">Nome do projeto</label><input id="labSequenceName" maxlength="120" value="Apresentação LABMATTAR">
+          <div class="lab-project-actions" id="labProjectActions"><button type="button" id="labDownloadDocument" title="Salvar projeto editável em JSON">SALVAR PROJETO</button><button type="button" id="labProjectOpen" aria-haspopup="dialog" aria-controls="labProjectDialog">NOVO / ABRIR</button><button type="button" id="labProjectPreview">VER APRESENTAÇÃO</button><button type="button" id="labReviewDelivery">EXPORTAR →</button></div>
+          <div id="labSequenceTools"></div><p class="lab-workflow-helper">Páginas na ordem de apresentação.</p>
           <div class="lab-section-start"><button type="button" id="labEnableSections">ORGANIZAR EM SEÇÕES</button><button type="button" id="labSectionDemo">ABRIR ENSAIO / 2 SEÇÕES</button><button type="button" id="labSectionRestore" hidden>VOLTAR AO PROJETO ANTERIOR</button></div>
           <div id="labSectionTools" hidden>
             <button type="button" id="labSectionAdd">+ NOVA SEÇÃO</button>
@@ -90,17 +92,8 @@
           <div id="labPageSectionField" hidden><label for="labPageSection">Seção desta página / mover</label><select id="labPageSection"></select></div><label for="labPageName">Nome da página selecionada</label><input id="labPageName" maxlength="120" value="Página 1">
           <div class="lab-page-actions"><button type="button" id="labPageAdd">+ NOVA PÁGINA</button><button type="button" id="labPageDuplicate">DUPLICAR</button><button type="button" id="labPageEarlier" aria-label="Mover página para antes" title="Subir na sequência">↑</button><button type="button" id="labPageLater" aria-label="Mover página para depois" title="Descer na sequência">↓</button><button type="button" id="labPageDelete">EXCLUIR</button></div>
           <button id="labEditCurrentPage" class="lab-edit-current" type="button">EDITAR ESTA PÁGINA →</button>
-          <button type="button" id="labReviewDelivery" class="lab-review-delivery">02 / REVISAR E EXPORTAR →</button>
-          <details class="lab-project-settings"><summary>PROJETO / SALVAR E ABRIR</summary><div><label for="labSequenceName">Nome do projeto</label><input id="labSequenceName" maxlength="120" value="Apresentação LABMATTAR">          <div class="lm-lab-field lm-lab-document-field">
-            <div class="lm-lab-field-title">ARQUIVO EDITÁVEL</div>
-            <div class="lm-lab-document-actions">
-              <button type="button" id="labDownloadDocument" title="Salvar composição editável como documento versionado JSON">SALVAR PROJETO</button>
-              <button type="button" id="labImportDocument" title="Abrir documento JSON compatível com o Laboratório">ABRIR PROJETO</button>
-              <input type="file" id="labDocumentFile" accept=".json,application/json" hidden>
-            </div>
-            <small class="lm-ctrl-helper">Salva páginas, fotografias, vídeos e motions com referências privadas. Os arquivos originais permanecem no Drive ou Dropbox; reabrir mídias exige acesso à mesma conta.</small>
-            <output id="labDocumentStatus" role="status" aria-live="polite"></output>
-          </div></div></details>
+          <div id="labProjectFileControls" hidden><button type="button" id="labImportDocument">ABRIR ARQUIVO JSON</button><input type="file" id="labDocumentFile" accept=".json,application/json" hidden></div>
+          <output id="labDocumentStatus" role="status" aria-live="polite"></output>
           <output id="labPagesStatus" role="status" aria-live="polite"></output>
         </section>
 <section id="labWorkflowMotion" class="lab-workflow-panel" hidden aria-label="Motion da página">        <div class="lab-motion-assets">
@@ -480,6 +473,6 @@ E PROCESSOS</textarea><small>As quebras são editoriais.</small></div>
   <p class="lm-lab-lead">Os exemplos mostram variações do mesmo sistema; não são layouts fixos.</p>
 </section>
 </main>
-<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-mp4-1"><script src="/composicao-lab.js?v=photo-effects-20261117" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js?v=photo-effects-20261117" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js?v=20261104-mp4-1" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs?v=20261118-apresentacoes"></script>
+<link rel="stylesheet" href="/composicao-acervo.css?v=20261104-mp4-1"><script src="/composicao-lab.js?v=photo-effects-20261117" defer></script><script src="/composicao-acervo.js?v=20261104-biblioteca-2" defer></script><script src="/composicao-studio.js?v=photo-effects-20261117" defer></script><script src="/composicao-lab-signature.js" defer></script><script type="module" src="/composicao-lab-motion.js" defer></script><script src="/composicao-lab-export.js?v=20261104-mp4-1" defer></script><script type="module" src="/composicao-document-ui.mjs"></script><script type="module" src="/composicao-pages-ui.mjs?v=20261118-paginas-organizadas"></script>
 </body></html>
 

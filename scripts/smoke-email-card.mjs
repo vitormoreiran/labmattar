@@ -63,7 +63,7 @@ try {
   for (const model of models) {
     await select(model.id);
     assert.equal(await page.locator('button[data-composition][aria-pressed=true]').count(), 1);
-    assert.equal(await page.locator('#togglePreview').isHidden(), model.id === 'm-horizontal');
+    assert.equal(await page.locator('#togglePreview').isHidden(), false);
     assert.equal(await page.locator('#openPreview').isVisible(), true);
     const file = await download('#downloadPNG', model.id + '.png');
     const png = await fs.readFile(file);

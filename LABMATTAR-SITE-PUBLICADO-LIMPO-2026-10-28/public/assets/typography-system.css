@@ -1,0 +1,44 @@
+/* LABMATTAR: three typographic roles. Titles retain editorial scale. */
+@font-face{font-family:LABUnivers;src:url('/fonts/univers-lt-std-45-light.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:LABPerpetua;src:url('/fonts/perpetua-titling-light.ttf') format('truetype');font-weight:300;font-style:normal;font-display:swap}
+:root{--type-univers:LABUnivers,Arial,sans-serif;--type-perpetua:LABPerpetua,Georgia,serif;--type-body-size:18px;--type-body-leading:1.45;--type-detail-size:13px;--type-detail-leading:1.35}
+html{font-synthesis:none}
+@media(max-width:760px){:root{--type-body-size:16px;--type-body-leading:1.5;--type-detail-size:12px;--type-detail-leading:1.4}}
+body,button,input,select,textarea{font-family:var(--type-univers)!important;font-weight:300!important}
+body main p,body article p,body main li,body article li,body main blockquote,body article blockquote{font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-body-size)!important;line-height:var(--type-body-leading)!important;letter-spacing:0!important;text-align:left!important;hyphens:none!important;-webkit-hyphens:none!important;word-break:normal!important;overflow-wrap:normal;text-wrap:pretty;max-width:min(100%,65ch)}
+body :is(h1,h2,h3,h4,h5,h6){font-weight:300!important;hyphens:none!important;-webkit-hyphens:none!important;word-break:normal!important;overflow-wrap:normal;max-width:100%;min-width:0;text-wrap:balance}
+body :is(h1,h2,h3,h4,h5,h6) :is(.perpetua,[class*='perpetua']),body :is(h1,h2,h3,h4,h5,h6).perpetua{font-family:var(--type-perpetua)!important;font-weight:300!important}
+body :is(h1,h2,h3,h4,h5,h6).type-needs-wrap{white-space:normal!important}
+body :is(h1,h2,h3,h4,h5,h6).type-needs-wrap :is(span,em,strong){white-space:normal!important;max-width:100%}
+body .chapter4-copy.has-reading h2.is-long-title{max-width:100%!important}
+body .section :is(h1,h2,h3) strong{font-size:inherit!important}
+body :is(nav,aside,figcaption,small,label,time,.eyebrow,.kicker,.meta,.caption,.detail,.chrome-label,.page-nav,.lm-nav){font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-detail-size)!important;line-height:var(--type-detail-leading)!important;letter-spacing:0!important;hyphens:none!important;-webkit-hyphens:none!important;word-break:normal!important}
+body :is(nav,aside,.lm-nav) :is(a,button,span,b,strong,li){font-family:var(--type-univers)!important;font-weight:300!important}
+body :is(figcaption,small,label,time,.eyebrow,.kicker,.meta,.caption,.detail) :is(span,b,strong,a){font-family:var(--type-univers)!important;font-weight:300!important}
+body :is(a,button,p,li,figcaption,.lm-name){overflow-wrap:normal;word-break:normal;hyphens:none;-webkit-hyphens:none}
+body :is(a[href^='http'],a[href^='mailto:']){overflow-wrap:anywhere}
+body :is(strong,b){font-weight:300!important}
+body :is(.chapter2-meta,.chapter2-reading-more,.guest-area,.guest-axis-header>span,.format-stats span,dt,.client-access-copy button){font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-detail-size)!important;line-height:var(--type-detail-leading)!important;letter-spacing:0!important}
+body .chapter2-meta span{font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-detail-size)!important;line-height:var(--type-detail-leading)!important;letter-spacing:0!important}
+body .guest-name{font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-body-size)!important;line-height:var(--type-body-leading)!important;letter-spacing:0!important}
+body .exhibition-stats span{font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-detail-size)!important;line-height:var(--type-detail-leading)!important;letter-spacing:0!important}
+body .chapter4-summary h3{font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-detail-size)!important;line-height:var(--type-detail-leading)!important;letter-spacing:0!important}
+body .gastro-monument{font-size:clamp(78px,11.5vw,170px)!important;line-height:.82!important;letter-spacing:-.025em!important}
+@media(max-width:760px){body .gastro-monument{font-size:clamp(42px,12vw,64px)!important;line-height:.9!important}}
+body :is(.portfolio-cta,.chapter2-project a[href^='/capitulo-3']){font-weight:300!important}
+
+/* First chapter opening cue uses the same detail role as menu and summary labels. */
+body .site-shell>.hero-scroll-cue{position:fixed;left:50%;bottom:max(clamp(16px,3vh,32px),env(safe-area-inset-bottom));z-index:900;isolation:isolate;display:block;width:max-content;max-width:calc(100vw - 140px);margin:0;transform:translateX(-50%);text-align:center;color:#fff;font-family:var(--type-univers)!important;font-size:var(--type-detail-size)!important;font-weight:300!important;line-height:1!important;letter-spacing:0!important;text-shadow:none;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+body .site-shell>.chapter1-ambient-base{z-index:-5;transition:opacity .3s}
+body .site-shell>.chapter1-ambient-opening{z-index:-4;background:linear-gradient(#17142266,#0b091066),url('/assets/chapter1-opening-first-frame-20261022.jpg') center/cover;transition:opacity .3s;pointer-events:none}
+body .site-shell>.chapter1-ambient-opening .chapter1-ambient-canvas{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .2s}
+body .site-shell>.chapter1-ambient-opening .chapter1-ambient-canvas.is-ready{opacity:1}
+body .site-shell>.ambient-video.is-hidden{opacity:0}
+body .site-shell>.hero-scroll-cue.is-visible{opacity:1;visibility:visible}
+body.lm-guide-open .site-shell>.hero-scroll-cue{opacity:0;visibility:hidden}
+
+/* Section handoffs use the same quiet body scale as the portfolio opening label. */
+body :is(.portfolio-cta,.chapter2-contact-signature a){font-family:var(--type-univers)!important;font-size:var(--type-body-size)!important;line-height:var(--type-body-leading)!important;font-weight:300!important;letter-spacing:0!important}
+/* Chrome numbers are display titles; navigation labels remain detail text. */
+.lm-nav .lm-number,.lm-nav .lm-year{font-family:var(--type-univers)!important;font-weight:300!important}
+.lm-nav :is(.lm-label,.lm-name,.lm-summary a){font-family:var(--type-univers)!important;font-weight:300!important;font-size:var(--type-detail-size)!important;line-height:var(--type-detail-leading)!important;letter-spacing:0!important}

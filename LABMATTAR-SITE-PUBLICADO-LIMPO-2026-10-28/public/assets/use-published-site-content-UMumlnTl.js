@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-S-ySWqyJ.js";import{i as t}from"./framework-CXnKph_e.js";var n=e(t(),1);function r(){let[e,t]=(0,n.useState)(null);return(0,n.useEffect)(()=>{let e=!0;return fetch(`/api/content/portfolio`,{cache:`no-store`}).then(e=>e.ok?e.json():null).then(n=>{e&&t(n?.content??null)}).catch(()=>void 0),()=>{e=!1}},[]),e}export{r as t};

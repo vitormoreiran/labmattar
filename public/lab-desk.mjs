@@ -4,11 +4,13 @@ import {storyTopic} from './lab-story-model.mjs';
 import {addStoryTopic,removeStoryPhoto,createStoryTemplate} from './lab-story-project.mjs';
 import {pageRows,pageFingerprint,fullCatalog,changeContent,duplicatePage,moveSelected} from './lab-desk-model.mjs';
 import {libraryList,librarySave} from './lab-project-library.mjs';
+import {createProjectWriteQueue,isActiveProjectSave} from './lab-project-write-queue.mjs';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const frame=$('engine'),hadDraft=Boolean(localStorage.getItem('labmattar-pages-v1'));
 let api,host,documentValue,rows=[],selectedId='',currentKey='',records=[],view='all',filter='',panel='content',mode='desk',loading=true,inputTimer,saveTimer,readTimer,pendingText=false,fieldKey='',history=[],queue=Promise.resolve(),thumbTimer,thumbPending=new Map(),previewBusy=false,previewURL='';
 const placeholder='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><rect width="640" height="360" fill="%23eeefeb"/><text x="320" y="184" text-anchor="middle" fill="%23767873" font-family="Arial,sans-serif" font-size="18">Preparando prévia…</text></svg>'.replaceAll('%23','#'));
 const thumbs=new Map(),knownThumbs=new Map(),formatName={horizontal:'Horizontal / 16:9',vertical:'Vertical / 9:16',quadrado:'Quadrado / 1:1',editorial:'Editorial'};
+const writeProject=createProjectWriteQueue(librarySave);
 const row=()=>rows.find(p=>p.id===selectedId)||rows[0];
 const context=()=>host.LabProductionBridge.snapshot();
 function toast(text,error=false){$('toast').textContent=text;$('toast').dataset.error=String(error);$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',6500);}
@@ -16,7 +18,22 @@ function native(task){const promise=queue.then(async()=>{for(let n=0;api.isBusy(
 function run(task){return Promise.resolve().then(task).catch(error=>{toast(error.message,true);$('saveState').textContent='Revise a mensagem para continuar.';});}
 function read(){if(api.isBusy())return false;const snapshot=api.snapshot();documentValue=snapshot.document;rows=pageRows(documentValue);selectedId=snapshot.currentPageId||rows[0]?.id;return true;}
 function scheduleRead(){clearTimeout(readTimer);readTimer=setTimeout(()=>{if(loading)return;if(!read()){scheduleRead();return;}render();scheduleSave();},120);}
-async function saveCurrent(){if(!currentKey||!documentValue||pendingText)return;const record={id:currentKey,name:documentValue.name,document:documentValue,currentPageId:selectedId,updatedAt:Date.now()};await librarySave(record);records=records.filter(p=>p.id!==currentKey);records.push(record);localStorage.setItem('labmattar-desk-active-v1',currentKey);$('saveState').textContent='Rascunho salvo neste navegador';renderProjects();}
+async function saveCurrent(){
+  if(!currentKey||!documentValue||pendingText)return;
+  // Capture the identity and content before async storage begins. Older writes
+  // must never complete after a newer revision of the same project.
+  const record={id:currentKey,name:documentValue.name,document:documentValue,currentPageId:selectedId,updatedAt:Date.now()};
+  await writeProject(record);
+  records=records.filter(p=>p.id!==record.id);
+  records.push(record);
+  // An older project's write may finish after switching to another one.
+  // Only the project currently open may update the active marker and UI.
+  if(isActiveProjectSave(currentKey,record.id)){
+    localStorage.setItem('labmattar-desk-active-v1',record.id);
+    $('saveState').textContent='Rascunho salvo neste navegador';
+  }
+  renderProjects();
+}
 function scheduleSave(){clearTimeout(saveTimer);$('saveState').textContent='Salvando rascunho local…';saveTimer=setTimeout(()=>run(saveCurrent),400);}
 function renderProjects(){const search=$('search').value.toLocaleLowerCase('pt-BR'),working=records.filter(p=>!p.id.startsWith('reference:'));let html=working.length?'<p class="list-label">MEUS PROJETOS</p>':'';for(const item of working)if(item.name.toLocaleLowerCase('pt-BR').includes(search))html+=projectButton(item.id,item.name,item.document.pages.length,item.document.story?.topics.length||item.document.sections?.length||0);html+='<p class="list-label">PROJETOS DE REFERÊNCIA</p>';for(const ref of STORY_PRESETS){const saved=records.find(p=>p.id==='reference:'+ref.id),name=saved?.name||ref.name;if(name.toLocaleLowerCase('pt-BR').includes(search))html+=projectButton('reference:'+ref.id,name,saved?.document.pages.length||({aleteia:32,poiesis:27,'cada-corpo-abre-um-mundo':27})[ref.id],saved?.document.story?.topics.length||10,ref.id);} $('projects').innerHTML=html;}
 function projectButton(id,name,count,sections,slug){const item=records.find(x=>x.id===id),first=item?.document.pages[0],preview=first?thumbs.get(first.id+':'+pageFingerprint(first)):'',src=preview|| (slug?'/presentation-models/covers/'+slug+'.webp':'/identidade/M.svg');return '<button class="project" data-project="'+esc(id)+'" aria-pressed="'+(id===currentKey)+'"><img src="'+esc(src)+'" alt=""><span><strong>'+esc(name)+'</strong><small>'+count+' páginas'+(sections?' · '+sections+' seções':'')+'</small></span></button>';}

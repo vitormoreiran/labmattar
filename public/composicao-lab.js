@@ -616,6 +616,19 @@
    * Validate the rendered title against the shared reading frame. If content
    * exceeds it, report the condition; never shrink an individual title.
    */
+  // Validate rendered words, excluding whitespace and the editing surface.
+  function textExceedsColumn(element){
+    const box=element.getBoundingClientRect();
+    const room=Math.max(.5,board.getBoundingClientRect().width*.001);
+    const walker=document.createTreeWalker(element,NodeFilter.SHOW_TEXT);
+    for(let node=walker.nextNode();node;node=walker.nextNode()){
+      for(const word of node.data.matchAll(/\S+/g)){
+        const range=document.createRange();range.setStart(node,word.index);range.setEnd(node,word.index+word[0].length);
+        for(const rect of range.getClientRects())if(rect.width>0&&rect.height>0&&(rect.left<box.left-room||rect.right>box.right+room))return true;
+      }
+    }
+    return false;
+  }
   function fitTitleToReadingArea(){
     const reading=by("labReading");
     const kicker=reading.querySelector(".lm-lab-kicker");
@@ -656,7 +669,7 @@
     }
     if(!body.hidden){
       const b=body.getBoundingClientRect();
-      if(body.scrollWidth>body.clientWidth+2||
+      if(textExceedsColumn(body)||
          b.left<safe.left-sideRoom||b.right>safe.right+sideRoom||
          b.top<safe.top-sideRoom||b.bottom>safe.bottom+sideRoom||
          b.bottom>footerRect.top-2)ok=false;
@@ -818,7 +831,7 @@
     const hasEditorial=Boolean(state.title.trim()||(!body.hidden&&state.body.trim()));
     const invalid=captionOverflow||!titleFit.ok||hasEditorial&&(titleWide||copyRect.left<rect.left-2||copyRect.right>rect.right+2||
       copyRect.top<rect.top+1||copyRect.bottom>footerRect.top-6||
-      (!body.hidden&&body.scrollWidth>body.clientWidth+3));
+      (!body.hidden&&textExceedsColumn(body)));
     const collision=false;
     // The visual proof and its status must agree: an unintended overlap is
     // never an approved canvas, even if all text fits inside the page.

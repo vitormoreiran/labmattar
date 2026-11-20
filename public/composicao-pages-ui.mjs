@@ -660,7 +660,7 @@ async function exportSequence(type,options={}){
   if(['html','preview'].includes(type)&&pages.some(page=>(page.clips||[]).length||page.backgroundVideo)){
     if(!confirm('LABMATTAR / VÍDEOS PRIVADOS\\n\\nO HTML offline incorpora os vídeos de fundo e os outros vídeos selecionados. Quem receber o arquivo poderá assisti-los mesmo sem acesso ao Drive. O limite é 32 MB por vídeo e 64 MB por apresentação.\\n\\nDeseja incorporar esses vídeos no arquivo?'))return;
   }
-  let preview=null;if(type==='preview'){preview=options.previewWindow||window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
+  let preview=null,previewDocument;if(type==='preview'&&!options.returnPreview){preview=options.previewWindow||window.open('about:blank','_blank');if(preview){preview.opener=null;preview.document.body.textContent='Preparando apresentação…';}}
   commit();const original=current,originalState=bridge().snapshot().state,project=sequenceDocument(name,pages,sections,documentSignature,imageAssets,story);
   readSequence(project,bridge().snapshot().photoCatalog,catalog);
   const active=pages[current];busy=true;switching=true;panel.setAttribute('aria-busy','true');
@@ -679,7 +679,7 @@ async function exportSequence(type,options={}){
        scene.backgroundVideo=pages[index].backgroundVideo?copy(pages[index].backgroundVideo):null;scenes.push(scene);
     }
     const warnings=[...new Set(scenes.flatMap((scene,index)=>scene.warnings.map(warning=>`Página ${index+1}: ${warning}`)))];
-    if(warnings.length&&!confirm('LABMATTAR / Qualidade dos originais\n\n'+warnings.join('\n')+'\n\nExportar na dimensão selecionada?')){
+    if(type!=='preview'&&warnings.length&&!confirm('LABMATTAR / Qualidade dos originais\n\n'+warnings.join('\n')+'\n\nExportar na dimensão selecionada?')){
       preview?.close();notify('Exportação cancelada. O projeto foi preservado.');return;
     }
     const fonts=await officialFonts();
@@ -688,12 +688,18 @@ async function exportSequence(type,options={}){
       download(await createPDF(scenes,fonts),'labmattar-apresentacao.pdf');
     }else{
       const html=await webDocument(scenes,project,catalog||[],fonts),blob=new Blob([html],{type:'text/html;charset=utf-8'});
-      if(type==='preview'&&preview){const url=URL.createObjectURL(blob);preview.location.replace(url);const cleanup=setInterval(()=>{if(preview.closed){URL.revokeObjectURL(url);clearInterval(cleanup);}},1000);}
+      if(type==='preview'&&options.returnPreview)previewDocument=blob;
+      else if(type==='preview'&&preview){const url=URL.createObjectURL(blob);preview.location.replace(url);const cleanup=setInterval(()=>{if(preview.closed){URL.revokeObjectURL(url);clearInterval(cleanup);}},1000);}
       else download(blob,'labmattar-site.html');
     }
     window.LabPages.lastExport={schemaVersion:1,renderer:'labmattar-scene-v1',type,maxEdge:Number(by('labExportSize').value),pages:scenes.map(scene=>({id:scene.id,name:scene.name,width:scene.width,height:scene.height,outputWidth:scene.outputWidth,outputHeight:scene.outputHeight,rasterized:scene.rasterized})),warnings};
     notify(`${pages.length} página${pages.length>1?'s':''} / ${type==='pdf'?'PDF':type==='html'?'SITE HTML':'APRESENTAÇÃO'} concluído.`);
-  }catch(error){preview?.close();notify('Exportação não concluída: '+error.message,true);}
+    return previewDocument;
+  }catch(error){
+    const rect=selector=>{const element=board.querySelector(selector);if(!element)return null;const box=element.getBoundingClientRect(),css=getComputedStyle(element);return {x:box.x,y:box.y,width:box.width,height:box.height,scrollWidth:element.scrollWidth,clientWidth:element.clientWidth,hidden:element.hidden,visibility:css.visibility,font:css.fontSize};};
+    window.LabPages.lastExportError={page:current+1,name:pages[current].name,status:by('labStatus').textContent,fit:by('labTitleFitInfo').textContent,board:{width:board.offsetWidth,height:board.offsetHeight,...board.getBoundingClientRect().toJSON()},copy:rect('#labCopy'),reading:rect('#labReading'),title:rect('#labRenderedTitle'),body:rect('#labRenderedBody'),footer:rect('.lm-lab-bottom'),kicker:rect('.lm-lab-kicker')};
+    preview?.close();notify('Exportação não concluída / página '+(current+1)+': '+error.message,true);
+  }
   finally{
     current=original;bridge().restore(originalState);await settled();selectedMotion=active.motions[0]?.id||'';renderMotions();renderBackgroundVideo();renderPages();
     lab.inert=previousInert;switching=false;busy=false;panel.removeAttribute('aria-busy');commit();

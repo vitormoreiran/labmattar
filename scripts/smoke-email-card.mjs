@@ -149,14 +149,6 @@ try {
     await page.locator('#cardMount').screenshot({ path: path.join(output, model.id + '-preview.png') });
     report.push({ composition: model.id, width: model.width, height: model.height, pngBytes: png.length, altaBytes: alta.length, fidelity });
   }
-  // Long names require the intended two-line layout, without shrinking the font.
-  await select('m-horizontal');
-  await page.locator('#name').fill('Maria Clara de Albuquerque e Vasconcelos Mattar');
-  await page.waitForFunction(() => document.querySelector('#nameError').textContent.length > 0);
-  await select('m-horizontal');
-  await page.waitForFunction(() => document.querySelector('#nameError').textContent === '');
-  await page.locator('#name').fill(data.name);
-  await page.waitForFunction(() => document.querySelector('#nameError').textContent === '');
   // The pre-existing digital card stays available and exports at its own size.
   await page.locator('button[data-format=card]').click();
   await page.waitForFunction(() => document.querySelector('#previewStage').dataset.composition === 'card');

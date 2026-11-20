@@ -204,6 +204,7 @@ try {
   await highPage.goto(origin); await highPage.waitForSelector('#previewStage[data-ready=true] canvas');
   const sharpness = await highPage.locator('#cardMount canvas').evaluate(c => ({ buffer: c.width, shown: c.getBoundingClientRect().width }));
   assert.ok(sharpness.buffer >= sharpness.shown * 2, 'Retina preview needs enough source pixels');
+  await highPage.locator('.channel-links summary').click();
   for (const [key, value] of Object.entries(data)) await highPage.locator('#' + key).fill(value);
   const retinaDownload = highPage.waitForEvent('download'); await highPage.locator('#downloadPNG').click();
   const retinaFile = path.join(output, 'retina-native.png'); await (await retinaDownload).saveAs(retinaFile);

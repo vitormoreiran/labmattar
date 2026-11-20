@@ -37,12 +37,21 @@
           <label for="role">Função ou área <span>opcional</span></label><input id="role" name="role" autocomplete="organization-title" maxlength="100" placeholder="Ex.: Produção e projetos" aria-describedby="roleError"><p class="field-error" id="roleError"></p>
           <label for="email">E-mail <span>obrigatório</span></label><input id="email" name="email" type="email" autocomplete="email" maxlength="150" placeholder="Seu e-mail de trabalho" required aria-describedby="emailError"><p class="field-error" id="emailError"></p>
           <label for="phone">Telefone <span>opcional</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="+55 11 99999-9999" aria-describedby="phoneError"><p class="field-error" id="phoneError"></p>
-          <fieldset class="channel-fields"><legend>CANAIS E PRIVACIDADE <span>opcional</span></legend>
-            <label for="instagram">Instagram</label><input id="instagram" name="instagram" type="url" inputmode="url" maxlength="200" placeholder="https://instagram.com/seuperfil">
-            <label for="whatsapp">WhatsApp</label><input id="whatsapp" name="whatsapp" type="url" inputmode="url" maxlength="200" placeholder="https://wa.me/5511999999999">
-            <label for="linkedin">LinkedIn</label><input id="linkedin" name="linkedin" type="url" inputmode="url" maxlength="200" placeholder="https://linkedin.com/company/...">\n            <label for="youtube">YouTube</label><input id="youtube" name="youtube" type="url" inputmode="url" maxlength="200" placeholder="https://youtube.com/@canal">
-            <label for="privacyUrl">Política de privacidade</label><input id="privacyUrl" name="privacyUrl" type="url" inputmode="url" maxlength="200" placeholder="https://labmattar.com/politica-de-privacidade">
-            <p class="channel-note">Os ícones usam a cor escolhida para M / faixa. Deixe em branco o que não quiser mostrar.</p>
+          <fieldset class="channel-fields"><legend>ÍCONES E PRIVACIDADE <span>opcional</span></legend>
+            <p class="channel-intro">Escolha os ícones que aparecem no cartão. Os links ficam no HTML baixado.</p>
+            <div class="channel-toggles" role="group" aria-label="Ícones exibidos no cartão">
+              <label><input id="showInstagram" type="checkbox" checked> Instagram</label>
+              <label><input id="showWhatsapp" type="checkbox" checked> WhatsApp</label>
+              <label><input id="showLinkedin" type="checkbox" checked> LinkedIn</label>
+              <label><input id="showYoutube" type="checkbox" checked> YouTube</label>
+            </div>
+            <details class="channel-links"><summary>ADICIONAR LINKS EDITÁVEIS</summary>
+              <label for="instagram">Instagram</label><input id="instagram" name="instagram" type="url" inputmode="url" maxlength="200" placeholder="https://instagram.com/seuperfil">
+              <label for="whatsapp">WhatsApp</label><input id="whatsapp" name="whatsapp" type="url" inputmode="url" maxlength="200" placeholder="https://wa.me/5511999999999">
+              <label for="linkedin">LinkedIn</label><input id="linkedin" name="linkedin" type="url" inputmode="url" maxlength="200" placeholder="https://linkedin.com/company/...">
+              <label for="youtube">YouTube</label><input id="youtube" name="youtube" type="url" inputmode="url" maxlength="200" placeholder="https://youtube.com/@canal">
+              <label for="privacyUrl">Política de privacidade</label><input id="privacyUrl" name="privacyUrl" type="url" inputmode="url" maxlength="200" placeholder="https://labmattar.com/politica-de-privacidade">
+            </details>
           </fieldset>
           <p class="data-note">Seus dados ficam apenas nesta página.</p>
           <div class="export-heading"><h2><span>03</span> BAIXAR</h2></div>

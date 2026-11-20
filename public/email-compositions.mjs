@@ -3,10 +3,7 @@ import { normalizeSignature } from './email-signature.mjs';
 // All four email compositions use the former 480 × 100 px strip. Elements are
 // recomposed at this size; native marks and contact text never stretch to fit.
 export const EMAIL_COMPOSITIONS = Object.freeze([
-  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 176, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' },
-  { id: 'm-compacto', label: 'M compacto', width: 480, height: 176, motion: true, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/02-m-compacto.png' },
-  { id: 'mattar-faixa', label: 'MATTAR na faixa', width: 480, height: 176, motion: false, paper: '#F7F6F2', thumbnail: '/identidade/email/modelos/03-mattar-faixa.png' },
-  { id: 'm-linha', label: 'M com linha', width: 480, height: 176, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/04-m-linha.png' }
+  { id: 'm-horizontal', label: 'M horizontal', width: 480, height: 132, motion: true, paper: '#FFFFFF', thumbnail: '/identidade/email/modelos/01-m-horizontal.png?v=simples-20261117' }
 ].map(Object.freeze));
 
 export function emailComposition(id = EMAIL_COMPOSITIONS[0].id) {
@@ -140,25 +137,16 @@ const SOCIAL_MARKS = Object.freeze({
 });
 
 function paintChannelFooter(context, footer, colors) {
-  if (!footer || (!footer.links.length && !footer.privacy)) return;
+  if (!footer || !footer.links.length) return;
   context.save();
-  context.fillStyle = colors.paper; context.fillRect(0, 100, 480, 76);
+  context.fillStyle = colors.paper; context.fillRect(0, 100, 480, 32);
   context.globalAlpha = .28; context.fillStyle = colors.ink; context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
   let x = 12;
   for (const key of footer.links) {
     const mark = SOCIAL_MARKS[key]; if (!mark) continue;
-    context.save(); context.translate(x, 105); context.scale(.5, .5);
+    context.save(); context.translate(x, 108); context.scale(.58, .58);
     context.fillStyle = colors.accent; context.fill(new Path2D(mark)); context.restore();
-    x += 17;
-  }
-  context.fillStyle = colors.ink; context.globalAlpha = .73; setFont(context, 6.2);
-  context.fillText('Esta mensagem e seus anexos podem conter dados pessoais e informações confidenciais, destinados exclusivamente aos seus destinatários.', 12, 127);
-  context.fillText('Se recebida por engano, não utilize, acesse, copie ou divulgue o conteúdo; avise o remetente e elimine esta mensagem.', 12, 138);
-  context.fillText('O tratamento de dados observa a LGPD, com medidas de segurança adequadas e apenas pelo período e para as finalidades necessárias.', 12, 149);
-  context.fillText('Consulte a Política de Privacidade para informações sobre coleta, cookies, seus direitos e os canais de contato.', 12, 160);
-  if (footer.privacy) {
-    context.globalAlpha = 1; context.fillStyle = colors.accent; setFont(context, 6.3);
-    context.fillText('PRIVACY POLICY / POLÍTICA DE PRIVACIDADE · PT', 12, 171);
+    x += 20;
   }
   context.restore();
 }

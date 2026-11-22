@@ -96,3 +96,5 @@
  .lab-story-photo>img{width:72px;height:58px}
  .lab-story-photo-actions{grid-column:2;max-width:none}
 }
+
+#labStorySettings>label{display:block;margin:12px 0 8px}#labStoryImageScroll{display:block;width:100%;margin-bottom:12px}

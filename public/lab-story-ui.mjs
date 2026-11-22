@@ -1,14 +1,15 @@
 import {STORY_ROLES,storyTopic,storyLabel,storyCaption} from './lab-story-model.mjs';
 import {STORY_PRESETS} from './lab-story-presets.mjs';
-import {updateStoryText,setStoryCaption,addStoryPhotos,moveStoryPhoto,removeStoryPhoto,setStoryRole,moveStoryTopic,removeStoryTopic,addStoryTopic} from './lab-story-project.mjs';
+import {updateStoryText,setStoryCaption,addStoryPhotos,moveStoryPhoto,removeStoryPhoto,setStoryRole,moveStoryTopic,removeStoryTopic,addStoryTopic,setStoryImageScroll} from './lab-story-project.mjs';
 const el=(tag,attrs={},text)=>{const node=document.createElement(tag);for(const [key,value]of Object.entries(attrs))node.setAttribute(key,value);if(text!==undefined)node.textContent=text;return node;};
 const clone=value=>JSON.parse(JSON.stringify(value));
 export function installStoryEditor({panel,list,getProject,getContext,beforeEdit,applyProject,selectPage,createTemplate,openPreset,isBusy,onError,confirmAction=async message=>confirm(message)}){
- const link=el('link',{rel:'stylesheet',href:'/composicao-story.css?v=20261118-paginas-organizadas'});document.head.append(link);
+ const link=el('link',{rel:'stylesheet',href:'/composicao-story.css?v=20261122-scroll'});document.head.append(link);
  const tools=el('section',{class:'lab-story-tools','aria-label':'Seções da apresentação'}),start=el('button',{type:'button',id:'labStoryNew'},'CRIAR APRESENTAÇÃO');
- const settings=el('details',{id:'labStorySettings'}),summary=el('summary',{},'TRANSIÇÕES ENTRE SEÇÕES'),hint=el('p',{class:'detail'},'Abra uma seção para escolher a foto ou editar seu conteúdo.'),add=el('button',{type:'button',id:'labStoryAdd'},'+ NOVA SEÇÃO');
+ const settings=el('details',{id:'labStorySettings'}),summary=el('summary',{},'MOVIMENTO DA APRESENTAÇÃO'),hint=el('p',{class:'detail'},'Abra uma seção para escolher a foto ou editar seu conteúdo.'),add=el('button',{type:'button',id:'labStoryAdd'},'+ NOVA SEÇÃO');
  const flags=el('div',{class:'lab-story-flags'});for(const [key,label]of [['mTransition','Passagem com o M antes dos atos'],['actEntrances','Abertura com número e título em cada ato']]){const input=el('input',{type:'checkbox','data-story-setting':key,id:'labStory-'+key}),caption=el('label',{for:input.id});caption.append(input,document.createTextNode(label));flags.append(caption);input.onchange=async()=>{try{if(isBusy())return;const value=input.checked;beforeEdit();const project=clone(getProject());project.story[key]=value;await applyProject(project);}catch(error){onError(error.message);render();}};}
- settings.append(summary,flags);tools.append(el('p',{class:'detail'},'SEÇÕES E PÁGINAS'),hint,add,settings);document.getElementById('labSequenceTools').append(tools);
+ const motion=el('select',{id:'labStoryImageScroll'}),motionLabel=el('label',{for:motion.id},'Passagem das imagens');for(const [value,label]of [['vertical','Vertical'],['fade','Troca suave'],['horizontal','Horizontal']])motion.add(new Option(label,value));motion.onchange=async()=>{try{if(isBusy())return;beforeEdit();await applyProject(setStoryImageScroll(getProject(),motion.value,catalog()));}catch(error){onError(error.message);render();}};
+ settings.append(summary,motionLabel,motion,flags);tools.append(el('p',{class:'detail'},'SEÇÕES E PÁGINAS'),hint,add,settings);document.getElementById('labSequenceTools').append(tools);
 
  // Starting another project is separate from editing the current sequence.
  const manager=el('dialog',{id:'labProjectDialog',class:'lab-project-dialog','aria-labelledby':'labProjectDialogTitle'}),managerHead=el('header'),managerTitle=el('h3',{id:'labProjectDialogTitle'},'NOVO / ABRIR'),managerClose=el('button',{type:'button','aria-label':'Fechar projetos'},'×');
@@ -65,6 +66,7 @@ export function installStoryEditor({panel,list,getProject,getContext,beforeEdit,
  function render(){
   const project=getProject(),active=Boolean(project.story);panel.classList.toggle('lab-story-mode',active);tools.hidden=!active;
   if(!active){lastKey='';return;}
+  motion.value=project.story.imageScroll||'horizontal';
   for(const input of flags.querySelectorAll('input'))input.checked=project.story[input.dataset.storySetting];
   const current=getContext().pageId,key=JSON.stringify([project.story,project.pages.map(page=>[page.id,page.name,page.composition.pages[0].media.photoKey,page.composition.pages[0].text.title.value]),current]);if(key===lastKey)return;lastKey=key;list.replaceChildren();
   const selected=project.story.topics.find(topic=>topic.pageIds.includes(current));if(current!==lastSelected){expandedId=selected?.id;lastSelected=current;}

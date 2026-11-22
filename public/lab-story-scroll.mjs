@@ -1,5 +1,5 @@
-// Vertical scroll drives a continuous horizontal track. The photos stay opaque
-// and side by side; only their position changes, without scaling the content.
+// Native vertical scrolling drives the selected image transition.
+// The image geometry stays intact in every direction.
 export function photoFrameProgress(position,count,reduced=false){
  let value=Math.max(0,Math.min(count-1,Number.isFinite(position)?position:0));
  // Native scroll positions round to pixels; anchored photos still settle fully.
@@ -13,13 +13,13 @@ export function photoFrameProgress(position,count,reduced=false){
 export function installTopicScroll(frameAt){
  const topics=[...document.querySelectorAll('.scroll-topic')],frames=[...document.querySelectorAll('.photo-backdrop[data-native-page]')];
  const topicImages=new Map(topics.map(topic=>[topic,[...topic.querySelectorAll('.photo-backdrop[data-native-page]')]])),homes=new Map(frames.map(frame=>[frame,frame.parentElement]));
- const html=document.documentElement,viewport=document.createElement('div'),track=document.createElement('div');viewport.className='background-viewport';track.className='background-track';viewport.append(track);document.body.prepend(viewport);
+ const html=document.documentElement,direction=['vertical','horizontal','fade'].includes(document.documentElement.dataset.imageScroll)?document.documentElement.dataset.imageScroll:'horizontal',viewport=document.createElement('div'),track=document.createElement('div');viewport.className='background-viewport';track.className='background-track';viewport.append(track);document.body.prepend(viewport);
  const previous=document.getElementById('previous'),next=document.getElementById('next'),counter=document.getElementById('page-count'),reduced=matchMedia('(prefers-reduced-motion: reduce)');
  const probe=document.createElement('div');probe.className='viewport-probe';probe.setAttribute('aria-hidden','true');document.body.append(probe);
  let entries=[],positions=[],current=-1,scrollFrame=0,layoutFrame=0,printing=false,printY=0,lastScreenY=scrollY,renderKey='',visibleKey='',readingTop=80,readingBottom=innerHeight-80;
  function mountTrack(){
-  for(const [index,frame]of frames.entries()){frame.dataset.scrollTopic=[...topicImages].find(([,images])=>images.includes(frame))[0].id;track.append(frame);Object.assign(frame.style,{left:index*100+'%',right:'auto',width:'100%',opacity:'1'});}
-  html.dataset.horizontalImages='true';renderKey='';visibleKey='';
+  for(const [index,frame]of frames.entries()){frame.dataset.scrollTopic=[...topicImages].find(([,images])=>images.includes(frame))[0].id;track.append(frame);Object.assign(frame.style,{left:(direction==='horizontal'?index*100:0)+'%',top:(direction==='vertical'?index*100:0)+'%',right:'auto',bottom:'auto',width:'100%',height:'100%',opacity:'1'});}
+  html.dataset.imageTrack='true';html.dataset.imageScroll=direction;html.dataset.horizontalImages=String(direction==='horizontal');renderKey='';visibleKey='';
  }
  function protectReading(copy){
   if(!copy)return;const rect=copy.getBoundingClientRect(),start=Math.max(0,readingTop-rect.top),end=Math.min(rect.height,readingBottom-rect.top);
@@ -28,9 +28,11 @@ export function installTopicScroll(frameAt){
  }
  function render(state){
   const visible=state.base+':'+state.next;
-  if(visible!==visibleKey){visibleKey=visible;for(const [index,frame]of frames.entries())frame.style.visibility=index===state.base||index===state.next?'visible':'hidden';}
+  if(visible!==visibleKey){visibleKey=visible;for(const [index,frame]of frames.entries()){frame.style.visibility=index===state.base||index===state.next?'visible':'hidden';if(direction==='fade')frame.style.opacity=index===state.next&&state.next!==state.base?String(state.progress):'1';}}
   const key=String(Math.round((state.base+state.progress)*1e6));if(key===renderKey)return;renderKey=key;
-  track.style.transform='translate3d('+(-(state.base+state.progress)*100).toFixed(5)+'%,0,0)';
+  const offset=(-(state.base+state.progress)*100).toFixed(5)+'%';
+  track.style.transform=direction==='vertical'?'translate3d(0,'+offset+',0)':direction==='horizontal'?'translate3d('+offset+',0,0)':'translate3d(0,0,0)';
+  if(direction==='fade'){frames[state.base].style.opacity='1';if(state.next!==state.base)frames[state.next].style.opacity=String(state.progress);}
  }
  function update(){
   scrollFrame=0;if(printing||printMedia.matches||layoutFrame||!entries.length)return;lastScreenY=scrollY;
@@ -91,7 +93,7 @@ export function installTopicScroll(frameAt){
  // Trackpads can also scroll sideways. The ordinary vertical wheel is left
  // entirely native and uses the same document timeline as keyboard and touch.
  addEventListener('wheel',event=>{
-  if(printing||Math.abs(event.deltaX)<=Math.abs(event.deltaY)||event.target.closest('.lm-nav,input,textarea,select,[contenteditable=true]'))return;
+  if(direction!=='horizontal'||printing||Math.abs(event.deltaX)<=Math.abs(event.deltaY)||event.target.closest('.lm-nav,input,textarea,select,[contenteditable=true]'))return;
   if(!event.cancelable)return;event.preventDefault();const previous=html.style.scrollBehavior;html.style.scrollBehavior='auto';scrollBy({top:event.deltaX*(event.deltaMode===1?16:event.deltaMode===2?probe.offsetHeight:1),behavior:'auto'});html.style.scrollBehavior=previous;
  },{passive:false});
  const observer=new ResizeObserver(scheduleLayout);observer.observe(probe);for(const topic of topics){const copy=topic.querySelector('.topic-copy');if(copy)observer.observe(copy);}
@@ -100,8 +102,8 @@ export function installTopicScroll(frameAt){
  function enterPrint(){
   // Print styles can shrink the screen track before the media event arrives.
   // Keep the last screen position so leaving print restores the same image.
-  if(printing)return;printing=true;printY=lastScreenY;delete html.dataset.horizontalImages;
-  for(const frame of frames){homes.get(frame).append(frame);for(const property of ['left','right','width','opacity','visibility'])frame.style[property]='';}
+  if(printing)return;printing=true;printY=lastScreenY;delete html.dataset.horizontalImages;delete html.dataset.imageTrack;
+  for(const frame of frames){homes.get(frame).append(frame);for(const property of ['left','right','top','bottom','width','height','opacity','visibility'])frame.style[property]='';}
  }
  function leavePrint(){
   if(!printing)return;printing=false;mountTrack();layout();const previous=html.style.scrollBehavior;html.style.scrollBehavior='auto';scrollTo({top:printY,behavior:'auto'});html.style.scrollBehavior=previous;update();
@@ -123,7 +125,7 @@ export const topicScrollCSS=`
 .topic-copy{position:relative;flex:0 0 auto;width:min(100%,680px);z-index:1}.topic-copy h2{margin:0 0 30px;font-size:clamp(44px,6.1vw,104px);font-weight:300;line-height:1.02;letter-spacing:-.025em}.story-title-line{display:block;overflow-wrap:break-word}.story-title-line:nth-child(2){letter-spacing:0}.topic-copy p{margin:0;max-width:560px;font-size:19px;line-height:1.45;white-space:pre-wrap}
 .frame-anchor{position:absolute;left:0;top:calc(var(--frame-index)*100svh);width:1px;height:1px;visibility:hidden;pointer-events:none}.viewport-probe{position:fixed;left:0;top:0;width:1px;height:100svh;padding:var(--reading-top) 0 var(--reading-bottom);visibility:hidden;pointer-events:none;z-index:-10}
 .background-viewport{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#181818}.background-track{position:absolute;inset:0;will-change:transform}
-@media screen{html[data-horizontal-images=true]{overflow-anchor:none}html[data-horizontal-images=true] main{position:relative;z-index:1}html[data-horizontal-images=true] .photo-stack{background:transparent}html[data-horizontal-images=true] .scroll-topic[data-reading-overflow=true] .topic-stage{height:var(--topic-flow-height)}}
+@media screen{html[data-image-track=true]{overflow-anchor:none}html[data-image-track=true] main{position:relative;z-index:1}html[data-image-track=true] .photo-stack{background:transparent}html[data-image-track=true] .scroll-topic[data-reading-overflow=true] .topic-stage{height:var(--topic-flow-height)}}
 /* Keep all copy readable when a short viewport cannot contain a pinned topic. */
 .scroll-topic[data-reading-overflow=true] .topic-stage{position:relative;height:auto;display:block;padding:0;overflow:visible}.scroll-topic[data-reading-overflow=true] .photo-stack{position:relative;inset:auto;overflow:visible}.scroll-topic[data-reading-overflow=true] .photo-backdrop{position:relative;inset:auto;height:100svh;opacity:1!important;visibility:visible!important;will-change:auto}.scroll-topic[data-reading-overflow=true] .photo-backdrop:first-child{height:max(100svh,var(--reading-height))}.scroll-topic[data-reading-overflow=true] .topic-copy{position:absolute;top:var(--reading-top);left:9%;width:min(82%,680px)}
 @media(max-width:760px){.topic-copy h2{font-size:clamp(34px,9vw,60px);margin-bottom:26px}.topic-copy p{font-size:17px}}

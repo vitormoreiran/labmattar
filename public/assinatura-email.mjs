@@ -144,7 +144,7 @@ async function update() {
   stage.dataset.format = format; mount.style.maxWidth = size.width * 2 + 'px'; updateColors();
   document.getElementById('downloadPNGHigh').hidden = format !== 'email';
   try {
-    const next = await createCard(isExample ? example : value, options(previewDensity(), isExample ? exampleChannels : readChannels()));
+    const next = await createCard(isExample ? example : value, options(previewDensity(), readChannels()));
     if (format === 'card') { const source = await ensureVideo(); next.draw(source); }
     else if (!paused && video?.readyState >= 2 && next.canAnimate) next.draw(video);
     if (ticket !== generation) return;

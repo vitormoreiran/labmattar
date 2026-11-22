@@ -1,5 +1,5 @@
 // Chapter changes have their own rhythm: identify the act, reveal its first
-// photograph, then release the reading and the continuous horizontal gallery.
+// photograph, then release the reading and the continuous image sequence.
 export function actSlideState(progress,reduced=false){
  const clamp=value=>Math.max(0,Math.min(1,value));
  const smooth=(a,b)=>{const x=clamp((progress-a)/(b-a));return x*x*(3-2*x);};
@@ -53,6 +53,10 @@ export const actSlidesCSS=`
 .act-slide-stage{position:fixed;inset:0;z-index:30;isolation:isolate;overflow:hidden;background:#181818;color:#f7f6f2;visibility:hidden;opacity:0;--act-image-reveal:0;--act-title-opacity:0;--act-title-y:0px;--act-photo-x:0%}
 .act-slide-photo{position:absolute;inset:0;overflow:hidden;clip-path:inset(0 0 0 calc(100% * (1 - var(--act-image-reveal))))}
 .act-slide-photo:before{content:'';position:absolute;inset:0;background-image:var(--act-photo);background-position:50% 50%;background-size:cover;background-repeat:no-repeat;transform:translate3d(var(--act-photo-x),0,0)}
+html[data-image-scroll=vertical] .act-slide-photo{clip-path:inset(calc(100% * (1 - var(--act-image-reveal))) 0 0 0)}
+html[data-image-scroll=vertical] .act-slide-photo:before{transform:translate3d(0,var(--act-photo-x),0)}
+html[data-image-scroll=fade] .act-slide-photo{clip-path:none;opacity:var(--act-image-reveal)}
+html[data-image-scroll=fade] .act-slide-photo:before{transform:none}
 .act-slide-photo:after{content:'';position:absolute;inset:0;background:rgba(0,0,0,var(--act-photo-contrast))}
 .act-slide-copy{position:absolute;left:9%;right:9%;top:50%;opacity:var(--act-title-opacity);transform:translate3d(0,calc(-50% + var(--act-title-y)),0)}
 .act-slide-kicker{margin:0 0 20px;font:300 13px/1.4 UniversMattar,Arial,sans-serif;letter-spacing:.04em}
@@ -60,8 +64,8 @@ export const actSlidesCSS=`
 .act-slide-number{flex:none;font:300 clamp(100px,14vw,210px)/.85 UniversMattar,Arial,sans-serif;letter-spacing:-.035em}
 .act-slide-name{min-width:0;margin:0;font:300 clamp(48px,7.2vw,118px)/1.04 PerpetuaMattar,Georgia,serif;letter-spacing:0;overflow-wrap:normal}
 .presentation-pagination.is-act-slide{visibility:hidden;pointer-events:none}
-@media screen{html[data-horizontal-images=true] .scroll-topic[data-act] .topic-copy{opacity:var(--act-reading-opacity,1);transform:translate3d(0,var(--act-reading-y,0px),0)}}
-@media screen{html[data-horizontal-images=true] .scroll-topic[data-act][data-reading-overflow=true] .topic-copy{top:calc(var(--reading-top) + var(--act-reading-offset,0px))}}
+@media screen{html[data-image-track=true] .scroll-topic[data-act] .topic-copy{opacity:var(--act-reading-opacity,1);transform:translate3d(0,var(--act-reading-y,0px),0)}}
+@media screen{html[data-image-track=true] .scroll-topic[data-act][data-reading-overflow=true] .topic-copy{top:calc(var(--reading-top) + var(--act-reading-offset,0px))}}
 @media(max-width:760px){.act-slide-heading{flex-direction:column;align-items:flex-start;gap:24px}.act-slide-number{font-size:clamp(84px,25vw,118px)}.act-slide-name{font-size:clamp(36px,10vw,64px)}.act-slide-kicker{font-size:12px;margin-bottom:20px}}
 @media(max-height:560px) and (min-width:761px){.act-slide-number{font-size:100px}.act-slide-name{font-size:54px}.act-slide-kicker{margin-bottom:16px}}
 @media print{.act-opener{display:none!important}.scroll-topic[data-act] .topic-copy{opacity:1!important;transform:none!important}}

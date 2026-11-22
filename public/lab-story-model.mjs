@@ -7,7 +7,8 @@ const identifier=value=>typeof value==='string'&&/^[a-zA-Z0-9_-]{1,80}$/.test(va
 const keys=(value,allowed)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(key=>allowed.includes(key));
 export function normalizeStory(value,pages){
  if(value==null)return null;
- check(keys(value,['template','version','topics','mTransition','actEntrances'])&&value.template===STORY_TEMPLATE&&value.version===1,'modelo');
+ check(keys(value,['template','version','topics','mTransition','actEntrances','imageScroll'])&&value.template===STORY_TEMPLATE&&value.version===1,'modelo');
+ check(value.imageScroll===undefined||['vertical','horizontal','fade'].includes(value.imageScroll),'passagem das imagens');
  check(typeof value.mTransition==='boolean'&&typeof value.actEntrances==='boolean','movimento do modelo');
  check(Array.isArray(value.topics)&&value.topics.length>0&&value.topics.length<=30,'use de 1 a 30 seções');
  const pageIds=new Set(pages.map(page=>page.id)),topicIds=new Set(),members=[];
@@ -22,7 +23,7 @@ export function normalizeStory(value,pages){
  });
  check(topics[0].role==='cover'&&topics.filter(topic=>topic.role==='cover').length===1,'a primeira seção deve ser a única abertura');
  check(members.length===pages.length&&members.every((id,index)=>id===pages[index].id),'as páginas devem pertencer a uma seção e seguir sua ordem');
- return {template:STORY_TEMPLATE,version:1,topics,mTransition:value.mTransition,actEntrances:value.actEntrances};
+ return {template:STORY_TEMPLATE,version:1,topics,mTransition:value.mTransition,actEntrances:value.actEntrances,...(value.imageScroll===undefined?{}:{imageScroll:value.imageScroll})};
 }
 export function storyTopic(project,id){
  const topic=project.story?.topics.find(item=>item.id===id);if(!topic)throw Error('Seção não encontrada.');

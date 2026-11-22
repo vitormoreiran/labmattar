@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';
 import {readSequence,sequenceDocument} from '../public/lab-sequence.mjs';
 import {normalizeStory,storyTopic,storyLabel} from '../public/lab-story-model.mjs';
-import {createStoryTemplate,splitStoryBody,updateStoryText,addStoryPhotos,moveStoryPhoto,removeStoryPhoto,setStoryCaption,moveStoryTopic,addStoryTopic,removeStoryTopic,syncStoryReading} from '../public/lab-story-project.mjs';
+import {createStoryTemplate,splitStoryBody,updateStoryText,addStoryPhotos,moveStoryPhoto,removeStoryPhoto,setStoryCaption,moveStoryTopic,addStoryTopic,removeStoryTopic,syncStoryReading,setStoryImageScroll} from '../public/lab-story-project.mjs';
 import {storyWebDocument} from '../public/lab-story-web.mjs';
 import {prepareChapter4Publication} from '../tools/laboratorio-export/publication.mjs';
 const data='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLbtAAAAABJRU5ErkJggg==';
@@ -51,7 +51,14 @@ test('HTML deriva a mesma estrutura e incorpora projeto editável, fontes e nave
  const project=model(),scenes=project.pages.map(page=>({id:page.id,name:page.name,width:1280,height:720,outputWidth:1920,outputHeight:1080,items:[{kind:'rect',layer:'background',x:0,y:0,w:1280,h:720,color:'#181818'}],motions:[],clips:[]}));
  const svg=new TextEncoder().encode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 822 627"><path d="M0 0H822V627H0Z"/></svg>'),fonts={UniversMattar:new Uint8Array([1]),PerpetuaMattar:new Uint8Array([2])};
  const html=await storyWebDocument(scenes,project,[],fonts,{resource:async()=>svg,base64:bytes=>Buffer.from(bytes).toString('base64'),motionBytes:async()=>new Uint8Array(),privateVideoBytes:async()=>new Uint8Array(),animatedBackground:()=>'',motionInkPixels:()=>{},installMotionInk:()=>{}});
- assert.equal((html.match(/data-act-opener=/g)||[]).length,5);assert.equal((html.match(/data-native-page=/g)||[]).length,10);assert(html.includes('story-print-page'));assert(html.includes('aspect-ratio:var(--art-aspect)')&&html.includes('object-fit:contain'));assert(html.includes('type="application/json" id="project"'));const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];scripts.forEach(match=>new vm.Script(match[1]));
+ assert(html.includes('data-image-scroll="vertical"'));assert.equal((html.match(/data-act-opener=/g)||[]).length,5);assert.equal((html.match(/data-native-page=/g)||[]).length,10);assert(html.includes('story-print-page'));assert(html.includes('aspect-ratio:var(--art-aspect)')&&html.includes('object-fit:contain'));assert(html.includes('type="application/json" id="project"'));const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];scripts.forEach(match=>new vm.Script(match[1]));
  const published=prepareChapter4Publication(html,'novo-estudo'),prepared=published.files.get('index.html').toString();
  assert.equal(published.manifest.sections.length,10);assert.equal(published.manifest.template,'mattar-apresentacoes-01');assert.equal(published.manifest.navigation,'embedded');assert(prepared.includes('function installTopicScroll('));assert(prepared.includes('function installSectionTransitions('));assert(prepared.includes('function installActSlides('));assert(prepared.includes('function mountPublishedPresentation('));assert.deepEqual(JSON.parse(prepared.match(/id="project">([\s\S]*?)<\/script>/)[1]),project);
+});
+
+test('passagem das imagens é salva no projeto sem alterar páginas, texto ou geometria',()=>{
+ const original=model();assert.equal(original.story.imageScroll,'vertical');
+ for(const mode of ['vertical','horizontal','fade']){const next=setStoryImageScroll(original,mode,photos);assert.equal(next.story.imageScroll,mode);assert.equal(readSequence(clone(next),photos,[]).story.imageScroll,mode);assert.deepEqual(next.pages,original.pages);assert.equal(original.story.imageScroll,'vertical');}
+ const legacy=clone(original);delete legacy.story.imageScroll;assert.equal(Object.hasOwn(readSequence(legacy,photos,[]).story,'imageScroll'),false);
+ assert.throws(()=>setStoryImageScroll(original,'inexistente',photos),/passagem das imagens/);assert.equal(original.story.imageScroll,'vertical');
 });

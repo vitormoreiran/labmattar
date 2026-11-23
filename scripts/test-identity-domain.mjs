@@ -100,6 +100,40 @@ test('fails closed on another domain worker, missing domain, unready identity or
  }
 });
 
+
+test('read-only audit retries a transient ECONNRESET without touching domains',async()=>{
+ const api=fakeCloudflare();
+ let attempts=0;
+ const fetcher=(url,options)=>{
+  if(url.startsWith(PROBE_ORIGIN+'/manual?')&&attempts++===0){
+   return Promise.reject(Object.assign(new TypeError('fetch failed'),{cause:{code:'ECONNRESET'}}));
+  }
+  return api.fetcher(url,options);
+ };
+ const result=await migrateIdentityDomain({...settings,expectedSha:sha,fetcher});
+ assert.equal(result.mode,'read-only');
+ assert.equal(result.changed,false);
+ assert.equal(attempts,2);
+ assert.equal(api.calls.filter(x=>x.method!=='GET').length,0);
+});
+
+test('repeated TLS read failures stop the transfer before any PUT',async()=>{
+ const api=fakeCloudflare();
+ let attempts=0;
+ const fetcher=(url,options)=>{
+  if(url.startsWith(PROBE_ORIGIN+'/manual?')){
+   attempts++;
+   return Promise.reject(Object.assign(new TypeError('fetch failed'),{cause:{code:'ECONNRESET'}}));
+  }
+  return api.fetcher(url,options);
+ };
+ await assert.rejects(migrateIdentityDomain({
+  ...settings,expectedSha:sha,apply:true,confirmation,fetcher
+ }),/Falha de rede ao conferir \/manual apos 3 tentativas/);
+ assert.equal(attempts,3);
+ assert.equal(api.calls.filter(x=>x.method!=='GET').length,0);
+});
+
 test('identity Worker and portfolio Worker have independent releases and D1',async()=>{
  const original=JSON.parse(await readFile(new URL('../site-oficial/wrangler.jsonc',import.meta.url),'utf8'));
  assert.equal(original.name,PREVIOUS_WORKER);

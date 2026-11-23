@@ -52,10 +52,21 @@ export async function migrateIdentityDomain({
   return {portfolio,identity};
  }
 
+ // Only repeat non-mutating GET requests. Never retry a Cloudflare PUT: a
+ // connection reset after a write could conceal a completed reassignment.
+ async function readOnlyGet(url,options,label){
+  for(let attempt=1;attempt<=3;attempt++){
+   try{return await fetcher(url,options)}
+   catch(error){
+    if(attempt===3)throw new Error('Falha de rede ao conferir '+label+' apos 3 tentativas.',{cause:error});
+    await new Promise(resolve=>setTimeout(resolve,500*attempt));
+   }
+  }
+ }
  const before=await listDomains();
- const manifestResponse=await fetcher(
+ const manifestResponse=await readOnlyGet(
   PROBE_ORIGIN+'/laboratorio-release.json?revision='+expectedSha,
-  {cache:'no-store',signal:AbortSignal.timeout(15000)}
+  {cache:'no-store',signal:AbortSignal.timeout(15000)},'manifesto da identidade'
  );
  if(!manifestResponse.ok)throw Error('Manifesto do Worker independente indisponivel.');
  const manifest=await manifestResponse.json();
@@ -64,22 +75,22 @@ export async function migrateIdentityDomain({
   throw Error('Worker independente nao corresponde a revisao e origem esperadas.');
  }
  for(const route of PAGES){
-  const response=await fetcher(PROBE_ORIGIN+route+'?cutover='+expectedSha,
-   {redirect:'follow',cache:'no-store',signal:AbortSignal.timeout(20000)});
+  const response=await readOnlyGet(PROBE_ORIGIN+route+'?cutover='+expectedSha,
+   {redirect:'follow',cache:'no-store',signal:AbortSignal.timeout(20000)},route);
   if(!response.ok||!response.headers.get('content-type')?.includes('text/html')){
    throw Error('Pagina da identidade nao validada: '+route+' ('+response.status+').');
   }
   await response.body?.cancel();
  }
- const googleResponse=await fetcher(PROBE_ORIGIN+'/api/acervo/status',
-  {cache:'no-store',signal:AbortSignal.timeout(15000)});
+ const googleResponse=await readOnlyGet(PROBE_ORIGIN+'/api/acervo/status',
+  {cache:'no-store',signal:AbortSignal.timeout(15000)},'status do Google Drive');
  if(!googleResponse.ok)throw Error('API do acervo indisponivel no Worker independente.');
  const providers=await googleResponse.json();
  if(providers.providers?.google?.configured!==true){
   throw Error('Google Drive nao configurado no Worker independente: corrigir antes da migracao.');
  }
- const portfolioResponse=await fetcher(PORTFOLIO_ORIGIN+'/',
-  {redirect:'manual',cache:'no-store',signal:AbortSignal.timeout(15000)});
+ const portfolioResponse=await readOnlyGet(PORTFOLIO_ORIGIN+'/',
+  {redirect:'manual',cache:'no-store',signal:AbortSignal.timeout(15000)},'home institucional');
  if(!portfolioResponse.ok){
   throw Error('Site institucional indisponivel: interromper a migracao.');
  }

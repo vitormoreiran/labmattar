@@ -92,6 +92,13 @@ html = re.sub(r'<footer>ESTADO 0[1-9]</footer>', '', html)
 html = html.replace('<span class="detail">01—09 / VASOS</span>', '')
 # Shorten the opening and label the two autonomous signatures accurately.
 html = html.replace('<p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p>', '')
+# Maintain the universal cover's Detalhe column without reintroducing
+# the redundant label retired during REVIEW1. Safe on repeated generation.
+summary = '<p class="copy">Um símbolo estruturante, um logotipo oficial e nove vasos.</p>'
+detail = '<p class="detail">VETOR / VOLUME<br/>ASSINATURA / APLICAÇÃO</p>'
+html = html.replace(summary+'</div>', summary+detail+'</div>', 1)
+assert '<div class="bottomline">'+summary+detail+'</div>' in html, 'Missing canonical cover Detail'
+
 html = html.replace('>Assinatura principal<', '>LOGOTIPO OFICIAL<')
 html = html.replace('>Símbolo principal<', '>SÍMBOLO / ASSINATURA<')
 

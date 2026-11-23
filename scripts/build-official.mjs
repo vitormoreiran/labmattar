@@ -7,15 +7,10 @@ export async function assembleOfficial({base,lab,presentations,output,sha='local
  await cp(path.join(base,'worker'),path.join(output,'worker'),{recursive:true});
  const baseline=JSON.parse(await readFile(path.join(base,'baseline.json'),'utf8'));
  for(const [file,expected]of Object.entries(baseline.files))if(hash(await readFile(path.join(base,file)))!==expected)throw Error('Base oficial alterada sem nova conferência: '+file);
- const entries=await readdir(lab,{recursive:true,withFileTypes:true});let added=0;
- for(const entry of entries){if(!entry.isFile())continue;const relative=path.relative(lab,path.join(entry.parentPath||entry.path,entry.name)).replaceAll('\\','/');
-  // The original Worker continues to render the home and existing chapters.
-  if(['index.html','404.html','_headers','_redirects'].includes(relative))continue;
-  const source=path.join(lab,relative),target=path.join(output,'public',relative),bytes=await readFile(source);
-  let existing;try{existing=await readFile(target);}catch(error){if(error.code!=='ENOENT')throw error;}
-  if(existing){if(!existing.equals(bytes))throw Error('Laboratório colide com arquivo oficial: '+relative);continue;}
-  await mkdir(path.dirname(target),{recursive:true});await writeFile(target,bytes);added++;
- }
+ // The portfolio package contains ONLY the verified original site and explicit
+ // portfolio publications. Identity files are never copied into this output.
+ // The 'lab' input is retained solely for the approved gallery stylesheet.
+ const added=0;
  // Keep the recovered archive byte-for-byte intact. The already merged
  // Chapter 2 gallery adjustment is applied only to the assembled stylesheet.
  const galleryOverride=path.join(lab,'chapter2-gallery-scale.css');

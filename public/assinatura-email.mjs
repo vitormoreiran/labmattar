@@ -11,7 +11,12 @@ const picker = document.getElementById('compositionPicker');
 const previewDialog = document.getElementById('previewDialog'), zoomCanvas = document.getElementById('zoomCanvas');
 const example = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
 const exampleChannels = { instagram: true, whatsapp: true, linkedin: true, youtube: true, privacyUrl: true };
+const SYMBOL_VARIANTS = Object.freeze(Array.from({ length: 9 }, (_, index) => {
+  const number = String(index + 1).padStart(2, '0');
+  return { id: 'vaso-' + number, label: 'Vaso ' + number, source: '/identidade/vaso_' + number + '.svg' };
+}));
 const params = new URLSearchParams(location.search);
+let symbol = SYMBOL_VARIANTS.some(item => item.id === params.get('simbolo')) ? params.get('simbolo') : 'vaso-01';
 let composition = EMAIL_COMPOSITIONS.some(item => item.id === params.get('modelo')) ? params.get('modelo') : 'm-horizontal';
 let format = params.get('formato') === 'card' ? 'card' : 'email';
 let card, video, videoPromise, generation = 0, validated = false, controller, working = false, frameHandle = 0;
@@ -29,7 +34,7 @@ const readChannels = () => {
   channels.privacyUrl = form.elements.namedItem('privacyUrl').value.trim();
   return channels;
 };
-const options = (density = 2, channels = readChannels()) => ({ format, composition, colors: { ...colors }, channels, density });
+const options = (density = 2, channels = readChannels()) => ({ format, composition, symbol, colors: { ...colors }, channels, density });
 const exportDensity = () => format === 'email' ? 1 : 2;
 // Draw extra pixels for the enlarged screen preview, independently of exports.
 const previewDensity = () => Math.min(4, Math.max(2, Math.ceil((devicePixelRatio || 1) * 2)));
@@ -68,6 +73,20 @@ for (const [index, model] of EMAIL_COMPOSITIONS.entries()) {
     update();
   });
   document.getElementById('compositionOptions').append(button);
+}
+for (const variant of SYMBOL_VARIANTS) {
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'symbol-choice';
+  button.dataset.symbol = variant.id; button.setAttribute('aria-label', variant.label);
+  const image = new Image(); image.src = variant.source; image.alt = ''; image.decoding = 'async';
+  const caption = document.createElement('span'); caption.textContent = variant.label;
+  button.append(image, caption);
+  button.addEventListener('click', () => {
+    if (working) return;
+    pauseMotion(); symbol = variant.id;
+    const url = new URL(location.href); url.searchParams.set('simbolo', symbol); history.replaceState(null, '', url);
+    update();
+  });
+  document.getElementById('symbolOptions').append(button);
 }
 for (const group of document.querySelectorAll('[data-color-palette]')) {
   const key = group.dataset.colorPalette;
@@ -139,6 +158,8 @@ async function update() {
   const ticket = ++generation, value = read(), isExample = !fields.some(key => value[key]), size = cardSize(options());
   document.getElementById('exampleLabel').hidden = !isExample;
   picker.hidden = format !== 'email';
+  document.getElementById('symbolPicker').hidden = format !== 'email';
+  for (const button of document.querySelectorAll('button[data-symbol]')) button.setAttribute('aria-pressed', String(button.dataset.symbol === symbol));
   for (const button of document.querySelectorAll('button[data-format]')) button.setAttribute('aria-pressed', String(button.dataset.format === format));
   for (const button of document.querySelectorAll('button[data-composition]')) button.setAttribute('aria-pressed', String(button.dataset.composition === composition));
   stage.dataset.format = format; mount.style.maxWidth = size.width * 2 + 'px'; updateColors();
@@ -171,7 +192,7 @@ function valid() {
 }
 function busy(active) {
   working = active;
-  for (const input of document.querySelectorAll('input, button[data-format], button[data-composition], button[data-color-key], #resetColors, #downloadMotion, #downloadPNG, #downloadPNGHigh, #downloadHTML, #downloadContact, #copyText')) input.disabled = active;
+  for (const input of document.querySelectorAll('input, button[data-format], button[data-composition], button[data-symbol], button[data-color-key], #resetColors, #downloadMotion, #downloadPNG, #downloadPNGHigh, #downloadHTML, #downloadContact, #copyText')) input.disabled = active;
   form.setAttribute('aria-busy', String(active));
   document.querySelector('.export-progress').hidden = !active || !controller;
   controls();

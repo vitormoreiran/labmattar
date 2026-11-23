@@ -69,12 +69,12 @@
     "structural": {
       "name": "Univers LT Std 45 Light",
       "weight": 300,
-      "source": "https://labmattar.com/fonts/univers-lt-std-45-light.otf"
+      "source": "https://identidade.labmattar.com/fonts/univers-lt-std-45-light.otf"
     },
     "editorial": {
       "name": "Perpetua Titling MT Light",
       "weight": 300,
-      "source": "https://labmattar.com/fonts/perpetua-titling-light.ttf"
+      "source": "https://identidade.labmattar.com/fonts/perpetua-titling-light.ttf"
     },
     "roles": [
       "title",

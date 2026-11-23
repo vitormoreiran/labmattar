@@ -3,6 +3,7 @@ import path from 'node:path';
 import { IDENTITY_HOST } from '../site-oficial/worker/identity-domain.mjs';
 
 export async function configureIdentityDomain({ token, accountId, baseline, apply = false, fetcher = fetch }) {
+  if (apply) throw Error('O vínculo antigo da identidade ao Worker do portfólio foi desativado. Use migrate-identity-domain.mjs após validar o Worker exclusivo.');
   if (!token || accountId !== baseline.accountId || baseline.worker !== 'mattar-portfolio' || baseline.domain !== 'labmattar.com') {
     throw Error('A configuração exige a credencial e a conta do serviço oficial LABMATTAR.');
   }

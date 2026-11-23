@@ -157,7 +157,7 @@ jobs:
       - name: Validar seguranca do acervo
         run: node scripts/test-acervo.mjs
       - name: Validar contratos de páginas e elementos
-        run: node --test scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
+        run: node --test scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-official-routing.mjs scripts/test-deployment-boundaries.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main'
         shell: bash
@@ -297,6 +297,16 @@ jobs:
         with:
           name: laboratorio-site-${{ github.sha }}
           path: dist/client
+          retention-days: 7
+          if-no-files-found: error
+      - name: Guardar identidade compilada para Worker independente
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: identidade-site-${{ github.sha }}
+          path: |
+            dist/client
+            dist/server
           retention-days: 7
           if-no-files-found: error
       - name: Confirmar Redes Sociais na URL publicada

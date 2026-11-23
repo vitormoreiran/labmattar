@@ -87,10 +87,11 @@ export async function migrateIdentityDomain({
 
  let changed=false;
  if(apply&&before.identity.service===PREVIOUS_WORKER){
-  // Cloudflare's documented PUT body accepts hostname, service and zone_name.
-  // Do not pass enabled/previews_enabled: they are response fields, not body parameters.
+  // Preserve the active hostname and its preview-routing state; no DELETE or DNS writes.
+  // These fields are documented optional parameters for PUT /workers/domains.
   const bound=await api(endpoint,{method:'PUT',body:JSON.stringify({
-   hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain
+   hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain,
+   enabled:true,previews_enabled:before.identity.previews_enabled===true
   })});
   if(bound.result?.service!==TARGET_WORKER||bound.result?.hostname!==IDENTITY_HOST){
    throw Error('Resposta do novo vinculo nao corresponde ao Worker da identidade.');

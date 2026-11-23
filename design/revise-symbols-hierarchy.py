@@ -69,6 +69,7 @@ assert 'id="state-morph-svg"' not in html
 assert html.count('id="manual-states-script"') == 0
 assert html.count('class="lm-reading-intro"') == 1
 assert html.count('lm-identity-application') == 1
+html = re.sub(r'\n*(<link rel="stylesheet" href="/manual-symbols\.css)', r'\n\1', html)
 html = re.sub(r'\n*(<link rel="stylesheet" href="/motion)', r'\n\1', html)
 html = re.sub(r'\n*(<script defer src="/motion)', r'\n\1', html)
 html = re.sub(r'<h2 class="title">', '<h2 class="title lm-manual-section-title">', html)

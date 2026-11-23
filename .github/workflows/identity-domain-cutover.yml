@@ -1,0 +1,163 @@
+name: Verificar ou transferir dominio exclusivo da identidade
+# Manual only: does not publish, build, or edit the institutional portfolio.
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: SHA completo da identidade validada em workers.dev
+        type: string
+        required: true
+      mode:
+        description: Apenas conferir (padrao) ou transferir apos auditoria
+        type: choice
+        required: true
+        default: audit
+        options: [audit, apply]
+      audit_run_id:
+        description: Run ID de auditoria aprovada - obrigatorio apenas para apply
+        type: string
+        required: false
+      confirmation:
+        description: Para apply, digite VINCULAR IDENTIDADE AO WORKER EXCLUSIVO
+        type: string
+        required: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: labmattar-domain-cutover
+  cancel-in-progress: false
+jobs:
+  controlar:
+    name: Conferir e executar apenas acao autorizada
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    environment: preview
+    steps:
+      - name: Conferir a revisao atual e o consentimento
+        id: guard
+        uses: actions/github-script@v7
+        env:
+          EXPECTED_SHA: ${{ inputs.release_sha }}
+          CUTOVER_MODE: ${{ inputs.mode }}
+          AUDIT_RUN_ID: ${{ inputs.audit_run_id }}
+          CUTOVER_CONFIRM: ${{ inputs.confirmation }}
+        with:
+          script: |
+            if (context.ref !== 'refs/heads/main') throw Error('Somente main.');
+            const expected=process.env.EXPECTED_SHA;
+            if (!/^[a-f0-9]{40}$/.test(expected||'')) throw Error('SHA completo invalido.');
+            const {data:main}=await github.rest.git.getRef({...context.repo,ref:'heads/main'});
+            // The published Worker can precede an ops-only cutover PR. Never
+            // allow content, manual, portfolio or Worker changes after release.
+            if (main.object.sha!==expected) {
+              const {data:diff}=await github.rest.repos.compareCommits({
+                ...context.repo,base:expected,head:main.object.sha,per_page:100
+              });
+              const allowed=new Set([
+                '.github/workflows/identity-domain-cutover.yml',
+                'scripts/migrate-identity-domain.mjs',
+                'scripts/test-identity-domain.mjs',
+                'docs/identity-domain-cutover.md'
+              ]);
+              if (diff.status!=='ahead'||!Array.isArray(diff.files)||
+                  diff.files.length<1||diff.files.length>4||
+                  diff.files.some(file=>!allowed.has(file.filename))) {
+                throw Error('Conteudo alterado depois do release: revalidar e publicar o Worker exclusivo.');
+              }
+            }
+            core.setOutput('main_sha',main.object.sha);
+            const mode=process.env.CUTOVER_MODE;
+            if (!['audit','apply'].includes(mode)) throw Error('Modo invalido.');
+            if (mode==='apply') {
+              if (process.env.CUTOVER_CONFIRM!=='VINCULAR IDENTIDADE AO WORKER EXCLUSIVO') {
+                throw Error('Transferencia exige confirmacao explicita.');
+              }
+              const id=Number(process.env.AUDIT_RUN_ID);
+              if (!Number.isSafeInteger(id)||id<1) throw Error('audit_run_id invalido.');
+              const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
+              if (run.name!=='Verificar ou transferir dominio exclusivo da identidade'||
+                  run.event!=='workflow_dispatch'||run.conclusion!=='success'||
+                  run.head_branch!=='main'||run.head_sha!==main.object.sha||
+                  run.head_repository.full_name!==context.repo.owner+'/'+context.repo.repo) {
+                throw Error('Auditoria anterior precisa estar aprovada no mesmo main.');
+              }
+              const {data:artifacts}=await github.rest.actions.listWorkflowRunArtifacts({
+                ...context.repo,run_id:id,per_page:100
+              });
+              if (!artifacts.artifacts.some(a=>a.name==='identity-domain-audit-'+expected&&!a.expired)) {
+                throw Error('Auditoria anterior sem artefato correspondente a revisao.');
+              }
+            }
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.guard.outputs.main_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+      - name: Testar preservacao institucional e guardas de migracao
+        run: node --test scripts/test-identity-domain.mjs scripts/test-official-routing.mjs
+      - name: Auditar Cloudflare, identidade, Google e portfolio sem alterar vinculos
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          IDENTITY_RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          node scripts/migrate-identity-domain.mjs
+      - name: Guardar evidencia de auditoria sem segredos
+        if: inputs.mode == 'audit'
+        uses: actions/upload-artifact@v4
+        with:
+          name: identity-domain-audit-${{ inputs.release_sha }}
+          path: dist/identity-domain-audit.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Recuperar auditoria aprovada
+        if: inputs.mode == 'apply'
+        uses: actions/download-artifact@v4
+        with:
+          name: identity-domain-audit-${{ inputs.release_sha }}
+          run-id: ${{ inputs.audit_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist/cutover-evidence
+      - name: Confirmar comprovante e imutabilidade do portfolio
+        if: inputs.mode == 'apply'
+        env:
+          IDENTITY_RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          node --input-type=module -e '
+            import {readFileSync} from "node:fs";
+            const r=JSON.parse(readFileSync("dist/cutover-evidence/identity-domain-audit.json","utf8"));
+            if(r.mode!=="read-only" || r.changed!==false ||
+               r.revision!==process.env.IDENTITY_RELEASE_SHA ||
+               r.to!=="labmattar-identidade" ||
+               r.portfolio!=="labmattar.com" || r.portfolioWorker!=="mattar-portfolio" ||
+               r.googleConfigured!==true)
+              throw Error("A auditoria anterior nao corresponde ao estado exigido.");
+          '
+      - name: Transferir exclusivamente identidade.labmattar.com
+        if: inputs.mode == 'apply'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          IDENTITY_RELEASE_SHA: ${{ inputs.release_sha }}
+          IDENTITY_CUTOVER_CONFIRM: ${{ inputs.confirmation }}
+        run: node scripts/migrate-identity-domain.mjs --apply
+      - name: Verificar identidade no dominio oficial
+        if: inputs.mode == 'apply'
+        env:
+          EXPECTED_SHA: ${{ inputs.release_sha }}
+        run: node scripts/verify-identity-domain.mjs
+      - name: Arquivar confirmacao da transferencia
+        if: inputs.mode == 'apply' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: identity-domain-transfer-${{ inputs.release_sha }}
+          path: |
+            dist/identity-domain-migration.json
+            dist/identity-domain-audit.json
+          if-no-files-found: error
+          retention-days: 30

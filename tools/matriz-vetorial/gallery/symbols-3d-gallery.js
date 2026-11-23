@@ -142,8 +142,12 @@ if (root) {
 
   buttons.forEach(button => button.addEventListener("click", () => {
     const number = Number(button.dataset.vaso);
-    if (!ready) setup();
-    choose(number);
+    if (!ready) {
+      // setup() already invokes choose(active): avoid fetching P1 and the
+      // requested model simultaneously on the first direct interaction.
+      active = number;
+      setup();
+    } else choose(number);
   }));
   if ("IntersectionObserver" in window) {
     const watcher = new IntersectionObserver(entries => {

@@ -141,12 +141,13 @@ function paintChannelFooter(context, footer, colors) {
   context.save();
   context.fillStyle = colors.paper; context.fillRect(0, 100, 480, 32);
   context.globalAlpha = .28; context.fillStyle = colors.ink; context.fillRect(10, 100, 460, .5); context.globalAlpha = 1;
-  let x = 12;
-  for (const key of footer.links) {
-    const mark = SOCIAL_MARKS[key]; if (!mark) continue;
-    context.save(); context.translate(x, 108); context.scale(.58, .58);
-    context.fillStyle = colors.accent; context.fill(new Path2D(mark)); context.restore();
-    x += 20;
+  const visible = footer.links.filter(key => Boolean(SOCIAL_MARKS[key]));
+  const markSize = 14, gap = 12;
+  let x = (480 - (visible.length * markSize + Math.max(0, visible.length - 1) * gap)) / 2;
+  for (const key of visible) {
+    context.save(); context.translate(x, 108); context.scale(markSize / 24, markSize / 24);
+    context.fillStyle = colors.accent; context.fill(new Path2D(SOCIAL_MARKS[key])); context.restore();
+    x += markSize + gap;
   }
   context.restore();
 }

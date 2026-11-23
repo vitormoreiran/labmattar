@@ -105,7 +105,7 @@ export function cardLayout(data, { format = 'card', composition = 'm-horizontal'
   };
 }
 
-export async function createCard(data, { format = 'card', composition = 'm-horizontal', symbol = 'vaso-01', theme = 'paper', colors: customColors, channels, density = 2 } = {}) {
+export async function createCard(data, { format = 'card', composition = 'm-horizontal', symbol = 'published', theme = 'paper', colors: customColors, channels, density = 2 } = {}) {
   if (!CARD_FORMATS[format] || !CARD_THEMES[theme]) throw Error('Composição desconhecida.');
   if (format === 'email' && !/^vaso-(0[1-9])$/.test(symbol) && symbol !== 'published') throw Error('Símbolo desconhecido.');
   if (!Number.isInteger(density) || density < 1 || density > 4) throw Error('Resolução de desenho inválida.');

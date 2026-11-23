@@ -131,8 +131,10 @@ if(process.argv[1]&&path.resolve(process.argv[1])===import.meta.filename){
   expectedSha:process.env.IDENTITY_RELEASE_SHA,
   confirmation:process.env.IDENTITY_CUTOVER_CONFIRM
  });
+ await mkdir('dist',{recursive:true});
+ // Audit artifact contains only non-secret routing evidence.
+ await writeFile('dist/identity-domain-audit.json',JSON.stringify(result,null,2)+'\n');
  if(result.changed){
-  await mkdir('dist',{recursive:true});
   await writeFile('dist/identity-domain-migration.json',JSON.stringify(result,null,2)+'\n');
  }
  console.log(JSON.stringify(result));

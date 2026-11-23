@@ -7,6 +7,7 @@ on:
       - 'public/lab-desk*'
       - 'public/lab-project-library.mjs'
       - 'scripts/test-lab-desk.mjs'
+      - 'scripts/test-lab-project-write-queue.mjs'
       - 'scripts/smoke-lab-desk.mjs'
       - 'public/apresentacoes/**'
       - 'public/laboratorio-index.css'
@@ -86,6 +87,12 @@ on:
       - '.github/workflows/composition-browser.yml'
   workflow_dispatch:
 
+# Superseded pull-request revisions do not need to finish the expensive suite.
+# Keep main/release runs independent and do not change deployment guards.
+concurrency:
+  group: labmattar-composition-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -99,7 +106,7 @@ jobs:
         with:
           node-version: '22'
       - name: Validar contrato de documento v1
-        run: node --test scripts/test-lab-desk.mjs scripts/test-presentation-gallery.mjs scripts/test-lab-story-presets.mjs scripts/test-lab-story.mjs scripts/test-chapter4-publication.mjs scripts/test-lab-sequence.mjs scripts/test-lab-section-web.mjs scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
+        run: node --test scripts/test-lab-project-write-queue.mjs scripts/test-lab-desk.mjs scripts/test-presentation-gallery.mjs scripts/test-lab-story-presets.mjs scripts/test-lab-story.mjs scripts/test-chapter4-publication.mjs scripts/test-lab-sequence.mjs scripts/test-lab-section-web.mjs scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-composicao-document.mjs scripts/test-approved-applications.mjs
       - name: Instalar navegador de testes
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2

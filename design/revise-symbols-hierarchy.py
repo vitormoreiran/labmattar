@@ -26,7 +26,7 @@ html = re.sub(r'<link[^>]*href="/manual-symbols\.css[^>]*>', '', html)
 html = re.sub(r'<script[^>]*src="/(?:vendor/MorphSVGPlugin|manual-symbols)\.js[^>]*>\s*</script>', '', html)
 html = re.sub(r'<link[^>]*href="/motion\.css[^>]*>', '', html)
 html = re.sub(r'<script[^>]*src="/motion\.js[^>]*>\s*</script>', '', html)
-html = html.replace('</head>', '<link rel="stylesheet" href="/motion.css"/>\n<script defer src="/motion.js"></script>\n</head>', 1)
+html = html.replace('</head>', '<link rel="stylesheet" href="/manual-symbols.css"/>\n<link rel="stylesheet" href="/motion.css"/>\n<script defer src="/motion.js"></script>\n</head>', 1)
 html = html.replace('href="#transformacao">Transformação', 'href="#transformacao">Motion')
 rules = re.search(r'<section class="chapter" id="regras">.*?</section>', html, re.S)
 if rules:

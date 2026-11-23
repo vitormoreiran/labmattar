@@ -61,6 +61,16 @@ test('legacy action cannot restore coupling between portfolio and identity',asyn
  assert.ok(api.calls.every(x=>x.method==='GET'));
 });
 
+test('read-only legacy check accepts migrated identity Worker without restoring old coupling',async()=>{
+ const api=fakeCloudflare({service:TARGET_WORKER});
+ const result=await configureIdentityDomain({...settings,fetcher:api.fetcher});
+ assert.equal(result.service,TARGET_WORKER);
+ assert.equal(result.mode,'read-only');
+ assert.equal(result.changed,false);
+ assert.equal(result.alreadyActive,true);
+ assert.ok(api.calls.every(x=>x.method==='GET'));
+});
+
 test('audit checks the exact identity release and portfolio without any writes',async()=>{
  const api=fakeCloudflare();
  const result=await migrateIdentityDomain({...settings,expectedSha:sha,fetcher:api.fetcher});

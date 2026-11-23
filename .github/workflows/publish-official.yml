@@ -28,12 +28,37 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const runId=context.eventName==='workflow_run'?context.payload.workflow_run.id:Number(context.payload.inputs.build_run_id);
+            // Reuse an approved main preview only if subsequent changes are
+            // operational metadata, never content or portfolio source.
+            if(context.ref!=='refs/heads/main')throw Error('Publicacao oficial somente na branch main.');
+            const runId=Number(context.payload.inputs.build_run_id);
+            if(!Number.isSafeInteger(runId)||runId<1)throw Error('ID de preview invalido.');
             const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:runId});
             const {data:main}=await github.rest.git.getRef({...context.repo,ref:'heads/main'});
             if(run.name!=='Publicar previa LABMATTAR'||run.conclusion!=='success'||run.head_branch!=='main'||run.head_repository.full_name!==`${context.repo.owner}/${context.repo.repo}`||!['push','workflow_dispatch'].includes(run.event))throw Error('Use um build validado do repositório oficial no main.');
-            if(main.object.sha!==run.head_sha){core.notice('Build anterior ao main atual; publicação ignorada.');core.setOutput('eligible','false');return;}
-            core.setOutput('eligible','true');core.setOutput('sha',run.head_sha);core.setOutput('run',String(run.id));
+            if(main.object.sha!==run.head_sha){
+              const {data:diff}=await github.rest.repos.compareCommits({
+                ...context.repo,base:run.head_sha,head:main.object.sha,per_page:100
+              });
+              const opsOnly=new Set([
+                '.github/workflows/identity-domain-cutover.yml',
+                '.github/workflows/publish-official.yml',
+                'docs/identity-domain-cutover.md',
+                'scripts/configure-identity-domain.mjs',
+                'scripts/migrate-identity-domain.mjs',
+                'scripts/test-identity-domain.mjs'
+              ]);
+              if(diff.status!=='ahead'||!Array.isArray(diff.files)||
+                 diff.files.length<1||diff.files.length>opsOnly.size||
+                 diff.files.some(file=>!opsOnly.has(file.filename))){
+                throw Error('O main recebeu alterações de conteúdo desde a prévia aprovada: gere um novo build antes de publicar o portfólio.');
+              }
+              core.notice('Prévia anterior reutilizada somente porque o main mudou em arquivos operacionais de migração.');
+            }
+            core.setOutput('eligible','true');
+            core.setOutput('sha',main.object.sha);
+            core.setOutput('asset_sha',run.head_sha);
+            core.setOutput('run',String(run.id));
       - uses: actions/checkout@v4
         if: steps.source.outputs.eligible == 'true'
         with:
@@ -48,7 +73,7 @@ jobs:
       - uses: actions/download-artifact@v4
         if: steps.source.outputs.eligible == 'true'
         with:
-          name: laboratorio-site-${{ steps.source.outputs.sha }}
+          name: laboratorio-site-${{ steps.source.outputs.asset_sha }}
           path: dist/laboratorio-client
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ steps.source.outputs.run }}

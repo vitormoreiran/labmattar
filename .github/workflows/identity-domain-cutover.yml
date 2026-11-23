@@ -48,9 +48,25 @@ jobs:
             const expected=process.env.EXPECTED_SHA;
             if (!/^[a-f0-9]{40}$/.test(expected||'')) throw Error('SHA completo invalido.');
             const {data:main}=await github.rest.git.getRef({...context.repo,ref:'heads/main'});
+            // The published Worker can precede an ops-only cutover PR. Never
+            // allow content, manual, portfolio or Worker changes after release.
             if (main.object.sha!==expected) {
-              throw Error('Revisao nao e o main atual: reconstruir e validar identidade antes de migrar.');
+              const {data:diff}=await github.rest.repos.compareCommits({
+                ...context.repo,base:expected,head:main.object.sha,per_page:100
+              });
+              const allowed=new Set([
+                '.github/workflows/identity-domain-cutover.yml',
+                'scripts/migrate-identity-domain.mjs',
+                'scripts/test-identity-domain.mjs',
+                'docs/identity-domain-cutover.md'
+              ]);
+              if (diff.status!=='ahead'||!Array.isArray(diff.files)||
+                  diff.files.length<1||diff.files.length>4||
+                  diff.files.some(file=>!allowed.has(file.filename))) {
+                throw Error('Conteudo alterado depois do release: revalidar e publicar o Worker exclusivo.');
+              }
             }
+            core.setOutput('main_sha',main.object.sha);
             const mode=process.env.CUTOVER_MODE;
             if (!['audit','apply'].includes(mode)) throw Error('Modo invalido.');
             if (mode==='apply') {
@@ -62,7 +78,7 @@ jobs:
               const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
               if (run.name!=='Verificar ou transferir dominio exclusivo da identidade'||
                   run.event!=='workflow_dispatch'||run.conclusion!=='success'||
-                  run.head_branch!=='main'||run.head_sha!==expected||
+                  run.head_branch!=='main'||run.head_sha!==main.object.sha||
                   run.head_repository.full_name!==context.repo.owner+'/'+context.repo.repo) {
                 throw Error('Auditoria anterior precisa estar aprovada no mesmo main.');
               }
@@ -75,7 +91,7 @@ jobs:
             }
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.release_sha }}
+          ref: ${{ steps.guard.outputs.main_sha }}
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:

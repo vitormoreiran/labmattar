@@ -334,6 +334,28 @@ try {
       'Expanded M must preserve the SVG central proportions on '+width);
     await expanded.screenshot({path:`symbols-proof/${phase}-expanded-m-${width}.png`});
   }
+  // The 3D gallery loads only when visible. Complete the real GLB downloads
+  // before navigating this page to /editor, otherwise Chromium aborts an
+  // in-flight P1.glb fetch and reports a false network regression.
+  // Do not suppress ERR_ABORTED: assert that the viewer actually loads all
+  // nine approved numeric models and that the selection is functional.
+  const vesselGallery=page.locator('#lm-vasos3d');
+  await vesselGallery.scrollIntoViewIfNeeded();
+  const loadedVessels=[];
+  for(const number of [1,2,3,4,5,6,7,8,9]){
+    if(number!==1) await vesselGallery.locator('[data-vaso="'+number+'"]').click();
+    await page.waitForFunction(n=>{
+      const el=document.querySelector('#lm-vasos3d');
+      return el?.dataset.active===String(n)&&el.dataset.ready==='true';
+    },number,{timeout:45000});
+    assert.equal(await vesselGallery.locator('[data-vaso="'+number+'"]').getAttribute('aria-pressed'),'true',
+      'Selected 3D vessel '+number+' must be active after its model loads');
+    loadedVessels.push(number);
+  }
+  const canvasSize=await vesselGallery.locator('canvas').evaluate(el=>({width:el.width,height:el.height}));
+  assert.ok(canvasSize.width>0&&canvasSize.height>0,'The 3D canvas must have a rendering surface');
+  report.threeDimensional={loadedVessels,canvasSize};
+  await vesselGallery.screenshot({path:`symbols-proof/${phase}-vessels-3d-390.png`});
   const motionPage=await browser.newPage({viewport:{width:390,height:844}});
   try{
     await motionPage.goto(new URL('/motion.html',url).href,{waitUntil:'networkidle'});

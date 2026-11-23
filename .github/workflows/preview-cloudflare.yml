@@ -159,7 +159,7 @@ jobs:
       - name: Validar contratos de páginas e elementos
         run: node --test scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-official-routing.mjs scripts/test-deployment-boundaries.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar Workers preview
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         shell: bash
         run: |
           test -f dist/server/index.js
@@ -204,7 +204,7 @@ jobs:
           }
           JSON
       - name: Publicar apenas Worker de previa
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -292,7 +292,7 @@ jobs:
           node scripts/build-official.mjs dist/client dist/oficial-checked
           npx --no-install wrangler deploy --dry-run --config dist/oficial-checked/wrangler.jsonc --outdir dist/oficial-check-bundle
       - name: Guardar Laboratório validado para o site oficial
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         uses: actions/upload-artifact@v4
         with:
           name: laboratorio-site-${{ github.sha }}
@@ -310,7 +310,7 @@ jobs:
           retention-days: 7
           if-no-files-found: error
       - name: Confirmar Redes Sociais na URL publicada
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         shell: bash
         run: |
           set -euo pipefail
@@ -329,7 +329,7 @@ jobs:
           echo "Redes Sociais: deploy nao confirmado. Consultar passos anteriores."
           exit 1
       - name: Confirmar entrega de fotografia real do 01_Portfolio
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         shell: bash
         run: |
           set -euo pipefail
@@ -349,7 +349,7 @@ jobs:
           echo "Falha: Worker nao conseguiu carregar uma fotografia real do acervo."
           exit 1
       - name: Verificar manual e matriz na URL publicada
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         env:
           MANUAL_URL: https://labmattar-identidade-previa.vitormoreiran.workers.dev/manual?verify=${{ github.sha }}
           CHECK_EDITOR: '1'

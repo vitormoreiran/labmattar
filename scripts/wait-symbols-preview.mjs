@@ -11,7 +11,12 @@ try {
  for(let attempt=0;attempt<18;attempt++){
   const stamp=Date.now();
   const manual=await page.goto(base+'/manual?publication='+stamp,{waitUntil:'domcontentloaded',timeout:30000});
-  const correct=manual.status()===200&&await page.locator('.motion-symbol-preview[data-motion-version="20261104-groups"]').count()===1;
+  const manualVersion=await page.evaluate(()=>({
+    current:!!document.querySelector('#uso.lm-identity-application .lm-expanded-center img'),
+    legacy:!!document.querySelector('.motion-symbol-preview[data-motion-version="20261104-groups"]'),
+    redundantSections:!!document.querySelector('#transformacao,#ferramenta,#regras')
+  }));
+  const correct=manual.status()===200&&manualVersion.current&&!manualVersion.legacy&&!manualVersion.redundantSections;
   const composition=await page.goto(base+'/composicao.html?publication='+stamp,{waitUntil:'domcontentloaded',timeout:30000});
   const constructionReady=composition.status()===200&&
     await page.locator('#construcao').count()===1&&
@@ -34,7 +39,7 @@ try {
    await page.waitForSelector('.lm-root[aria-busy="false"]',{timeout:60000});
    ready=true;console.log('Published laboratory index points to the current Matrix; isolated Compor and the preserved contour editor are ready.');break;
   }
-  console.log('Published assets not yet consistent:',JSON.stringify({manual:correct,construction:constructionReady,laboratory:labReady,composition:compositionReady,editor:editor.status(),tools}));
+  console.log('Published assets not yet consistent:',JSON.stringify({manual:correct,manualVersion,construction:constructionReady,laboratory:labReady,composition:compositionReady,editor:editor.status(),tools}));
   await page.waitForTimeout(5000);
  }
  if(!ready)throw new Error('Published manual and editor did not become consistent');

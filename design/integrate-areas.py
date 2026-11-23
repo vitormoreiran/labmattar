@@ -75,6 +75,13 @@ for filename,area in areas.items():
  p=Path("public")/filename
  assert p.exists(),filename
  s=p.read_text(encoding="utf-8")
+ # Remove reviewed redundancies from the authored source rather than hiding
+ # them with review-only CSS.
+ if area=="introducao":
+  s=s.replace('<p class="eyebrow">00 / INTRODUÇÃO</p>', '')
+  s=s.replace('<a class="link" href="#sistemas">CONHECER OS SISTEMAS ↓</a>', '')
+  s=s.replace('<p class="eyebrow">APRESENTAÇÃO AUDIOVISUAL</p>', '')
+  s=s.replace('<h2>Apresentação <em>da identidade</em></h2>', '<h2>APRESENTAÇÃO <em>DA IDENTIDADE</em></h2>')
  # Replace any source-local menu by the one unified menu.
  s=re.sub(r'<nav class="lm-site-nav"[^>]*>.*?</nav>',"",s,flags=re.S)
  s=re.sub(r'<style id="lm-site-navigation-style">.*?</style>',"",s,flags=re.S)

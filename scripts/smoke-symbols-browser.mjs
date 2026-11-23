@@ -22,7 +22,7 @@ const check = (ok,message) => assert.ok(ok,message);
 try {
   const response = await page.goto(url,{waitUntil:'networkidle',timeout:60000});
   assert.equal(response.status(),200,'Manual HTTP 200');
-  await page.waitForSelector('.motion-symbol-preview[data-motion-version="20261104-groups"] video');
+  await page.waitForSelector('#uso.lm-identity-application .lm-expanded-center img');
   await page.evaluate(()=>document.fonts.ready);
   report.fonts = await page.evaluate(()=>[...document.fonts].map(f=>({family:f.family,status:f.status})));
   for (const family of ['UniversMattar','PerpetuaMattar']) check(report.fonts.some(f=>f.family===family&&f.status==='loaded'),`Official font loaded: ${family}`);
@@ -218,7 +218,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':6,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
+        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();
@@ -295,18 +295,38 @@ try {
     }
   }
   await page.setViewportSize({width:1440,height:900});
-  assert.equal(await page.locator('.state-explorer, #state-morph-svg').count(),0,'Contour demo has been replaced');
-  const symbolVideo=page.locator('.motion-symbol-preview video');
-  assert.equal(await symbolVideo.locator('source').getAttribute('src'),'/motion/videos/m-form.mp4');
-  assert.deepEqual(await symbolVideo.evaluate(video=>({autoplay:video.autoplay,muted:video.muted,loop:video.loop,controls:video.controls,inline:video.playsInline})),{autoplay:false,muted:true,loop:true,controls:false,inline:true});
-  assert.equal(await symbolVideo.evaluate(video=>video.paused),true);
-  await page.locator('.motion-symbol-preview .motion-ink-toggle').click();
-  await page.waitForFunction(()=>document.querySelector('.motion-symbol-preview video').currentTime>0.1);
-  await symbolVideo.evaluate(video=>{video.currentTime=video.duration-0.15;});
-  await page.waitForFunction(()=>{const v=document.querySelector('.motion-symbol-preview video');return !v.paused&&v.currentTime<1.5;});
-  for(const width of [1440,390]){
+  assert.equal(await page.locator('.state-explorer, #state-morph-svg, #transformacao, #ferramenta, #regras').count(),0,
+    'Retired contour, Motion and tools sections must not reappear in Symbols');
+  assert.equal(await page.locator('#uso.lm-identity-application .lm-application-axis').count(),4,
+    'Four concise application examples in Symbols');
+  assert.equal(await page.locator('#uso video, .motion-symbol-preview video').count(),0,
+    'Motion videos belong to the Motion chapter only');
+  const expanded = page.locator('#uso .lm-application-expanded');
+  assert.equal(await expanded.locator('.lm-expanded-field').count(),2,'Expanded M has two continuous side fields');
+  assert.equal(await expanded.locator('.lm-expanded-center img').getAttribute('src'),'/identidade/M.svg',
+    'Expanded M uses approved central geometry');
+  for (const width of [1440,390]) {
     await page.setViewportSize({width,height:900});
-    await page.locator('#transformacao').screenshot({path:`symbols-proof/${phase}-motion-${width}.png`});
+    const fields=await expanded.evaluate(el=>{
+      const left=el.querySelector('.lm-expanded-field');
+      const right=el.querySelector('.lm-expanded-field:last-child');
+      const img=el.querySelector('.lm-expanded-center img');
+      const bb=e=>e.getBoundingClientRect();
+      const a=bb(left),b=bb(right),m=bb(img),frame=bb(el);
+      return {
+        frameWidth:frame.width,leftWidth:a.width,rightWidth:b.width,
+        sideColor:getComputedStyle(left).backgroundColor,
+        otherColor:getComputedStyle(right).backgroundColor,
+        imageLoaded:img.complete&&img.naturalWidth>0,
+        aspectError:Math.abs((m.width/m.height)-(img.naturalWidth/img.naturalHeight))
+      };
+    });
+    assert.ok(fields.frameWidth>0&&fields.leftWidth>8&&fields.rightWidth>8,
+      'Expanded M must fill both sides on '+width);
+    assert.equal(fields.sideColor,fields.otherColor,'Expanded sides use a single color');
+    assert.ok(fields.imageLoaded&&fields.aspectError<0.02,
+      'Expanded M must preserve the SVG central proportions on '+width);
+    await expanded.screenshot({path:`symbols-proof/${phase}-expanded-m-${width}.png`});
   }
   const motionPage=await browser.newPage({viewport:{width:390,height:844}});
   try{
@@ -322,18 +342,18 @@ try {
     assert.equal(await motionPage.locator('.motion-card video').evaluateAll(videos=>videos.every(v=>v.paused&&!v.autoplay)),true);
     await motionPage.locator('.motion-card .motion-ink-toggle').first().click();
     await motionPage.waitForFunction(()=>document.querySelector('.motion-card video').currentTime>0.1);
-    assert.doesNotMatch(await motionPage.locator('main').innerText(),/aprovad|avaliação/i);
+    assert.match(await motionPage.locator('main').innerText(),/M, VASOS E MATTAR/,'Approved transformations are explained');
     for(const width of [1440,390]){
       await motionPage.setViewportSize({width,height:900});
       assert.equal(await motionPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No Motion document overflow');
       await motionPage.screenshot({path:`symbols-proof/${phase}-motion-gallery-${width}.png`,fullPage:true});
     }
-    report.motion={groups:[1,4,3],players:8,statusLabels:false,symbolVideoPlayback:true};
+    report.motion={groups:[1,4,3],players:8,statusLabels:false,readerInitiatedPlayback:true};
   }finally{await motionPage.close();}
   await page.setViewportSize({width:390,height:844});
-  await page.locator('header.top a[href="#estrutura"]').click();await page.waitForTimeout(100);
-  const menus=await page.evaluate(()=>({nav:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,header:document.querySelector('header.top').getBoundingClientRect().top,headerBottom:document.querySelector('header.top').getBoundingClientRect().bottom,title:document.querySelector('#estrutura h2').getBoundingClientRect().top}));
-  check(menus.header>=menus.nav-1,'Sticky menus do not overlap');check(menus.title>=menus.headerBottom-1,'Anchor title is visible');
+  assert.equal(await page.locator('header.top').count(),0,'Obsolete local navigation removed');
+  assert.equal(await page.locator('.lm-site-nav a[data-area="simbolos"][aria-current="page"]').count(),1,
+    'Canonical navigation identifies the Symbols chapter');
   for(const file of ['M.svg',...Array.from({length:9},(_,i)=>`vaso_${String(i+1).padStart(2,'0')}.svg`)]) {
     const r=await page.request.get(new URL('/identidade/'+file,url).href);assert.equal(r.status(),200,'Official asset '+file);
   }

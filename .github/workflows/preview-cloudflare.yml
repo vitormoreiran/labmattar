@@ -63,7 +63,7 @@ on:
       - 'scripts/prepare-motion.mjs'
       - 'scripts/smoke-symbols-browser.mjs'
   push:
-    branches: [main, fix/manual-symbols-verified, review/simbolos-motion-20261123]
+    branches: [main, fix/manual-symbols-verified]
     paths:
       - '.github/workflows/preview-cloudflare.yml'
       - 'site-oficial/**'

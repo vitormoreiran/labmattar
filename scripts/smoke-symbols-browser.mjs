@@ -218,7 +218,17 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':6,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
+        // The reviewed Symbols page has five headings after Motion moves to its
+        // own chapter. The legacy page has six. Verify the two valid structures
+        // explicitly during migration instead of accepting an arbitrary count.
+        let symbolsHeadingCount=6;
+        if(area==='manual.html'){
+          const reviewed=await areaPage.locator('#uso.lm-identity-application').count()===1;
+          const legacy=await areaPage.locator('#transformacao').count()===1;
+          assert.notEqual(reviewed,legacy,'Exactly one Symbols chapter structure must be present');
+          symbolsHeadingCount=reviewed?5:6;
+        }
+        const expected={'manual.html':symbolsHeadingCount,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();

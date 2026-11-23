@@ -44,6 +44,7 @@ jobs:
                 '.github/workflows/identity-domain-cutover.yml',
                 '.github/workflows/publish-official.yml',
                 'docs/identity-domain-cutover.md',
+                'scripts/configure-identity-domain.mjs',
                 'scripts/migrate-identity-domain.mjs',
                 'scripts/test-identity-domain.mjs'
               ]);

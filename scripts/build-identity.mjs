@@ -11,7 +11,8 @@ export async function assembleIdentity({client,server,output,sha='local'}) {
  if(!(await stat(path.join(server,'index.js')).catch(()=>null)))throw Error('Missing identity server bundle');
  await mkdir(path.join(output,'worker'),{recursive:true});
  await cp(client,path.join(output,'public'),{recursive:true});
- await cp(path.join(server,'index.js'),path.join(output,'worker/index.js'));
+ // Keep all Vinext server chunks: index.js can import siblings at runtime.
+ await cp(server,path.join(output,'worker'),{recursive:true,force:true});
  await cp(path.resolve('scripts/acervo-api.mjs'),path.join(output,'worker/acervo-api.mjs'));
  await cp(path.resolve('identity/worker/entry.mjs'),path.join(output,'worker/entry.mjs'));
  // Uses no portfolio Worker, legacy published assets, or institutional D1 database.

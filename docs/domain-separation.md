@@ -1,6 +1,6 @@
 # LABMATTAR — separação definitiva entre site e identidade
 
-**Status:** implementação em branch isolada. NÃO integrar nem trocar o domínio antes dos testes.
+**Status:** implementação em branch isolada. Validar PR antes de integrá-la; não trocar o domínio nem publicar o portfólio limpo antes de validar o novo Worker.
 **Objetivo:** uma única publicação oficial da identidade em `https://identidade.labmattar.com`, sem páginas, ferramentas ou API do manual em `https://labmattar.com`.
 
 ## Propriedade de cada serviço
@@ -25,7 +25,7 @@ Compartilham **repositório**, não Worker, pacote de assets, vinculação de do
 ## Sequência segura de implantação
 
 1. **Congelar evidências**: anotar revisão e versão Cloudflare ativas em ambos os endereços, guardar o histórico do Worker `mattar-portfolio` e inventariar conteúdo institucional acrescentado ao baseline. Confirmar que a montagem institucional conserva os 658 arquivos-base, correção de galeria e apresentações publicadas.
-2. **Construir e validar o Worker exclusivo**: usar `Preparar Worker exclusivo da identidade` apontando para um run válido da prévia no `main`. Primeira execução com `deploy_staging=false` (dry run); depois, apenas com o resultado conferido, `deploy_staging=true`. Isso publica somente `labmattar-identidade.vitormoreiran.workers.dev`, sem tocar nos dois domínios oficiais.
+2. **Integrar código, sem publicar os domínios**: após CI do PR, integrar ao main (o fluxo do portfólio está manual, portanto esse merge não deve atualizar `labmattar.com`). Em seguida, **construir e validar o Worker exclusivo**: usar `Preparar Worker exclusivo da identidade` apontando para um run válido da prévia no `main`. Primeira execução com `deploy_staging=false` (dry run); depois, apenas com o resultado conferido, `deploy_staging=true`. Isso publica somente `labmattar-identidade.vitormoreiran.workers.dev`, sem tocar nos dois domínios oficiais.
 3. **Configurar segredos no novo Worker**: verificar OAuth/Google, Dropbox, chave de sessão, origem `LM_ACERVO_ORIGIN=https://identidade.labmattar.com` e URLs autorizadas nos provedores. Cookies/sessões do usuário devem continuar no hostname da identidade. Nunca copiar segredos ao repositório.
 4. **Auditar pré-produção**: introdução, capítulos 01–07, Matriz, composição, assinatura, mídias, exportações e mobile. Os recursos estáticos devem carregar no Worker independente; confirmar o hash do manifesto `laboratorio-release.json`.
 5. **Migrar SOMENTE o domínio da identidade**: usar `scripts/migrate-identity-domain.mjs` com `IDENTITY_RELEASE_SHA`, credenciais Cloudflare e confirmação textual `IDENTITY_CUTOVER_CONFIRM='VINCULAR IDENTIDADE AO WORKER EXCLUSIVO'`, primeiro sem `--apply`, depois com `--apply`. A API faz PUT no vínculo existente, sem apagar registros DNS nem projetos.

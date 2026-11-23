@@ -30,8 +30,14 @@ function fakeCloudflare({service=PREVIOUS_WORKER,google=true,portfolio=PREVIOUS_
   if(url.includes('/workers/domains')){
    if(method==='PUT'){
     const body=JSON.parse(options.body);
-    assert.deepEqual(Object.keys(body).sort(),['enabled','hostname','previews_enabled','service','zone_name']);
-    assert.deepEqual(body,{hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain,enabled:true,previews_enabled:false});
+    assert.deepEqual(Object.keys(body).sort(),['enabled','hostname','override_existing_origin','previews_enabled','service','zone_name']);
+    assert.deepEqual(body,{
+     hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain,
+     enabled:true,previews_enabled:false,override_existing_origin:true
+    });
+    // Cloudflare 409/100116 if the existing origin is not explicitly overridden.
+    // The fake models the same constraint so no future change can silently
+    // remove the flag and break the real custom-domain cutover again.
     identityService=TARGET_WORKER;
     return Response.json({success:true,result:{hostname:IDENTITY_HOST,service:TARGET_WORKER}});
    }
@@ -79,6 +85,22 @@ test('apply transfers only identidade.labmattar.com and confirms mapping',async(
  assert.equal(writes[0].method,'PUT');
  assert.equal(writes[0].url,'https://api.cloudflare.com/client/v4/accounts/'+baseline.accountId+'/workers/domains');
  assert.equal(result.portfolio,baseline.domain);
+});
+
+test('cutover does not touch the institutional hostname when overriding the identity origin',async()=>{
+ const api=fakeCloudflare();
+ const result=await migrateIdentityDomain({...settings,expectedSha:sha,apply:true,confirmation,fetcher:api.fetcher});
+ assert.equal(result.portfolio,'labmattar.com');
+ assert.equal(result.portfolioWorker,PREVIOUS_WORKER);
+ assert.equal(api.getIdentity(),TARGET_WORKER);
+ assert.equal(api.calls.filter(x=>x.method==='PUT').length,1);
+ const put=JSON.parse(api.calls.find(x=>x.method==='PUT').body);
+ assert.equal(put.hostname,IDENTITY_HOST);
+ assert.notEqual(put.hostname,'labmattar.com');
+ assert.equal(put.override_existing_origin,true);
+ assert.equal(Object.hasOwn(put,'override_existing_dns_record'),false);
+ assert.equal(Object.hasOwn(put,'override_scope'),false);
+ assert.equal(api.calls.filter(x=>x.method==='DELETE').length,0);
 });
 
 test('already-transferred identity is idempotent; never attempts PUT again',async()=>{

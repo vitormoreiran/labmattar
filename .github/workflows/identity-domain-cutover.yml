@@ -48,23 +48,24 @@ jobs:
             const expected=process.env.EXPECTED_SHA;
             if (!/^[a-f0-9]{40}$/.test(expected||'')) throw Error('SHA completo invalido.');
             const {data:main}=await github.rest.git.getRef({...context.repo,ref:'heads/main'});
-            // The published Worker can precede an ops-only cutover PR. Never
-            // allow content, manual, portfolio or Worker changes after release.
-            if (main.object.sha!==expected) {
+            // Only these operational files can differ from the deployed release.
+            // No change to institutional chapters, manual assets, or Workers.
+            const allowed=new Set([
+              '.github/workflows/identity-domain-cutover.yml',
+              'scripts/migrate-identity-domain.mjs',
+              'scripts/test-identity-domain.mjs',
+              'docs/identity-domain-cutover.md'
+            ]);
+            async function opsOnlySince(base,head) {
               const {data:diff}=await github.rest.repos.compareCommits({
-                ...context.repo,base:expected,head:main.object.sha,per_page:100
+                ...context.repo,base,head,per_page:100
               });
-              const allowed=new Set([
-                '.github/workflows/identity-domain-cutover.yml',
-                'scripts/migrate-identity-domain.mjs',
-                'scripts/test-identity-domain.mjs',
-                'docs/identity-domain-cutover.md'
-              ]);
-              if (diff.status!=='ahead'||!Array.isArray(diff.files)||
-                  diff.files.length<1||diff.files.length>4||
-                  diff.files.some(file=>!allowed.has(file.filename))) {
-                throw Error('Conteudo alterado depois do release: revalidar e publicar o Worker exclusivo.');
-              }
+              return diff.status==='ahead'&&Array.isArray(diff.files)&&
+                diff.files.length>0&&diff.files.length<=allowed.size&&
+                diff.files.every(file=>allowed.has(file.filename));
+            }
+            if (main.object.sha!==expected&&!(await opsOnlySince(expected,main.object.sha))) {
+              throw Error('Conteudo alterado depois do release: revalidar e publicar o Worker exclusivo.');
             }
             core.setOutput('main_sha',main.object.sha);
             const mode=process.env.CUTOVER_MODE;
@@ -78,9 +79,16 @@ jobs:
               const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
               if (run.name!=='Verificar ou transferir dominio exclusivo da identidade'||
                   run.event!=='workflow_dispatch'||run.conclusion!=='success'||
-                  run.head_branch!=='main'||run.head_sha!==main.object.sha||
+                  run.head_branch!=='main'||
                   run.head_repository.full_name!==context.repo.owner+'/'+context.repo.repo) {
-                throw Error('Auditoria anterior precisa estar aprovada no mesmo main.');
+                throw Error('Auditoria anterior precisa ser de main no mesmo repositorio.');
+              }
+              // A previously successful audit remains acceptable when the only
+              // later commits are guarded cutover script changes. This apply run
+              // repeats the complete read-only preflight before any domain write.
+              if (run.head_sha!==main.object.sha&&
+                  !(await opsOnlySince(run.head_sha,main.object.sha))) {
+                throw Error('A auditoria foi feita antes de mudancas de conteudo; refaca a auditoria.');
               }
               const {data:artifacts}=await github.rest.actions.listWorkflowRunArtifacts({
                 ...context.repo,run_id:id,per_page:100

@@ -58,8 +58,10 @@ A operacao de reversao deve ser decidida e registrada separadamente.
 
 ## Pontos de atencao
 
-- Uma alteracao posterior em `main` exige novo build do Worker exclusivo,
-  novo teste e nova auditoria; o workflow bloqueia SHA antigo.
+- Alteracoes posteriores em `main` que afetem conteudo, ferramentas ou Workers exigem
+  novo build do Worker exclusivo, novo teste e nova auditoria. A integracao deste
+  proprio PR, limitada aos quatro arquivos operacionais, e a unica excecao
+  automatica verificada pelo workflow.
 - O workflow `audit` nao transfere dominio.
 - `apply` e a unica operacao capaz de alterar vinculo Cloudflare neste
   fluxo; nunca a executar sem a auditoria.

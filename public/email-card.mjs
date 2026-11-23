@@ -64,8 +64,13 @@ export function cardResources() {
     const logo = new Image(); logo.src = '/presentation-assets/mattar-published.svg';
     const m = new Image(); m.src = '/identidade/M.svg';
     const mPublished = new Image(); mPublished.src = '/ambiente-editorial/media/m-publicado.svg';
-    await Promise.all([logo.decode(), m.decode(), mPublished.decode()]);
-    return { logo, m, mPublished };
+    const vases = Object.fromEntries(Array.from({ length: 9 }, (_, index) => {
+      const number = String(index + 1).padStart(2, '0'), image = new Image();
+      image.src = '/identidade/vaso_' + number + '.svg';
+      return ['vaso-' + number, image];
+    }));
+    await Promise.all([logo.decode(), m.decode(), mPublished.decode(), ...Object.values(vases).map(image => image.decode())]);
+    return { logo, m, mPublished, vases };
   })().catch(error => { resources = null; throw error; });
 }
 
@@ -100,8 +105,9 @@ export function cardLayout(data, { format = 'card', composition = 'm-horizontal'
   };
 }
 
-export async function createCard(data, { format = 'card', composition = 'm-horizontal', theme = 'paper', colors: customColors, channels, density = 2 } = {}) {
+export async function createCard(data, { format = 'card', composition = 'm-horizontal', symbol = 'vaso-01', theme = 'paper', colors: customColors, channels, density = 2 } = {}) {
   if (!CARD_FORMATS[format] || !CARD_THEMES[theme]) throw Error('Composição desconhecida.');
+  if (format === 'email' && !!/^vaso-(0[1-9])$/.test(symbol) && symbol !== 'published') throw Error('Símbolo desconhecido.');
   if (!Number.isInteger(density) || density < 1 || density > 4) throw Error('Resolução de desenho inválida.');
   const resources = await cardResources();
   const dimensions = cardSize({ format, composition }), colors = resolveCardColors(theme, customColors);
@@ -126,18 +132,30 @@ export async function createCard(data, { format = 'card', composition = 'm-horiz
     if (value.phone) text(value.phone, 24, 244, 14);
     text('labmattar.com', 456, 244, 14, 'right');
   }
+  const selectedSymbol = symbol === 'published' ? resources.mPublished : resources.vases[symbol];
   const base = canvas(target.width, target.height); base.getContext('2d').drawImage(target, 0, 0);
-  if (compact && layout.motion) paintNativeMark(context, layout.mark.source === 'published' ? resources.mPublished : resources.m, layout.mark, colors.accent);
+  if (compact && layout.motion) paintNativeMark(context, selectedSymbol || (layout.mark.source === 'published' ? resources.mPublished : resources.m), layout.mark, colors.accent);
   const poster = canvas(target.width, target.height); poster.getContext('2d').drawImage(target, 0, 0);
   const area = layout.motion;
   const ink = area ? canvas(Math.ceil(area.width * density), Math.ceil(area.height * density)) : null;
   const inkContext = ink?.getContext('2d', { willReadFrequently: true });
   const rgb = colors.accent.slice(1).match(/../g).map(value => parseInt(value, 16));
   return {
-    canvas: target, base, layout, colors, format, composition, theme, density, size: dimensions, canAnimate: Boolean(area),
+    canvas: target, base, layout, colors, format, composition, symbol, theme, density, size: dimensions, canAnimate: Boolean(area),
     reset() { context.setTransform(1, 0, 0, 1, 0, 0); context.drawImage(poster, 0, 0); },
     draw(video) {
       if (!area) return;
+      if (compact && symbol !== 'published') {
+        const phase = (video?.currentTime || 0) / CARD_MOTION.duration * Math.PI * 2;
+        const scale = 1 + Math.sin(phase) * .025;
+        context.setTransform(density, 0, 0, density, 0, 0); context.drawImage(base, 0, 0);
+        context.save();
+        const centerX = layout.mark.x + layout.mark.width / 2, centerY = layout.mark.y + layout.mark.height / 2;
+        context.translate(centerX, centerY); context.scale(scale, scale); context.translate(-centerX, -centerY);
+        paintNativeMark(context, selectedSymbol, layout.mark, colors.accent);
+        context.restore();
+        return;
+      }
       // Contain the complete crop using one scale. The new M rectangles have
       // a different aspect ratio from the 4:3 film; stretching is forbidden.
       const c = compact && layout.mark.source === 'published' ? CARD_MOTION.publishedCrop : CARD_MOTION.crop;

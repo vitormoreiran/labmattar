@@ -2,6 +2,13 @@
 
 Este repositório mantém o manual de identidade e as ferramentas do LABMATTAR. O GitHub prepara e valida a prévia; o workflow oficial promove o mesmo artefato para labmattar.com, preservando os projetos existentes. As instruções de publicação estão em [site-oficial/README.md](site-oficial/README.md).
 
+## Domínios canônicos
+
+- **Identidade visual e ferramentas:** `https://identidade.labmattar.com/inicio` é o endereço oficial do manual, Laboratório, Matriz e recursos de composição. As rotas antigas de entrada do manual no domínio principal são redirecionadas para este subdomínio.
+- **Portfólio e projetos institucionais:** `https://labmattar.com/` permanece no Worker existente `mattar-portfolio`, com home, capítulos e projetos originais preservados.
+- **Código e publicação:** ambos são montados pelo mesmo repositório e pelo fluxo existente; não criar uma segunda cópia do manual nem um novo Worker para corrigir URLs. Mídias, API e manifesto de release permanecem acessíveis nas rotas técnicas originais para preservar compatibilidade.
+- **Mudanças de rota:** verificar `site-oficial/worker/entry.mjs`, `site-oficial/wrangler.jsonc` e `scripts/test-official-routing.mjs` antes de integrar.
+
 ## Referências vigentes
 
 - Manual: capítulos 00 Introdução, 01 Símbolos, 02 Motion, 03 Tipografia, 04 Cores, 05 Composição, 06 Laboratório e 07 Redes Sociais. A ordem vem de [design/identity-system.json](design/identity-system.json).

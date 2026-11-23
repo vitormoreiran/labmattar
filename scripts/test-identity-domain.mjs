@@ -50,6 +50,15 @@ test('hosting sends the identity root through the Worker without changing its se
   assert.equal(config.name, baseline.worker); assert.equal(config.keep_vars, true);
   assert.equal(config.d1_databases[0].binding, 'DB');
 });
+test('Cloudflare routes canonical identity entrypoints through Worker before static assets', async () => {
+  const config = JSON.parse(await readFile(new URL('../site-oficial/wrangler.jsonc', import.meta.url), 'utf8'));
+  for (const route of ['/inicio', '/inicio.html', '/manual', '/manual.html', '/tipografia',
+    '/tipografia.html', '/compor', '/compor.html', '/laboratorio', '/laboratorio/',
+    '/assinatura-email.html', '/motion/matriz/index.html']) {
+    assert.ok(config.assets.run_worker_first.includes(route), route + ' bypasses canonical redirect');
+  }
+});
+
 test('identity verification requires introduction, overview, tools, media and API on the same release', async () => {
   const expected = 'b'.repeat(40), visited = [];
   const fetcher = async (url, options = {}) => {

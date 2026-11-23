@@ -18,25 +18,31 @@ test('Laboratório serves the overview while composition, portfolio and API keep
     const requests = [];
     const introduction = await readFile(new URL('../design/inicio.html', import.meta.url), 'utf8');
     const env = { ASSETS: { fetch(request) { requests.push(request.url); return new Response(new URL(request.url).pathname==='/inicio'?introduction:overview, { headers: { 'content-type': 'text/html' } }); } } };
-    for (const route of ['/laboratorio?origem=menu', '/laboratorio/']) {
+    // Old manual URLs stay usable but resolve to the sole canonical identity domain.
+    for (const route of ['/inicio', '/inicio.html', '/manual', '/motion.html', '/tipografia',
+      '/cores', '/composicao.html', '/laboratorio?origem=menu', '/laboratorio/',
+      '/compor.html?studio=1', '/montar', '/identidade', '/redes',
+      '/assinatura-email.html', '/motion/matriz/index.html']) {
       const request = new Request('https://labmattar.com' + route);
       const response = await worker.fetch(request, env, {});
-      assert.equal(response.status, 200); assert.equal(response.headers.has('location'), false);
-      const html = await response.text(); assert.ok(html.includes('class="lm-lab-tool-grid"')); assert.ok(html.includes('CARTÃO MATTAR'));
-      assert.equal(html.includes('id="labArtboard"'), false);
-      assert.equal(requests.at(-1), request.url);
+      assert.equal(response.status, 302, 'Reversible canonical redirect for ' + route);
+      assert.equal(response.headers.get('location'), 'https://identidade.labmattar.com' + route);
     }
-    for (const route of ['/compor.html?studio=1', '/', '/capitulo-4/sesc']) {
+    // Portfolio, public archives, release manifest, media and API remain on the main domain.
+    for (const route of ['/', '/capitulo-4/sesc', '/editar', '/assets/chapter1-opening.mp4',
+      '/motion/videos/m-form.mp4', '/laboratorio-release.json', '/api/unrelated']) {
       const response = await worker.fetch(new Request('https://labmattar.com' + route), env, {});
       assert.equal(await response.text(), 'original:' + new URL(route, 'https://labmattar.com').pathname);
     }
     assert.equal(await (await worker.fetch(new Request('https://labmattar.com/api/acervo/projects'), env, {})).text(), 'api');
-    assert.equal(requests.length, 2);
+    assert.equal(requests.length, 0);
     const portal = await worker.fetch(new Request('https://identidade.labmattar.com/?origem=teste'), env, {});
     assert.ok((await portal.text()).includes('id="sistemas"'));
     assert.equal(requests.at(-1), 'https://identidade.labmattar.com/inicio?origem=teste');
     const portalLab = await worker.fetch(new Request('https://identidade.labmattar.com/laboratorio'), env, {});
     assert.ok((await portalLab.text()).includes('class="lm-lab-tool-grid"'));
+    const composition = await worker.fetch(new Request('https://identidade.labmattar.com/compor.html?studio=1'), env, {});
+    assert.equal(composition.status, 200);
     const portfolio = await worker.fetch(new Request('https://identidade.labmattar.com/capitulo-4/sesc?from=portal'), env, {});
     assert.equal(portfolio.headers.get('location'), 'https://labmattar.com/capitulo-4/sesc?from=portal');
   } finally {

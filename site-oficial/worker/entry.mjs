@@ -1,9 +1,27 @@
 import original from './index.js';
 import {handleAcervoRequest} from './acervo-api.mjs';
 import {IDENTITY_HOST,IDENTITY_ENTRY} from './identity-domain.mjs';
+
+// Canonical identity entrypoints. Keep portfolio, original media, archives,
+// API and deployment verification on labmattar.com; no wildcard redirects.
+const IDENTITY_PAGES = new Set([
+ 'inicio','manual','motion','tipografia','cores','composicao','laboratorio',
+ 'compor','identidade','redes','imagem','assinatura-email','montar',
+ 'aplicacoes-validadas','validacao-identidade'
+]);
+function identityCanonicalPath(pathname){
+ const short=pathname.replace(/^\//,'').replace(/\.html$/,'').replace(/\/$/,'');
+ if(IDENTITY_PAGES.has(short))return pathname;
+ if(/^\/motion\/matriz(?:\/|$)/.test(pathname))return pathname;
+ return null;
+}
 export default {
  fetch(request,env,ctx){
   const url=new URL(request.url);
+  if(url.hostname==='labmattar.com'&&identityCanonicalPath(url.pathname)){
+   url.hostname=IDENTITY_HOST;
+   return Response.redirect(url.href,302);
+  }
   if(url.pathname.startsWith('/api/acervo/'))return handleAcervoRequest(request,env);
   if(url.hostname===IDENTITY_HOST){
    if(url.pathname.startsWith('/capitulo-')||url.pathname.startsWith('/editar')){

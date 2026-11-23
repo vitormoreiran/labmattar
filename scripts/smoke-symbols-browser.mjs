@@ -350,8 +350,26 @@ try {
     },number,{timeout:45000});
     assert.equal(await vesselGallery.locator('[data-vaso="'+number+'"]').getAttribute('aria-pressed'),'true',
       'Selected 3D vessel '+number+' must be active after its model loads');
+    const modelState=await vesselGallery.evaluate(el=>({
+      rendered:el.dataset.rendered,
+      modelCount:el.dataset.modelCount,
+      fallback:getComputedStyle(el.querySelector('.lm-3d-fallback')).display
+    }));
+    assert.equal(modelState.rendered,String(number),'Rendered 3D vessel must match the selected number');
+    assert.equal(modelState.modelCount,'1','Exactly one 3D model may occupy the scene');
+    assert.equal(modelState.fallback,'none','Temporary silhouette must not overlap a rendered 3D vessel');
     loadedVessels.push(number);
   }
+  // Revisit a cached model and switch quickly: the previous model must be
+  // removed and its centering must not accumulate across selections.
+  for(const number of [1,9,2,1]){
+    await vesselGallery.locator('[data-vaso="'+number+'"]').click();
+    await page.waitForFunction(n=>{
+      const el=document.querySelector('#lm-vasos3d');
+      return el?.dataset.rendered===String(n)&&el?.dataset.modelCount==='1';
+    },number,{timeout:15000});
+  }
+  assert.equal(await vesselGallery.getAttribute('data-rendered'),'1','Rapid re-selection ends at the final requested vessel');
   const canvasSize=await vesselGallery.locator('canvas').evaluate(el=>({width:el.width,height:el.height}));
   assert.ok(canvasSize.width>0&&canvasSize.height>0,'The 3D canvas must have a rendering surface');
   report.threeDimensional={loadedVessels,canvasSize};

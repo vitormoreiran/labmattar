@@ -55,6 +55,7 @@
 .lm-3d-canvas-wrap canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab}
 .lm-3d-canvas-wrap canvas:active{cursor:grabbing}
 .lm-3d-fallback{position:absolute;z-index:1;inset:0;margin:auto;width:52%;height:70%;object-fit:contain;filter:brightness(0);pointer-events:none;opacity:.8}
+.lm-3d-stage[data-ready="false"] .lm-3d-canvas-wrap canvas{visibility:hidden}
 .lm-3d-stage[data-ready="true"] .lm-3d-fallback{display:none}
 .lm-3d-panel{display:flex;flex-direction:column;justify-content:center;gap:20px}
 .lm-3d-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}

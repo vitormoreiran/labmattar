@@ -13,8 +13,8 @@ if (root) {
   const buttons = [...root.querySelectorAll("[data-vaso]")];
   const assetRoot = root.dataset.assetRoot || "/motion/matriz/models/dense";
   const cache = new Map();
-  let active = 1, ticket = 0, current = null, ready = false, visible = false, frameId = null;
-  let renderer, scene, camera, controls, loader;
+  let active = 1, ticket = 0, ready = false, visible = false, frameId = null;
+  let renderer, scene, camera, controls, loader, vesselLayer;
   const announce = (message) => { status.textContent = message; };
   const label = (n) => String(n).padStart(2, "0");
 
@@ -45,10 +45,14 @@ if (root) {
   }
 
   function fit(object) {
+    // Cached objects return to their source pose before measuring and
+    // centering. Otherwise choosing 01 -> 02 -> 01 shifts 01 repeatedly.
+    object.position.set(0, 0, 0);
+    object.updateMatrixWorld(true);
     const bounds = new THREE.Box3().setFromObject(object);
     const center = bounds.getCenter(new THREE.Vector3());
     const dimensions = bounds.getSize(new THREE.Vector3());
-    object.position.sub(center);
+    object.position.copy(center).multiplyScalar(-1);
     const fov = (camera.fov * Math.PI) / 180;
     const horizontal = dimensions.x / Math.max(camera.aspect, 0.1);
     const distance = Math.max(dimensions.y, horizontal, dimensions.z) / (2 * Math.tan(fov / 2)) * 1.55;
@@ -62,6 +66,16 @@ if (root) {
     controls.update();
   }
 
+  function clearVessel() {
+    // Clear only the model layer; preserve the camera and approved lighting.
+    // Empty immediately, rather than keeping the old 3D on screen beneath
+    // the selected vase's temporary 2D silhouette.
+    if (vesselLayer) vesselLayer.clear();
+    root.dataset.modelCount = "0";
+    root.dataset.rendered = "";
+    if (renderer) renderer.clear();
+  }
+
   function choose(number) {
     if (!Number.isInteger(number) || number < 1 || number > 9) return;
     active = number;
@@ -70,14 +84,20 @@ if (root) {
     buttons.forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.vaso) === number)));
     placeholder.src = "/identidade/vaso_" + label(number) + ".svg";
     root.dataset.ready = "false";
+    clearVessel();
     announce("CARREGANDO VASO " + label(number) + "...");
     if (!renderer) return;
     const apply = (object) => {
+      // Out-of-order GLB responses must never reintroduce a previous vase.
       if (token !== ticket) return;
-      if (current) scene.remove(current);
-      current = object;
-      scene.add(object);
+      vesselLayer.clear();
       fit(object);
+      vesselLayer.add(object);
+      // Render the single model BEFORE unveiling the WebGL surface.
+      controls.update();
+      renderer.render(scene, camera);
+      root.dataset.modelCount = String(vesselLayer.children.length);
+      root.dataset.rendered = String(number);
       root.dataset.ready = "true";
       announce("VASO " + label(number) + " / ARRASTE PARA GIRAR · ROLE PARA APROXIMAR");
     };
@@ -115,6 +135,10 @@ if (root) {
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       scene = new THREE.Scene();
+      vesselLayer = new THREE.Group();
+      vesselLayer.name = "vaso-ativo";
+      scene.add(vesselLayer);
+      renderer.autoClear = true;
       scene.add(new THREE.AmbientLight(0xffffff, 2.1));
       const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
       keyLight.position.set(3, 6, 7);

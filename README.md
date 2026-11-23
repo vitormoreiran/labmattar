@@ -1,13 +1,13 @@
 # LABMATTAR — identidade, Motion e Laboratório
 
-Este repositório mantém o manual de identidade e as ferramentas do LABMATTAR. O GitHub prepara e valida a prévia; o workflow oficial promove o mesmo artefato para labmattar.com, preservando os projetos existentes. As instruções de publicação estão em [site-oficial/README.md](site-oficial/README.md).
+Este repositório contém código de dois produtos com **deploys independentes**: site institucional/portfólio em labmattar.com e manual de identidade/ferramentas em identidade.labmattar.com. O código pode conviver no GitHub; os Workers e artefatos publicados não devem ser misturados. As instruções de publicação estão em [site-oficial/README.md](site-oficial/README.md).
 
-## Domínios canônicos
+## Separação das publicações
 
-- **Identidade visual e ferramentas:** `https://identidade.labmattar.com/inicio` é o endereço oficial do manual, Laboratório, Matriz e recursos de composição. As rotas antigas de entrada do manual no domínio principal são redirecionadas para este subdomínio.
-- **Portfólio e projetos institucionais:** `https://labmattar.com/` permanece no Worker existente `mattar-portfolio`, com home, capítulos e projetos originais preservados.
-- **Código e publicação:** ambos são montados pelo mesmo repositório e pelo fluxo existente; não criar uma segunda cópia do manual nem um novo Worker para corrigir URLs. Mídias, API e manifesto de release permanecem acessíveis nas rotas técnicas originais para preservar compatibilidade.
-- **Mudanças de rota:** verificar `site-oficial/worker/entry.mjs`, `site-oficial/wrangler.jsonc` e `scripts/test-official-routing.mjs` antes de integrar.
+- **https://identidade.labmattar.com/inicio**: manual, capítulos, símbolos, Matriz, Laboratório, editor de composição, cartão de e-mail e todo material da identidade. Serviço separado `labmattar-identidade`, gerado de `dist/client` e `dist/server` pelo `scripts/build-identity.mjs`.
+- **https://labmattar.com/**: site institucional, portfólio e apresentações, sem páginas, assets ou API exclusivos do manual. Serviço histórico `mattar-portfolio`, gerado da base recuperada de `site-oficial/` com as publicações institucionais.
+- Os Workers, as configurações, os artefatos e os fluxos de publicação são independentes, embora compartilhem um repositório.
+- A transferência do domínio oficial da identidade não é automática: veja `docs/domain-separation.md` antes de qualquer alteração Cloudflare.
 
 ## Referências vigentes
 

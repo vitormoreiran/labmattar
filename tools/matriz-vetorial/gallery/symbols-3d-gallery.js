@@ -69,6 +69,7 @@ if (root) {
     root.dataset.active = String(number);
     buttons.forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.vaso) === number)));
     placeholder.src = "/identidade/vaso_" + label(number) + ".svg";
+    root.dataset.ready = "false";
     announce("CARREGANDO VASO " + label(number) + "...");
     if (!renderer) return;
     const apply = (object) => {

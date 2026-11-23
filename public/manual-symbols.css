@@ -58,7 +58,7 @@
 .lm-3d-stage[data-ready="true"] .lm-3d-fallback{display:none}
 .lm-3d-panel{display:flex;flex-direction:column;justify-content:center;gap:20px}
 .lm-3d-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
-.lm-3d-selector button{appearance:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;min-height:82px;cursor:pointer}
+.lm-3d-selector button{appearance:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;color:var(--ink);min-height:82px;cursor:pointer}
 .lm-3d-selector button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .lm-3d-selector button:hover:not([aria-pressed="true"]){background:#e6dbcf}
 .lm-3d-selector button:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}

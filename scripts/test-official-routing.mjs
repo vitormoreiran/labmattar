@@ -25,7 +25,7 @@ test('Laboratório serves the overview while composition, portfolio and API keep
       '/assinatura-email.html', '/motion/matriz/index.html']) {
       const request = new Request('https://labmattar.com' + route);
       const response = await worker.fetch(request, env, {});
-      assert.equal(response.status, 308, 'Permanent redirect for ' + route);
+      assert.equal(response.status, 302, 'Reversible canonical redirect for ' + route);
       assert.equal(response.headers.get('location'), 'https://identidade.labmattar.com' + route);
     }
     // Portfolio, public archives, release manifest, media and API remain on the main domain.

@@ -8,7 +8,7 @@ assert 'id="estrutura"' in html and '<div class="symbol-row">' in html
 
 a = html.index('<section class="chapter" id="estrutura">')
 b = html.index('<div class="symbol-row">', a)
-intro = '<div class="lm-reading-intro"><h2 class="lm-manual-section-title"><span class="line">ASSINATURA E</span><span class="line perpetua">SÍMBOLO</span></h2><p>O M identifica a marca e pode atuar como assinatura, vetor ou máscara. MATTAR é o logotipo institucional oficial, preferencial em comunicações externas; ambos podem ser utilizados isoladamente.</p></div>'
+intro = '<div class="lm-reading-intro"><h2 class="lm-manual-section-title"><span class="line">M E</span><span class="line perpetua">MATTAR</span></h2><p>O M é o elemento estruturante: identifica e assina autonomamente, como vetor, máscara ou elemento gráfico. MATTAR é o logotipo institucional oficial, preferencial nas comunicações externas e em aplicações com outras marcas. Não precisam aparecer juntos.</p></div>'
 html = html[:a] + '<section class="chapter" id="estrutura"><div class="inner">' + intro + html[b:]
 html = re.sub(r'<h1 class="title(?: lm-manual-page-title)?">.*?</h1>', '<h1 class="title lm-manual-page-title"><span class="lm-cover-title-content"><span class="line">SISTEMA DE</span><span class="line perpetua">SÍMBOLOS</span></span></h1>', html, count=1, flags=re.S)
 html = html.replace('Sistema de identidade / Elementos gráficos / 2026', 'LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS', 1)
@@ -46,13 +46,13 @@ for section_id, text in copy.items():
     assert count == 1, f'Missing copy paragraph: {section_id}'
 
 application = '''<section class="chapter lm-identity-application" id="uso"><div class="inner">
-<p class="eyebrow">04 / APLICAÇÃO DA IDENTIDADE</p>
-<h2 class="title lm-manual-section-title"><span class="line">COMPOSIÇÃO E</span><span class="line perpetua">APLICAÇÃO</span></h2>
-<div class="lm-application-axis"><div><p class="detail">01 / M E MATTAR</p><p class="copy">M e MATTAR podem atuar isoladamente. Em comunicações externas, MATTAR é o logotipo oficial preferencial, inclusive em aplicações com outras marcas.</p></div><div class="lm-application-brand"><img src="/identidade/M.svg" alt="M do LABMATTAR"><img src="/identidade/mattar.svg" alt="Logotipo MATTAR"></div></div>
-<div class="lm-application-axis"><div><p class="detail">02 / APLICAÇÃO</p><h2 class="lm-manual-section-title lm-application-subtitle">M INTEGRAL E EXPANDIDO</h2><p class="copy">No modo expandido, a geometria central do M permanece intacta; o campo se prolonga horizontalmente por recorte lateral. A aplicação do Simpósio é a referência desta composição.</p><a class="detail lm-application-link" href="/capitulo-4/simposio/">VER APLICAÇÃO DO SIMPÓSIO ↗</a></div><div class="lm-application-expanded" aria-label="Demonstração do M integral e expandido"><span class="lm-expanded-field" aria-hidden="true"></span><span class="lm-expanded-center"><img src="/identidade/M.svg" alt="M central preservado"></span><span class="lm-expanded-field" aria-hidden="true"></span></div></div>
-<div class="lm-application-axis"><div><p class="detail">03 / SÍMBOLOS E VASOS</p><p class="copy">Os vasos são equivalentes entre si. Use-os como vetores ou máscaras, preservando desenho, proporção e leitura.</p></div><div class="lm-application-vases"><img src="/identidade/vaso_01.svg" alt="Vaso 01"><img src="/identidade/vaso_03.svg" alt="Vaso 03"><img src="/identidade/vaso_06.svg" alt="Vaso 06"><img src="/identidade/vaso_09.svg" alt="Vaso 09"></div></div>
-<div class="lm-application-axis"><div><p class="detail">04 / REGRAS DE COMPOSIÇÃO</p><p class="copy">Defina hierarquia, cor e escala antes de inserir símbolos. Alinhe os elementos à mesma estrutura e confira a leitura no formato final.</p></div><div class="lm-application-rules"><span>ESCALA</span><span>POSIÇÃO</span><span>HIERARQUIA</span><span>COR</span></div></div>
-<p class="detail lm-application-endnote"><a href="/motion.html">VER ROTEIROS EM MOTION ↗</a></p>
+<p class="eyebrow">04 / REGRAS DE APLICAÇÃO</p>
+<h2 class="title lm-manual-section-title"><span class="line">REGRAS DE</span><span class="line perpetua">APLICAÇÃO</span></h2>
+<div class="lm-application-axis"><div><p class="detail">01 / ASSINATURAS</p><p class="copy">M e MATTAR assinam de forma autônoma. O M pode identificar e-mails e documentos; MATTAR é o logotipo oficial preferencial em comunicações externas, inclusive com outras marcas. A presença conjunta não é obrigatória.</p></div><div class="lm-application-brand"><figure><img src="/identidade/M.svg" alt="Símbolo M"><figcaption>M / ASSINATURA AUTÔNOMA</figcaption></figure><figure><img src="/identidade/mattar.svg" alt="Logotipo oficial MATTAR"><figcaption>MATTAR / LOGOTIPO OFICIAL</figcaption></figure></div></div>
+<div class="lm-application-axis"><div><p class="detail">02 / GEOMETRIA</p><h2 class="lm-manual-section-title lm-application-subtitle">M INTEGRAL E EXPANDIDO</h2><p class="copy">No estado integral, o vetor mantém sua geometria. No expandido, as laterais ocupam horizontalmente o campo enquanto as reentrâncias centrais permanecem intactas. Os cantos externos não precisam aparecer.</p><p class="detail lm-application-reference">REFERÊNCIA REAL: SIMPÓSIO / MÁSCARA DE IMAGEM. EXPANSÃO ESTÁTICA, NÃO MOTION.</p></div><div class="lm-application-comparison"><figure><div class="lm-application-integral"><img src="/identidade/M.svg" alt="M integral, com sua geometria completa"></div><figcaption>M INTEGRAL</figcaption></figure><figure><div class="lm-application-expanded" aria-label="M expandido horizontalmente, com núcleo central preservado"><span class="lm-expanded-field" aria-hidden="true"></span><span class="lm-expanded-center"><img src="/identidade/M.svg" alt="M com as reentrâncias centrais preservadas"></span><span class="lm-expanded-field" aria-hidden="true"></span></div><figcaption>M EXPANDIDO</figcaption></figure></div></div>
+<div class="lm-application-axis"><div><p class="detail">03 / VASOS</p><p class="copy">Os nove vasos têm a mesma importância. Funcionam como vetores ou máscaras; sozinhos, não garantem a identificação da marca. Uma transformação originada no M pode estabelecer essa relação.</p></div><div class="lm-application-vases"><figure><img src="/identidade/vaso_01.svg" alt="Vaso 01 em vetor"><figcaption>VETOR</figcaption></figure><figure><span class="lm-application-vase-mask" role="img" aria-label="Vaso 01 usado como máscara em um campo vermelho oficial"></span><figcaption>MÁSCARA</figcaption></figure></div></div>
+<div class="lm-application-axis"><div><p class="detail">04 / LIMITES</p><p class="copy">Explorar escala e posição é permitido; distorcer a geometria e aplicar cores fora do sistema oficial, não.</p></div><dl class="lm-application-rules"><div><dt>INTEGRIDADE</dt><dd>Não distorcer vetores. A expansão horizontal é exclusiva do M estático.</dd></div><div><dt>COR</dt><dd>Usar somente cores e preenchimentos oficiais.</dd></div><div><dt>ESCALA MÍNIMA DIGITAL</dt><dd>M: 24 px de altura; vasos: 32 px de altura; MATTAR: 120 px de largura.</dd></div><div><dt>ESCALA MÁXIMA</dt><dd>Sem máximo fixo: ampliar e recortar preservando o reconhecimento.</dd></div></dl></div>
+<p class="detail lm-application-endnote">AS TRANSFORMAÇÕES ENTRE M, VASOS E LETRAS DE MATTAR SÃO APRESENTADAS EM <a href="/motion.html">MOTION ↗</a>.</p>
 </div></section>'''
 existing_application = 'lm-identity-application' in html
 html = re.sub(r'<section\b[^>]*class="[^"]*lm-identity-application[^"]*"[^>]*>.*?</section>', '', html, count=1, flags=re.S)
@@ -63,6 +63,13 @@ html = re.sub(r'\n*</main>', '\n'+application+'\n</main>', html, count=1)
 html = re.sub(r'<p class="detail"[^>]*>EDITOR INTEGRAL / BACKUP ORIGINAL V72</p>', '', html)
 html = html.replace('>Símbolo master<', '>Símbolo principal<')
 html = html.replace('01—09 / MESMO PESO', '01—09 / VASOS')
+# Keep a single identifier per vessel; remove repetitive state and group labels.
+html = re.sub(r'<footer>ESTADO 0[1-9]</footer>', '', html)
+html = html.replace('<span class="detail">01—09 / VASOS</span>', '')
+# Shorten the opening and label the two autonomous signatures accurately.
+html = html.replace('<p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p>', '')
+html = html.replace('>Assinatura principal<', '>LOGOTIPO OFICIAL<')
+html = html.replace('>Símbolo principal<', '>SÍMBOLO / ASSINATURA<')
 
 assert html.count('data-motion-version="20261104-groups"') == 0
 assert 'id="state-morph-svg"' not in html

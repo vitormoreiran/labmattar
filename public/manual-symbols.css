@@ -1,23 +1,46 @@
-/* Símbolos: estilos locais de demonstração. A geometria editorial global vem de manual-layout.css. */
-/* Referências de aplicação: uma área prática, construída apenas com ativos aprovados. */
-.lm-identity-application .inner{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:0 24px}.lm-identity-application :is(.eyebrow,.title){grid-column:1/-1}.lm-application-axis{grid-column:1/-1;display:grid;grid-template-columns:5fr 7fr;gap:clamp(24px,6vw,90px);padding:clamp(32px,5vw,62px) 0;border-top:1px solid var(--line);align-items:center}.lm-application-axis .copy{margin:10px 0 0;max-width:42ch}.lm-application-brand{display:flex;align-items:center;gap:clamp(30px,7vw,110px);min-height:180px}.lm-application-brand img:first-child{width:min(27%,160px);max-height:150px}.lm-application-brand img:last-child{width:min(52%,360px);height:auto}.lm-application-vases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(12px,2vw,28px);align-items:end}.lm-application-vases img{width:100%;max-height:145px;object-fit:contain}.lm-application-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}.lm-application-rules span{padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}.lm-application-motion{grid-column:1/-1;border-top:1px solid var(--line);padding-top:clamp(32px,5vw,62px)}.lm-application-motion>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:18px 0}.lm-application-motion video{display:block;width:100%;aspect-ratio:16/9;background:#181818;object-fit:cover}@media(max-width:700px){.lm-application-axis{grid-template-columns:1fr;gap:28px}.lm-application-brand{min-height:110px}.lm-application-vases img{max-height:90px}.lm-application-motion>div{grid-template-columns:1fr}}
-
-/* Static expanded M: solid side fields meet the undistorted central SVG crop. */
-.lm-application-link{display:inline-block;margin-top:18px}
-.lm-application-expanded{
- display:flex;align-items:stretch;overflow:hidden;
- width:100%;height:clamp(180px,24vw,280px);background:var(--paper);
-}
+/* Símbolos — exemplos editoriais; mantém a régua geral do manual. */
+.lm-identity-application .inner{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px}
+.lm-identity-application :is(.eyebrow,.title){grid-column:1/-1}
+.lm-application-axis{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,80px);align-items:start;padding:clamp(36px,5vw,60px) 0;border-top:1px solid var(--line)}
+.lm-application-axis .copy{margin:12px 0 0;max-width:46ch}
+.lm-application-axis figure{margin:0;min-width:0}
+.lm-application-axis figcaption{font:400 12px/1.4 var(--u);letter-spacing:.04em;margin-top:14px}
+.lm-application-brand{display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(20px,3vw,44px);align-items:end}
+.lm-application-brand figure{min-height:190px;display:flex;flex-direction:column;justify-content:flex-end}
+.lm-application-brand img{display:block;max-width:100%;max-height:150px;object-fit:contain;object-position:left center;filter:brightness(0)}
+.lm-application-brand figure:last-child img{max-height:115px}
+.lm-application-subtitle{display:block;font:300 clamp(21px,2.3vw,36px)/1.07 var(--p);margin:8px 0 18px;text-transform:uppercase;letter-spacing:0}
+.lm-application-reference{margin-top:22px;max-width:54ch}
+.lm-application-comparison{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,25px);align-items:end}
+.lm-application-comparison figure{min-width:0}
+.lm-application-integral,.lm-application-expanded{display:flex;align-items:center;justify-content:center;overflow:hidden;height:clamp(160px,20vw,235px);background:var(--paper)}
+.lm-application-integral img{width:auto;height:100%;max-width:100%;object-fit:contain;filter:brightness(0)}
+.lm-application-expanded{align-items:stretch}
 .lm-expanded-field{flex:1 1 0;background:var(--ink);height:100%}
-.lm-expanded-center{display:block;position:relative;flex:0 0 clamp(105px,13vw,168px);overflow:hidden;height:100%}
-.lm-application-expanded .lm-expanded-center img{
- position:absolute;left:50%;top:0;transform:translateX(-50%);
- display:block;width:auto;height:100%;max-width:none;max-height:none;
- filter:brightness(0);object-fit:contain;
-}
-.lm-application-endnote{grid-column:1/-1;border-top:1px solid var(--line);padding-top:24px}
+.lm-expanded-center{display:block;position:relative;flex:0 0 clamp(86px,11vw,142px);overflow:hidden;height:100%}
+.lm-application-expanded .lm-expanded-center img{position:absolute;left:50%;top:0;transform:translateX(-50%);display:block;width:auto;height:100%;max-width:none;max-height:none;object-fit:contain;filter:brightness(0)}
+.lm-application-vases{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,60px)}
+.lm-application-vases figure{display:flex;flex-direction:column;align-items:center;justify-content:end}
+.lm-application-vases img{width:100%;max-width:165px;height:160px;object-fit:contain;filter:brightness(0)}
+.lm-application-vase-mask{display:block;width:100%;max-width:165px;height:160px;background:#E22E24;-webkit-mask:url('/identidade/vaso_01.svg') center/contain no-repeat;mask:url('/identidade/vaso_01.svg') center/contain no-repeat}
+.lm-application-rules{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0;border-top:1px solid var(--line)}
+.lm-application-rules>div{padding:18px 14px 20px 0;border-bottom:1px solid var(--line)}
+.lm-application-rules dt{font:400 12px/1.4 var(--u);letter-spacing:.035em;margin-bottom:10px}
+.lm-application-rules dd{font:400 clamp(14px,1.2vw,17px)/1.45 var(--u);margin:0;max-width:30ch}
+.lm-application-endnote{grid-column:1/-1;border-top:1px solid var(--line);padding:20px 0 0}
 .lm-application-endnote a{text-decoration:underline;text-underline-offset:4px}
-@media(max-width:700px){
- .lm-application-expanded{height:190px}
+@media(max-width:850px){
+ .lm-application-axis{grid-template-columns:1fr;gap:24px}
+ .lm-application-brand figure{min-height:120px}
+ .lm-application-rules{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+ .lm-identity-application .inner{column-gap:0}
+ .lm-application-brand{gap:12px}
+ .lm-application-brand img{max-height:95px}
+ .lm-application-brand figure:last-child img{max-height:68px}
+ .lm-application-comparison{grid-template-columns:1fr;gap:25px}
+ .lm-application-integral,.lm-application-expanded{height:190px}
  .lm-expanded-center{flex-basis:115px}
+ .lm-application-rules{grid-template-columns:1fr}
 }

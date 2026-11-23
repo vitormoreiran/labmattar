@@ -1,41 +1,28 @@
 import original from './index.js';
-import {handleAcervoRequest} from './acervo-api.mjs';
-import {IDENTITY_HOST,IDENTITY_ENTRY} from './identity-domain.mjs';
 
-// Canonical identity entrypoints. Keep portfolio, original media, archives,
-// API and deployment verification on labmattar.com; no wildcard redirects.
-const IDENTITY_PAGES = new Set([
- 'inicio','manual','motion','tipografia','cores','composicao','laboratorio',
- 'compor','identidade','redes','imagem','assinatura-email','montar',
- 'aplicacoes-validadas','validacao-identidade'
+// Portfolio Worker: no Manual de Identidade, Laboratorio or identity editor.
+// The historical portfolio continues to use its recovered Worker unchanged.
+const IDENTITY_ROUTES = new Set([
+  'inicio','manual','motion','tipografia','cores','composicao','laboratorio',
+  'compor','identidade','redes','imagem','assinatura-email','montar',
+  'aplicacoes-validadas','validacao-identidade'
 ]);
-function identityCanonicalPath(pathname){
- const short=pathname.replace(/^\//,'').replace(/\.html$/,'').replace(/\/$/,'');
- if(IDENTITY_PAGES.has(short))return pathname;
- if(/^\/motion\/matriz(?:\/|$)/.test(pathname))return pathname;
- return null;
+function isIdentityOnlyPath(pathname) {
+  const slug=pathname.replace(/^\//,'').replace(/\.html$/,'').replace(/\/$/,'');
+  return IDENTITY_ROUTES.has(slug)
+    || /^\/motion\/(?:matriz|videos)(?:\/|$)/.test(pathname)
+    || /^\/api\/acervo(?:\/|$)/.test(pathname)
+    || /^\/identidade-kit(?:\/|$)/.test(pathname);
 }
 export default {
- fetch(request,env,ctx){
-  const url=new URL(request.url);
-  if(url.hostname==='labmattar.com'&&identityCanonicalPath(url.pathname)){
-   url.hostname=IDENTITY_HOST;
-   return Response.redirect(url.href,302);
+  fetch(request,env,ctx) {
+    const url=new URL(request.url);
+    if (url.hostname==='labmattar.com' && isIdentityOnlyPath(url.pathname)) {
+      return new Response('Not Found', {
+        status:404,
+        headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}
+      });
+    }
+    return original.fetch(request,env,ctx);
   }
-  if(url.pathname.startsWith('/api/acervo/'))return handleAcervoRequest(request,env);
-  if(url.hostname===IDENTITY_HOST){
-   if(url.pathname.startsWith('/capitulo-')||url.pathname.startsWith('/editar')){
-    url.hostname='labmattar.com';return Response.redirect(url.href,302);
-   }
-   if(url.pathname==='/'){
-    url.pathname=IDENTITY_ENTRY;
-    return env.ASSETS.fetch(new Request(url,request));
-   }
-   if(!url.pathname.startsWith('/api/'))return env.ASSETS.fetch(request);
-  }
-  if(['/laboratorio','/laboratorio/'].includes(url.pathname)){
-   return env.ASSETS.fetch(request);
-  }
-  return original.fetch(request,env,ctx);
- }
 };

@@ -1,0 +1,81 @@
+name: Preparar Worker exclusivo da identidade
+# Never binds a custom domain. Manual staging prevents accidental cutover.
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: ID de Publicar previa LABMATTAR concluido com sucesso no main
+        required: true
+        type: string
+      deploy_staging:
+        description: Publicar Worker separado em workers.dev (sem dominio oficial)
+        required: true
+        type: boolean
+        default: false
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: labmattar-identity-worker
+  cancel-in-progress: false
+jobs:
+  preparar:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: preview
+    steps:
+      - name: Conferir revisão imutável aprovada
+        id: source
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const id=Number(context.payload.inputs.build_run_id);
+            if(!Number.isSafeInteger(id)||id<1)throw Error('Run ID inválido');
+            const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
+            const {data:main}=await github.rest.git.getRef({...context.repo,ref:'heads/main'});
+            if(run.name!=='Publicar previa LABMATTAR'||run.conclusion!=='success'||run.head_branch!=='main'||
+              run.head_repository.full_name!==`${context.repo.owner}/${context.repo.repo}`||run.head_sha!==main.object.sha){
+              throw Error('Somente prévia bem-sucedida do main atual pode originar Worker da identidade');
+            }
+            core.setOutput('sha',run.head_sha);
+            core.setOutput('run',String(run.id));
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.source.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.13.0'
+          cache: npm
+      - uses: actions/download-artifact@v4
+        with:
+          name: identidade-site-${{ steps.source.outputs.sha }}
+          path: dist/identity-source
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ steps.source.outputs.run }}
+      - name: Montar identidade sem portfólio
+        env:
+          GITHUB_SHA: ${{ steps.source.outputs.sha }}
+        run: |
+          npm ci --ignore-scripts
+          node --test scripts/test-deployment-boundaries.mjs
+          node scripts/build-identity.mjs dist/identity-source/client dist/identity-source/server dist/identity
+          node --check dist/identity/worker/entry.mjs
+          npx --no-install wrangler deploy --dry-run --config dist/identity/wrangler.jsonc --outdir dist/identity-dry-run
+      - name: Publicar apenas Worker independente (SEM ligar dominio)
+        if: inputs.deploy_staging
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          npx --no-install wrangler deploy --config dist/identity/wrangler.jsonc --keep-vars
+      - name: Guardar montagem para auditoria
+        uses: actions/upload-artifact@v4
+        with:
+          name: worker-identidade-${{ steps.source.outputs.sha }}
+          path: |
+            dist/identity/wrangler.jsonc
+            dist/identity/public/laboratorio-release.json
+          retention-days: 7

@@ -25,8 +25,14 @@ export async function configureIdentityDomain({ token, accountId, baseline, appl
     if (page === 20) throw Error('A lista de domínios excede a conferência automática.');
   }
   const existing = domains.find(domain => domain.hostname.toLowerCase() === IDENTITY_HOST);
-  if (existing && (existing.service !== baseline.worker || existing.zone_name !== baseline.domain)) {
-    throw Error('O subdomínio já pertence a outro serviço. A configuração existente foi preservada.');
+  // Historical read-only audit: the identity may already have been migrated.
+  // Never consider any third-party worker an acceptable destination.
+  if (existing && (existing.zone_name !== baseline.domain ||
+    ![baseline.worker, 'labmattar-identidade'].includes(existing.service))) {
+    throw Error('O subdomínio pertence a um serviço inesperado. Nenhum vínculo foi alterado.');
+  }
+  if (existing?.service === 'labmattar-identidade' && existing.enabled !== true) {
+    throw Error('O Worker exclusivo da identidade não está ativo.');
   }
   if (!existing) {
     const answers = await Promise.all(['A', 'AAAA', 'CNAME'].map(async type => {
@@ -44,7 +50,7 @@ export async function configureIdentityDomain({ token, accountId, baseline, appl
     if (result.result.hostname !== IDENTITY_HOST || result.result.service !== baseline.worker || !result.result.enabled) throw Error('A Cloudflare não confirmou o vínculo esperado.');
     changed = true;
   }
-  return { hostname: IDENTITY_HOST, service: baseline.worker, zone: baseline.domain, mode: apply ? 'apply' : 'read-only', changed, alreadyActive: Boolean(existing?.enabled) };
+  return { hostname: IDENTITY_HOST, service: existing?.service || baseline.worker, zone: baseline.domain, mode: apply ? 'apply' : 'read-only', changed, alreadyActive: Boolean(existing?.enabled) };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === import.meta.filename) {

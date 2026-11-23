@@ -18,7 +18,7 @@
 .lm-application-expanded{align-items:stretch}
 .lm-expanded-field{flex:1 1 0;background:var(--ink);height:100%}
 .lm-expanded-center{display:block;position:relative;flex:0 0 clamp(86px,11vw,142px);overflow:hidden;height:100%}
-.lm-application-expanded .lm-expanded-center img{position:absolute;left:50%;top:0;transform:translateX(-50%);display:block;width:auto;height:100%;max-width:none;max-height:none;object-fit:contain;filter:brightness(0)}
+.lm-application-expanded .lm-expanded-center img{position:absolute;left:50%;top:0;transform:translateX(-50%);display:block;width:auto;height:100%;max-width:none;max-height:none;object-fit:contain;filter:brightness(0) invert(9.4%)}
 .lm-application-vases{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,60px)}
 .lm-application-vases figure{display:flex;flex-direction:column;align-items:center;justify-content:end}
 .lm-application-vases img{width:100%;max-width:165px;height:160px;object-fit:contain;filter:brightness(0)}

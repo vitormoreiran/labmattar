@@ -37,7 +37,7 @@ if rules:
 
 # Approved concise copy. Change only editorial text; preserve SVGs and controls.
 copy = {
-    'principio': 'Uma assinatura, um símbolo principal e nove vasos.',
+    'principio': 'Um símbolo estruturante, um logotipo oficial e nove vasos.',
     'vasos': 'Os nove vasos integram a identidade e têm a mesma importância. Nenhum é principal.',
 }
 for section_id, text in copy.items():
@@ -61,6 +61,9 @@ for section_id in ('regras', 'ferramenta'):
     assert count == 1 or existing_application, f'Missing application section: {section_id}'
 html = re.sub(r'\n*</main>', '\n'+application+'\n</main>', html, count=1)
 html = re.sub(r'<p class="detail"[^>]*>EDITOR INTEGRAL / BACKUP ORIGINAL V72</p>', '', html)
+# Signatures already carry concise captions below their artwork; keep no second role label above.
+for label in ('Assinatura principal', 'LOGOTIPO OFICIAL', 'SÍMBOLO / ASSINATURA'):
+    html = html.replace('<article class="symbol"><p class="eyebrow">'+label+'</p>', '<article class="symbol">')
 html = html.replace('>Símbolo master<', '>Símbolo principal<')
 html = html.replace('01—09 / MESMO PESO', '01—09 / VASOS')
 # Keep a single identifier per vessel; remove repetitive state and group labels.

@@ -43,6 +43,7 @@ jobs:
           node scripts/prepare-identity-review.mjs
       - name: Preparar Motion e Matriz atual
         run: |
+          node --check tools/matriz-vetorial/src/app.js
           npm ci --prefix tools/matriz-vetorial
           npm test --prefix tools/matriz-vetorial
           npm run format:check --prefix tools/matriz-vetorial

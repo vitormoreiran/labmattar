@@ -20,7 +20,7 @@ export default {
   const url=new URL(request.url);
   if(url.hostname==='labmattar.com'&&identityCanonicalPath(url.pathname)){
    url.hostname=IDENTITY_HOST;
-   return Response.redirect(url.href,308);
+   return Response.redirect(url.href,302);
   }
   if(url.pathname.startsWith('/api/acervo/'))return handleAcervoRequest(request,env);
   if(url.hostname===IDENTITY_HOST){

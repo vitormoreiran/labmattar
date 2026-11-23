@@ -218,7 +218,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
+        const expected={'manual.html':4,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();

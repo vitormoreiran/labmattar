@@ -4,12 +4,12 @@
 .lm-application-axis{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,5vw,80px);align-items:start;padding:clamp(36px,5vw,60px) 0;border-top:1px solid var(--line)}
 .lm-application-axis .copy{margin:12px 0 0;max-width:46ch}
 .lm-application-axis figure{margin:0;min-width:0}
-.lm-application-axis figcaption{font:400 12px/1.4 var(--u);letter-spacing:.04em;margin-top:14px}
+.lm-application-axis figcaption{margin-top:14px}
 .lm-application-brand{display:grid;grid-template-columns:1fr 1.4fr;gap:clamp(20px,3vw,44px);align-items:end}
 .lm-application-brand figure{min-height:190px;display:flex;flex-direction:column;justify-content:flex-end}
 .lm-application-brand img{display:block;max-width:100%;max-height:150px;object-fit:contain;object-position:left center;filter:brightness(0)}
 .lm-application-brand figure:last-child img{max-height:115px}
-.lm-application-subtitle{display:block;font:300 clamp(21px,2.3vw,36px)/1.07 var(--p);margin:8px 0 18px;text-transform:uppercase;letter-spacing:0}
+.lm-application-subtitle{display:block;margin:8px 0 18px;text-transform:uppercase}
 .lm-application-reference{margin-top:22px;max-width:54ch}
 .lm-application-comparison{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,25px);align-items:end}
 .lm-application-comparison figure{min-width:0}
@@ -25,8 +25,8 @@
 .lm-application-vase-mask{display:block;width:100%;max-width:165px;height:160px;background:#E22E24;-webkit-mask:url('/identidade/vaso_01.svg') center/contain no-repeat;mask:url('/identidade/vaso_01.svg') center/contain no-repeat}
 .lm-application-rules{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:0;border-top:1px solid var(--line)}
 .lm-application-rules>div{padding:18px 14px 20px 0;border-bottom:1px solid var(--line)}
-.lm-application-rules dt{font:400 12px/1.4 var(--u);letter-spacing:.035em;margin-bottom:10px}
-.lm-application-rules dd{font:400 clamp(14px,1.2vw,17px)/1.45 var(--u);margin:0;max-width:30ch}
+.lm-application-rules dt{margin-bottom:10px}
+.lm-application-rules dd{margin:0;max-width:30ch}
 .lm-application-endnote{grid-column:1/-1;border-top:1px solid var(--line);padding:20px 0 0}
 .lm-application-endnote a{text-decoration:underline;text-underline-offset:4px}
 @media(max-width:850px){

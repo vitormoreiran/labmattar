@@ -9,7 +9,7 @@
 .lm-application-brand figure{min-height:190px;display:flex;flex-direction:column;justify-content:flex-end}
 .lm-application-brand img{display:block;max-width:100%;max-height:150px;object-fit:contain;object-position:left center;filter:brightness(0)}
 .lm-application-brand figure:last-child img{max-height:115px}
-.lm-application-subtitle{display:block;margin:8px 0 18px;text-transform:uppercase}
+.lm-application-subtitle{display:block;margin:8px 0 18px}
 .lm-application-reference{margin-top:22px;max-width:54ch}
 .lm-application-comparison{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,25px);align-items:end}
 .lm-application-comparison figure{min-width:0}

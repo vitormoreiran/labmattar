@@ -98,11 +98,15 @@ export async function migrateIdentityDomain({
 
  let changed=false;
  if(apply&&before.identity.service===PREVIOUS_WORKER){
-  // Preserve the active hostname and its preview-routing state; no DELETE or DNS writes.
-  // These fields are documented optional parameters for PUT /workers/domains.
+  // Reassign the existing Custom Domain in place; do not delete its DNS or TLS
+  // records. Cloudflare returns 409/100116 WITHOUT override_existing_origin.
+  // This override is allowed ONLY after listDomains confirms both hosts and
+  // verifies that identity is currently owned by PREVIOUS_WORKER.
+  // Never use override_existing_dns_record or retry this PUT automatically.
   const bound=await api(endpoint,{method:'PUT',body:JSON.stringify({
    hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain,
-   enabled:true,previews_enabled:before.identity.previews_enabled===true
+   enabled:true,previews_enabled:before.identity.previews_enabled===true,
+   override_existing_origin:true
   })});
   if(bound.result?.service!==TARGET_WORKER||bound.result?.hostname!==IDENTITY_HOST){
    throw Error('Resposta do novo vinculo nao corresponde ao Worker da identidade.');

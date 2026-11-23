@@ -86,7 +86,14 @@ jobs:
         run: |
           node scripts/verify-official.mjs
           node scripts/guard-official-deploy.mjs
-          npx --no-install wrangler versions deploy "${OFFICIAL_VERSION_ID}@100%" --yes --config dist/oficial/wrangler.jsonc
+          for attempt in 1 2 3 4 5; do
+            if npx --no-install wrangler versions deploy "${OFFICIAL_VERSION_ID}@100%" --yes --config dist/oficial/wrangler.jsonc; then
+              exit 0
+            fi
+            if [ "$attempt" = 5 ]; then exit 1; fi
+            echo "A versão ainda está sendo propagada; nova tentativa em 8 segundos."
+            sleep 8
+          done
       - name: Conferir publicação servida pelo domínio
         if: steps.source.outputs.eligible == 'true'
         env:

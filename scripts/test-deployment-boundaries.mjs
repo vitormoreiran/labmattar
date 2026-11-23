@@ -25,7 +25,6 @@ test('identity builds independently from the portfolio and without D1',async()=>
   assert.equal(config.d1_databases,undefined,'institutional D1 is not copied');
   assert.equal((await readFile(path.join(output,'worker/chunks/app.js'),'utf8')).includes('identity'),true);
   assert.ok(await stat(path.join(output,'public/manual.html')));
-  assert.equal((await readFile(path.join(output,'public/laboratorio-release.json'),'utf8')).includes('"1'.repeat(40)),false);
   const release=JSON.parse(await readFile(path.join(output,'public/laboratorio-release.json'),'utf8'));
   assert.equal(release.sha,'1'.repeat(40));
   assert.equal(release.service,IDENTITY_SERVICE);

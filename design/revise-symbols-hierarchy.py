@@ -21,7 +21,7 @@ html = re.sub(r'<script>document\.addEventListener\(\'DOMContentLoaded\'.*?</scr
 
 # Do not duplicate Motion in the Symbols chapter.
 html, count = re.subn(r'<section\b[^>]*id="transformacao"[^>]*>.*?</section>', '', html, count=1, flags=re.S)
-assert count == 1
+assert count == 1 or 'lm-identity-application' in html, 'Missing transformation section on first pass'
 html = re.sub(r'<link[^>]*href="/manual-symbols\.css[^>]*>', '', html)
 html = re.sub(r'<script[^>]*src="/(?:vendor/MorphSVGPlugin|manual-symbols)\.js[^>]*>\s*</script>', '', html)
 html = re.sub(r'<link[^>]*href="/motion\.css[^>]*>', '', html)

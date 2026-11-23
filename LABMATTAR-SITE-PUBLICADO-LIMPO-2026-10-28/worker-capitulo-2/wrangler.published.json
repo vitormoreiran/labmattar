@@ -1,0 +1,48 @@
+{
+  "name": "mattar-portfolio-publicacao",
+  "account_id": "3067fba491c79b591eaeb03609c41074",
+  "main": "published-worker.mjs",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": false,
+  "preview_urls": false,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mattar-editor-interno",
+      "database_id": "a8f6a17c-ff5d-464e-bfc1-c64f51075d29"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MEDIA",
+      "id": "cda4e8b2497c470ca55166854174347c"
+    }
+  ],
+  "assets": {
+    "directory": "C:/Users/vitor/Desktop/Mattar988/Mattar 2/recovery/mattar-recovered/public",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "routes": [
+    {
+      "pattern": "labmattar.com/capitulo-2*",
+      "zone_name": "labmattar.com"
+    },
+    {
+      "pattern": "labmattar.com/api/content/portfolio",
+      "zone_name": "labmattar.com"
+    },
+    {
+      "pattern": "labmattar.com/assets/page-oorIu5QC.js",
+      "zone_name": "labmattar.com"
+    },
+    {
+      "pattern": "labmattar.com/assets/navigation-data.js",
+      "zone_name": "labmattar.com"
+    },
+    {
+      "pattern": "labmattar.com/media/*",
+      "zone_name": "labmattar.com"
+    }
+  ]
+}

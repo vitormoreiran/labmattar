@@ -1,0 +1,40 @@
+/* Simpósio: apply the LABMATTAR title, reading and detail roles without
+   changing the established editorial scale or the presentation layout. */
+body.test-version main :is(h1,h2,h3,h4) {
+  font-family:var(--type-univers)!important;
+}
+body.test-version main strong {
+  font-family:var(--type-univers)!important;
+  font-weight:300!important;
+}
+body.test-version main :is(h1,h2,h3,h4) strong,
+body.test-version main .guests-intro h2 span {
+  font-family:var(--type-perpetua)!important;
+  font-weight:300!important;
+}
+body.test-version main :is(.field-terms,.artist-carousel-credit,.guests-kicker) {
+  font-family:var(--type-univers)!important;
+  font-size:var(--type-detail-size)!important;
+  line-height:var(--type-detail-leading)!important;
+  font-weight:300!important;
+  letter-spacing:0!important;
+}
+body.test-version main :is(.format-details,.exhibition-details) dd {
+  font-family:var(--type-univers)!important;
+  font-size:var(--type-body-size)!important;
+  line-height:var(--type-body-leading)!important;
+  font-weight:300!important;
+  letter-spacing:0!important;
+}
+body.test-version main .format-stats strong {
+  font-family:var(--type-univers)!important;
+  font-size:clamp(48px,5.2vw,78px)!important;
+  line-height:.88!important;
+  letter-spacing:-.045em!important;
+}
+body.test-version main .exhibition-format-grid {
+  grid-template-columns:minmax(0,1fr);
+}
+body.test-version main .exhibition-stats {
+  width:min(100%,850px);
+}

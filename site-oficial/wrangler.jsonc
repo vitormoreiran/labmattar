@@ -24,7 +24,6 @@
       "/manual/",
       "/motion",
       "/motion.html",
-      "/motion/",
       "/tipografia",
       "/tipografia.html",
       "/tipografia/",
@@ -40,7 +39,6 @@
       "/compor/",
       "/identidade",
       "/identidade.html",
-      "/identidade/",
       "/redes",
       "/redes.html",
       "/redes/",
@@ -59,12 +57,9 @@
       "/validacao-identidade",
       "/validacao-identidade.html",
       "/validacao-identidade/",
-      "/motion/matriz/index.html",
-      "/motion/matriz/",
       "/motion/*",
       "/identidade/*",
-      "/identidade-kit/*",
-      "/api/acervo/*"
+      "/identidade-kit/*"
     ]
   },
   "d1_databases": [

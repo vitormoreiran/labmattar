@@ -1,0 +1,4 @@
+/* REVIEW1: remove markers and calls to action that duplicate the navigation. */
+.hero>.eyebrow,#apresentacao>.eyebrow,.hero-end>.link{display:none}
+.hero h1,.section h2{text-transform:uppercase}
+@media(min-width:741px){.entry p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}

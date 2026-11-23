@@ -30,8 +30,8 @@ function fakeCloudflare({service=PREVIOUS_WORKER,google=true,portfolio=PREVIOUS_
   if(url.includes('/workers/domains')){
    if(method==='PUT'){
     const body=JSON.parse(options.body);
-    assert.deepEqual(Object.keys(body).sort(),['hostname','service','zone_name']);
-    assert.deepEqual(body,{hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain});
+    assert.deepEqual(Object.keys(body).sort(),['enabled','hostname','previews_enabled','service','zone_name']);
+    assert.deepEqual(body,{hostname:IDENTITY_HOST,service:TARGET_WORKER,zone_name:baseline.domain,enabled:true,previews_enabled:false});
     identityService=TARGET_WORKER;
     return Response.json({success:true,result:{hostname:IDENTITY_HOST,service:TARGET_WORKER}});
    }

@@ -11,12 +11,15 @@ const picker = document.getElementById('compositionPicker');
 const previewDialog = document.getElementById('previewDialog'), zoomCanvas = document.getElementById('zoomCanvas');
 const example = { name: 'Joana Oliveira', role: 'Comunicação e projetos', email: 'joana@labmattar.com', phone: '+55 11 99999-9999' };
 const exampleChannels = { instagram: true, whatsapp: true, linkedin: true, youtube: true, privacyUrl: true };
-const SYMBOL_VARIANTS = Object.freeze(Array.from({ length: 9 }, (_, index) => {
-  const number = String(index + 1).padStart(2, '0');
-  return { id: 'vaso-' + number, label: 'Vaso ' + number, source: '/identidade/vaso_' + number + '.svg' };
-}));
+const SYMBOL_VARIANTS = Object.freeze([
+  { id: 'published', label: 'M original', source: '/ambiente-editorial/media/m-publicado.svg' },
+  ...Array.from({ length: 9 }, (_, index) => {
+    const number = String(index + 1).padStart(2, '0');
+    return { id: 'vaso-' + number, label: 'Vaso ' + number, source: '/identidade/vaso_' + number + '.svg' };
+  })
+]);
 const params = new URLSearchParams(location.search);
-let symbol = SYMBOL_VARIANTS.some(item => item.id === params.get('simbolo')) ? params.get('simbolo') : 'vaso-01';
+let symbol = SYMBOL_VARIANTS.some(item => item.id === params.get('simbolo')) ? params.get('simbolo') : 'published';
 let composition = EMAIL_COMPOSITIONS.some(item => item.id === params.get('modelo')) ? params.get('modelo') : 'm-horizontal';
 let format = params.get('formato') === 'card' ? 'card' : 'email';
 let card, video, videoPromise, generation = 0, validated = false, controller, working = false, frameHandle = 0;

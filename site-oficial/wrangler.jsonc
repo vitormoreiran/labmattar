@@ -60,7 +60,11 @@
       "/validacao-identidade.html",
       "/validacao-identidade/",
       "/motion/matriz/index.html",
-      "/motion/matriz/"
+      "/motion/matriz/",
+      "/motion/*",
+      "/identidade/*",
+      "/identidade-kit/*",
+      "/api/acervo/*"
     ]
   },
   "d1_databases": [

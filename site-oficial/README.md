@@ -2,15 +2,13 @@
 
 Esta é a base recuperada do serviço `mattar-portfolio`, versão ativa `ae4852f0-ec18-4544-8406-3c0be5b99928` de 29/10/2026. O módulo executável foi baixado da API oficial; os arquivos públicos de texto e as mídias foram conferidos contra o domínio em 04/11/2026. `baseline.json` registra os hashes dos 658 arquivos. O banco D1 e as credenciais continuam no Cloudflare.
 
-## O que será publicado
+## Publicação institucional preservada
 
-O workflow **Publicar labmattar.com oficial** recebe o artefato do workflow **Publicar previa LABMATTAR**, depois dos testes, no mesmo commit do `main`. Ele preserva a página inicial e os capítulos existentes e acrescenta os arquivos do Laboratório. A montagem recusa colisões de arquivos e endereços reservados.
+O Worker `mattar-portfolio` atende exclusivamente `https://labmattar.com`: página inicial, projetos, capítulos institucionais e apresentações autorizadas. A montagem conserva a base recuperada (658 arquivos verificados), o complemento aprovado da galeria e as apresentações institucionais explicitamente publicadas. **Nenhum arquivo HTML, editor, mídia ou API exclusivos do Manual de Identidade é copiado para este serviço.**
 
-- Laboratório: `https://labmattar.com/laboratorio/`.
-- Motion: `https://labmattar.com/motion.html`.
-- Nova apresentação: `https://labmattar.com/capitulo-4/<endereco>/`.
+O manual, a Matriz e o Laboratório pertencem ao serviço separado `labmattar-identidade` em `https://identidade.labmattar.com`; o procedimento de migração sem perda de dados está em `docs/domain-separation.md`.
 
-O destino é o Worker existente `mattar-portfolio`, com o mesmo banco `mattar-editor`. Não há migração de banco. O fluxo envia uma versão com `--keep-vars`, testa seu endereço de prévia e só então muda o tráfego para ela. O domínio e as rotas existentes não são reconfigurados. As conexões do acervo dependem das credenciais e origens autorizadas configuradas no serviço oficial; elas não são copiadas da prévia.
+O fluxo **Publicar labmattar.com oficial** é de execução manual autorizada, não é disparado por edições da identidade. O Worker institucional continua usando o mesmo D1 `mattar-editor`, seus projetos e credenciais existentes. Não há migração do banco.
 
 ## Publicar uma apresentação criada no Laboratório
 

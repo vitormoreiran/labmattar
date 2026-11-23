@@ -7,7 +7,7 @@ export async function verifyIdentityDomain({ expected, fetcher = fetch, origin =
   const request = (route, options = {}) => fetcher(origin + route, { cache: 'no-store', redirect: 'follow', signal: AbortSignal.timeout(15000), ...options });
   const release = await request('/laboratorio-release.json?revision=' + expected);
   assert.equal(release.ok, true, 'Manifesto da identidade disponível');
-  assert.equal((await release.json()).sha, expected, 'Identidade e site oficial usam a mesma revisão');
+  assert.equal((await release.json()).sha, expected, 'Identidade publicada corresponde à revisão solicitada');
   const pages = [
     ['/', ['00 / Introdução', 'id="sistemas"']],
     ['/manual', ['LABMATTAR']], ['/motion', ['LABMATTAR']], ['/tipografia', ['LABMATTAR']],

@@ -17,7 +17,8 @@ function isIdentityOnlyPath(pathname) {
 export default {
   fetch(request,env,ctx) {
     const url=new URL(request.url);
-    if (url.hostname==='labmattar.com' && isIdentityOnlyPath(url.pathname)) {
+    // Also enforce isolation on Cloudflare version-preview URLs.
+    if (isIdentityOnlyPath(url.pathname)) {
       return new Response('Not Found', {
         status:404,
         headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}

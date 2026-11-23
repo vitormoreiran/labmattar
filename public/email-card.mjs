@@ -107,7 +107,7 @@ export function cardLayout(data, { format = 'card', composition = 'm-horizontal'
 
 export async function createCard(data, { format = 'card', composition = 'm-horizontal', symbol = 'vaso-01', theme = 'paper', colors: customColors, channels, density = 2 } = {}) {
   if (!CARD_FORMATS[format] || !CARD_THEMES[theme]) throw Error('Composição desconhecida.');
-  if (format === 'email' && !!/^vaso-(0[1-9])$/.test(symbol) && symbol !== 'published') throw Error('Símbolo desconhecido.');
+  if (format === 'email' && !/^vaso-(0[1-9])$/.test(symbol) && symbol !== 'published') throw Error('Símbolo desconhecido.');
   if (!Number.isInteger(density) || density < 1 || density > 4) throw Error('Resolução de desenho inválida.');
   const resources = await cardResources();
   const dimensions = cardSize({ format, composition }), colors = resolveCardColors(theme, customColors);
@@ -148,8 +148,8 @@ export async function createCard(data, { format = 'card', composition = 'm-horiz
       if (compact && symbol !== 'published') {
         const phase = (video?.currentTime || 0) / CARD_MOTION.duration * Math.PI * 2;
         const scale = 1 + Math.sin(phase) * .025;
-        context.setTransform(density, 0, 0, density, 0, 0); context.drawImage(base, 0, 0);
-        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0); context.drawImage(base, 0, 0);
+        context.setTransform(density, 0, 0, density, 0, 0); context.save();
         const centerX = layout.mark.x + layout.mark.width / 2, centerY = layout.mark.y + layout.mark.height / 2;
         context.translate(centerX, centerY); context.scale(scale, scale); context.translate(-centerX, -centerY);
         paintNativeMark(context, selectedSymbol, layout.mark, colors.accent);

@@ -44,3 +44,25 @@
  .lm-expanded-center{flex-basis:115px}
  .lm-application-rules{grid-template-columns:1fr}
 }
+
+
+/* REVIEW1 / 03 — one viewer and nine explicit IDs; no animation semantics. */
+.lm-3d-section .inner{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px}
+.lm-3d-section :is(.eyebrow,.title){grid-column:1/-1}
+.lm-3d-intro{grid-column:1/7;max-width:54ch;margin:20px 0 44px}
+.lm-3d-stage{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,8fr) minmax(220px,4fr);gap:clamp(24px,3vw,46px);border-top:1px solid var(--line);padding-top:clamp(25px,4vw,50px);align-items:stretch}
+.lm-3d-canvas-wrap{position:relative;min-height:320px;aspect-ratio:7/5;background:var(--paper);overflow:hidden}
+.lm-3d-canvas-wrap canvas{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.lm-3d-canvas-wrap canvas:active{cursor:grabbing}
+.lm-3d-fallback{position:absolute;z-index:1;inset:0;margin:auto;width:52%;height:70%;object-fit:contain;filter:brightness(0);pointer-events:none;opacity:.8}
+.lm-3d-stage[data-ready="true"] .lm-3d-fallback{display:none}
+.lm-3d-panel{display:flex;flex-direction:column;justify-content:center;gap:20px}
+.lm-3d-selector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.lm-3d-selector button{appearance:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;min-height:82px;cursor:pointer}
+.lm-3d-selector button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.lm-3d-selector button:hover:not([aria-pressed="true"]){background:#e6dbcf}
+.lm-3d-selector button:focus-visible{outline:2px solid var(--ink);outline-offset:-4px}
+.lm-3d-status{min-height:35px;margin:0}
+.lm-3d-explain{max-width:40ch;opacity:.75;margin:0}
+@media(max-width:850px){.lm-3d-intro{grid-column:1/-1}.lm-3d-stage{grid-template-columns:1fr;gap:18px}.lm-3d-canvas-wrap{min-height:280px;aspect-ratio:4/3}.lm-3d-panel{gap:15px}.lm-3d-selector button{min-height:62px}}
+@media(max-width:520px){.lm-3d-section .inner{column-gap:0}.lm-3d-canvas-wrap{min-height:230px;aspect-ratio:1/1}.lm-3d-selector button{min-height:58px}}

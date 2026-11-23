@@ -67,4 +67,17 @@ for (const name of await readdir(assetsDirectory)) {
     await unlink(path.join(assetsDirectory, name));
   }
 }
+// A fixed, self-contained Three.js module for the Symbols chapter.
+await build({
+  absWorkingDir: root,
+  entryPoints: ["src/symbols-3d-gallery.js"],
+  outfile: "dist/symbols-3d-gallery.js",
+  bundle: true,
+  format: "esm",
+  platform: "browser",
+  target: "es2022",
+  minify: true,
+  sourcemap: false
+});
+
 console.log("Build complete: dist/");

@@ -218,7 +218,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':4,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
+        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':1,'composicao.html':4,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();
@@ -297,6 +297,12 @@ try {
   await page.setViewportSize({width:1440,height:900});
   assert.equal(await page.locator('.state-explorer, #state-morph-svg, #transformacao, #ferramenta, #regras').count(),0,
     'Retired contour, Motion and tools sections must not reappear in Symbols');
+  assert.equal(await page.locator('#tridimensional.lm-3d-section').count(),1,
+    'Exactly one 3D section in the Symbols chapter');
+  assert.deepEqual(await page.locator('#lm-vasos3d [data-vaso]').evaluateAll(els=>els.map(x=>x.getAttribute('data-vaso'))),
+    ['1','2','3','4','5','6','7','8','9'], '3D models are indexed by approved numeric names, not array order');
+  assert.equal(await page.locator('#tridimensional canvas').count(),1,
+    '3D models are presented in a single navigable canvas');
   assert.equal(await page.locator('#uso.lm-identity-application .lm-application-axis').count(),4,
     'Four concise application examples in Symbols');
   assert.equal(await page.locator('#uso video, .motion-symbol-preview video').count(),0,

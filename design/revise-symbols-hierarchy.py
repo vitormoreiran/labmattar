@@ -60,6 +60,27 @@ for section_id in ('regras', 'ferramenta'):
     html, count = re.subn(r'<section\b[^>]*id="'+section_id+r'"[^>]*>.*?</section>', '', html, count=1, flags=re.S)
     assert count == 1 or existing_application, f'Missing application section: {section_id}'
 html = re.sub(r'\n*</main>', '\n'+application+'\n</main>', html, count=1)
+
+# A static, nine-object viewer lives in Symbols, not in the Motion chapter.
+three_dimensional = '''<section class="chapter lm-3d-section" id="tridimensional"><div class="inner">
+<p class="eyebrow">03 / VARIAÇÕES TRIDIMENSIONAIS</p>
+<h2 class="title lm-manual-section-title"><span class="line">VARIAÇÕES</span><span class="line perpetua">TRIDIMENSIONAIS</span></h2>
+<p class="copy lm-3d-intro">Os nove vasos também podem ser apresentados em volume. Selecione cada forma para observar sua tridimensionalidade. Os vasos continuam sendo elementos gráficos do sistema, não assinaturas autônomas.</p>
+<div class="lm-3d-stage" id="lm-vasos3d" data-asset-root="/motion/matriz/models/dense" data-active="1" data-ready="false">
+<div class="lm-3d-canvas-wrap"><img class="lm-3d-fallback" src="/identidade/vaso_01.svg" alt="" aria-hidden="true"/><canvas aria-label="Modelo tridimensional do vaso selecionado; arraste para girar"></canvas></div>
+<div class="lm-3d-panel"><p class="detail">SELECIONE O VASO</p>
+<div class="lm-3d-selector" role="group" aria-label="Nove vasos tridimensionais"><button type="button" data-vaso="1" aria-label="Visualizar vaso 01 em 3D" aria-pressed="true">01</button><button type="button" data-vaso="2" aria-label="Visualizar vaso 02 em 3D" aria-pressed="false">02</button><button type="button" data-vaso="3" aria-label="Visualizar vaso 03 em 3D" aria-pressed="false">03</button><button type="button" data-vaso="4" aria-label="Visualizar vaso 04 em 3D" aria-pressed="false">04</button><button type="button" data-vaso="5" aria-label="Visualizar vaso 05 em 3D" aria-pressed="false">05</button><button type="button" data-vaso="6" aria-label="Visualizar vaso 06 em 3D" aria-pressed="false">06</button><button type="button" data-vaso="7" aria-label="Visualizar vaso 07 em 3D" aria-pressed="false">07</button><button type="button" data-vaso="8" aria-label="Visualizar vaso 08 em 3D" aria-pressed="false">08</button><button type="button" data-vaso="9" aria-label="Visualizar vaso 09 em 3D" aria-pressed="false">09</button></div>
+<p class="detail lm-3d-status" data-lm-3d-status role="status" aria-live="polite">PRÉVIA TRIDIMENSIONAL / ESCOLHA UM VASO</p>
+<p class="detail lm-3d-explain">GEOMETRIAS ORIGINAIS, OTIMIZADAS PARA A WEB. A ROTAÇÃO AQUI SERVE SOMENTE PARA EXAMINAR O VOLUME.</p></div></div>
+</div></section>'''
+html = re.sub(r'\s*<section class="chapter lm-3d-section" id="tridimensional">.*?</section>', '', html, count=1, flags=re.S)
+assert html.count('<section class="chapter lm-identity-application" id="uso">') == 1
+html = html.replace('<section class="chapter lm-identity-application" id="uso">', three_dimensional+'\n<section class="chapter lm-identity-application" id="uso">', 1)
+if '<script type="module" src="/motion/matriz/symbols-3d-gallery.js"></script>' not in html:
+    html = html.replace('</head>', '<script type="module" src="/motion/matriz/symbols-3d-gallery.js"></script>\n</head>', 1)
+assert html.count('id="tridimensional"') == 1
+assert html.count('data-vaso=') == 9
+
 html = re.sub(r'<p class="detail"[^>]*>EDITOR INTEGRAL / BACKUP ORIGINAL V72</p>', '', html)
 # Signatures already carry concise captions below their artwork; keep no second role label above.
 for label in ('Assinatura principal', 'LOGOTIPO OFICIAL', 'SÍMBOLO / ASSINATURA'):

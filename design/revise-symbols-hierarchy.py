@@ -46,7 +46,6 @@ for section_id, text in copy.items():
     assert count == 1, f'Missing copy paragraph: {section_id}'
 
 application = '''<section class="chapter lm-identity-application" id="uso"><div class="inner">
-<p class="eyebrow">04 / REGRAS DE APLICAÇÃO</p>
 <h2 class="title lm-manual-section-title"><span class="line">REGRAS DE</span><span class="line perpetua">APLICAÇÃO</span></h2>
 <div class="lm-application-axis"><div><p class="detail">01 / ASSINATURAS</p><p class="copy">M e MATTAR assinam de forma autônoma. O M pode identificar e-mails e documentos; MATTAR é o logotipo oficial preferencial em comunicações externas, inclusive com outras marcas. A presença conjunta não é obrigatória.</p></div><div class="lm-application-brand"><figure><img src="/identidade/M.svg" alt="Símbolo M"><figcaption class="detail">M / ASSINATURA AUTÔNOMA</figcaption></figure><figure><img src="/identidade/mattar.svg" alt="Logotipo oficial MATTAR"><figcaption class="detail">MATTAR / LOGOTIPO OFICIAL</figcaption></figure></div></div>
 <div class="lm-application-axis"><div><p class="detail">02 / GEOMETRIA</p><h3 class="detail lm-application-subtitle">M INTEGRAL E EXPANDIDO</h3><p class="copy">No estado integral, o vetor mantém sua geometria. No expandido, as laterais ocupam horizontalmente o campo enquanto as reentrâncias centrais permanecem intactas. Os cantos externos não precisam aparecer.</p><p class="detail lm-application-reference">REFERÊNCIA REAL: SIMPÓSIO / MÁSCARA DE IMAGEM. EXPANSÃO ESTÁTICA, NÃO MOTION.</p></div><div class="lm-application-comparison"><figure><div class="lm-application-integral"><img src="/identidade/M.svg" alt="M integral, com sua geometria completa"></div><figcaption class="detail">M INTEGRAL</figcaption></figure><figure><div class="lm-application-expanded" aria-label="M expandido horizontalmente, com núcleo central preservado"><span class="lm-expanded-field" aria-hidden="true"></span><span class="lm-expanded-center"><img src="/identidade/M.svg" alt="M com as reentrâncias centrais preservadas"></span><span class="lm-expanded-field" aria-hidden="true"></span></div><figcaption class="detail">M EXPANDIDO</figcaption></figure></div></div>
@@ -63,7 +62,6 @@ html = re.sub(r'\n*</main>', '\n'+application+'\n</main>', html, count=1)
 
 # A static, nine-object viewer lives in Symbols, not in the Motion chapter.
 three_dimensional = '''<section class="chapter lm-3d-section" id="tridimensional"><div class="inner">
-<p class="eyebrow">03 / VARIAÇÕES TRIDIMENSIONAIS</p>
 <h2 class="title lm-manual-section-title"><span class="line">VARIAÇÕES</span><span class="line perpetua">TRIDIMENSIONAIS</span></h2>
 <p class="copy lm-3d-intro">Os nove vasos também podem ser apresentados em volume. Selecione cada forma para observar sua tridimensionalidade. Os vasos continuam sendo elementos gráficos do sistema, não assinaturas autônomas.</p>
 <div class="lm-3d-stage" id="lm-vasos3d" data-asset-root="/motion/matriz/models/dense" data-active="1" data-ready="false">
@@ -87,15 +85,23 @@ for label in ('Assinatura principal', 'LOGOTIPO OFICIAL', 'SÍMBOLO / ASSINATURA
     html = html.replace('<article class="symbol"><p class="eyebrow">'+label+'</p>', '<article class="symbol">')
 html = html.replace('>Símbolo master<', '>Símbolo principal<')
 html = html.replace('01—09 / MESMO PESO', '01—09 / VASOS')
+# Remove redundant labels while keeping blank grid anchors for the canonical cover.
+html = html.replace('<p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 01 — SÍMBOLOS</p>',
+                    '<p class="eyebrow" aria-hidden="true"></p>', 1)
+html = html.replace('<p class="eyebrow">02 / Família de vasos</p>', '', 1)
+html = html.replace('<span class="line">NOVE FORMAS</span><span class="line perpetua">UM SISTEMA</span>',
+                    '<span class="line">OS NOVE</span><span class="line perpetua">VASOS</span>', 1)
+
 # Keep a single identifier per vessel; remove repetitive state and group labels.
 html = re.sub(r'<footer>ESTADO 0[1-9]</footer>', '', html)
 html = html.replace('<span class="detail">01—09 / VASOS</span>', '')
 # Shorten the opening and label the two autonomous signatures accurately.
 html = html.replace('<p class="detail">SISTEMA VETORIAL<br/>ASSINATURA / M / VASOS</p>', '')
+html = html.replace('<p class="detail">VETOR / VOLUME<br/>ASSINATURA / APLICAÇÃO</p>', '', 1)
 # Maintain the universal cover's Detalhe column without reintroducing
 # the redundant label retired during REVIEW1. Safe on repeated generation.
 summary = '<p class="copy">Um símbolo estruturante, um logotipo oficial e nove vasos.</p>'
-detail = '<p class="detail">VETOR / VOLUME<br/>ASSINATURA / APLICAÇÃO</p>'
+detail = '<p class="detail" aria-hidden="true"></p>'
 html = html.replace(summary+'</div>', summary+detail+'</div>', 1)
 assert '<div class="bottomline">'+summary+detail+'</div>' in html, 'Missing canonical cover Detail'
 

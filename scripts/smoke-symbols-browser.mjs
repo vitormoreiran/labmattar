@@ -279,6 +279,15 @@ try {
       assert.equal(await introPage.locator('.lm-site-nav [data-area="introducao"][aria-current="page"]').count(),1,'Entire introduction is chapter 00');
       assert.equal(await introPage.locator('.lm-site-nav [aria-current="page"]').count(),1);
       assert.deepEqual(await introPage.locator('#sistemas .entry>span:first-child').allTextContents(),['01','02','03','04','05','06','07'],'Introduction index follows the chapter menu');
+       const titles=await introPage.locator('main h1, main h2').allTextContents();
+       assert.ok(titles.every(t=>t.trim()===t.trim().toLocaleUpperCase('pt-BR')),'REVIEW1: introduction titles are uppercase');
+       const titleSize=await introPage.locator('main h1').evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
+       assert.ok(Math.abs(titleSize-Math.min(104,Math.max(31,width*.07)))<1,'REVIEW1: introduction cover uses standard title size');
+       assert.equal(await introPage.locator('#arquivo .archive-card').count(),3,'REVIEW1: archive has three real linked resources');
+       assert.equal(await introPage.locator('#arquivo video source[src="/motion/videos/m-form.mp4"]').count(),1);
+       assert.equal(await introPage.locator('#arquivo .placeholder').count(),0,'REVIEW1: no empty archival placeholders');
+       if(width===1440)assert.equal(await introPage.locator('#sistemas .entry p').evaluateAll(items=>items.every(el=>getComputedStyle(el).whiteSpace==='nowrap')),true,'REVIEW1: index descriptions use one line on desktop');
+       assert.ok(await introPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'REVIEW1: no intro horizontal overflow');
       assert.equal(await introPage.locator('main>.section>.eyebrow').filter({hasText:/^0[1-9] \/ /}).count(),0,'Introduction sections do not start new chapters');
       await introPage.locator('header a[href="#arquivo"]').click();
       assert.equal(new URL(introPage.url()).hash,'#arquivo');

@@ -134,6 +134,8 @@ jobs:
           cache: npm
       - name: Validar tres tratamentos de texto
         run: node scripts/validate-manual-type-sources.mjs
+      - name: Verificar substituicao dos nove vasos 3D antes do deploy
+        run: node scripts/test-symbols-3d-switch.mjs
       - name: Preparar Motion e Matriz atual
         run: |
           npm ci --prefix tools/matriz-vetorial

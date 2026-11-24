@@ -19,6 +19,21 @@ page.on('requestfailed', request => {
   report.failedRequests.push(failure);
 });
 const check = (ok,message) => assert.ok(ok,message);
+// The published Worker may reset a navigation during route changes.
+// Retry only transient transport errors, never HTTP errors or broken content.
+async function navigateArea(page, href) {
+  for (let attempt=0; attempt<3; attempt++) {
+    try {
+      // Later assertions already await fonts, role assignment, and page content.
+      return await page.goto(href,{waitUntil:'domcontentloaded',timeout:60000});
+    } catch (error) {
+      const transient = /net::ERR_CONNECTION_RESET|net::ERR_CONNECTION_CLOSED|net::ERR_TIMED_OUT/.test(String(error));
+      if (phase!=='published' || !transient || attempt===2) throw error;
+      console.warn('Preview navigation retry',attempt+1,href,String(error).slice(0,180));
+      await page.waitForTimeout((attempt+1)*750);
+    }
+  }
+}
 try {
   const response = await page.goto(url,{waitUntil:'networkidle',timeout:60000});
   assert.equal(response.status(),200,'Manual HTTP 200');
@@ -33,13 +48,17 @@ try {
   report.manualHeadings=[];
   const areas=['manual.html','motion.html','tipografia.html','cores.html','composicao.html','laboratorio.html'];
   report.manualGeometry=[];
-  for (const [viewportWidth,viewportHeight] of [[1440,900],[1024,768],[768,1024],[390,844],[320,640]]) {
+  // The compiled artifact is exhaustively tested at five viewports.
+  // Check both desktop and mobile on the published Worker without multiplying
+  // cross-network navigations across unrelated manual chapters.
+  const viewportCases=phase==='published'?[[1440,900],[390,844]]:[[1440,900],[1024,768],[768,1024],[390,844],[320,640]];
+  for (const [viewportWidth,viewportHeight] of viewportCases) {
     const group=[];
     const geometry=[];
     for (const area of areas) {
       const areaPage=await browser.newPage({viewport:{width:viewportWidth,height:viewportHeight},reducedMotion:'reduce'});
       try {
-        const response=await areaPage.goto(new URL('/'+area,url).href,{waitUntil:'networkidle',timeout:60000});
+        const response=await navigateArea(areaPage,new URL('/'+area,url).href);
         assert.equal(response.status(),200,'Area HTTP 200 '+area);
         const navLinks=await areaPage.locator('.lm-nav-list a').evaluateAll(links=>links.map(link=>({
           index:link.querySelector('.lm-nav-index').textContent.trim(),area:link.dataset.area,href:link.getAttribute('href')

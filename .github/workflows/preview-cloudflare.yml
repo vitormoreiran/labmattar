@@ -110,8 +110,11 @@ jobs:
         run: |
           set -euo pipefail
           base="${{ github.event.pull_request.base.sha || github.event.before }}"
-          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then base="$(git rev-parse HEAD^)"; fi
-          files="$(git diff --name-only "$base" HEAD)"
+          if [ -n "$base" ] && git cat-file -e "$base^{commit}" 2>/dev/null; then
+            files="$(git diff --name-only "$base" HEAD)"
+          else
+            files="$(git show --pretty='' --name-only HEAD)"
+          fi
           if [ -n "$files" ] && ! grep -qEv '^(design/(inicio|revise-symbols-hierarchy)\.py|public/(manual\.html|manual-symbols\.css)|scripts/test-identity-consistency\.mjs)$' <<<"$files"; then
             echo 'editorial_only=false' >> "$GITHUB_OUTPUT"
           else

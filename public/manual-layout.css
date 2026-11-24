@@ -93,7 +93,7 @@ html body main section.lm-manual-cover > .inner{
   align-items:start;
   justify-content:normal;
 }
-html body main section.lm-manual-cover > .inner > :first-child{
+html body main section.lm-manual-cover > .inner > :first-child:not(h1){
   grid-column:1 / 13;
   grid-row:1;
   min-height:calc(var(--lm-type-detail-size) * var(--lm-type-detail-leading));
@@ -349,7 +349,7 @@ html body main section.page .section-head > p:nth-child(2){
     grid-template-columns:minmax(0,1fr)!important;
     column-gap:0!important;
   }
-  html body main section.lm-manual-cover > .inner > :first-child,
+  html body main section.lm-manual-cover > .inner > :first-child:not(h1),
   html body main section.lm-manual-cover > .inner > h1,
   html body main section.lm-manual-cover > .inner > :is(.bottomline,.cover-bottom,.intro-bottom,.intro){
     grid-column:1!important;

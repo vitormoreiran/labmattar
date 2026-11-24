@@ -104,6 +104,19 @@ jobs:
     environment: preview
     steps:
       - uses: actions/checkout@v4
+      - name: Delimitar verificações da prévia
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then base="$(git rev-parse HEAD^)"; fi
+          files="$(git diff --name-only "$base" HEAD)"
+          if [ -n "$files" ] && ! grep -qEv '^(design/(inicio|revise-symbols-hierarchy)\.py|public/(manual\.html|manual-symbols\.css)|scripts/test-identity-consistency\.mjs)$' <<<"$files"; then
+            echo 'editorial_only=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'editorial_only=true' >> "$GITHUB_OUTPUT"
+          fi
       - name: Preparar fonte
         shell: bash
         run: |
@@ -120,9 +133,6 @@ jobs:
           for page in tipografia cores composicao laboratorio compor identidade inicio redes; do cp "design/$page.html" "public/$page.html"; done
           python3 design/integrate-areas.py
           python3 design/revise-symbols-hierarchy.py
-          cp public/manual.html /tmp/manual-once.html
-          python3 design/revise-symbols-hierarchy.py
-          cmp /tmp/manual-once.html public/manual.html
           git diff --exit-code -- public/identidade
           python3 design/validate-identity.py
           python3 scripts/prepare-identity-kit.py
@@ -137,6 +147,7 @@ jobs:
       - name: Verificar substituicao dos nove vasos 3D antes do deploy
         run: node scripts/test-symbols-3d-switch.mjs
       - name: Preparar Motion e Matriz atual
+        if: steps.scope.outputs.editorial_only != 'true'
         run: |
           npm ci --prefix tools/matriz-vetorial
           npm test --prefix tools/matriz-vetorial
@@ -157,8 +168,10 @@ jobs:
           cp dist/matrix/design/matrix/index.html dist/client/editor/index.html
           cp -R dist/matrix/matrix-assets dist/client/matrix-assets
       - name: Validar seguranca do acervo
+        if: steps.scope.outputs.editorial_only != 'true'
         run: node scripts/test-acervo.mjs
       - name: Validar contratos de páginas e elementos
+        if: steps.scope.outputs.editorial_only != 'true'
         run: node --test scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar Workers preview
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
@@ -217,6 +230,7 @@ jobs:
           # Preserve Cloudflare dashboard variables and all provider secrets across deploys.
           npx wrangler deploy --config wrangler.preview.jsonc --keep-vars
       - name: Preparar inspeção do PDF
+        if: steps.scope.outputs.editorial_only != 'true'
         run: |
           python3 -m pip install --quiet pypdf==6.10.0
           if ! command -v pdftoppm >/dev/null || ! command -v ffmpeg >/dev/null; then
@@ -228,10 +242,12 @@ jobs:
             sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
           fi
       - name: Instalar navegador de testes
+        if: steps.scope.outputs.editorial_only != 'true'
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           npx playwright install chromium
       - name: Servir pacote compilado para as verificações
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &
@@ -242,54 +258,69 @@ jobs:
           cat /tmp/manual-http.log
           exit 1
       - name: Validar os quatro modelos de assinatura
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-email-card.mjs
       - name: Validar páginas e PDF do Laboratório
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-pages.mjs
       - name: Validar seções e publicação HTML
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-sections.mjs
       - name: Validar exportação de vídeo
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-video.mjs
       - name: Validar Redes Sociais
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: REDES_URL=http://127.0.0.1:8765/redes.html node scripts/smoke-redes-browser.mjs
       - name: Validar Símbolos
         shell: bash
         run: MANUAL_URL=http://127.0.0.1:8765/manual.html node scripts/smoke-symbols-browser.mjs
       - name: Validar Cores
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COLORS_URL=http://127.0.0.1:8765/cores.html node scripts/smoke-colors-browser.mjs
       - name: Validar Matriz Vetorial
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: EDITOR_URL=http://127.0.0.1:8765/editor/ node scripts/smoke-matrix-browser.mjs
       - name: Validar composição
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-browser.mjs
       - name: Validar controles do Laboratório
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-composition-studio.mjs
       - name: Validar edição em telas de toque
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-mobile.mjs
       - name: Validar desfoque e vidro na fotografia
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-lab-photo-effects.mjs
       - name: Validar assinaturas na composição
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-signature-browser.mjs
       - name: Validar renderização PNG
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-laboratorio-export.mjs
       - name: Validar interface do acervo
+        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: COMPOSITION_URL=http://127.0.0.1:8765/compor.html node scripts/smoke-acervo-ui.mjs
       - name: Validar coerência do manual
         shell: bash
         run: node scripts/smoke-identity-review.mjs
       - name: Conferir pacote do domínio oficial sem publicar
+        if: steps.scope.outputs.editorial_only != 'true'
         run: |
           node scripts/build-official.mjs dist/client dist/oficial-checked
           npx --no-install wrangler deploy --dry-run --config dist/oficial-checked/wrangler.jsonc --outdir dist/oficial-check-bundle

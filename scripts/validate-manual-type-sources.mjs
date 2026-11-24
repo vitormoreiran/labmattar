@@ -1,4 +1,4 @@
-// Three treatments only: Título, Corpo, Detalhe.
+// Four treatments only: Título, Subtítulo, Corpo, Detalhe.
 // Fail before build/deploy if a manual source reintroduces local text formats.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -45,8 +45,8 @@ for (const file of [...pages,...styles]) {
     file+': obsolete alternate typography token');
 }
 const canonical = readFileSync('public/manual-headings.css','utf8');
-for (const token of ['--lm-type-title-size','--lm-type-body-size','--lm-type-detail-size']) {
+for (const token of ['--lm-type-title-size','--lm-type-subtitle-size','--lm-type-body-size','--lm-type-detail-size']) {
   assert.ok(canonical.includes(token),'Missing canonical token '+token);
 }
-console.log('Typography sources OK: '+audited+' manual files; three roles, zero conflicting declarations.');
+console.log('Typography sources OK: '+audited+' manual files; four roles, zero conflicting declarations.');
 

@@ -174,8 +174,8 @@ try {
         const audit=await areaPage.evaluate(()=>{
           const text=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
           const seen=[],errors=[];let node;
-          const title=Math.max(31,Math.min(innerWidth*.07,104)),body=innerWidth<=760?17:19,detail=innerWidth<=760?12:13;
-          const expect={title:{size:title,leading:title*.98},body:{size:body,leading:body*(innerWidth<=760?1.5:1.45)},detail:{size:detail,leading:detail*(innerWidth<=760?1.4:1.35)}};
+          const title=Math.max(31,Math.min(innerWidth*.07,104)),subtitle=Math.max(24,Math.min(innerWidth*.033,49)),body=innerWidth<=760?17:19,detail=innerWidth<=760?12:13;
+          const expect={title:{size:title,leading:title*.98},subtitle:{size:subtitle,leading:subtitle*1.1},body:{size:body,leading:body*(innerWidth<=760?1.5:1.45)},detail:{size:detail,leading:detail*(innerWidth<=760?1.4:1.35)}};
           const scale=(min,mult,max,width)=>Math.min(max,Math.max(min,width*mult));
           while((node=text.nextNode())){
             const value=node.nodeValue?.trim();if(!value)continue;
@@ -197,8 +197,9 @@ try {
             const labVars=lab?getComputedStyle(lab):null;
             const labSize=labVars?parseFloat(labVars.getPropertyValue('--lm-type-'+role+'-size')):NaN;
             const nominal=Number.isFinite(labSize)?
-              {size:labSize,leading:labSize*(role==='title'?.98:role==='body'?(innerWidth<=760?1.5:1.45):(innerWidth<=760?1.4:1.35))}:
+              {size:labSize,leading:labSize*(role==='title'?.98:role==='subtitle'?1.1:role==='body'?(innerWidth<=760?1.5:1.45):(innerWidth<=760?1.4:1.35))}:
               sizes?{title:{size:sizes.title,leading:sizes.title*.98},
+                subtitle:{size:sizes.subtitle,leading:sizes.subtitle*1.1},
                 body:{size:sizes.body,leading:sizes.body*(innerWidth<=760?1.5:1.45)},
                 detail:{size:sizes.detail,leading:sizes.detail*(innerWidth<=760?1.4:1.35)}}[role]:expect[role];
             const item={role,tag:e.tagName,className:String(e.className).slice(0,90),text:value.slice(0,50),size:parseFloat(cs.fontSize),leading:parseFloat(cs.lineHeight),weight:cs.fontWeight,family:cs.fontFamily,tracking:parseFloat(cs.letterSpacing)||0};
@@ -209,7 +210,7 @@ try {
             if(item.weight!=='300')errors.push({...item,reason:'weight must be 300'});
             if(!/^(UniversMattar|PerpetuaMattar)/.test(item.family))errors.push({...item,reason:'unapproved font family'});
             const alt=role==='title'&&item.family.startsWith('PerpetuaMattar');
-            const tracking=role==='title'?(alt?0:-.025*nominal.size):role==='body'?0:.04*nominal.size;
+            const tracking=role==='title'?(alt?0:-.025*nominal.size):role==='subtitle'?-0.025*nominal.size:role==='body'?0:.04*nominal.size;
             if(Math.abs(item.tracking-tracking)>.12)errors.push({...item,reason:'non-token letter spacing',expected:tracking});
           }
           let pseudoCount=0;
@@ -230,10 +231,10 @@ try {
                 errors.push({...actual,reason:'CSS-generated label is not Detalhe'});
             }
           }
-          return {count:seen.length,pseudoCount,counts:Object.fromEntries(['title','body','detail'].map(r=>[r,seen.filter(x=>x.role===r).length])),errors:errors.slice(0,40),errorCount:errors.length};
+          return {count:seen.length,pseudoCount,counts:Object.fromEntries(['title','subtitle','body','detail'].map(r=>[r,seen.filter(x=>x.role===r).length])),errors:errors.slice(0,40),errorCount:errors.length};
         });
         assert.ok(audit.count>=15,'Text audit must cover real content on every chapter: '+area);
-        assert.equal(audit.errorCount,0,'Only three typography treatments in '+area+' / '+viewportWidth+': '+JSON.stringify(audit.errors));
+        assert.equal(audit.errorCount,0,'Only four typography treatments in '+area+' / '+viewportWidth+': '+JSON.stringify(audit.errors));
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');

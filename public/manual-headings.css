@@ -1,5 +1,5 @@
-/* LABMATTAR / Tipografia normativa. EXACTLY THREE visible text treatments.
- * Título (Univers/Perpetua), Corpo (Univers) and Detalhe (Univers).
+/* LABMATTAR / Tipografia normativa. FOUR visible text treatments.
+ * Título (Univers/Perpetua), Subtítulo, Corpo and Detalhe (Univers).
  * This file overrides legacy component-specific typography without altering
  * project SVGs, editor geometry, or image composition. */
 @font-face{font-family:UniversMattar;src:url('/fonts/univers-lt-std-45-light.otf') format('opentype');font-style:normal;font-weight:300;font-display:swap}
@@ -8,20 +8,23 @@
  --lm-type-univers:UniversMattar,Arial,sans-serif;
  --lm-type-perpetua:PerpetuaMattar,Georgia,serif;
  --lm-type-title-size:clamp(31px,7vw,104px);
+ --lm-type-subtitle-size:clamp(24px,3.3vw,49px);
  /* Official logical-page sizes: the canvas always uses these source values. */
  --lm-type-page-body-size:19px;
  --lm-type-page-detail-size:13px;
  --lm-type-body-size:var(--lm-type-page-body-size);
  --lm-type-detail-size:var(--lm-type-page-detail-size);
  --lm-type-title-leading:.98;
+ --lm-type-subtitle-leading:1.1;
  --lm-type-body-leading:1.45;
  --lm-type-detail-leading:1.35;
  --lm-type-title-tracking:-.025em;
+ --lm-type-subtitle-tracking:-.025em;
  --lm-type-title-perpetua-tracking:0px;
  --lm-type-body-tracking:0px;
  --lm-type-detail-tracking:.04em;
 }
-/* Semantic fallback: the same three tokens render even before the
+/* Semantic fallback: the same four tokens render even before the
    role classifier runs. JavaScript assigns precise roles for dynamic text. */
 html body{
  font-family:var(--lm-type-univers);
@@ -39,6 +42,14 @@ html body :is(h1,h2,.title,.type-title,.big,.transform-rule,.artboard .headline,
  letter-spacing:var(--lm-type-title-tracking);
  text-transform:uppercase;
 }
+html body :is(.lm-application-subtitle,.motion-card h3){
+ font-family:var(--lm-type-univers);
+ font-size:var(--lm-type-subtitle-size);
+ font-weight:300;
+ line-height:var(--lm-type-subtitle-leading);
+ letter-spacing:var(--lm-type-subtitle-tracking);
+ text-transform:uppercase;
+}
 html body :is(h1,h2,.title,.type-title,.big,.transform-rule,.artboard .headline,.lm-lab-title,.lm-lab-heading h2,.lm-case-reading h3,.lm-case-contrast h3,.lm-case-validation h3) :is(.perpetua,.p,em){
  font-family:var(--lm-type-perpetua);
  letter-spacing:0;
@@ -52,7 +63,7 @@ html body :is(nav,header,footer,button,input,textarea,select,option,label,legend
  text-transform:uppercase;
 }
 /* Existing visual containers continue to own positioning, color and spacing.
- * Text elements get one of the three roles from manual-type-roles.js. */
+ * Text elements get one of the four roles from manual-type-roles.js. */
 html body [data-lm-text-role="title"]:not(#__lm_type_guard__){
  font-family:var(--lm-type-univers)!important;
  font-size:var(--lm-type-title-size)!important;
@@ -60,6 +71,16 @@ html body [data-lm-text-role="title"]:not(#__lm_type_guard__){
  font-style:normal!important;
  line-height:var(--lm-type-title-leading)!important;
  letter-spacing:var(--lm-type-title-tracking)!important;
+ text-transform:uppercase!important;
+ font-synthesis:none!important;
+}
+html body [data-lm-text-role="subtitle"]:not(#__lm_type_guard__){
+ font-family:var(--lm-type-univers)!important;
+ font-size:var(--lm-type-subtitle-size)!important;
+ font-weight:300!important;
+ font-style:normal!important;
+ line-height:var(--lm-type-subtitle-leading)!important;
+ letter-spacing:var(--lm-type-subtitle-tracking)!important;
  text-transform:uppercase!important;
  font-synthesis:none!important;
 }
@@ -90,7 +111,7 @@ html body #labArtboard{
  --lm-type-body-size:var(--lm-type-page-body-size);
  --lm-type-detail-size:var(--lm-type-page-detail-size);
 }
-/* Perpetua is an alternate letterform INSIDE Título, never a fourth scale. */
+/* Perpetua is an alternate letterform INSIDE Título, never a fifth scale. */
 html body [data-lm-text-role="title"]:is(.perpetua,.p,em):not(#__lm_type_guard__),
 html body :is(.perpetua,.p,em) [data-lm-text-role="title"]:not(#__lm_type_guard__){
  font-family:var(--lm-type-perpetua)!important;

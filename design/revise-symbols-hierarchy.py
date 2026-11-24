@@ -70,7 +70,7 @@ application = '''<section class="chapter lm-identity-application" id="uso"><div 
 application = application.replace('<section class="lm-application-axis">', '<div class="lm-application-axis">')
 application = application.replace('</section>\n<section class="lm-application-axis">', '</div>\n<div class="lm-application-axis">')
 application = application.replace('</section>\n<p class="detail lm-application-endnote">', '</div>\n<p class="detail lm-application-endnote">')
-html = re.sub(r'<section\b[^>]*class="[^"]*lm-identity-application[^"]*"[^>]*>.*?</section>', '', html, count=1, flags=re.S)
+html = re.sub(r'<section\b[^>]*class="[^"]*lm-identity-application[^"]*"[^>]*>.*?(?=\s*</main>)', '', html, count=1, flags=re.S)
 for section_id in ('regras', 'ferramenta'):
     html, count = re.subn(r'<section\b[^>]*id="'+section_id+r'"[^>]*>.*?</section>', '', html, count=1, flags=re.S)
     assert count == 1 or existing_application, f'Missing application section: {section_id}'

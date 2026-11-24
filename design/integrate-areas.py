@@ -99,6 +99,9 @@ for filename,area in areas.items():
   for old,new in replacements.items(): s=s.replace(old,new)
   s=re.sub(r'>(Símbolos|Motion|Tipografia|Cores|Composição|Laboratório|Redes sociais) ↗<', lambda m:'>'+m.group(1).upper()+' ↗<', s)
   s=s.replace('>Ver capítulo<','>VER CAPÍTULO ↗<').replace('>Abrir ferramentas<','>ABRIR FERRAMENTAS ↗<')
+  s=re.sub(r'<a class="archive-card" href="/aplicacoes-validadas\.html">.*?</a>', '', s, flags=re.S)
+  intro_style='<style>main[aria-label="00 / Introdução"] .hero{justify-content:center;gap:0}main[aria-label="00 / Introdução"] .hero-end{display:block;margin-top:clamp(24px,4vw,55px)}main[aria-label="00 / Introdução"] .hero-end p{max-width:57ch}</style>'
+  s=s.replace('</head>',intro_style+'</head>',1)
  # Replace any source-local menu by the one unified menu.
  s=re.sub(r'<nav class="lm-site-nav"[^>]*>.*?</nav>',"",s,flags=re.S)
  s=re.sub(r'<style id="lm-site-navigation-style">.*?</style>',"",s,flags=re.S)

@@ -77,3 +77,6 @@
 .lm-3d-canvas-wrap{min-height:clamp(420px,54vw,700px)}.lm-3d-stage{grid-template-columns:1fr}.lm-3d-panel{align-items:center}.lm-3d-selector{display:flex;border-left:0}.lm-3d-selector button{flex:1;min-height:48px;border-left:1px solid var(--line)}.lm-3d-status{min-height:auto}.lm-3d-explain:empty{display:none}
 @media(max-width:850px){.lm-application-examples{grid-template-columns:1fr 1fr}.lm-application-examples figure:last-child{grid-column:1/-1}.lm-3d-canvas-wrap{min-height:360px}}
 @media(max-width:520px){.lm-application-examples{grid-template-columns:1fr}.lm-application-examples figure:last-child{grid-column:auto}.lm-3d-canvas-wrap{min-height:280px}.lm-3d-selector{display:grid;grid-template-columns:repeat(3,1fr);width:100%}}
+
+/* REVIEW 01 — unidades editoriais em coluna, com exemplos na largura da régua. */
+.lm-application-axis{display:block}.lm-application-axis>div:first-child{max-width:62ch;margin-bottom:clamp(24px,3vw,42px)}.lm-application-examples,.lm-application-brand,.lm-application-comparison,.lm-application-vases,.lm-application-rules{width:100%}.lm-application-brand{grid-template-columns:1fr 1fr}.lm-application-brand figure:first-child{order:0}.lm-application-brand figure:last-child{order:1}.lm-3d-panel{width:100%}.lm-3d-selector{width:100%;justify-content:stretch}.lm-3d-selector button{min-width:0}

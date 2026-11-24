@@ -31,6 +31,10 @@ header{position:sticky;top:0;z-index:10;background:rgba(247,246,242,.98);border-
 .rule-mark{position:absolute;right:14px;bottom:14px;width:24px;height:18px;background:currentColor;mask:url('/identidade/M.svg') center/contain no-repeat}
 .rule-photo{width:100%;aspect-ratio:2/1;object-fit:cover}
 .sample.neutral.balanced>img,.sample.neutral.balanced .sample-m{width:14%;height:16%;right:8%}
+html body main #uso .applications{grid-template-columns:repeat(2,minmax(0,1fr))!important;margin-top:32px}
+html body main #uso .sample{min-height:0!important;aspect-ratio:1.65!important;overflow:visible!important}
+#uso .sample .title{overflow-wrap:anywhere}
+@media(max-width:760px){html body main #uso .applications{grid-template-columns:minmax(0,1fr)!important}}
 @media(max-width:700px){.rule{grid-template-columns:minmax(0,1fr)}}
 </style>
 <link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19"/>

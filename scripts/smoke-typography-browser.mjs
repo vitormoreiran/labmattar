@@ -24,7 +24,7 @@ try{
  assert.equal(await page.locator('#regras .rules .rule').count(),5);
  assert.match(await page.locator('#regras .rules .rule').first().innerText(),/fixo na r\u00e9gua da p\u00e1gina/);
  assert.ok(!(await page.locator('main').innerText()).includes('posicionado livremente'));
- assert.match(await page.locator('[data-motion-role="body"] [data-original]').innerText(),/preservando o alinhamento e a hierarquia/);
+ assert.match(await page.locator('[data-motion-role="body"] [data-original]').innerText(),/sem deslocar seu eixo de composição/);
  for(const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]){
   await page.setViewportSize({width,height});await page.waitForTimeout(150);
   const g=await geometry();report.viewports.push(g);assert.equal(g.document,width,'No horizontal scroll');assert.deepEqual(g.overflow,[],'No clipped words');assert.equal(g.styles.length,1,'Exactly ONE title style everywhere');

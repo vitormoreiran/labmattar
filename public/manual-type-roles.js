@@ -10,6 +10,7 @@
  const BODY='h3,h4,h5,h6,p,li,dd,blockquote,.copy,.body-sample,.explain,.state-help,.lm-lab-body,.lm-lab-lead,.lm-lab-legend,.notes p,.rule span,.lm-case-intro p,.lm-case-aside p,.lm-case-facts p,.lm-case-validation p,.lm-case-validation ul,.lm-case-reading p,.lm-case-contrast p,.lm-rules-index p,.lm-composition-vocabulary p';
  function roleFor(el){
   if(el.closest(DETAIL))return 'detail';
+  if(el.closest('#uso .applications .sample h2'))return 'subtitle';
   if(el.closest(TITLE))return 'title';
   if(el.closest(SUBTITLE))return 'subtitle';
   if(el.closest(BODY))return 'body';

@@ -245,12 +245,10 @@ jobs:
             sudo apt-get install --no-install-recommends -y poppler-utils ffmpeg
           fi
       - name: Instalar navegador de testes
-        if: steps.scope.outputs.editorial_only != 'true'
         run: |
           npm install --no-save --no-package-lock playwright@1.58.2
           npx playwright install chromium
       - name: Servir pacote compilado para as verificações
-        if: steps.scope.outputs.editorial_only != 'true'
         shell: bash
         run: |
           python3 -m http.server 8765 --directory dist/client > /tmp/manual-http.log 2>&1 &

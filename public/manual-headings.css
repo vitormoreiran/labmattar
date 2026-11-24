@@ -181,6 +181,10 @@ html body .compact-band .title .line{
  white-space:normal!important;
 }
 html body #uso .applications{grid-template-columns:minmax(0,1fr)!important}
+/* The color posters are scaled examples of the same title treatment. */
+html body #uso .sample.poster{
+ --lm-type-title-size:clamp(22px,8.1cqw,64px);
+}
 html body #uso .sample{
  aspect-ratio:auto!important;
  min-height:clamp(520px,55vw,720px)!important;

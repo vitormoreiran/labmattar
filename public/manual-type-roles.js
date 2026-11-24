@@ -1,5 +1,5 @@
 /* Every visible text node in the five LABMATTAR manual areas is mapped
- * to one of three roles. This includes interactive editor labels and samples. */
+ * to one of four roles. This includes interactive editor labels and samples. */
 (()=>{
  'use strict';
  const ROLE='data-lm-text-role';
@@ -9,8 +9,9 @@
  const SUBTITLE='.lm-application-subtitle,.motion-card h3,.motion-reading h3,.lm-motion-subtitle';
  const BODY='h3,h4,h5,h6,p,li,dd,blockquote,.copy,.body-sample,.explain,.state-help,.lm-lab-body,.lm-lab-lead,.lm-lab-legend,.notes p,.rule span,.lm-case-intro p,.lm-case-aside p,.lm-case-facts p,.lm-case-validation p,.lm-case-validation ul,.lm-case-reading p,.lm-case-contrast p,.lm-rules-index p,.lm-composition-vocabulary p';
  function roleFor(el){
+  if(el.closest('.editorial-caption .lm-motion-subtitle'))return 'subtitle';
+  if(el.closest('.editorial-caption .copy'))return 'body';
   if(el.closest(DETAIL))return 'detail';
-  if(el.closest('#uso .applications .sample h2'))return 'subtitle';
   if(el.closest(TITLE))return 'title';
   if(el.closest(SUBTITLE))return 'subtitle';
   if(el.closest(BODY))return 'body';

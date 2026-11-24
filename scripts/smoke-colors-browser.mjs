@@ -19,7 +19,7 @@ try{
       assert.equal(await page.locator('#uso .sample').count(),6);
       assert.equal(await page.locator('.color-motion-replay').count(),6);
       const samples=page.locator('#uso .sample');
-      const originals=await Promise.all(Array.from({length:4},(_,i)=>sourceSnapshot(samples.nth(i))));
+      const originals=await Promise.all((await samples.all()).map(sourceSnapshot));
       await page.emulateMedia({reducedMotion:'no-preference'});
       await samples.first().scrollIntoViewIfNeeded();
       await page.waitForFunction(()=>document.querySelector('#uso .sample').dataset.colorMotion==='playing');
@@ -56,7 +56,7 @@ try{
       assert.deepEqual(await sourceSnapshot(samples.first()),originals[0]);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
       await page.locator('#uso').screenshot({path:`colors-proof/examples-${width}.png`});
-      report.viewports.push({width,examples:4,automaticEntry:true,replay:true,fixedLayout:true,exactText:true,reducedMotion:true});
+      report.viewports.push({width,examples:originals.length,automaticEntry:true,replay:true,fixedLayout:true,exactText:true,reducedMotion:true});
     }finally{await page.close();}
   }
   assert.deepEqual(report.errors,[]);report.passed=true;

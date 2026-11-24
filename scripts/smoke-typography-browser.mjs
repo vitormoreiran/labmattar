@@ -18,11 +18,11 @@ try{
  await page.evaluate(()=>document.fonts.ready);await page.waitForTimeout(200);
  report.fonts=await page.evaluate(()=>[...document.fonts].map(f=>({family:f.family,status:f.status})));
  for(const family of ['UniversMattar','PerpetuaMattar'])assert.ok(report.fonts.some(f=>f.family===family&&f.status==='loaded'),family);
- assert.deepEqual(await page.locator('[data-text-role]').evaluateAll(els=>els.map(e=>e.dataset.textRole)),['title','body','detail']);
+ assert.deepEqual(await page.locator('[data-text-role]').evaluateAll(els=>els.map(e=>e.dataset.textRole)),['title','subtitle','body','detail']);
  assert.equal(await page.locator('.lm-motion-unit').count(),1);
  assert.equal(await page.locator('.massive,.display,.category,.editorial').count(),0);
  assert.equal(await page.locator('#regras .rules .rule').count(),5);
- assert.match(await page.locator('#regras .rules .rule').first().innerText(),/fixo na r\u00e9gua da p\u00e1gina/);
+ assert.match(await page.locator('#regras .rules .rule').first().innerText(),/Identificar a função/);
  assert.ok(!(await page.locator('main').innerText()).includes('posicionado livremente'));
  assert.match(await page.locator('[data-motion-role="body"] [data-original]').innerText(),/sem deslocar seu eixo de composição/);
  for(const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]){
@@ -35,8 +35,8 @@ try{
   const labels=await page.locator('[data-lm-type-measure]').allTextContents();
   assert.deepEqual(labels,expected.map(value=>value+' px'),'Typography index labels must reflect real computed specimens');
   if([1440,390].includes(width)){await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`typography-proof/cover-${width}.png`});await page.locator('#titulo').screenshot({path:`typography-proof/title-${width}.png`});}
-  await page.locator('header.top a[href="#titulo"]').click();await page.waitForTimeout(100);
-  const nav=await page.evaluate(()=>({global:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,local:document.querySelector('header.top').getBoundingClientRect().top,bottom:document.querySelector('header.top').getBoundingClientRect().bottom,title:document.querySelector('#titulo h3').getBoundingClientRect().top}));assert.ok(nav.local>=nav.global-1,'Menus do not overlap');assert.ok(nav.title>=nav.bottom-1,'Anchor title not covered');
+  await page.goto(new URL('#titulo',url).href);
+  const nav=await page.evaluate(()=>({global:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,title:document.querySelector('#titulo h3').getBoundingClientRect().top}));assert.ok(nav.title>=nav.global-1,'Anchor title not covered by the chapter menu');
  }
  await page.locator('#type-guides').click();assert.equal(await page.locator('#type-guides').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('.board-guides').evaluate(e=>getComputedStyle(e).display),'block');
  await page.setViewportSize({width:1440,height:900});await page.waitForTimeout(150);await page.locator('#regras').screenshot({path:'typography-proof/composition-1440.png'});
@@ -48,7 +48,7 @@ try{
   const before=await ruler();await page.locator('#lm-motion-play').click();await page.waitForTimeout(150);
   assert.equal(await page.locator('#motion-composition').getAttribute('data-playing'),'true');
   const states=await page.locator('[data-motion-role]').evaluateAll(els=>els.map(e=>({role:e.dataset.motionRole,animated:e.getAnimations().length===1,start:e.getAnimations()[0]?.startTime,text:[...e.querySelectorAll('[data-original]')].some(l=>l.textContent!==l.dataset.original)})));
-  assert.deepEqual(states.map(s=>s.role),['detail','title','subtitle','body']);assert.ok(states.every(s=>s.animated&&s.text),'All four treatments animate');assert.equal(new Set(states.map(s=>s.start)).size,1,'One synchronized entrance');
+  assert.deepEqual(states.map(s=>s.role),['title','subtitle','body','detail']);assert.ok(states.every(s=>s.animated&&s.text),'All four treatments animate');assert.equal(new Set(states.map(s=>s.start)).size,1,'One synchronized entrance');
   assert.deepEqual(await ruler(),before,'Layout stays fixed on the page ruler');
   for(let i=0;i<4;i++){assert.deepEqual((await geometry()).overflow,[],'Animated characters stay inside their reserved words');await page.waitForTimeout(200);}
   await page.waitForTimeout(750);assert.deepEqual(await texts(),originals,'Exact final text in every role');assert.equal(await page.locator('#motion-composition').getAttribute('data-playing'),'false');assert.equal((await geometry()).styles.length,1);

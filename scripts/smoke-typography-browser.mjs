@@ -21,8 +21,8 @@ try{
  assert.deepEqual(await page.locator('[data-text-role]').evaluateAll(els=>els.map(e=>e.dataset.textRole)),['title','body','detail']);
  assert.equal(await page.locator('.lm-motion-unit').count(),1);
  assert.equal(await page.locator('.massive,.display,.category,.editorial').count(),0);
- assert.equal(await page.locator('.rules .rule').count(),5);
- assert.match(await page.locator('.rules .rule').first().innerText(),/fixo na r\u00e9gua da p\u00e1gina/);
+ assert.equal(await page.locator('#regras .rules .rule').count(),5);
+ assert.match(await page.locator('#regras .rules .rule').first().innerText(),/fixo na r\u00e9gua da p\u00e1gina/);
  assert.ok(!(await page.locator('main').innerText()).includes('posicionado livremente'));
  assert.match(await page.locator('[data-motion-role="body"] [data-original]').innerText(),/preservando o alinhamento e a hierarquia/);
  for(const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]){
@@ -36,7 +36,7 @@ try{
   assert.deepEqual(labels,expected.map(value=>value+' px'),'Typography index labels must reflect real computed specimens');
   if([1440,390].includes(width)){await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:`typography-proof/cover-${width}.png`});await page.locator('#titulo').screenshot({path:`typography-proof/title-${width}.png`});}
   await page.locator('header.top a[href="#titulo"]').click();await page.waitForTimeout(100);
-  const nav=await page.evaluate(()=>({global:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,local:document.querySelector('header.top').getBoundingClientRect().top,bottom:document.querySelector('header.top').getBoundingClientRect().bottom,title:document.querySelector('#titulo h2').getBoundingClientRect().top}));assert.ok(nav.local>=nav.global-1,'Menus do not overlap');assert.ok(nav.title>=nav.bottom-1,'Anchor title not covered');
+  const nav=await page.evaluate(()=>({global:document.querySelector('.lm-site-nav').getBoundingClientRect().bottom,local:document.querySelector('header.top').getBoundingClientRect().top,bottom:document.querySelector('header.top').getBoundingClientRect().bottom,title:document.querySelector('#titulo h3').getBoundingClientRect().top}));assert.ok(nav.local>=nav.global-1,'Menus do not overlap');assert.ok(nav.title>=nav.bottom-1,'Anchor title not covered');
  }
  await page.locator('#type-guides').click();assert.equal(await page.locator('#type-guides').getAttribute('aria-pressed'),'true');assert.equal(await page.locator('.board-guides').evaluate(e=>getComputedStyle(e).display),'block');
  await page.setViewportSize({width:1440,height:900});await page.waitForTimeout(150);await page.locator('#regras').screenshot({path:'typography-proof/composition-1440.png'});

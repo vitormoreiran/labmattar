@@ -16,8 +16,8 @@ try{
     try{
       assert.equal((await page.goto(url,{waitUntil:'networkidle'})).status(),200);
       await page.evaluate(()=>document.fonts.ready);
-      assert.equal(await page.locator('#uso .sample').count(),4);
-      assert.equal(await page.locator('.color-motion-replay').count(),4);
+      assert.equal(await page.locator('#uso .sample').count(),6);
+      assert.equal(await page.locator('.color-motion-replay').count(),6);
       const samples=page.locator('#uso .sample');
       const originals=await Promise.all(Array.from({length:4},(_,i)=>sourceSnapshot(samples.nth(i))));
       await page.emulateMedia({reducedMotion:'no-preference'});
@@ -25,7 +25,7 @@ try{
       await page.waitForFunction(()=>document.querySelector('#uso .sample').dataset.colorMotion==='playing');
       assert.deepEqual(await sourceSnapshot(samples.first()),originals[0],'Automatic entry preserves source and layout');
       await page.waitForFunction(()=>document.querySelector('#uso .sample').dataset.colorMotion==='idle');
-      for(let index=0;index<4;index++){
+      for(let index=0;index<6;index++){
         const sample=samples.nth(index),button=page.locator('.color-motion-replay').nth(index);
         await button.click();
         await page.waitForTimeout(100);

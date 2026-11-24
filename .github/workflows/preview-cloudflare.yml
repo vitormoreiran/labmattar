@@ -150,7 +150,6 @@ jobs:
       - name: Verificar substituicao dos nove vasos 3D antes do deploy
         run: node scripts/test-symbols-3d-switch.mjs
       - name: Preparar Motion e Matriz atual
-        if: steps.scope.outputs.editorial_only != 'true'
         run: |
           npm ci --prefix tools/matriz-vetorial
           npm test --prefix tools/matriz-vetorial

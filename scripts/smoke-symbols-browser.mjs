@@ -331,8 +331,8 @@ try {
     ['1','2','3','4','5','6','7','8','9'], '3D models are indexed by approved numeric names, not array order');
   assert.equal(await page.locator('#tridimensional canvas').count(),1,
     '3D models are presented in a single navigable canvas');
-  assert.equal(await page.locator('#uso.lm-identity-application .lm-application-axis').count(),4,
-    'Four concise application examples in Symbols');
+  assert.equal(await page.locator('#uso.lm-identity-application .lm-application-axis').count(),6,
+    'Six approved application units remain in Symbols');
   assert.equal(await page.locator('#uso video, .motion-symbol-preview video').count(),0,
     'Motion videos belong to the Motion chapter only');
   const expanded = page.locator('#uso .lm-application-expanded');

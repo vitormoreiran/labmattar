@@ -7,6 +7,8 @@
 :root{--paper:#f7f6f2;--ink:#181818;--line:#cbc9c4;--rule:var(--line);--red:#e22e24;--beige:#e6dbcf;--margin:clamp(20px,4vw,64px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink)}
+main{--lm-layout-section-space:clamp(48px,6vw,88px)}
+html body main section.page.lm-manual-section h2.lm-manual-section-title{margin:0 0 24px!important}
 a{color:inherit;text-underline-offset:4px}
 button{cursor:pointer}
 .page{border-bottom:1px solid var(--line);scroll-margin-top:54px}
@@ -27,7 +29,9 @@ figure,.detail,.poster-title,.lm-motion-subtitle{margin:0}
 .poster-top,.poster-bottom{min-width:0}
 .poster-bottom,.corner-composition .poster-top{display:grid;grid-template-columns:minmax(0,1fr) clamp(34px,11%,78px);align-items:end;gap:12px}
 .corner-composition .poster-top{align-items:start}
+.signature,.corner-mark img,.rule-diagram image{filter:brightness(0)}
 .signature,.corner-mark img{display:block;width:100%;height:clamp(24px,7.7cqw,56px);object-fit:contain}
+.rule-diagram .mark-white{filter:brightness(0) invert(1)}
 .sample[style*="--text:#FFFFFF"] .signature,.mark-white{filter:brightness(0) invert(1)}
 .accent{display:block;height:4px;width:24%;margin-bottom:16px;background:var(--accent)}
 .editorial-caption{padding-top:10px}

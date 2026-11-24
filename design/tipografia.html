@@ -19,6 +19,8 @@ header.top{position:sticky;top:var(--global-nav-h);z-index:90;background:var(--p
 @media(max-width:760px){html .lm-site-nav{justify-content:flex-start;gap:4px 18px}.chapter{padding-block:64px}.cover{min-height:calc(85svh - var(--header-stack))}.cover-bottom{align-items:flex-start;flex-direction:column;gap:24px}.lm-motion-stage{min-height:430px;padding:32px 0;gap:36px}.rules{grid-template-columns:1fr;gap:24px}.type-board{--board-pad:24px}.board-reading{margin-block:16px;gap:24px}.demo-toolbar{align-items:center}.demo-toolbar>span{max-width:19ch}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 #hierarquia .role{border-top:1px solid var(--line);padding-top:28px;margin-top:36px;scroll-margin-top:calc(var(--header-stack) + 24px)}
+main{--lm-layout-section-space:clamp(48px,6vw,88px)}
+html body main section.chapter.lm-manual-section h2.lm-manual-section-title{margin:0 0 24px!important}
 #hierarquia .role h3{margin:0 0 12px}
 #hierarquia .specimen{border:1px solid var(--line);padding:clamp(18px,4vw,48px);margin:24px 0 0;min-height:128px;display:grid;align-content:center;gap:14px}
 #hierarquia .specimen .copy,.body-example p{margin:0}
@@ -35,6 +37,7 @@ header.top{position:sticky;top:var(--global-nav-h);z-index:90;background:var(--p
 .editorial-rules{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:28px}
 .editorial-rules p{margin:0;max-width:48ch}
 @media(max-width:700px){.families,.editorial-rules{grid-template-columns:1fr}}
+@media(max-width:700px){#movimento> .inner>h2>.perpetua{display:block}}
 #movimento .lm-motion-stage{min-height:0;grid-template-rows:auto;gap:18px;border:1px solid var(--line);padding:clamp(20px,4vw,48px)}
 
 </style><link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19"/>

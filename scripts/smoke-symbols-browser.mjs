@@ -284,7 +284,8 @@ try {
        assert.ok(titles.every(t=>t.trim()===t.trim().toLocaleUpperCase('pt-BR')),'REVIEW1: introduction titles are uppercase');
        const titleSize=await introPage.locator('main h1').evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
        assert.ok(Math.abs(titleSize-Math.min(104,Math.max(31,width*.07)))<1,'REVIEW1: introduction cover uses standard title size');
-       assert.equal(await introPage.locator('#arquivo .archive-card').count(),3,'REVIEW1: archive has three real linked resources');
+       assert.deepEqual(await introPage.locator('#arquivo .archive-card').evaluateAll(cards=>cards.map(card=>card.getAttribute('href'))),
+         ['/motion.html','/manual.html#tridimensional'],'REVIEW1: archive keeps only the two editorial resources');
        assert.equal(await introPage.locator('#arquivo video source[src="/motion/videos/m-form.mp4"]').count(),1);
        assert.equal(await introPage.locator('#arquivo .placeholder').count(),0,'REVIEW1: no empty archival placeholders');
        if(width===1440)assert.equal(await introPage.locator('#sistemas .entry p').evaluateAll(items=>items.every(el=>getComputedStyle(el).whiteSpace==='nowrap')),true,'REVIEW1: index descriptions use one line on desktop');

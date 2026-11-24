@@ -54,7 +54,7 @@ application = '''<section class="chapter lm-identity-application" id="uso"><div 
 <p class="detail lm-application-endnote">AS TRANSFORMAÇÕES ENTRE M, VASOS E LETRAS DE MATTAR SÃO APRESENTADAS EM <a href="/motion.html">MOTION ↗</a>.</p>
 </div></section>'''
 application = application.replace('<section class="lm-application-axis">', '<div class="lm-application-axis">')
-application = application.replace('</section>\n<section class="lm-application-axis">', '</div>\n<div class="lm-application-axis">')
+application = application.replace('</section>\n<div class="lm-application-axis">', '</div>\n<div class="lm-application-axis">')
 application = application.replace('</section>\n<p class="detail lm-application-endnote">', '</div>\n<p class="detail lm-application-endnote">')
 existing_application = 'lm-identity-application' in html
 application = '''<section class="chapter lm-identity-application" id="uso"><div class="inner">
@@ -68,7 +68,7 @@ application = '''<section class="chapter lm-identity-application" id="uso"><div 
 <p class="detail lm-application-endnote">AS TRANSFORMAÇÕES ENTRE O M, OS RECIPIENTES E AS LETRAS DE MATTAR SÃO APRESENTADAS NO <a href="/motion.html">CAPÍTULO MOTION ↗</a>.</p>
 </div></section>'''
 application = application.replace('<section class="lm-application-axis">', '<div class="lm-application-axis">')
-application = application.replace('</section>\n<section class="lm-application-axis">', '</div>\n<div class="lm-application-axis">')
+application = application.replace('</section>\n<div class="lm-application-axis">', '</div>\n<div class="lm-application-axis">')
 application = application.replace('</section>\n<p class="detail lm-application-endnote">', '</div>\n<p class="detail lm-application-endnote">')
 html = re.sub(r'<section\b[^>]*class="[^"]*lm-identity-application[^"]*"[^>]*>.*?(?=\s*</main>)', '', html, count=1, flags=re.S)
 for section_id in ('regras', 'ferramenta'):

@@ -418,7 +418,7 @@ try {
     assert.equal(await motionPage.locator('.motion-card video').evaluateAll(videos=>videos.every(v=>v.paused&&!v.autoplay)),true);
     await motionPage.locator('.motion-card .motion-ink-toggle').first().click();
     await motionPage.waitForFunction(()=>document.querySelector('.motion-card video').currentTime>0.1);
-    assert.match(await motionPage.locator('main').innerText(),/M, VASOS E MATTAR/,'Approved transformations are explained');
+    assert.match(await motionPage.locator('main').innerText(),/PRINCÍPIOS DE TRANSFORMAÇÃO/,'Approved transformations are explained');
     for(const width of [1440,390]){
       await motionPage.setViewportSize({width,height:900});
       assert.equal(await motionPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'No Motion document overflow');

@@ -24,7 +24,7 @@ try{
  assert.equal(await page.locator('.rules .rule').count(),5);
  assert.match(await page.locator('.rules .rule').first().innerText(),/fixo na r\u00e9gua da p\u00e1gina/);
  assert.ok(!(await page.locator('main').innerText()).includes('posicionado livremente'));
- assert.match(await page.locator('[data-motion-role="body"] [data-original]').innerText(),/devem usar a mesma anima\u00e7\u00e3o de entrada em todo o site/);
+ assert.match(await page.locator('[data-motion-role="body"] [data-original]').innerText(),/preservando o alinhamento e a hierarquia/);
  for(const [width,height] of [[1920,1080],[1440,900],[1024,768],[768,1024],[390,844],[375,667],[320,640]]){
   await page.setViewportSize({width,height});await page.waitForTimeout(150);
   const g=await geometry();report.viewports.push(g);assert.equal(g.document,width,'No horizontal scroll');assert.deepEqual(g.overflow,[],'No clipped words');assert.equal(g.styles.length,1,'Exactly ONE title style everywhere');
@@ -48,7 +48,7 @@ try{
   const before=await ruler();await page.locator('#lm-motion-play').click();await page.waitForTimeout(150);
   assert.equal(await page.locator('#motion-composition').getAttribute('data-playing'),'true');
   const states=await page.locator('[data-motion-role]').evaluateAll(els=>els.map(e=>({role:e.dataset.motionRole,animated:e.getAnimations().length===1,start:e.getAnimations()[0]?.startTime,text:[...e.querySelectorAll('[data-original]')].some(l=>l.textContent!==l.dataset.original)})));
-  assert.equal(states.length,3);assert.ok(states.every(s=>s.animated&&s.text),'Title, body and detail all animate');assert.equal(new Set(states.map(s=>s.start)).size,1,'One synchronized entrance');
+  assert.deepEqual(states.map(s=>s.role),['detail','title','subtitle','body']);assert.ok(states.every(s=>s.animated&&s.text),'All four treatments animate');assert.equal(new Set(states.map(s=>s.start)).size,1,'One synchronized entrance');
   assert.deepEqual(await ruler(),before,'Layout stays fixed on the page ruler');
   for(let i=0;i<4;i++){assert.deepEqual((await geometry()).overflow,[],'Animated characters stay inside their reserved words');await page.waitForTimeout(200);}
   await page.waitForTimeout(750);assert.deepEqual(await texts(),originals,'Exact final text in every role');assert.equal(await page.locator('#motion-composition').getAttribute('data-playing'),'false');assert.equal((await geometry()).styles.length,1);

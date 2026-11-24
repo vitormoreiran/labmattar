@@ -96,6 +96,7 @@ html body main section.lm-manual-cover > .inner{
 html body main section.lm-manual-cover > .inner > :first-child{
   grid-column:1 / 13;
   grid-row:1;
+  min-height:calc(var(--lm-type-detail-size) * var(--lm-type-detail-leading));
   margin:0!important;
   padding:0;
   min-width:0;

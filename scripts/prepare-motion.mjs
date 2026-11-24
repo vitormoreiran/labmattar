@@ -36,15 +36,27 @@ for(const entry of entries){
 function cards(ids){return ids.map(id=>catalog.find(entry=>entry.id===id)).map(entry=>{
   const duration=entry.duration.toLocaleString('pt-BR',{maximumFractionDigits:2});
   const ratio=entry.aspect.replace(':',' / ');
-  const content=entry.video?`<video data-motion-ink muted loop playsinline preload="auto" poster="${entry.poster}" aria-label="${esc(entry.title)}"><source src="${entry.video}" type="video/mp4"><a href="${entry.video}">Baixar vídeo</a></video>`:'<p class="detail">Prévia local: exportação pendente.</p>';
-  return `<article class="motion-card" data-motion-id="${entry.id}"><h3>${esc(entry.title)}</h3><div class="motion-meta detail"><span>${duration} s · ${entry.aspect}</span>${entry.cut!==null?`<span>Corte sugerido: ${entry.cut.toLocaleString('pt-BR')} s em 1×</span>`:''}</div><div class="motion-frame" style="aspect-ratio:${ratio}">${content}</div><div class="motion-links detail">${entry.video?`<a href="${entry.video}" download>BAIXAR MP4</a>`:''}<a href="${entry.project}" download>BAIXAR ROTEIRO JSON</a><a href="${entry.editor}">EDITAR NA MATRIZ ↗</a></div></article>`;
+  const title=entry.displayTitle||entry.title;
+  const content=entry.video?`<video data-motion-ink muted loop playsinline preload="auto" poster="${entry.poster}" aria-label="${esc(title)}"><source src="${entry.video}" type="video/mp4"><a href="${entry.video}">Baixar vídeo</a></video>`:'<p class="detail">Prévia local: exportação pendente.</p>';
+  return `<article class="motion-card" data-motion-id="${entry.id}"><h3>${esc(title)}</h3><div class="motion-meta detail"><span>${duration} s · ${entry.aspect}</span>${entry.cut!==null?`<span>Corte sugerido: ${entry.cut.toLocaleString('pt-BR')} s em 1×</span>`:''}</div><div class="motion-frame" style="aspect-ratio:${ratio}">${content}</div><div class="motion-links detail">${entry.video?`<a href="${entry.video}" download>BAIXAR MP4</a>`:''}<a href="${entry.project}" download>BAIXAR ROTEIRO JSON</a><a href="${entry.editor}">EDITAR NA MATRIZ ↗</a></div></article>`;
 }).join('\n');}
 const groups=[
-  {id:'roteiros',number:'01',label:'ROTEIRO DE SÍMBOLO',title:'M E VASO 08',description:'Este roteiro registra M → vaso 08 → M. Preserve a rotação e as transformações exibidas no vídeo e no JSON correspondente.',ids:['m-form']},
-  {id:'assinaturas',number:'02',label:'ROTEIROS DE ASSINATURA',title:'LETRAS E VASOS',description:'Cada vídeo mostra apenas as transformações presentes em seu roteiro. Consulte o JSON antes de reutilizar uma sequência.',ids:['mattar-rhythm','composition','acervo-mattar','abertura-fecho']},
-  {id:'transicoes',number:'03',label:'ROTEIROS DE TRANSIÇÃO',title:'TRANSIÇÕES REGISTRADAS',description:'Os pontos de corte indicam somente os trechos existentes em cada roteiro. Não inferir novas passagens entre formas.',ids:['perfil-corte','passagem-bastao','forma-intervalo']},
+  {id:'roteiros',title:'SÍMBOLO EM MOVIMENTO',description:'O M se transforma em recipiente por meio de um movimento contínuo de rotação e transformação, retornando à sua configuração original.',ids:['m-form']},
+  {id:'assinaturas',title:'MATTAR EM MOVIMENTO',description:'As letras de MATTAR se transformam em recipientes, explorando diferentes relações de ritmo, simultaneidade e sequência.',ids:['mattar-rhythm','composition','acervo-mattar','abertura-fecho']},
+  {id:'transicoes',title:'TRANSIÇÕES',description:'O movimento também atua como elemento de passagem entre imagens, cenas e composições. Os giros e as transformações oferecem pontos de passagem para a construção de sequências audiovisuais.',ids:['perfil-corte','passagem-bastao','forma-intervalo']},
 ];
-const gallery=groups.map(group=>`<section class="chapter lm-manual-section" id="${group.id}" data-motion-group="${group.id}"><div class="inner"><p class="eyebrow">${group.number} / ${group.label}</p><h2 class="lm-manual-section-title">${group.title}</h2><p>${group.description}</p><div class="motion-grid">${cards(group.ids)}</div></div></section>`).join('\n');
+const displayNames={
+  'm-form':'GIRO E TRANSFORMAÇÃO',
+  'mattar-rhythm':'RITMO ALTERNADO',
+  'composition':'TRANSFORMAÇÃO EM SEQUÊNCIA',
+  'acervo-mattar':'FORMAÇÃO DE MATTAR',
+  'abertura-fecho':'ABERTURA E FECHO',
+  'perfil-corte':'CORTE NO PERFIL',
+  'passagem-bastao':'DESDOBRAMENTO DE MATTAR',
+  'forma-intervalo':'ROTAÇÃO DO RECIPIENTE'
+};
+for(const entry of catalog)entry.displayTitle=displayNames[entry.id]||entry.title;
+const gallery=groups.map(group=>`<section class="chapter lm-manual-section" id="${group.id}" data-motion-group="${group.id}"><div class="inner"><h2 class="lm-manual-section-title">${group.title}</h2><p>${group.description}</p><div class="motion-grid">${cards(group.ids)}</div></div></section>`).join('\n');
 
 await writeFile(path.join(root,'public/motion/catalog.json'),JSON.stringify({schemaVersion:1,items:catalog},null,2)+'\n');
 const template=await readFile(path.join(root,'design/motion.html'),'utf8');

@@ -42,7 +42,7 @@ html body :is(h1,h2,.title,.type-title,.big,.transform-rule,.artboard .headline,
  letter-spacing:var(--lm-type-title-tracking);
  text-transform:uppercase;
 }
-html body :is(.lm-application-subtitle,.motion-card h3){
+html body :is(.lm-application-subtitle,.motion-card h3,.motion-reading h3){
  font-family:var(--lm-type-univers);
  font-size:var(--lm-type-subtitle-size);
  font-weight:300;

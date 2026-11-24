@@ -82,6 +82,23 @@ for filename,area in areas.items():
   s=s.replace('<a class="link" href="#sistemas">CONHECER OS SISTEMAS ↓</a>', '')
   s=s.replace('<p class="eyebrow">APRESENTAÇÃO AUDIOVISUAL</p>', '')
   s=s.replace('<h2>Apresentação <em>da identidade</em></h2>', '<h2>APRESENTAÇÃO <em>DA IDENTIDADE</em></h2>')
+  replacements={
+   'Esta plataforma reúne os elementos gráficos da identidade, suas regras de aplicação e ferramentas para estudar composições. O arquivo audiovisual e os materiais de referência serão incorporados nesta mesma área.':'Este manual reúne os elementos da identidade visual do LABMATTAR, seus princípios de construção, regras de aplicação e ferramentas de composição.',
+   '<p>Espaço reservado para o vídeo de abertura. O material será incorporado aqui quando você selecionar o arquivo definitivo.</p><div class="film-slot" aria-label="Espaço reservado para vídeo de abertura"><p>LABMATTAR / APRESENTAÇÃO</p><div class="film-middle"><span class="play-icon" aria-hidden="true">▷</span></div><div class="film-bottom"><span>VÍDEO A INSERIR</span><span>SEM ARQUIVO PUBLICADO</span></div></div>':'<div class="film-slot" aria-label="Apresentação audiovisual indisponível"><div class="film-middle"><span>VÍDEO INDISPONÍVEL.</span></div></div>',
+   'M e nove vasos do acervo':'M, LOGOTIPO E RECIPIENTES.',
+   'Giros, transformações, assinaturas e transições':'GIROS, TRANSFORMAÇÕES E SEQUÊNCIAS DE MOVIMENTO.',
+   'Fontes oficiais, hierarquia, exemplos e animação':'FAMÍLIAS TIPOGRÁFICAS, HIERARQUIA E REGRAS DE USO.',
+   'Paleta, contraste e modos de aplicação':'PALETA CROMÁTICA, CONTRASTE E APLICAÇÕES.',
+   'Construção, alinhamentos, M central e adaptação de formatos':'ESTRUTURA, ALINHAMENTOS E RELAÇÕES ENTRE ELEMENTOS.',
+   'Criação de páginas, apresentações e exportações':'FERRAMENTAS DE CRIAÇÃO E APLICAÇÃO DA IDENTIDADE.',
+   'Critérios editoriais, temporadas e formatos de publicação':'FORMATOS E APLICAÇÕES DA COMUNICAÇÃO DIGITAL.',
+   'Recursos já disponíveis para consulta e aplicação da identidade.':'Acervo de materiais audiovisuais, documentos e estudos relacionados à identidade visual do LABMATTAR.',
+   'NOVE VASOS EM VOLUME':'NOVE RECIPIENTES EM VOLUME',
+   'Variações tridimensionais para observação':'PESQUISAS E EXPERIMENTAÇÕES GRÁFICAS.'
+  }
+  for old,new in replacements.items(): s=s.replace(old,new)
+  s=re.sub(r'>(Símbolos|Motion|Tipografia|Cores|Composição|Laboratório|Redes sociais) ↗<', lambda m:'>'+m.group(1).upper()+' ↗<', s)
+  s=s.replace('>Ver capítulo<','>VER CAPÍTULO ↗<').replace('>Abrir ferramentas<','>ABRIR FERRAMENTAS ↗<')
  # Replace any source-local menu by the one unified menu.
  s=re.sub(r'<nav class="lm-site-nav"[^>]*>.*?</nav>',"",s,flags=re.S)
  s=re.sub(r'<style id="lm-site-navigation-style">.*?</style>',"",s,flags=re.S)

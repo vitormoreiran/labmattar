@@ -16,7 +16,7 @@ test('capítulos, capas e Matriz têm referências coerentes',()=>{
   const file='design'+section.path;
   const html=read(file==='design/manual.html'?'public/manual.html':file);
   const label=section.label.toLocaleUpperCase('pt-BR');
-  const canonicalSymbols=section.id==='simbolos'&&html.includes('SISTEMA DE')&&html.includes('SÍMBOLOS');
+  const canonicalSymbols=section.id==='symbols'&&html.includes('SISTEMA DE')&&html.includes('SÍMBOLOS');
   assert.ok(canonicalSymbols||html.includes(section.number+' — '+label)||html.includes(section.number+' &mdash; '+label),section.label+': identificação antiga');
  }
  assert.match(read('design/laboratorio.html'),/href="\/motion\/matriz\/index.html" aria-label="Abrir Matriz Vetorial atual"/);

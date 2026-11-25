@@ -187,7 +187,15 @@
 .lm-case-frame[data-m-presentation="completo"] .lm-case-symbol{
   transform:none;
 }
-.lm-case-frame[data-m-presentation="completo"] .lm-case-symbol .lm-case-image{
+.lm-case-frame[data-format="horizontal"][data-m-presentation="completo"] .lm-case-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  -webkit-mask:var(--mask-h) center / 100% 100% no-repeat;
+  mask:var(--mask-h) center / 100% 100% no-repeat;
+}
+.lm-case-frame[data-format="vertical"][data-m-presentation="completo"] .lm-case-image{
   position:absolute;
   left:50%;
   top:50%;

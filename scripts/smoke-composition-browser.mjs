@@ -223,6 +223,10 @@ try{
     await constructionPage.locator('[data-case-step="'+step+'"]').click();
     assert(await constructionPage.locator('#caseFrame').getAttribute("data-step")===step,
       "Construction layers must remain interactive: "+step);
+    if(step==="campo"){
+      assert(await constructionPage.locator(".lm-case-ambient").evaluate(img=>getComputedStyle(img).filter)==="none",
+        "Campo must show the original photograph without blur");
+    }
   }
   assert(await constructionPage.locator("#caseGuides, .lm-case-safe").count()===0,
     "Decorative safe-area guide must be removed");
@@ -259,9 +263,12 @@ try{
     "Vertical mode must expose the two M appearances");
   const measureM=async()=>constructionPage.locator("#caseFrame").evaluate(frame=>{
     const b=frame.getBoundingClientRect();
-    const m=frame.querySelector(".lm-case-image").getBoundingClientRect();
+    const image=frame.querySelector(".lm-case-image");
+    const m=image.getBoundingClientRect();
+    const css=getComputedStyle(image);
     return {frame:{left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height},
       mask:{left:m.left,right:m.right,top:m.top,bottom:m.bottom,width:m.width,height:m.height},
+      maskSize:css.maskSize,
       mode:frame.dataset.mPresentation};
   });
   const initialM=await measureM();
@@ -282,8 +289,9 @@ try{
   assert(await constructionPage.locator(".lm-case-m-presentation").isVisible() &&
          horizontalFull.mode==="completo" &&
          Math.abs(horizontalFull.mask.height-horizontalFull.frame.height)<2 &&
-         Math.abs(horizontalFull.mask.width/horizontalFull.mask.height-990.08/743.18)<.005,
-    "Horizontal case must also allow a full-height M without distorting the vector: "+JSON.stringify(horizontalFull));
+         Math.abs(horizontalFull.mask.width-horizontalFull.frame.width)<2 &&
+         horizontalFull.maskSize==="100% 100%",
+    "The horizontal expanded M must fill the surface with the V4 mask: "+JSON.stringify(horizontalFull));
   await constructionPage.locator('[data-case-format="mobile"]').click();
   assert(await constructionPage.locator("#caseFrame").getAttribute("data-m-presentation")==="completo",
     "Changing orientation must preserve M presentation mode");

@@ -92,10 +92,26 @@ try {
             assert.equal(await guides.isVisible(),false);
             await areaPage.locator('#guide-on').click();
             assert.equal(await guides.isVisible(),true);
-            const expand=areaPage.locator('.expand-example').first();
+          }
+          if([1440,390].includes(viewportWidth)){
+            const study=areaPage.locator('#relacoes-imagem .spec-example').first();
+            const aspect=await study.locator('.spec').evaluate(el=>getComputedStyle(el).aspectRatio);
+            const expand=study.locator('.expand-example');
             await expand.click();
             const dialog=areaPage.locator('#review5-enlarge');
-            assert.equal(await dialog.locator('#dialog-body > .spec').count(),1);
+            const enlarged=dialog.locator('#dialog-body > .spec');
+            assert.equal(await enlarged.evaluate(el=>getComputedStyle(el).aspectRatio),aspect,
+              'Enlarging an image study preserves its format');
+            if(viewportWidth===390){
+              const body=dialog.locator('#dialog-body');
+              const fits=()=>body.evaluate(el=>el.scrollWidth<=el.clientWidth);
+              assert.equal(await fits(),true,'The whole study fits before zooming');
+              const zoom=dialog.locator('#dialog-zoom');
+              await zoom.click();
+              assert.equal(await fits(),false,'The detail view provides horizontal scrolling');
+              await zoom.click();
+              assert.equal(await fits(),true,'Switching back restores the full view');
+            }
             await dialog.locator('#dialog-close').click();
             assert.equal(await dialog.isVisible(),false);
             assert.equal(await expand.evaluate(button=>button===document.activeElement),true);

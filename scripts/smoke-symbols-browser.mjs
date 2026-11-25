@@ -82,8 +82,25 @@ try {
             'Composição must link to the Laboratory');
           assert.equal(await areaPage.locator('#construcao .lm-case-facts article').count(),0,
             'Construction guidance belongs in Compor, not in a fixed explanatory grid');
-          assert.equal(await areaPage.locator('#regras-de-composicao .lm-m-guide-grid article').count(),6,
-            'Six identity composition rules remain available');
+          assert.equal(await areaPage.locator('#regras-de-composicao .rule-row').count(),9,
+            'V4 includes its nine illustrated composition rules');
+          assert.equal(await areaPage.locator('.expand-example').count(),26,
+            'All V4 studies can be enlarged');
+          if(viewportWidth===1440){
+            const guides=areaPage.locator('#guides');
+            await areaPage.locator('#guide-off').click();
+            assert.equal(await guides.isVisible(),false);
+            await areaPage.locator('#guide-on').click();
+            assert.equal(await guides.isVisible(),true);
+            const expand=areaPage.locator('.expand-example').first();
+            await expand.click();
+            const dialog=areaPage.locator('#review5-enlarge');
+            assert.equal(await dialog.locator('#dialog-body > .spec').count(),1);
+            await dialog.locator('#dialog-close').click();
+            assert.equal(await dialog.isVisible(),false);
+            assert.equal(await expand.evaluate(button=>button===document.activeElement),true);
+            await areaPage.evaluate(()=>window.scrollTo(0,0));
+          }
         }
         if(area==='laboratorio.html' && viewportWidth===1440){
           const oldImagePage=await browser.newPage();
@@ -154,7 +171,7 @@ try {
           'motion.html':'#roteiros h2',
           'tipografia.html':'#hierarquia h2',
           'cores.html':'#paleta h2',
-          'composicao.html':'#construcao .lm-case-intro h2',
+          'composicao.html':'#estrutura h2',
           'laboratorio.html':'#ferramentas .inner > p.eyebrow'
         };
         const internal=areaPage.locator(internalSelectors[area]);
@@ -164,7 +181,7 @@ try {
           'Chapter section uses the exact same editorial left axis: '+area+'/'+viewportWidth+
           ' internal='+internalX+' cover='+placement.title.left);
         if(area==='composicao.html'){
-          for(const selector of ['#regras-de-composicao h2','#reducao-protecao h2','.lm-composition-next .inner > p.eyebrow']){
+          for(const selector of ['#construcao .lm-case-intro h2','#regras-de-composicao h2','#aplicacao h2']){
             const x=await areaPage.locator(selector).evaluate(el=>el.getBoundingClientRect().left);
             assert.ok(Math.abs(x-placement.kicker.left)<=2,'Composition internal section shares ruler: '+selector+'/'+viewportWidth);
           }
@@ -174,6 +191,20 @@ try {
         const audit=await areaPage.evaluate(()=>{
           const text=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
           const seen=[],errors=[];let node;
+          const specimenSizes=new Map();
+          function specimenSize(specimen,role){
+            if(!specimenSizes.has(specimen))specimenSizes.set(specimen,{});
+            const sizes=specimenSizes.get(specimen);
+            if(sizes[role]===undefined){
+              const meter=document.createElement('span');
+              meter.style.cssText='position:absolute;visibility:hidden;display:block';
+              meter.style.width='var(--lm-type-'+role+'-size)';
+              specimen.append(meter);
+              sizes[role]=parseFloat(getComputedStyle(meter).width);
+              meter.remove();
+            }
+            return sizes[role];
+          }
           const title=Math.max(31,Math.min(innerWidth*.07,104)),subtitle=Math.max(24,Math.min(innerWidth*.033,49)),body=innerWidth<=760?17:19,detail=innerWidth<=760?12:13;
           const expect={title:{size:title,leading:title*.98},subtitle:{size:subtitle,leading:subtitle*1.1},body:{size:body,leading:body*(innerWidth<=760?1.5:1.45)},detail:{size:detail,leading:detail*(innerWidth<=760?1.4:1.35)}};
           const scale=(min,mult,max,width)=>Math.min(max,Math.max(min,width*mult));
@@ -200,7 +231,11 @@ try {
             const posterStyle=poster&&getComputedStyle(poster);
             const posterWidth=poster&&poster.clientWidth-parseFloat(posterStyle.paddingLeft)-parseFloat(posterStyle.paddingRight);
             const posterTitle=scale(22,.081,64,posterWidth);
-            const nominal=poster&&role==='title'?{size:posterTitle,leading:posterTitle*.98}:Number.isFinite(labSize)?
+            const specimen=e.closest('.lm-v4-specimen');
+            const studySize=specimen&&role in expect?specimenSize(specimen,role):NaN;
+            const nominal=Number.isFinite(studySize)?
+              {size:studySize,leading:studySize*expect[role].leading/expect[role].size}:
+              poster&&role==='title'?{size:posterTitle,leading:posterTitle*.98}:Number.isFinite(labSize)?
               {size:labSize,leading:labSize*(role==='title'?.98:role==='subtitle'?1.1:role==='body'?(innerWidth<=760?1.5:1.45):(innerWidth<=760?1.4:1.35))}:
               sizes?{title:{size:sizes.title,leading:sizes.title*.98},
                 subtitle:{size:sizes.subtitle,leading:sizes.subtitle*1.1},
@@ -242,7 +277,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':5,'composicao.html':4,'laboratorio.html':1};
+        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':5,'composicao.html':15,'laboratorio.html':1};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();

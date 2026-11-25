@@ -59,15 +59,538 @@
 </style><link rel="stylesheet" href="/composicao-demo.css"><link rel="stylesheet" href="/manual-headings.css?v=20261104-corpo-19"/>
 <script defer src="/manual-type-roles.js?v=20261102-normative"></script>
 <link rel="stylesheet" href="/manual-layout.css?v=20261102-grid1">
+<style>
+/* Review 05: study assets and layout are scoped to this editorial chapter. */
+@scope (.lm-composition-v4) {
+:scope{
+  --lm-layout-section-space:clamp(46px,6vw,90px);
+}
+:scope {--paper:#F7F6F2;--ink:#181818;--line:#c9c6bf;--muted:#625f59;--red:#E22E24;--body:var(--lm-type-body-size);--detail:var(--lm-type-detail-size);--art:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDQwIiBoZWlnaHQ9IjEwMDAiIHZpZXdCb3g9IjAgMCAxNDQwIDEwMDAiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iYSIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjZTZkYmNmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYTY5ZThlIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgyPSIxIiB5Mj0iLjYiPjxzdG9wIHN0b3AtY29sb3I9IiNmN2Y2ZjIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNiYWE1OGIiLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudCBpZD0iYyIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjYzBiMmEyIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNWI0NjNlIi8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJzaGFkb3ciIHg9Ii01MCUiIHk9Ii01MCUiIHdpZHRoPSIyMDAlIiBoZWlnaHQ9IjIwMCUiPjxmZURyb3BTaGFkb3cgZHg9IjI2IiBkeT0iMzUiIHN0ZERldmlhdGlvbj0iMjYiIGZsb29kLW9wYWNpdHk9Ii4yOCIvPjwvZmlsdGVyPjwvZGVmcz48cmVjdCB3aWR0aD0iMTQ0MCIgaGVpZ2h0PSIxMDAwIiBmaWxsPSJ1cmwoI2EpIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODEwIDQ5MCkgcm90YXRlKC0yNykiIGZpbHRlcj0idXJsKCNzaGFkb3cpIj48cmVjdCB4PSItNDgwIiB5PSItMjUwIiB3aWR0aD0iOTYwIiBoZWlnaHQ9IjUwMCIgcng9IjgiIGZpbGw9IiM1YjQ2M2UiLz48cmVjdCB4PSItNDQ1IiB5PSItMjE1IiB3aWR0aD0iODkwIiBoZWlnaHQ9IjQzMCIgcng9IjYiIGZpbGw9InVybCgjYikiLz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjUwIDApIj48ZWxsaXBzZSByeD0iMTU1IiByeT0iMTYwIiBmaWxsPSIjZTZkYmNmIi8+PGVsbGlwc2Ugcng9IjEyOCIgcnk9IjEzNCIgZmlsbD0iI2Y3ZjZmMiIvPjxlbGxpcHNlIHJ4PSI5OSIgcnk9IjEwMyIgZmlsbD0iIzViNDYzZSIvPjxlbGxpcHNlIHJ4PSI3NSIgcnk9IjgwIiBmaWxsPSIjYzBiMmEyIi8+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDc3IC04KSI+PHJlY3QgeD0iLTYwIiB5PSItMTY1IiB3aWR0aD0iMTIwIiBoZWlnaHQ9IjMzMCIgcng9IjU1IiBmaWxsPSJ1cmwoI2MpIi8+PHJlY3QgeD0iLTMwIiB5PSItMTI4IiB3aWR0aD0iNjAiIGhlaWdodD0iMjUwIiByeD0iMjgiIGZpbGw9IiNkMmMwYTQiLz48cmVjdCB4PSItMjkiIHk9Ii0zMCIgd2lkdGg9IjU4IiBoZWlnaHQ9Ijg3IiBmaWxsPSIjZjdmNmYyIi8+PC9nPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI2MCAtOCkiPjxyZWN0IHg9Ii02MCIgeT0iLTE2NSIgd2lkdGg9IjEyMCIgaGVpZ2h0PSIzMzAiIHJ4PSI1NSIgZmlsbD0iIzFmMzU1NCIvPjxyZWN0IHg9Ii0yNSIgeT0iLTEzMiIgd2lkdGg9IjUwIiBoZWlnaHQ9IjI1NSIgcng9IjIwIiBmaWxsPSIjNjQ3MDgwIi8+PHJlY3QgeD0iLTI1IiB5PSItMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI4NyIgZmlsbD0iI2Y3ZjZmMiIvPjwvZz48L2c+PHBhdGggZD0iTTAgODQwIDMyMCA2NTAgNjgwIDEwMDBIMFoiIGZpbGw9IiNhODk3ODQiIG9wYWNpdHk9Ii44Ii8+PC9zdmc+");--mask-h:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTE0LjY2NjY3IDYyNyIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDYyN0gzODIuMjU5MzNDMzk1LjQ5MzMzIDYyNyA0MTUuMTk0MzMgNjIwLjY4OSA0MjYuMDM3MzMgNjEyLjk3OEw1MzcuNjE5MzMgNTMzLjYwNkM1NDguNDYyMzMgNTI1Ljg5NCA1NjYuMjA0MzMgNTI1Ljg5NCA1NzcuMDQ3MzMgNTMzLjYwNkw2ODguNjI5MzMgNjEyLjk3OEM2OTkuNDcyMzMgNjIwLjY4OSA3MTkuMTczMzMgNjI3IDczMi40MDczMyA2MjdIMTExNC42NjY2N1YwSDY3Ny4wNTYzM0M2NjMuODIyMzMgMCA2NDcuMzY3MzMgOS40MDY5NCA2NDAuNDkzMzMgMjAuODk3OEw1NjkuODMyMzMgMTM5LjA1NEM1NjIuOTU4MzMgMTUwLjU0NSA1NTEuNzA4MzMgMTUwLjU0NSA1NDQuODM0MzMgMTM5LjA1NEw0NzQuMTczMzMgMjAuODk3OEM0NjcuMjk5MzMgOS40MDY5NCA0NTAuODQ0MzMgMCA0MzcuNjEwMzMgMEgwVjYyN1oiLz48L3N2Zz4=");--mask-v:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNTIuNjg3NTAgNjI3IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTAgNjI3SDEuMjY5NzVDMTQuNTAzNzUgNjI3IDM0LjIwNDc1IDYyMC42ODkgNDUuMDQ3NzUgNjEyLjk3OEwxNTYuNjI5NzUgNTMzLjYwNkMxNjcuNDcyNzUgNTI1Ljg5NCAxODUuMjE0NzUgNTI1Ljg5NCAxOTYuMDU3NzUgNTMzLjYwNkwzMDcuNjM5NzUgNjEyLjk3OEMzMTguNDgyNzUgNjIwLjY4OSAzMzguMTgzNzUgNjI3IDM1MS40MTc3NSA2MjdIMzUyLjY4NzUwVjBIMjk2LjA2Njc1QzI4Mi44MzI3NSAwIDI2Ni4zNzc3NSA5LjQwNjk0IDI1OS41MDM3NSAyMC44OTc4TDE4OC44NDI3NSAxMzkuMDU0QzE4MS45Njg3NSAxNTAuNTQ1IDE3MC43MTg3NSAxNTAuNTQ1IDE2My44NDQ3NSAxMzkuMDU0TDkzLjE4Mzc1IDIwLjg5NzhDODYuMzA5NzUgOS40MDY5NCA2OS44NTQ3NSAwIDU2LjYyMDc1IDBIMFY2MjdaIi8+PC9zdmc+")}
+h1, h2, h3, p, figure {margin:0}
+p+p {margin-top:.8em}
+a {color:inherit;text-underline-offset:4px}
+button {color:inherit;background:none;border:1px solid var(--line);cursor:pointer}
+button:focus-visible, a:focus-visible {outline:2px solid var(--red);outline-offset:3px}
+button[aria-pressed=true] {background:var(--ink);color:var(--paper);border-color:var(--ink)}
+button:disabled {opacity:.4;cursor:default}
+svg {display:block;max-width:100%;fill:currentColor}
+svg use {fill:currentColor}
+.definitions {position:absolute;width:0;height:0;overflow:hidden}
+.title {text-wrap:balance;overflow-wrap:break-word}
+.subtitle, h3 {overflow-wrap:break-word;text-wrap:balance}
+.copy {max-width:58ch;text-wrap:pretty}
+.section {border-top:1px solid var(--line);padding-block:clamp(46px,6vw,90px);scroll-margin-top:24px}
+.section>.title {margin-bottom:24px}
+.section>.copy {margin-bottom:28px}
+.meta {color:var(--muted);}
+.caption {color:var(--muted);margin-top:11px}
+.grid {display:grid;gap:20px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3 {grid-template-columns:repeat(3,minmax(0,1fr))}
+.example-grid figure, .grid figure {min-width:0}
+.example-grid h3 {margin:16px 0 9px}
+.example-grid h3+ p {max-width:43ch}
+.controls {display:flex;flex-wrap:wrap;gap:14px 24px;padding:14px 0;border-block:1px solid var(--line);margin-bottom:20px;align-items:flex-start}
+.control {display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.control>span {margin-right:6px}
+.control button {padding:9px 12px}
+.structure {display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:30px;align-items:center}
+.structure .note-list {display:grid;gap:15px}
+.structure .note-list p {border-top:1px solid var(--line);padding-top:12px}
+.structure .note-list b {display:block;margin-bottom:5px}
+.board {position:relative;border:1px solid var(--line);background:var(--paper);aspect-ratio:16/9;overflow:hidden;container-type:inline-size;color:var(--ink)}
+.board .inside {position:absolute;inset:8%;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch}
+.board .reading {position:absolute;left:0;top:30%;width:78%}
+.board .mini-sub {margin-top:2.1cqw}
+.board .mini-body {max-width:54ch;margin-top:1.7cqw;text-wrap:pretty}
+.board .mini-detail {max-width:72%}
+.board .sign {position:absolute;right:0;bottom:0;width:9cqw}
+.board .sign.mattar {width:18cqw}
+.board .guide-layer {position:absolute;inset:0;pointer-events:none;z-index:4}
+.board .guide-layer[hidden] {display:none}
+.safe-area {position:absolute;inset:8%;border:1px dashed #a19c90}
+.grid-guide {position:absolute;inset:8%;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1.1cqw}
+.grid-guide i {background:#E22E2409;border-inline:1px solid #E22E2435}
+.axis-guide {position:absolute;left:8%;top:4%;bottom:4%;border-left:1px dashed #E22E24}
+.center-guide {position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed #E22E24}
+.glabel {position:absolute;background:var(--paper);color:var(--ink);padding:3px 5px;}
+.glabel.origin {top:1%;left:8%}
+.glabel.margin {right:8%;bottom:1%}
+.glabel.center {top:1%;left:50%}
+.plate {position:relative;aspect-ratio:16/10;border:1px solid var(--line);container-type:inline-size;overflow:hidden;background:var(--paper)}
+.plate .sig {position:absolute;width:12%;right:8%;bottom:8%;z-index:2}
+.plate .minicopy {position:absolute;top:28%;left:8%;z-index:2}
+.plate .minidet {position:absolute;left:8%;top:8%;z-index:2}
+.plate .mark-elem {position:absolute;left:50%;top:29%;width:34%;transform:translateX(-50%);color:var(--ink)}
+.plate.element .minicopy {top:8%;}
+.plate.element .minidet {top:auto;bottom:8%}
+.plate .element-caption {display:block;margin-top:4px;}
+.plate .expanded {position:absolute;inset:0;background:var(--ink);mask-image:var(--mask-h);mask-size:100% 100%;mask-repeat:no-repeat}
+.plate.exp .minicopy, .plate.exp .minidet {color:white}
+.plate.exp .minicopy {top:39%}
+.plate .outline-axis {position:absolute;top:0;bottom:0;left:50%;border-left:1px dashed #E22E24;opacity:.8;pointer-events:none}
+.adapt {grid-template-columns:minmax(0,1.7fr) minmax(0,.9fr);align-items:start}
+.adapt .portrait {aspect-ratio:9/16;max-width:410px;margin:0 auto;background:#1F3554;color:#fff}
+.adapt .landscape {background:#1F3554;color:#fff}
+.adapt .portrait .reading {top:32%;width:100%}
+.adapt .portrait .sign {width:17cqw}
+.adapt .landscape .reading {top:25%}
+.adapt .portrait .sign.mattar {width:33cqw}
+.adapt figure:nth-child(2) .caption {max-width:410px;margin-inline:auto}
+.rule-row {border-top:1px solid var(--line);padding:25px 0;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:36px;align-items:center}
+.rule-row:last-child {border-bottom:1px solid var(--line)}
+.rule-row h3 {margin-bottom:12px}
+.rule-row p {max-width:48ch}
+.diagram {width:100%;height:auto}
+.end {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:36px;align-items:end}
+.end .copy {margin-top:18px}
+.end-link {border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:18px 0;text-decoration:none}
+.smallprint {color:var(--muted);}
+@media(max-width:1000px){.nav .shell{align-items:flex-start;flex-direction:column}
+.structure {grid-template-columns:1fr}
+.structure .note-list {grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3 {grid-template-columns:1fr 1fr}
+.example-grid figure:last-child {grid-column:1/-1;max-width:620px}
+.rule-row {gap:20px}}
+@media(max-width:700px){body{}
+.grid, .grid3, .adapt, .structure .note-list, .rule-row, .end {grid-template-columns:1fr}
+.grid3 figure:last-child {max-width:none}
+.section>.title {margin-bottom:20px}
+.rule-row {gap:16px;padding:22px 0}
+.controls {gap:12px}
+.control {width:100%}
+.control>span {width:100%}
+.control button {padding:8px 10px}
+.adapt .portrait {max-width:300px}
+.end-link {justify-self:start}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+:scope {--blue:#1F3554;--brown:#5B463E;--beige:#E6DBCF;--green:#8FD81B;--white:#fff}
+.library-lead {max-width:70ch;margin-bottom:30px}
+.sample-group {margin-top:36px}
+.sample-group+.sample-group {margin-top:54px}
+.spec-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 20px;align-items:start}
+.spec-grid.three {grid-template-columns:repeat(3,minmax(0,1fr))}
+.spec-grid>figure {min-width:0}
+.spec-grid figure>figcaption {margin-top:12px;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;column-gap:14px;row-gap:4px}
+.spec-grid .capname {color:var(--ink)}
+.spec-grid .captext {width:100%;color:var(--muted)}
+.expand-example {padding:0 0 2px;border:0;border-bottom:1px solid currentColor;}
+.spec {position:relative;container-type:inline-size;aspect-ratio:16/9;background:var(--paper);color:var(--ink);border:1px solid var(--line);overflow:hidden;isolation:isolate;--st:6.9cqw;--ss:3.35cqw;--sb:1.82cqw;--sd:1.25cqw;--sg:1.65cqw}
+.spec.a4 {aspect-ratio:210/297;--st:9.7cqw;--ss:4.65cqw;--sb:2.45cqw;--sd:1.85cqw;--sg:2.45cqw}
+.spec.sq {aspect-ratio:1;--st:9.2cqw;--ss:4.5cqw;--sb:2.75cqw;--sd:1.95cqw;--sg:2.6cqw}
+.spec.feed {aspect-ratio:4/5;--st:10cqw;--ss:4.7cqw;--sb:2.65cqw;--sd:1.9cqw;--sg:2.5cqw}
+.spec.story {aspect-ratio:9/16;--st:10.2cqw;--ss:4.7cqw;--sb:2.9cqw;--sd:2.1cqw;--sg:2.6cqw}
+.spec.blue {background:var(--blue);color:white}
+.spec.dark {background:var(--ink);color:white}
+.spec.beige {background:var(--beige);color:var(--ink)}
+.spec.white {background:white}
+.spec.red {background:var(--red);color:white}
+.spec-inner {position:absolute;inset:6.5%;display:flex;flex-direction:column;gap:var(--sg);min-width:0}
+.spec.a4 .spec-inner {inset:6.7% 7.8%}
+.spec.story .spec-inner {inset:11% 7.5%}
+.spec p, .spec h4, .spec h5, .spec figure {margin:0;min-width:0}
+.spec p+p {margin-top:.65em}
+.st {text-wrap:balance;overflow-wrap:anywhere}
+.ss {text-wrap:balance}
+.sb {text-wrap:pretty}
+.sp-header, .sp-footer {display:flex;align-items:flex-start;justify-content:space-between;gap:3cqw}
+.sp-header .sd:first-child, .sp-footer .sd:first-child {max-width:70%}
+.sp-footer {margin-top:auto;align-items:end;border-top:.08cqw solid currentColor;padding-top:1.2cqw}
+.sp-footer.plain {border-top:0;padding-top:0}
+.sp-header svg, .sp-footer svg {width:7.8cqw;flex-shrink:0;height:auto}
+.sp-header svg.wide, .sp-footer svg.wide {width:18cqw}
+.spec.a4 .sp-footer svg.wide, .spec.feed .sp-footer svg.wide, .spec.story .sp-footer svg.wide, .spec.sq .sp-footer svg.wide {width:22cqw}
+.sp-hero {margin-block:auto;display:flex;flex-direction:column;gap:var(--sg)}
+.sp-hero .sb {max-width:42ch}
+.sp-cols {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2.8cqw;align-items:start}
+.sp-cols.three {grid-template-columns:repeat(3,minmax(0,1fr));gap:2cqw}
+.sp-cols>* {min-width:0}
+.sp-stack {display:flex;flex-direction:column;gap:1.3cqw}
+.sp-section {border-top:.085cqw solid currentColor;padding-top:1.15cqw;display:flex;flex-direction:column;gap:1.05cqw}
+.accent-line {width:16cqw;height:.6cqw;background:var(--red);flex-shrink:0}
+.sp-picture {background-color:var(--beige);background-image:var(--art);background-size:cover;background-position:center;min-height:0}
+.sp-picture.p1 {background-image:var(--pic1)}
+.sp-picture.p2 {background-image:var(--pic2)}
+.sp-picture.p3 {background-image:var(--pic3)}
+.sp-picture.p4 {background-image:var(--art)}
+.sp-picture.center {background-position:60% 40%}
+.sp-picture.portrait {aspect-ratio:4/5}
+.sp-picture.wide {aspect-ratio:16/9}
+.sp-picture.square {aspect-ratio:1}
+.sp-picture.banner {aspect-ratio:2.6}
+.sp-picture.fill {height:100%;width:100%}
+.sp-picture.cropped {background-size:cover;background-position:42% 55%}
+.photo-split {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:3cqw;flex:1;align-items:stretch;min-height:0}
+.photo-split .sp-stack {justify-content:center}
+.sp-collage {display:grid;grid-template-columns:1.4fr 1fr;grid-template-rows:1fr 1fr;gap:1cqw;min-height:0;flex:1}
+.sp-collage>.sp-picture:first-child {grid-row:span 2}
+.sp-collage .sp-picture {height:100%}
+.sp-contact {display:grid;grid-template-columns:1fr auto;gap:1.2cqw;align-items:end}
+.sp-table {width:100%;border-collapse:collapse;text-align:left;table-layout:fixed}
+.sp-table th, .sp-table td {border-bottom:.085cqw solid currentColor;padding:1.05cqw .65cqw;vertical-align:top;overflow-wrap:anywhere;}
+.sp-table th:first-child, .sp-table td:first-child {padding-left:0}
+.sp-table th:last-child, .sp-table td:last-child {padding-right:0}
+.sp-table.tight th, .sp-table.tight td {padding-block:.78cqw}
+.sp-bullet {margin:0;padding:0 0 0 1.5em}
+.sp-bullet li+li {margin-top:.5em}
+.sp-image-notes {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1cqw}
+.sp-image-notes .sd {margin-top:.5cqw}
+.sp-mask {position:absolute;inset:0;mask-image:var(--mask-h);mask-size:100% 100%;mask-repeat:no-repeat;background:var(--pic1) center/cover;opacity:.92;z-index:-1}
+.sp-shade {position:absolute;inset:0;background:#0006;z-index:-1}
+.sp-vessel {width:12cqw;align-self:flex-end}
+.sp-poster {position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;gap:var(--sg);min-height:0}
+.sp-poster .st {max-width:100%}
+.sp-poster .sb {max-width:50ch}
+.study-note {color:var(--muted);max-width:90ch;margin-top:24px}
+.spec-grid .captext {max-width:100%}
+.dense-note {border-top:1px solid var(--line);margin-top:30px;padding-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.dense-note h3 {margin-bottom:8px}
+.image-pattern {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 20px}
+.image-pattern .spec {aspect-ratio:16/10}
+.image-pattern figure>figcaption {margin-top:9px}
+.image-pattern .sp-picture {border:0}
+.image-pattern .sp-footer {padding-top:0;border-top:0}
+.image-pattern .sp-picture.large {flex:1}
+.format-study {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,.82fr);gap:20px;align-items:start}
+.format-study .spec.story {max-width:100%}
+.format-study .spec-grid {display:contents}
+.sequence-line {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.sequence-line .spec {aspect-ratio:4/5}
+.sp-count {margin-left:auto}
+.chapter-index-note {max-width:65ch}
+.review5-dialog {border:1px solid var(--line);padding:0;background:var(--paper);color:var(--ink);width:min(1180px,95vw);max-width:95vw;max-height:94vh;margin:auto;overflow:auto}
+.review5-dialog::backdrop {background:#181818aa}
+.dialog-top {position:sticky;top:0;background:var(--paper);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:14px 18px;gap:12px;z-index:5}
+.dialog-top button {padding:8px 12px;}
+.dialog-body {padding:20px;overflow:auto}
+.dialog-body .spec {margin-inline:auto;width:100%;max-width:1100px;min-width:620px}
+.dialog-body .spec.a4 {max-width:790px}
+.dialog-body .spec.sq, .dialog-body .spec.feed, .dialog-body .spec.story {max-width:680px}
+.dialog-note {color:var(--muted);padding:0 20px 14px}
+.rule-row .diagram-spec {aspect-ratio:4/1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.rule-row .mini-diag {display:grid;align-items:center;border:1px solid var(--line);padding:10px;gap:5px}
+.mini-diag span {display:block;background:var(--ink);height:3px}
+.mini-diag .large {height:12px;width:70%}
+.mini-diag .small {width:55%;height:2px}
+.mini-diag .photo {height:40px;background:var(--pic1) center/cover}
+.mini-diag .photo.alt {background:var(--pic3) center/cover}
+.mini-diag .photo.alt2 {background:var(--pic2) center/cover}
+@media(max-width:1000px){.spec-grid.three,.format-study{grid-template-columns:repeat(2,minmax(0,1fr))}
+.spec-grid.three>figure:last-child {grid-column:auto}
+.format-study>figure:last-child {max-width:340px}}
+@media(max-width:700px){.spec-grid,.spec-grid.three,.image-pattern,.format-study,.dense-note{grid-template-columns:1fr}
+.spec-grid {gap:30px}
+.format-study>figure:last-child {max-width:100%}
+.sequence-line {grid-template-columns:1fr;gap:20px}
+.spec.a4 {max-width:480px;margin-inline:auto}
+.spec-grid.three figure:last-child {grid-column:auto}
+.dialog-body {padding:10px}
+.dialog-top {padding:12px}
+.dialog-body .spec {min-width:580px}
+.study-note {margin-top:16px}}
+:scope {--pic1:url("data:image/jpeg;base64,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")}
+:scope {--pic2:url("data:image/jpeg;base64,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")}
+:scope {--pic3:url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCABxALEDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD86Y5DnOcGtC31SWJcZz7mslGqZWyOKxcU9zkjJrY6/SNVF3aSwTHLYJFdBa25/wCEamDcAA4zXnEEzQsCpINbbeJ7qSx+zcBPavOrYaUmuTvc9KjiIxT5+zR12kbdW8ONa2pIuIzkgd6Z4Y8LRa7qNxaXJ8qdISRnj5qxfDOpHR2S8hJYA4kTv716ZYQxz3MWtwDYsiBWA615eKqTwjny7PZ+fY9HDwhiVDm3W68jzLWPDdxpc0gA85EbaXTkA1kEEHBrqri9mi8ZRxszG0luMtG33Tk1S8bWUdrrUzQpshJJAHQV6tGu3yRnu1c8ytRS5pQ2TsYY4NSAjrTGhkjCsylQRkE96UY713Xuce248HmnjJ/+vUanNPXmgBwyfT0qRTimKMewp49qllD93NKKQU4UgFBp3XpmkHSlxx3pAPjkK9Dz1zWlYak0TDLcZrLAwPqKfGGB46UbA0dtY61wPmrQGtjZ94VwAuGg6GmvqzgdatamElY73+2h6iivPf7Wb+8aKqxB57G+amjfBqismKnR8itbFF9XGM1Kj8VSR/ep0fOKQzSsb9rVywAZSMEGu+8P+OY3W309VKR7gx3evoK8zDfhUsUpQhgSrA8Edq4sRhoYiLjI7KGJnQknE6vXLqRPEqsCMebuXPbmtTUJo9Zs5Q5USpk+5rlYtXWVVFyu8r0cctVqG6jGoRfP+6kUAnPT61xVcPJQjbeG3yO2lXi5yvtM0ri7+0iztHjQAqF3Y5rHuIxHcyxL/AxXNa2r2wsNXsiuShAIJ6Gpda0aSxlju3TaspDexzSp4hJ0+X7dy54e6qc28bGEF29aUHFdHJ4ekuFWcJtiKbgccVjS2EschBQgdq66WJp1dE9Tkq4apS1a0IUbPX608UwgocYx9aUMSe1dJykin1p9MByPanZpAPB4p3UimDmnqQBSBC8gfpUsZzxUXcZNSxHJoYxtxwKzp2rTuF+XP86zJxnNXEwmV91FG2itDI4dXqZHyetUkepo3GetbNGli+j9KnWTFUEf3qZZKmwF1ZOeualV81SWTPtUqSY71NgLavj61Mj5GAcVSSTnrUiv7n8KQ0dTca//AGm2nrIgU24WPIHUCu9+IYT/AIRnTZFYcqv8q8gSXpzj+dalxr13e2KWsspkjT7uTnFeVWwSnVpThoot/ienSxfLTqQnq5L8j3/w1YwXfh/Sg0YZW25yOtWdQ8K2N34jFiIlRWj3KQO+a57wj4ngOiaZBG4Loygiu307UobnxMkrLmWNM/hmvjHTqUa0n6/mfWxnCrTivJHi3xC8Lt4d1F48YGa5BDzzXpvxq1kahqp2qB615er8819vg5SnQi5bnyGLjGNZqJYDZGBTx71XDD1OKlVh65rrschKKcOvWowxp3akA/IqaFvm6VXFTQtg0guTTDK1mzp1rSk5FUpwDmriZTKWwe9FP20VoYXPMlepUfFVQ2aer4rc6GXkfipkkqij96lWQ560rE2Lqyc1Mr+9UUfB55qZX9KkRdR81Kj81SSTmpkf6UrAWw1SxuQKqK+KmV89KkZsaZq0+nTRywyEbTu254zXoHg/4hufEST3JwGTYfSvLFkxjkelWIpChDA4I71y1sPTrJ8y1OqjiJ0mrPQ9A+IurQ6lqbPEQQfSuOU1C1y0mCxJPqaVJMnFOlT9lBQ7Cq1PazciyCMU9SM/4VADmpFOa1M7lhT05qQH3qsrEdKlV8ipYyUHFSxEbqgBzUkZ+YUgLUudtVJRxVtwcVXmXjNVExkVse1FOx7mitDI8ipwao1bPWnV0HQTK+KlVxVYNTw1ArFtX6DNSpJg1UVqkVsUtyS6smTUyPVJHxUyPnqakReVhipFbFVI355qVX9+9SBbVgamRzkc/nVNX5qZXqWNF5X6c1KrYqkj8DnnNTxvk80iky4j54/nUqniqivjvUqMfWpsMso1Sq2KrK9Shh2pFIsBqkib5qq7un5VPA2WFTYZo4ytQyDIPFTA/LTXAINCMZlTb9KKm2r7UVdzI8Upyv2NNorqOolpQcVEG6Cn5HrQSSq1PElQg4pQaALSSZxzUySdKpK2OalWTikTYvRy881Ore9Z6PxUyyH1qWhF9ZOMVMj8DmqKSZqZJKmwF5ZMVLHKRVJXqZH4qWh3NBJAalR8GqCSYxzVlH6HNIC2smetSh/SqitmpEc+tKxRbV81NC43iqav71NA3zipGmbafcFKRxTYfuipCvFSjOZDtFFSbfrRV2Mjww5oz60tJXUdYtA4NNyQaXNADw/rT81FQDyKBWJgcU5WqLeD607NBJOr4qVJPU1VU09XxSFYurJU8cnv+dZ6yYqZJOKViTRWT/IqZJM45rOSTGOasJIOxqbCL6Sc1Okh9az1k7VNHJ71NhmjHJ6mplf8az0k5qykvepKLaPVi3kzIBVFZM1YtXHmikxo6W3GVBFWCny5qtafcFXgMrWaIkQYPoaKm2fWiqMzwOiiius6hG6Ui9aKKB9Be9LRRQIKkHb6UUUEsWnDpRRQIeO1TJRRSF0JlqaLqKKKkhE69alWiikxosxdvpVhelFFQykTR9fwqxb/AOuX60UVIR3Ops/uLV5elFFY9SZDqKKKZkf/2Q==")}
+.sp-picture.large {flex:1;min-height:8cqw}
+.sp-image-notes .sp-picture.square {aspect-ratio:1.28}
+.spec.story .sp-picture.portrait {aspect-ratio:1.15}
+.spec.story .sp-hero {margin-block:0}
+.spec .sp-hero, .spec .sp-section {min-width:0}
+.spec.letter .sp-header svg {width:28cqw}
+.spec.letter .spec-inner {gap:3.1cqw}
+.spec.letter .sp-letter {display:flex;flex-direction:column;gap:2cqw}
+.spec.letter .sp-footer {padding-top:2cqw}
+.family-intro {margin:48px 0 20px;max-width:75ch}
+.family-intro h3 {margin:0 0 10px;}
+.family-intro p {margin:0;}
+.family-guide {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 28px;border-top:1px solid var(--line);margin-top:26px;padding-top:20px}
+.family-guide h3, .choice-strip h3 {margin:0 0 10px}
+.family-guide p, .choice-strip p {margin:0;}
+.choice-strip {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;margin:30px 0 46px}
+.choice-strip>div {padding:22px 0;border-top:1px solid var(--line)}
+.spec-grid.three {gap:30px 20px}
+.spec-grid .capname {color:var(--ink)}
+.spec-grid .captext {color:var(--ink);}
+.spec-grid .expand-example {color:var(--ink)}
+.spec-grid .spec {box-shadow:none}
+.spec .sp-meta {margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5cqw 3cqw}
+.spec .sp-meta>div {border-top:.08cqw solid currentColor;padding-top:1cqw;min-width:0}
+.spec .sp-meta dt, .spec .sp-meta dd {margin:0}
+.spec .sp-meta dd {margin-top:.55cqw}
+.spec .sp-header svg.wide {width:20cqw}
+.spec .sp-stage {display:flex;gap:1.3cqw;align-items:baseline}
+.spec .sp-stage .ss {flex-shrink:0}
+.spec .sp-stage+.sp-stage {border-top:.08cqw solid currentColor;padding-top:1cqw}
+.spec .sp-long .sb {text-wrap:wrap}
+.spec .sp-crop-label {display:flex;align-items:baseline;justify-content:space-between;gap:1cqw}
+.spec .sp-picture.source {background-image:url('/ambiente-editorial/media/BOXDOSENTIR-64.jpg'),var(--pic1);background-size:cover;background-position:center}
+.spec .sp-vessel.signature-pair {position:absolute;right:0;top:6cqw;width:12cqw}
+.spec.a4 .sp-footer {padding-top:1.2cqw}
+.spec .sp-proposal-heading {display:flex;flex-direction:column;gap:.9cqw}
+.spec .sp-proposal-heading .ss {margin-top:0}
+.spec .sp-quote {border-left:.55cqw solid var(--red);padding-left:2cqw}
+.spec .sp-info-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5cqw 2cqw}
+.spec .sp-info-grid>div {border-top:.08cqw solid currentColor;padding-top:1cqw}
+.spec .sp-image-note {margin-top:.6cqw}
+.spec .sp-narrative {display:grid;grid-template-columns:1fr 1fr;gap:3cqw;flex:1;min-height:0;align-items:stretch}
+.spec .sp-narrative .sp-stack {justify-content:center}
+.spec .sp-narrative .sp-picture {min-height:0}
+.spec .sp-conclusion {margin-top:auto;display:flex;justify-content:space-between;gap:2cqw;align-items:end}
+.spec .sp-conclusion>div {max-width:70%}
+.spec .sp-conclusion svg {width:18cqw;flex-shrink:0}
+.spec .sp-paper-dense {display:flex;flex-direction:column;gap:2cqw}
+.spec .sp-numbered {display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:2cqw;row-gap:1.4cqw}
+.spec .sp-numbered .sd {padding-top:.35cqw}
+.spec .sp-matter {max-width:46ch}
+.spec .sp-flat-footer {display:flex;justify-content:space-between;margin-top:auto;align-items:center;gap:1cqw}
+.spec .sp-flat-footer svg {width:18cqw}
+.spec .sp-caption-row {display:flex;justify-content:space-between;gap:1cqw;align-items:baseline}
+.spec .sp-caption-row .sd {max-width:75%}
+.spec .sp-note {margin-top:auto}
+.spec .sp-contact-line {border-top:.08cqw solid currentColor;padding-top:1cqw}
+.spec .sp-photo-card {display:flex;flex-direction:column;gap:.6cqw;min-height:0}
+.spec .sp-photo-card>.sp-picture {flex:1;min-height:8cqw}
+.spec .sp-photo-card .sd {flex-shrink:0}
+.spec .sp-info {display:flex;flex-direction:column;gap:1.2cqw}
+.spec .sp-long {max-width:100%}
+.spec .sp-hero .st {max-width:100%}
+.spec .sp-feature {display:grid;grid-template-columns:1.2fr .8fr;gap:2.6cqw;flex:1;min-height:0}
+.spec .sp-feature .sp-stack {justify-content:center}
+.spec .sp-feature .sp-picture {height:100%}
+.spec .sp-tight-title {display:flex;flex-direction:column;gap:.8cqw}
+.spec .sp-rules-inline {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2cqw}
+.spec .sp-rules-inline .sp-section {gap:.8cqw}
+.spec .sp-brief .sb {max-width:100%}
+.spec .sp-note-strong {padding:1.2cqw 0;border-top:.08cqw solid currentColor;border-bottom:.08cqw solid currentColor}
+.spec .sp-break {margin-top:auto}
+.spec .sp-paper-line {border-top:.08cqw solid currentColor;padding-top:1.2cqw}
+.spec .sp-document-sign {align-self:flex-end}
+.spec .sp-space-between {justify-content:space-between}
+.spec .sp-proposal-sign {display:flex;align-items:center;justify-content:space-between;gap:2cqw}
+.spec .sp-proposal-sign svg {width:21cqw}
+.study-note {color:var(--muted)}
+@media(max-width:700px){.choice-strip,.family-guide{grid-template-columns:1fr}
+.family-intro {margin:34px 0 16px}}
+:scope {--reading-line:calc(var(--body) * 1.45);--v4-space-tight:calc(var(--reading-line)*.5);--v4-space-medium:calc(var(--reading-line)*.85);--v4-space-group:calc(var(--reading-line)*1.65);--v4-vessel-mask:url('/identidade/vaso_06.svg')}
+.section>.title {margin-bottom:var(--v4-space-medium)}
+.section>.copy {margin-bottom:var(--v4-space-group)}
+.section .copy {max-width:62ch}
+.family-intro {margin-top:var(--v4-space-group);margin-bottom:var(--v4-space-medium)}
+.family-intro h3, .family-guide h3 {margin-bottom:var(--v4-space-tight)}
+.spec-grid .captext {margin-top:5px;max-width:61ch}
+.spec-grid figure>figcaption {margin-top:10px;row-gap:5px}
+.spec-grid {gap:44px 20px}
+.spec-grid.three {gap:38px 20px}
+.spec {--sl:calc(var(--sb)*1.45);--sg:calc(var(--sl)*.8);--tight:calc(var(--sl)*.5);--group:calc(var(--sl)*1.3);--capgap:calc(var(--sl)*.3)}
+.spec.a4 {--st:6.9cqw;--ss:3.3cqw;--sb:2cqw;--sd:1.5cqw;--sg:calc(var(--sl)*.85);--tight:calc(var(--sl)*.5);--group:calc(var(--sl)*1.55);--capgap:calc(var(--sl)*.3)}
+.spec.a4 .spec-inner {inset:6.7% 8%}
+.spec .ss {text-wrap:balance}
+.spec .sp-textgroup {display:flex;flex-direction:column;gap:var(--tight);min-width:0}
+.spec .sp-textgroup:has(>.st) {gap:calc(var(--sl)*.85)}
+.spec .sp-photo-caption {display:flex;flex-direction:column;gap:var(--capgap);min-width:0}
+.spec .sp-photo-card {gap:var(--capgap)}
+.spec .sp-photo-card>.sp-picture {min-height:0}
+.spec .sp-hero {gap:var(--tight)}
+.spec .sp-hero>.st + .ss {margin-top:calc(var(--sl)*.3)}
+.spec .sp-hero>.st + .sb {margin-top:calc(var(--sl)*.35)}
+.spec .sp-stack {gap:var(--tight)}
+.spec .sp-section {padding-top:var(--tight);gap:var(--tight)}
+.spec .sp-section+.sp-section {margin-top:calc(var(--sl)*.35)}
+.spec .sp-footer {padding-top:var(--tight);gap:2cqw;justify-content:space-between;min-height:0}
+.spec .sp-footer:has(>p:only-child) {justify-content:flex-end}
+.spec .sp-header {min-height:0;gap:2cqw}
+.spec .sp-footer.plain {padding-top:0}
+.spec .sp-footer svg:only-child {margin-left:auto}
+.spec .sp-table th, .spec .sp-table td {padding-block:calc(var(--sl)*.35);}
+.spec .sp-image-notes .sp-picture.sequence-square {aspect-ratio:1}
+.spec .sp-image-notes .sd {margin-top:var(--capgap)}
+.spec .sp-picture.source {background-image:var(--pic1)}
+.spec .sp-picture {background-repeat:no-repeat}
+.spec .sp-picture.square {aspect-ratio:1}
+.spec .sp-meta {gap:var(--tight) 3cqw}
+.spec .sp-meta>div {padding-top:var(--tight)}
+.spec .sp-meta dd {margin-top:var(--capgap)}
+.spec.letter .spec-inner {gap:var(--sg)}
+.spec.letter .sp-paper-dense {gap:calc(var(--sl)*.6)}
+.spec.letter .sp-paper-dense p+p {margin-top:0}
+.spec.letter .sp-footer {padding-top:var(--tight)}
+.spec .doc-heading {margin-bottom:calc(var(--sl)*.2)}
+.spec.a4 .sp-section {border-top-width:.075cqw}
+.spec.a4 .sp-vessel.signature-pair {width:12cqw}
+.spec.a4 .sp-hero .sb {max-width:45ch}
+.spec.story .sp-hero {margin-block:auto}
+.spec .sp-rules-inline .sp-section {gap:var(--tight)}
+.spec .sp-photo-card .sp-picture.fill {height:auto}
+.spec .sp-cols:has(>.sp-photo-card) {min-height:0}
+.spec .sp-cols>.sp-photo-card {height:100%}
+.distance-layout {display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(20px,4vw,54px);align-items:start}
+.distance-notes {display:grid;gap:22px}
+.distance-notes>div {border-top:1px solid var(--line);padding-top:14px}
+.distance-notes h3 {margin-bottom:var(--v4-space-tight)}
+.distance-sheet {border:1px solid var(--line);background:white;aspect-ratio:4/4.3;container-type:inline-size;--st:7.6cqw;--ss:4.1cqw;--sb:2.75cqw;--sd:1.75cqw;--dl:calc(var(--sb)*1.45);position:relative}
+.ds-in {position:absolute;inset:8%;display:flex;flex-direction:column;gap:calc(var(--dl)*1.35)}
+.ds-content {margin-block:auto;padding-right:17%;min-width:0}
+.ds-group {display:flex;flex-direction:column}
+.ds-group .sb {max-width:38ch}
+.ds-measure, .ds-separation {position:relative;height:calc(var(--dl)*.85);border-left:1px solid var(--red);margin-left:-2cqw;color:var(--ink);flex-shrink:0}
+.ds-measure:before, .ds-measure:after, .ds-separation:before, .ds-separation:after {content:'';position:absolute;left:-.55cqw;width:1.1cqw;border-top:1px solid var(--red)}
+.ds-measure:before, .ds-separation:before {top:0}
+.ds-measure:after, .ds-separation:after {bottom:0}
+.ds-measure span, .ds-separation span {position:absolute;right:-17cqw;top:50%;transform:translateY(-50%);white-space:nowrap;color:var(--red)}
+.ds-measure.small {height:calc(var(--dl)*.5)}
+.ds-separation {height:calc(var(--dl)*1.75)}
+.ds-foot {display:flex;align-items:end;justify-content:space-between;border-top:1px solid var(--line);padding-top:1.6cqw}
+.ds-foot svg {width:9cqw}
+.spacing-table-wrap {margin-top:32px}
+.spacing-table {border-collapse:collapse;width:100%;table-layout:fixed;text-align:left;}
+.spacing-table th, .spacing-table td {border-bottom:1px solid var(--line);padding:12px 16px 12px 0;overflow-wrap:break-word}
+.spacing-table th:first-child {width:42%}
+.spacing-table th:nth-child(2) {width:23%}
+.detail-examples, .crop-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px 20px}
+.detail-examples figure, .crop-grid figure {min-width:0}
+.detail-examples h3, .crop-grid h3 {margin:14px 0 10px}
+.detail-board {position:relative;container-type:inline-size;aspect-ratio:4/5;border:1px solid var(--line);background:white;--ss:5.8cqw;--sb:3.2cqw;--sd:2.15cqw;padding:9%;display:flex;flex-direction:column;gap:3cqw;min-width:0}
+.detail-board p {margin:0}
+.db-top, .db-bottom {display:flex;justify-content:space-between;position:relative;align-items:end;gap:1cqw}
+.db-bottom {margin-top:auto;border-top:1px solid var(--line);padding-top:2cqw}
+.db-bottom svg {width:26cqw;margin-left:auto}
+.db-reading {margin-block:auto;display:flex;flex-direction:column;gap:2cqw}
+.db-reading.compact {margin-block:2cqw auto}
+.db-image {height:46%;background:var(--pic1) center/cover}
+.db-caption {display:grid;gap:.7cqw}
+.db-service {display:grid;gap:1cqw;margin-top:3cqw}
+.db-service .sb+.sd {margin-top:1.8cqw}
+.callout {position:absolute;top:100%;right:0;margin-top:2cqw;border-top:1px solid var(--red);padding-top:1cqw;color:var(--red);}
+.db-bottom .callout {top:auto;bottom:100%;margin:0 0 1cqw;border-top:0;border-bottom:1px solid var(--red);padding:0 0 1cqw}
+.crop-demo {position:relative;container-type:inline-size;aspect-ratio:16/10;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:white;overflow:hidden;isolation:isolate}
+.crop-image {background:var(--pic1) center/cover no-repeat;width:84%;aspect-ratio:16/10}
+.squareframe .crop-image {width:52%;aspect-ratio:1}
+.portraitframe .crop-image {width:39%;aspect-ratio:4/5}
+.fullframe .crop-image {position:absolute;inset:0;width:100%;height:100%}
+.crop-overlay {position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.crop-type {position:absolute;left:8%;top:32%;color:white}
+.mframe .crop-image {position:absolute;inset:0;width:100%;height:100%;mask-image:var(--mask-h);mask-size:100% 100%;mask-repeat:no-repeat}
+.vframe .crop-image {width:48%;aspect-ratio:435/400;mask-image:var(--v4-vessel-mask);mask-size:contain;mask-repeat:no-repeat;mask-position:center}
+.crop-sign {position:absolute;right:7%;bottom:8%;width:16%}
+.application-criteria {margin-top:30px;border-top:1px solid var(--line);padding-top:20px;max-width:75ch}
+.application-criteria h3 {margin-bottom:var(--v4-space-tight)}
+@media(max-width:1000px){.detail-examples,.crop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.distance-layout {grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.distance-layout,.detail-examples,.crop-grid{grid-template-columns:1fr}
+.distance-sheet {max-width:480px;margin:auto}
+.distance-notes {gap:20px}
+.spacing-table td, .spacing-table th {padding-right:8px}
+.spacing-table th:first-child {width:40%}
+.spacing-table th:nth-child(2) {width:25%}
+.detail-board {max-width:440px;margin:auto}
+.section>.title {margin-bottom:18px}
+.section>.copy {margin-bottom:26px}}
+.crop-demo {aspect-ratio:16/9}
+.natural .crop-image {width:81%;aspect-ratio:16/10}
+.squareframe .crop-image {width:46%;aspect-ratio:1}
+.portraitframe .crop-image {width:36%;aspect-ratio:4/5}
+.vframe .crop-image {width:44%}
+.spec .sp-footer:has(.sp-page-number) {justify-content:flex-start}
+.spec .sp-footer:has(.sp-page-number) svg {margin-left:auto}
+.spec .sp-footer .sp-page-number {min-width:3cqw;flex-shrink:0}
+.spec .sp-footer .sp-page-number + p {max-width:65%;margin-left:1.2cqw}
+.spec .sp-footer:has(.sp-page-number):not(:has(svg)) {justify-content:flex-start}
+.spec .sp-footer .sp-page-number {font-variant-numeric:tabular-nums}
+.detail-board {gap:0}
+.db-caption {margin-top:calc(var(--sb)*.435);gap:.5cqw}
+.db-reading.compact {margin-top:calc(var(--sb)*1.85);margin-bottom:auto}
+.detail-board .db-bottom .callout {left:0;right:auto}
+.detail-board .db-top .callout {left:0;right:auto}
+.db-service {margin-top:calc(var(--sb)*1.45)}
+:scope .lm-v4-anchor{display:block;scroll-margin-top:72px}
+:scope .section{scroll-margin-top:54px}
+:scope .section h2{overflow-wrap:anywhere}
+:scope .section>.inner>h2{margin:0 0 24px!important}
+:scope .section>.inner>.copy{margin-bottom:28px}
+:scope .section>.inner.end .copy+.copy{margin-top:12px}
+:scope .lm-case-intro>div{grid-column:1/-1}
+:scope .lm-case-intro .copy{margin:20px 0 28px}
+:scope #contraste{margin-top:30px}
+:scope #contraste h3{margin:0}
+:scope .lm-motion-subtitle{overflow-wrap:anywhere}
+:scope .spacing-table-wrap{overflow-x:auto}
+:scope .spacing-table th,:scope .spacing-table td{overflow-wrap:anywhere}
+:scope .review5-dialog{max-height:94dvh}
+:scope .spec-grid .captext{overflow-wrap:anywhere}
+:scope .lm-v4-specimen{
+  --lm-type-title-size:var(--st,clamp(12px,6.9cqw,84px));
+  --lm-type-subtitle-size:var(--ss,clamp(9px,3.3cqw,34px));
+  --lm-type-body-size:var(--sb,clamp(8px,1.85cqw,19px));
+  --lm-type-detail-size:var(--sd,clamp(7px,1.25cqw,13px));
+}
+:scope .plate{--st:6.8cqw;--sd:clamp(7px,1.65cqw,13px)}
+:scope .plate.element{--st:5.4cqw}
+:scope .adapt .portrait{--st:9.4cqw;--ss:4.4cqw;--sb:3.85cqw;--sd:2.65cqw}
+:scope .crop-demo{--st:7.6cqw}
+@media(max-width:700px){
+  :scope .section>.inner.end{gap:18px}
+  :scope .board:not(.portrait) .reading{top:23%;width:93%}
+  :scope .dialog-top{position:sticky;top:0}
+}
+}
+.lm-v4-footer{border-top:1px solid var(--line);padding:24px var(--lm-layout-gutter);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+</style>
 </head><body>
 
-<main><section class="chapter lm-manual-cover"><div class="inner"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 05 — COMPOSIÇÃO</p><h1 class="big"><span class="lm-cover-title-content">SISTEMA DE<br><span class="perpetua">COMPOSIÇÃO</span></span></h1><div class="intro"><p>Superfície, margens e eixo horizontal organizam a composição. O M Elemento admite posição vertical e legenda. Título, Corpo e Detalhe orientam a leitura; fotografia e cor completam a estrutura.</p><p class="detail">SUPERFÍCIE / M / LEITURA / IMAGEM</p></div></div></section>
-
+<main>
+<section class="chapter lm-manual-cover"><div class="inner"><p class="eyebrow">LABMATTAR / IDENTIDADE VISUAL / 05 — COMPOSIÇÃO</p><h1 class="big"><span class="lm-cover-title-content">SISTEMA DE<br><span class="perpetua">COMPOSIÇÃO</span></span></h1><div class="intro"><p>A composição articula texto, imagem, cor e forma para diferentes situações de comunicação. A identidade preserva sua estrutura em documentos de leitura, apresentações de projetos, comunicações institucionais e experiências digitais.</p><p class="detail">SUPERFÍCIE / M / LEITURA / IMAGEM</p></div></div></section>
+<div class="lm-composition-v4">
+<svg aria-hidden="true" class="definitions" xmlns="http://www.w3.org/2000/svg"><defs><symbol id="m" viewBox="0 0 822 627"><path d="M0 627H235.926C249.16 627 268.861 620.689 279.704 612.978L391.286 533.606C402.129 525.894 419.871 525.894 430.714 533.606L542.296 612.978C553.139 620.689 572.84 627 586.074 627H822L771.813 0H530.723C517.489 0 501.034 9.40694 494.16 20.8978L423.499 139.054C416.625 150.545 405.375 150.545 398.501 139.054L327.84 20.8978C320.966 9.40694 304.511 0 291.277 0H50.1873L0 627Z"></path></symbol><symbol id="mattar" viewBox="0 0 822 199"><path d="M561.647 46.2084H530.071V0H516.864V46.2084H485.3C472.479 46.2084 461.991 56.6967 461.991 69.517V103.646C461.991 116.466 472.479 126.954 485.3 126.954H516.864V198.218H530.071V126.954H561.647C574.467 126.954 584.955 116.466 584.955 103.646V69.517C584.955 56.6967 574.467 46.2084 561.647 46.2084Z"></path><path d="M427.722 46.2084H396.146V0H382.939V46.2084H351.374C338.554 46.2084 328.066 56.6967 328.066 69.517V103.646C328.066 116.466 338.554 126.954 351.374 126.954H382.939V198.218H396.146V126.954H427.722C440.542 126.954 451.03 116.466 451.03 103.646V69.517C451.03 56.6967 440.542 46.2084 427.722 46.2084Z"></path><path d="M821.946 182.479L748.793 136.857C748.793 136.857 749.224 139.885 748.937 139.885L798.516 139.741C811.336 139.741 821.824 129.253 821.824 116.433V69.5059C821.824 56.6856 811.336 46.1973 798.516 46.1973H747.886C735.066 46.1973 724.578 56.6856 724.578 69.5059V197.764H737.763V163.039C737.763 157.734 736.746 148.019 745.532 151.456L821.846 197.864L821.935 182.479H821.946ZM757.458 106.342H785.762C802.063 106.364 809.07 111.349 809.07 117.483C809.07 123.616 803.058 128.944 785.762 128.623H757.458C741.3 128.944 734.149 123.616 734.149 117.483C734.149 111.349 742.04 106.121 757.458 106.342Z"></path><path d="M194.659 45.1799H155.822C155.822 45.1799 147.456 53.06 139.001 62.6973L112.741 92.6261C108.597 96.4501 103.126 98.4063 97.6113 98.539C97.5781 98.539 97.5559 98.539 97.5228 98.539C97.4896 98.539 97.4676 98.539 97.4344 98.539C91.9084 98.4063 86.4376 96.4501 82.3042 92.6261L56.0446 62.6973C47.5898 53.06 39.2235 45.1799 39.2235 45.1799H0.386793L0.143681 140.293C0.0552654 141.365 0 142.449 0 143.543V198.195H13.2071V143.543C13.2071 133.706 18.91 128.004 23.7618 126.843C37.7647 123.494 43.7216 132.999 51.889 141.83L77.2424 169.239C82.5031 174.919 89.5211 178.158 97.1028 178.478V178.533C97.2465 178.533 97.3902 178.511 97.5338 178.511C97.6775 178.511 97.8212 178.533 97.9538 178.533V178.478C105.535 178.169 112.553 174.919 117.814 169.239L143.168 141.83C151.335 132.999 157.292 123.494 171.295 126.843C176.147 128.004 181.85 133.695 181.85 143.543V198.195H195.057V143.543C195.057 142.437 195.001 141.354 194.913 140.293L194.67 45.1799H194.659Z"></path><path d="M213.717 46.2112C213.717 46.2112 213.75 46.2885 213.728 46.3438C212.778 48.9963 213.385 56.6885 237.014 56.3016L273.773 56.0585C286.594 55.9701 297.137 56.2132 297.027 63.0213C296.916 69.4535 286.594 70.9566 273.773 70.9566H237.014C224.194 70.9566 213.706 81.4449 213.706 94.2652V174.912C213.706 187.732 224.194 198.22 237.014 198.22H287.644C300.464 198.22 310.952 187.732 310.952 180.548V46.2112H213.717ZM276.039 106.268H247.735C234.915 106.268 223.398 103.438 224.426 95.1273C225.509 86.4625 234.915 83.9869 247.735 83.9869H276.039C288.859 83.9869 299.071 86.982 299.348 95.1273C299.613 103.129 288.859 106.268 276.039 106.268Z"></path><path d="M605.451 46.2112C605.451 46.2112 605.484 46.2885 605.462 46.3438C604.511 48.9963 605.119 56.6885 628.749 56.3016L665.507 56.0585C678.328 55.9701 688.871 56.2132 688.761 63.0213C688.65 69.4535 678.328 70.9566 665.507 70.9566H628.749C615.928 70.9566 605.44 81.4449 605.44 94.2652V174.912C605.44 187.732 615.928 198.22 628.749 198.22H679.378C692.198 198.22 702.686 187.732 702.686 180.548V46.2112H605.451ZM667.773 106.268H639.469C626.649 106.268 615.132 103.438 616.16 95.1273C617.243 86.4625 626.649 83.9869 639.469 83.9869H667.773C680.593 83.9869 690.805 86.982 691.082 95.1273C691.347 103.129 680.593 106.268 667.773 106.268Z"></path></symbol><symbol id="v" viewBox="0 0 435 400"><path d="M164.225 395.654L160.02 390.765L154.654 389.171C152.759 391.314 150.045 391.867 147.794 390.229L142.97 386.714C140.987 385.271 137.601 390.719 133.047 388.054L127.259 384.665C118.417 383.504 118.895 380.935 116.307 377.806L112.482 373.181C110.246 370.476 101.202 371.139 100.048 361.072C97.0725 358.115 97.5084 354.231 98.9055 350.629C99.6351 348.748 100.222 346.848 101.298 345.235L104.643 340.223C105.529 338.894 107.197 337.114 107.692 335.717C108.536 333.34 109.151 331.583 110.711 329.812C112.648 327.612 114.506 325.352 117.3 324.012L121.297 323.094C122.476 322.135 123.616 321.578 125.015 321.289L130.673 320.123C134.639 319.307 138.161 317.724 141.254 314.939C145.881 310.772 150.611 297.572 148.953 292.336L146.968 286.076C144.183 279.978 139.985 274.933 135.777 269.776L123.228 254.393L118.349 247.956C116.88 248.89 117.438 250.438 116.972 251.773C115.281 256.609 113.212 261.237 110.688 265.561C109.135 268.225 106.178 269.108 103.336 269.287C100.42 269.471 98.2333 267.64 98.2379 264.63C98.2402 263.024 98.4949 261.338 98.8596 259.785L101.319 249.314C102.175 245.669 102.315 242.129 101.085 238.522C100.147 235.769 99.2129 232.915 97.5588 230.557C95.7442 227.967 93.9409 225.677 91.6124 223.557C87.7398 220.031 84.1242 215.927 79.5772 213.307C77.4184 212.064 75.8996 211.148 74.0712 209.439C72.9195 208.363 71.0245 207.207 69.476 206.262C56.7525 198.505 44.7792 190.113 33.274 180.682L27.4376 175.898L23.7968 172.216C10.525 158.786 1.92881 142.438 0.0705302 123.447L0.00629358 118.296C-0.179534 103.352 3.75267 94.0539 11.4175 81.9339L16.1985 75.7121C22.1427 69.5844 29.0872 65.0236 36.3275 60.5866C39.7504 58.4898 37.532 56.5168 38.6194 54.8053C38.9245 54.3259 40.2987 54.062 40.8998 54.1699L47.8787 55.4271L58.8081 55.7161L65.6424 57.1408C70.7836 58.2122 75.1609 61.5846 79.3523 64.6542L81.7681 62.9818L87.1135 62.7799C86.228 60.9239 85.425 58.6985 84.1288 57.3496L77.3426 50.2904C76.0212 48.9162 77.1614 46.5073 77.0398 45.0184C76.8127 42.2471 76.5053 40.1617 77.634 37.684C80.2517 31.9463 84.778 35.3852 92.3144 33.0108C94.8861 32.2009 96.9211 25.7474 99.7383 25.0821C103.641 24.1599 107.093 25.8346 110.828 26.4127L118.128 27.5438L129.484 29.6567C130.643 29.8723 132.474 28.9111 132.974 28.0026C134.387 25.4285 136.314 24.6003 139.106 24.3319L146.39 23.6322C148.707 23.4097 151.311 24.3663 153.578 23.7584C156.879 22.8728 156.693 18.4772 158.377 15.7105C161.025 14.9924 163.544 15.4145 166.166 15.52L173.975 15.832C175.79 15.9055 178.066 14.9213 179.91 14.8547C184.255 14.6987 188.722 14.5244 192.946 15.0933C198.078 15.7862 206.449 17.8761 207.332 14.233C208.078 11.1657 209.457 8.85778 211.62 6.4879C213.235 4.7191 212.403 1.57839 217.447 0C221.352 0.277594 224.224 2.90442 225.117 6.5682C227.643 8.88531 229.43 11.2689 230.345 14.74C232.369 16.0821 234.755 13.9623 239.937 15.1507L244.95 16.3001C248.43 17.0984 251.917 16.8392 255.398 16.0156C257.9 15.4237 260.023 16.2358 262.551 16.3895L269.328 16.7979C271.695 19.856 275.024 21.0352 278.704 20.0005C284.777 18.2937 291.154 17.672 297.399 19.1999C300.613 19.9868 303.38 21.8061 306.507 22.8728C315.925 26.087 323.777 21.2738 331.828 22.8499C335.787 23.6253 338.793 30.0008 340.231 34.736C340.869 36.8351 345.535 35.1879 347.297 36.1905C350.222 37.8583 353.014 38.246 356.439 38.3034C358.614 38.3378 361.243 41.8571 360.291 43.7589L358.58 47.1818L352.893 55.3651L350.546 58.1847L354.175 60.7036C359.94 54.5071 367.557 51.3503 376.089 50.8364L380.241 50.5864C383.433 50.3937 386.895 50.5864 389.9 49.6136C391.721 49.024 393.449 47.9596 395.264 49.1709L396.445 53.5367C401.738 55.7138 406.436 58.4622 410.836 62.0503C414.422 64.9754 418.052 67.6687 420.802 71.3578L425.118 77.1391L429.497 85.1503C432.782 91.1587 434.32 97.6122 433.778 104.632C433.501 108.236 435.54 112.745 434.544 118.143L431.961 132.153C430.059 142.47 419.313 158.355 411.529 165.788L405.698 171.356L392.355 181.854L384.807 187.661L357.497 206.163C355.678 207.397 354.427 208.443 352.331 209.446C350.064 210.529 343.833 215.606 341.888 218.1C339.488 221.176 336.659 224.048 335.042 227.703C330.901 237.052 331.064 247.463 334.048 257.093C334.67 259.099 334.886 261.244 334.792 263.203C334.679 265.559 332.727 266.394 330.747 266.518C321.701 267.091 316.266 256.655 315.475 247.428C313.841 248.424 312.736 249.936 311.559 251.454L304.557 260.514L292.347 276.243C284.288 286.624 282.886 298.056 290.613 308.783C292.421 311.293 294.664 312.718 297.512 313.514C304.321 315.416 310.428 318.568 316.672 321.725C325.964 326.421 328.497 329.447 332.794 338.279C334.319 341.416 337.299 341.785 336.425 345.678C336.111 347.073 336.267 348.906 336.496 350.397C337.054 352.99 336.425 355.298 334.473 357.073C334.317 360.381 332.977 363.502 330.201 365.38L322.474 370.613C321.699 373.832 318.985 375.801 315.741 375.695L313.743 376.282C313.213 376.438 313.027 377.794 312.912 378.455C311.444 382.128 307.996 384.078 304.135 384.821C298.243 387.698 291.996 389.825 285.194 390.024L270.378 388.967L267.563 393.167L263.244 393.794C258.903 398.731 251.518 399.931 247.021 396.003C245.939 395.058 244.434 395.232 243.131 395.769L237.542 398.072C235.335 398.983 233.392 400.309 230.754 399.935C227.549 400.236 224.681 399.336 221.919 397.675L202.948 397.334L192.934 395.881L188.64 395.106C187.343 394.872 184.852 394.484 184.278 395.909C182.422 400.52 179.704 395.817 169.238 397.451C167.471 397.726 165.503 397.136 164.227 395.652L164.225 395.654ZM341.277 185.045L341.243 192.526C341.243 192.974 342.092 193.937 342.349 193.68C344.269 191.762 343 189.234 350.835 189.338L362.815 179.883L376.341 168.55L388.7 156.214C394.825 149.437 399.331 141.867 402.541 133.355C405.096 126.583 407.356 113.983 405.505 108.264L402.559 99.1631C399.574 89.9382 391.329 80.7593 381.581 79.0639C378.392 78.5087 374.719 78.7358 371.705 79.1006C367.149 79.6489 363.735 82.1197 361.067 85.5242C359.527 87.4903 357.077 89.1123 354.79 90.046C350.082 91.9708 348.921 86.0702 345.976 87.1416L338.155 89.9818L330.502 92.2461C327.664 93.0858 324.918 92.8174 322.169 94.2191L318.092 95.1529C315.874 96.9652 313.192 98.5895 310.65 99.716C309.983 100.049 309.801 101.921 310.068 102.682L314.97 116.734C317.886 125.089 323.403 132.018 327.565 139.749L331.307 146.7L336.093 157.038C340.11 165.717 341.323 175.148 341.275 185.043L341.277 185.045ZM96.8362 159.713L101.737 148.407L112.2 129.554L116.715 121.173L118.447 117.379C119.746 114.539 120.774 111.719 121.228 108.679L122.246 101.856C118.388 98.3119 114.01 96.5844 108.78 96.2655L103.166 95.1735C97.2078 94.6573 91.9221 93.3129 86.4665 90.5668C85.4066 90.0323 84.3054 91.3904 83.5392 92.2255C82.2613 93.6226 79.0105 93.5745 77.5927 92.3287C75.2114 90.2342 73.4655 87.8528 71.8137 85.2145C68.5445 79.9953 62.2906 79.1533 56.0941 80.2729C48.7459 81.6035 42.9829 85.7124 37.9908 91.1404C28.8807 101.042 24.4323 116.665 28.6168 129.352L32.3862 140.775L36.3321 147.281C39.9707 153.28 43.9832 158.639 48.9019 163.549L56.507 171.138L68.0605 181.531L73.9358 186.302C76.8655 188.681 79.7033 191.015 83.1882 192.614C84.7184 193.316 86.6753 194.137 87.6756 195.307C89.332 197.248 90.2519 198.806 93.1219 199.934C93.2756 191.157 91.7064 179.661 93.8951 171.143L96.8339 159.713H96.8362Z"></path></symbol><symbol id="v06" viewBox="0 0 435 400"><path d="M422.428 11.4737C416.539 5.12348 404.435 -0.652068 382.155 1.61842C375.38 2.30666 364.602 8.39439 361.991 10.3598C348.361 20.6266 340.386 33.3626 341.528 51.1079C342.138 60.6155 344.586 70.0238 346.019 79.5386C346.942 85.676 348.893 97.1916 347.325 103.017C345.225 110.836 336.419 106.281 331.261 105.018C317.865 101.74 302.823 100.001 289.179 99.2067C272.427 98.2275 254.299 98.0572 237.426 97.745C214.97 97.3264 192.733 99.4266 170.348 99.1925C156.505 99.0435 141.676 100.682 127.783 101.655C117.318 102.392 107.044 103.627 96.557 104.131C91.8883 104.351 88.4471 105.28 84.1545 102.371C81.288 100.434 82.5296 98.3694 82.5722 95.8222C82.6928 88.436 83.9842 82.4618 85.1265 75.3169C88.1562 56.3726 93.0022 31.5675 79.3723 15.6245C74.1572 9.52254 66.0403 3.91019 58.1361 2.04413C47.628 -0.43921 43.5483 -0.723021 33.9909 1.54037C31.2593 2.18604 23.9299 4.55585 19.4031 7.12434C13.4502 10.4946 8.07196 17.675 6.57486 20.0306C-6.11147 39.9399 2.03389 64.7804 10.3212 84.6827C33.6646 140.742 62.0882 195.113 93.6124 246.887C94.9463 249.08 100.715 255.217 102.815 256.842C105.128 258.63 111.925 263.058 112.947 263.739C127.201 273.225 148.629 278.554 165.225 283.478C169.73 284.819 174.357 286.06 178.685 287.756C183.467 289.636 187.958 296.746 188.774 298.243C191.555 303.337 191.598 312.15 191.839 315.045C192.62 324.51 192.031 331.513 190.676 340.85C190.569 341.602 189.583 345.32 189.306 345.866C188.49 347.477 185.993 350.507 184.957 352.131C184.311 353.139 177.897 356.176 175.243 356.637C171.88 357.226 165.133 359.149 161.798 359.723C159.527 360.114 148.104 361.22 144.847 366.684C142.861 370.019 141.669 373.751 140.214 377.305C139.015 380.236 137.447 380.591 139.881 384.01C145.514 391.907 168.056 395.959 177.372 397.25C199.651 400.337 224.137 401.167 246.359 397.96C255.193 396.683 270.895 394.306 278.274 389.431C278.82 389.069 282.999 385.33 283.106 385.025C283.453 383.996 283.219 383.109 283.432 382.173C283.985 379.789 285.064 378.448 284.142 375.624C284.028 375.269 280.445 370.054 279.984 369.494C278.38 367.557 276.777 367.549 275.365 366.308C272.952 364.193 274.166 364.534 270.689 363.179C263.877 360.525 258.57 359.603 251.283 358.815C249.495 358.624 247.317 357.765 245.543 357.46C243.5 357.105 241.918 358.028 240.073 356.19C237.185 353.316 236.092 350.024 235.191 346.171C233.439 338.665 233.056 333.194 233.318 325.311C233.623 316.009 233.85 298.03 241.556 292.382C246.664 288.643 266.921 286.564 275.265 284.251C276.848 283.811 282.077 282.484 283.099 281.796C284.035 281.158 303.37 274.218 310.259 270.642C311.849 269.819 319.1 266.456 321.136 265.2C331.694 258.658 335.518 247.881 341.599 237.77C348.169 226.858 364.318 198.398 364.8 197.469C365.879 195.397 396.367 137.819 397.836 134.718C398.943 132.384 407.847 114.603 410.281 110.268C410.7 109.523 419.916 89.9402 421.882 85.3283C426.572 74.3094 433.915 63.6097 434.483 51.4555C435.767 23.9543 425.962 15.2768 422.428 11.4666V11.4737ZM116.629 245.539C115.594 245.681 114.189 245.099 113.302 244.574C106.143 240.36 97.6355 224.857 92.8391 217.499C79.8902 197.653 31.685 110.091 27.7045 101.349C21.8297 88.4573 15.5787 74.8486 12.0737 60.9277C10.5411 54.8329 8.63958 47.021 8.7602 40.7985C8.9021 33.5258 9.22849 29.3609 12.9606 23.0035C20.2687 10.5372 41.0011 3.35676 54.2479 9.17487C55.3974 9.67863 61.9534 12.8573 62.521 13.3185C66.0332 16.1424 70.5741 20.655 72.9156 24.5645C82.409 40.4366 77.0663 60.1614 73.5258 77.1972C71.3404 87.7194 69.5595 99.008 73.5258 109.445C73.8379 110.268 74.3772 111.957 74.8597 112.546C75.3421 113.135 76.9244 113.958 77.5913 114.603C81.8627 118.726 86.2334 128.042 88.6529 133.697C97.7845 155.032 103.787 178.766 109.981 201.059C110.861 204.231 119.815 235.273 120.17 240.537C120.369 243.531 119.858 245.107 116.629 245.539ZM418.767 67.3205C414.027 81.0925 407.62 93.7717 401.242 106.912C399.894 109.693 392.5 122.33 391.053 125.459C389.762 128.262 389.662 129.432 387.86 132.377C384.937 137.152 381.9 143.964 379.069 149.306C363.36 178.993 347.112 208.616 327.884 236.124C325.464 239.586 323.534 243.375 320.583 246.561C319.937 247.256 315.723 251.322 315.268 251.535C313.459 252.372 313.14 250.825 312.061 250.144C310.756 249.314 309.11 249.137 308.868 247.306C308.578 245.085 308.634 238.579 308.918 236.323C309.23 233.825 313.161 223.7 313.8 222.756C314.374 221.905 333.049 153.386 336.54 143.325C338.179 138.614 340.45 133.945 342.819 129.383C343.373 128.311 347.573 120.521 347.985 120.173C348.155 120.031 348.964 120.116 349.531 119.776C350 119.499 352.448 116.881 352.824 116.328C356.002 111.609 356.868 98.3481 356.435 92.6152C355.137 75.395 347.353 48.4117 356.208 32.795C365.694 16.0786 384.135 9.5793 402.682 11.9491C407.102 12.5096 413.744 16.632 416.525 20.1016C422.478 27.509 422.414 36.9173 423.081 45.829C423.556 52.1367 420.811 61.3605 418.76 67.3276L418.767 67.3205Z" fill="currentColor"></path></symbol></defs></svg>
+<section class="section lm-manual-section" id="estrutura">
+<div class="inner">
+<h2 class="title lm-manual-section-title">ESTRUTURA <span class="perpetua">DA PÁGINA</span></h2>
+<p class="copy">O conteúdo se organiza a partir de uma área útil e de um eixo comum de leitura. A composição articula os elementos conforme sua função, preservando os alinhamentos e as margens.</p><div class="controls"><div aria-label="Guias de composição" class="control" role="group"><span class="detail">Visualização</span><button aria-pressed="false" id="guide-off">Resultado</button><button aria-pressed="true" id="guide-on">Estrutura</button></div></div><div class="structure">
+<figure><div aria-label="Demonstração dos quatro tratamentos tipográficos com régua e margem" class="board lm-v4-specimen"><div class="inside"><p class="mini-detail">LABMATTAR / IDENTIDADE VISUAL</p><div class="reading"><p class="mini-title">FORMA <span class="perpetua">E MATÉRIA</span></p><p class="mini-sub">PRÁTICAS E PROCESSOS</p><p class="mini-body">O LABMATTAR reúne práticas, materiais e processos. O texto acompanha as imagens e orienta a leitura.</p></div><p class="mini-detail">SÃO PAULO — BRASIL / 2026</p><div class="sign"><svg aria-hidden="true" viewBox="0 0 822 627"><use href="#m"></use></svg></div></div><div class="guide-layer" id="guides"><div class="grid-guide"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="safe-area"></div><div class="axis-guide"></div><div class="center-guide"></div><span class="glabel origin">Régua</span><span class="glabel center">Centro</span><span class="glabel margin">Margem</span></div></div><figcaption class="caption">Estudo de composição — guias demonstrativas da área útil e do eixo. Não representam medidas obrigatórias para todos os suportes.</figcaption></figure><div class="note-list"><p><b>Régua e margem</b>Definem o campo de leitura e a posição dos elementos.</p><p><b>Hierarquia</b>Título, Subtítulo, Corpo e Detalhe distinguem as funções da informação.</p><p><b>Assinatura</b>Identifica a instituição sem competir com o conteúdo principal.</p></div></div>
+</div>
+</section><section class="section lm-manual-section" id="espacamento">
+<div class="inner">
+<h2 class="title lm-manual-section-title">ESPAÇO E <span class="perpetua">HIERARQUIA</span></h2>
+<p class="copy">O espaço também estabelece hierarquia. Textos que desenvolvem uma mesma ideia formam um bloco; informações de outra natureza ocupam campos distintos. O intervalo deve indicar essa relação antes de produzir um efeito visual.</p>
+<div class="distance-layout">
+<figure><div class="distance-sheet lm-v4-specimen"><div class="ds-in"><p class="sd">LABMATTAR / ESTUDO EDITORIAL</p><div class="ds-content"><div class="ds-group"><p class="st">DA MATÉRIA<br/><span class="perpetua">À LINGUAGEM</span></p><div class="ds-measure"><span>0,75–1 L</span></div><p class="sb">A matéria organiza a percepção da experiência. A imagem e o texto desenvolvem um mesmo assunto.</p></div><div class="ds-separation"><span>1,5–2 L</span></div><div class="ds-group"><p class="ss">PROCESSOS</p><div class="ds-measure small"><span>0,5 L</span></div><p class="sb">O subtítulo anuncia uma nova unidade de leitura e permanece próximo da sua explicação.</p></div></div><div class="ds-foot"><p class="sd">IDENTIFICAÇÃO / CRÉDITO</p><svg aria-hidden="true" viewBox="0 0 822 627"><use href="#m"></use></svg></div></div></div><figcaption class="caption">Esquema de proximidade: os intervalos são referências relativas à entrelinha do Corpo, não medidas absolutas da marca.</figcaption></figure>
+<div class="distance-notes"><div>
+<h3 class="lm-motion-subtitle">Título e Corpo</h3><p>Aproximar o título do texto que o desenvolve. Em aberturas expressivas, o respiro pode crescer ao redor do conjunto, sem separar suas partes.</p></div><div>
+<h3 class="lm-motion-subtitle">Subtítulo e Corpo</h3><p>Usar um intervalo menor que o de uma mudança de assunto. Manter o subtítulo junto ao primeiro parágrafo, inclusive em documentos de várias páginas.</p></div><div>
+<h3 class="lm-motion-subtitle">Entre assuntos</h3><p>Usar um intervalo maior entre unidades independentes. Divisórias podem ajudar em tabelas e informações técnicas; não são obrigatórias em toda composição.</p></div></div></div>
+<div class="spacing-table-wrap"><table class="spacing-table"><thead><tr><th>Relação</th><th>Referência de estudo</th><th>Corpo de 19 px / entrelinha 1,45</th></tr></thead><tbody><tr><td>Título → Corpo ou Subtítulo</td><td>0,75–1 L</td><td>21–28 px</td></tr><tr><td>Subtítulo → Corpo</td><td>0,5 L</td><td>14 px</td></tr><tr><td>Imagem → legenda</td><td>0,25–0,5 L</td><td>7–14 px</td></tr><tr><td>Parágrafo → parágrafo</td><td>0,5–0,75 L</td><td>14–21 px</td></tr><tr><td>Unidade → unidade independente</td><td>1,5–2 L</td><td>41–55 px</td></tr></tbody></table><p class="caption">L = altura de uma linha de Corpo (tamanho × entrelinha). Valores iniciais para avaliação óptica, não normas de impressão. Ajustar ao suporte, à quantidade de texto e ao espaço disponível.</p></div>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Ritmo expressivo</h3><p>Em capas, preservar espaço livre em torno do bloco de leitura e deixar o título assumir protagonismo. Não distribuir título e texto por extremidades opostas.</p></div><div>
+<h3 class="lm-motion-subtitle">Ritmo documental</h3><p>Em páginas de leitura, trabalhar com intervalos regulares entre parágrafos e grupos. Se o conteúdo crescer, acrescentar uma página antes de reduzir a tipografia ou a entrelinha.</p></div></div>
+</div>
+</section><section class="section lm-manual-section" id="detalhes">
+<div class="inner">
+<h2 class="title lm-manual-section-title">POSIÇÃO DOS <span class="perpetua">DETALHES</span></h2>
+<p class="copy">O Detalhe identifica, localiza ou complementa a informação. Sua posição depende do que ele descreve, e não de uma obrigação de preencher os cantos da composição.</p>
+<div class="detail-examples">
+<figure><div class="detail-board lm-v4-specimen"><div class="db-top"><p class="sd">DOSSIÊ DE PROJETO</p><span class="callout">Identificação do documento</span></div><div class="db-reading"><p class="ss">PRÁTICAS E PROCESSOS</p><p class="sb">A investigação material acompanha as etapas de desenvolvimento da obra.</p></div><div class="db-bottom"><p class="sd">02</p><p class="sd">LABMATTAR</p><span class="callout">Paginação</span></div></div>
+<h3 class="lm-motion-subtitle">Documento</h3><p>Identificação no cabeçalho quando ajuda a localizar uma página. Número no rodapé. Não repetir a mesma informação nas duas posições.</p></figure>
+<figure><div class="detail-board lm-v4-specimen"><div aria-label="Recorte provisório de referência" class="db-image sp-picture p1" role="img"></div><div class="db-caption"><p class="sd">FIG. 01 / DETALHE DA MATÉRIA</p><p class="sd">CRÉDITO / A INSERIR</p></div><div class="db-reading compact"><p class="ss">MATÉRIA</p><p class="sb">O enquadramento revela uma relação entre textura e forma.</p></div></div>
+<h3 class="lm-motion-subtitle">Imagem</h3><p>Legenda e crédito acompanham a imagem, preferencialmente abaixo, alinhados à sua borda. Se houver conjunto, cada imagem recebe a identificação necessária.</p></figure>
+<figure><div class="detail-board lm-v4-specimen"><div class="db-reading"><p class="ss">UM ENCONTRO<br/>À MESA</p><p class="sb">Apresentação e conversa sobre matéria e experiência.</p><div class="db-service"><p class="sd">DATA E HORÁRIO</p><p class="sb">A confirmar</p><p class="sd">LOCAL</p><p class="sb">A confirmar</p></div></div><div class="db-bottom"><svg aria-hidden="true" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div>
+<h3 class="lm-motion-subtitle">Comunicação</h3><p>Rótulos como data e local podem ser Detalhe; seus valores e informações de participação precisam ter legibilidade de Corpo. A assinatura permanece independente.</p></figure></div><p class="caption">Usar Detalhe em informação auxiliar real. Não transformar textos essenciais em legenda nem inserir identificações redundantes acima dos títulos.</p>
+</div>
+</section>
+<section class="section lm-manual-section" id="m-composicao">
+<div class="inner">
+<h2 class="title lm-manual-section-title">O M NA <span class="perpetua">COMPOSIÇÃO</span></h2>
+<p class="copy">O M assume funções distintas de acordo com a peça. Como assinatura, identifica. Como elemento gráfico, organiza ou revela o conteúdo. Sua geometria original permanece como referência.</p><div class="grid grid3 example-grid">
+<figure><div class="plate lm-v4-specimen"><span class="minidet">LABMATTAR</span><div class="minicopy">FORMA<br/><em>E MATÉRIA</em></div><div class="sig"><svg aria-hidden="true" viewBox="0 0 822 627"><use href="#m"></use></svg></div></div>
+<h3 class="lm-motion-subtitle">Assinatura</h3><p>O M identifica a instituição em escala própria, respeitando a área de proteção. A assinatura é definida para o documento como um todo.</p></figure>
+<figure><div class="plate lm-v4-specimen element"><div class="minicopy">FORMA <em>E MATÉRIA</em></div><div class="outline-axis"></div><div class="mark-elem"><svg aria-hidden="true" viewBox="0 0 822 627"><use href="#m"></use></svg><span class="element-caption">M / ELEMENTO</span></div><span class="minidet">ESTUDO / 2026</span></div>
+<h3 class="lm-motion-subtitle">Elemento</h3><p>O M integral atua como elemento secundário. Mantém o eixo horizontal central e admite ajuste vertical, escala e legenda em Detalhe alinhada à esquerda do elemento.</p></figure>
+<figure><div class="plate lm-v4-specimen exp" style="--mask-h:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAzLjIwMDAwIDYyNyIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0wIDYyN0gzMjYuNTI2MDBDMzM5Ljc2MDAwIDYyNyAzNTkuNDYxMDAgNjIwLjY4OSAzNzAuMzA0MDAgNjEyLjk3OEw0ODEuODg2MDAgNTMzLjYwNkM0OTIuNzI5MDAgNTI1Ljg5NCA1MTAuNDcxMDAgNTI1Ljg5NCA1MjEuMzE0MDAgNTMzLjYwNkw2MzIuODk2MDAgNjEyLjk3OEM2NDMuNzM5MDAgNjIwLjY4OSA2NjMuNDQwMDAgNjI3IDY3Ni42NzQwMCA2MjdIMTAwMy4yMDAwMFYwSDYyMS4zMjMwMEM2MDguMDg5MDAgMCA1OTEuNjM0MDAgOS40MDY5NCA1ODQuNzYwMDAgMjAuODk3OEw1MTQuMDk5MDAgMTM5LjA1NEM1MDcuMjI1MDAgMTUwLjU0NSA0OTUuOTc1MDAgMTUwLjU0NSA0ODkuMTAxMDAgMTM5LjA1NEw0MTguNDQwMDAgMjAuODk3OEM0MTEuNTY2MDAgOS40MDY5NCAzOTUuMTExMDAgMCAzODEuODc3MDAgMEgwVjYyN1oiLz48L3N2Zz4=')"><div class="expanded"></div><span class="minidet" style="top:19%">LABMATTAR</span><div class="minicopy">FORMA<br/><em>E MATÉRIA</em></div></div>
+<h3 class="lm-motion-subtitle">Expandido</h3><p>O M ocupa a altura da superfície e se prolonga horizontalmente até as bordas. As reentrâncias centrais permanecem intactas. Pode atuar como campo de cor ou máscara.</p></figure></div><p class="caption">Para redução, proteção e integridade geométrica, consultar o capítulo <a href="/manual.html#uso">Símbolos ↗</a>.</p>
+</div>
+</section>
 <section class="chapter lm-case lm-manual-section" id="construcao">
-  <div class="lm-case-intro">
+  <span id="imagem" class="lm-v4-anchor"></span><div class="lm-case-intro">
     <div>
-      <p class="eyebrow">01 / CONSTRUÇÃO</p>
-      <h2>CONSTRUÇÃO<br><em>DA PÁGINA</em></h2>
+      <h2 class="lm-manual-section-title">IMAGEM E <span class="perpetua">LEITURA</span></h2>
+      <p class="copy">A fotografia pode ocupar o campo visual, permanecer em enquadramento próprio ou ser delimitada pela geometria do M. Quando o texto se sobrepõe à imagem, o tratamento preto ajustável favorece a leitura; não substitui a escolha do enquadramento e da cor do texto.</p>
     </div>
   </div>
   <div class="lm-case-trace"><span><strong>EXEMPLO</strong> / CADA CORPO ABRE UM MUNDO</span><span><strong>DEMONSTRAÇÃO</strong> / CAMADAS E FORMATO</span><a href="/compor.html?studio=1#laboratorio" aria-label="Abrir ajuda e dúvidas na ferramenta de composição">DÚVIDAS NO COMPOR ↗</a></div>
@@ -94,6 +617,7 @@
       <button type="button" data-case-contrast="on" aria-pressed="false">20%</button>
       <button type="button" data-case-contrast="40" aria-pressed="true">40%</button>
       <button type="button" data-case-contrast="60" aria-pressed="false">60%</button>
+      <button type="button" data-case-contrast="80" aria-pressed="false">80%</button>
     </div>
     <div class="lm-case-control" role="group" aria-label="Como visualizar a leitura">
       <span>LEITURA</span>
@@ -129,63 +653,168 @@
     </div>
   </div>
 
-  <div class="lm-case-contrast" id="contraste">
-    <div><p class="eyebrow">EM VALIDAÇÃO / TEXTO SOBRE FOTOGRAFIA</p><h3>CONTRASTE<br><span class="perpetua">AJUSTÁVEL</span></h3></div>
-    <div>
-      <p>O tratamento preto pode variar conforme a fotografia, o enquadramento e a cor do texto, inclusive dentro do M. Compare as intensidades e confira a leitura no tamanho final.</p>
-      <p>Sem sobreposição de texto, esse tratamento não é acrescentado. Os percentuais são opções de composição; 40% é o ponto de partida preferencial. Ajuste conforme a imagem e confirme a leitura no tamanho final.</p>
-    </div>
-  </div>
-  <div class="lm-case-validation">
-    <div><p class="eyebrow">O QUE PERMANECE</p><p>A régua, as margens, o eixo central do M e os três tratamentos de texto.</p></div>
-    <div><p class="eyebrow">O QUE SE ADAPTA</p><p>Formato, enquadramento e aparição do M: Elemento (inteiro, com escala própria) ou Expandido (altura total com sangria lateral). O vertical recompõe a página sem deformar o vetor.</p></div>
-  </div>
+  <div class="inner" id="contraste"><div class="grid" style="margin-top:30px"><div>
+<h3 class="lm-motion-subtitle">Tratamento de leitura</h3><p style="margin-top:12px">40% é o ponto de partida preferencial. Ajuste a intensidade entre 0% e 80% conforme a imagem e confira o resultado no tamanho final.</p></div><div>
+<h3 class="lm-motion-subtitle">Sem texto sobre imagem</h3><p style="margin-top:12px">Sem sobreposição de texto, o tratamento preto não é acrescentado automaticamente. A imagem preserva suas características visuais.</p></div></div></div>
+</section><section class="section lm-manual-section" id="enquadramento">
+<div class="inner">
+<h2 class="title lm-manual-section-title">ENQUADRAMENTO E <span class="perpetua">MÁSCARA</span></h2>
+<p class="copy">A escolha do recipiente, do M ou do enquadramento retangular deve responder à função da imagem. A máscara é uma intervenção da identidade; o recorte geométrico simples é uma forma de organizar a leitura. Nenhum deles é obrigatório.</p><div class="crop-grid">
+<figure><div class="crop-demo lm-v4-specimen natural"><div aria-label="Recorte provisório de fotografia de referência, utilizado para comparar enquadramentos" class="crop-image" role="img"></div></div>
+<h3 class="lm-motion-subtitle">Retangular / contexto</h3><p>Documentação, portfólio e registros em que a relação entre obra, espaço e gesto precisa permanecer legível. Evitar cortar informações importantes.</p></figure>
+<figure><div class="crop-demo lm-v4-specimen squareframe"><div aria-label="Recorte provisório de fotografia de referência, utilizado para comparar enquadramentos" class="crop-image" role="img"></div></div>
+<h3 class="lm-motion-subtitle">Quadrado / série</h3><p>Dípticos, séries, detalhes de matéria e comparações. Usar quando o corte preserva o assunto e a equivalência entre os quadros ajuda a leitura.</p></figure>
+<figure><div class="crop-demo lm-v4-specimen portraitframe"><div aria-label="Recorte provisório de fotografia de referência, utilizado para comparar enquadramentos" class="crop-image" role="img"></div></div>
+<h3 class="lm-motion-subtitle">Vertical / aproximação</h3><p>Gestos, corpos, objetos verticais e conteúdos destinados a superfícies altas. Reenquadrar intencionalmente, sem deformar a imagem.</p></figure>
+<figure><div class="crop-demo lm-v4-specimen fullframe"><div aria-label="Recorte provisório de fotografia de referência, utilizado para comparar enquadramentos" class="crop-image" role="img"></div><div class="crop-overlay"></div><div class="crop-type">DA MATÉRIA<br/><span class="perpetua">À LINGUAGEM</span></div></div>
+<h3 class="lm-motion-subtitle">Campo fotográfico</h3><p>Aberturas e momentos expressivos em que a imagem estrutura a superfície. Quando houver texto sobre a fotografia, verificar leitura e aplicar o tratamento preto se necessário.</p></figure>
+<figure><div class="crop-demo lm-v4-specimen mframe"><div aria-label="Recorte provisório de fotografia de referência, utilizado para comparar enquadramentos" class="crop-image" role="img"></div></div>
+<h3 class="lm-motion-subtitle">Máscara M expandido</h3><p>Aberturas e aplicações expressivas em que a identidade deve intervir na imagem. Preservar a geometria central e o eixo do M; não usar para todos os registros.</p></figure>
+<figure><div class="crop-demo lm-v4-specimen vframe"><div aria-label="Recorte provisório de fotografia de referência, utilizado para comparar enquadramentos" class="crop-image" role="img"></div><svg aria-hidden="true" class="crop-sign" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div>
+<h3 class="lm-motion-subtitle">Máscara de recipiente</h3><p>Composições especiais em que a forma do recipiente participa do sentido da imagem. Preferir conteúdos que permaneçam compreensíveis dentro do recorte; não substituir a assinatura.</p></figure></div>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Quando preservar</h3><p>Em fichas de obra, documentos técnicos e registros de processo, priorizar o enquadramento que melhor documenta o conteúdo. Não sacrificar informação pela uniformidade de uma grade.</p></div><div>
+<h3 class="lm-motion-subtitle">Quando intervir</h3><p>Em capas, aberturas, chamadas e composições especiais, a máscara pode criar uma relação entre a forma da marca e o conteúdo. Se o recorte impedir o reconhecimento do assunto, usar uma imagem sem máscara.</p></div></div><p class="caption">Comparações construídas com o mesmo recorte fotográfico provisório da V3. A seleção final deve partir dos arquivos originais e preservar seus créditos. Máscara de recipiente demonstrada em 2D; a pesquisa tridimensional permanece futura.</p>
+</div>
+</section><section class="section lm-manual-section" id="relacoes-imagem">
+<div class="inner">
+<h2 class="title lm-manual-section-title">RELAÇÕES ENTRE <span class="perpetua">IMAGENS</span></h2><p class="copy library-lead">A seleção de imagens antecede a diagramação. Contexto, matéria, gesto e processo cumprem funções distintas. Definir primeiro a relação entre as imagens; só depois escolher a quantidade, as proporções e os intervalos.</p>
+<div class="spec-grid">
+<figure class="spec-example"><div class="spec lm-v4-specimen"><div class="spec-inner"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 large" role="img"></div><div class="sp-cols"><p class="st">MATÉRIA</p><div class="sp-stack"><p class="sb">A imagem introduz o universo material do projeto.</p><p class="sd">Registro / detalhe</p></div></div><div class="sp-footer"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Imagem dominante</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Um único enquadramento ocupa o campo principal; texto e créditos permanecem em faixa neutra.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen"><div class="spec-inner"><p class="ss">RELAÇÕES DE <span class="perpetua">FORMA</span></p><div class="sp-cols" style="flex:1;align-items:stretch;gap:1cqw"><div class="sp-photo-card"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 fill" role="img"></div><p class="sd">01 / DETALHE</p></div><div class="sp-photo-card"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p3 fill" role="img"></div><p class="sd">02 / SUPERFÍCIE</p></div></div><div class="sp-footer"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Díptico</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Duas imagens de escala equivalente estabelecem uma relação visual; uma legenda articula a leitura.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen"><div class="spec-inner"><p class="ss">GESTOS E PROCESSOS</p><div class="sp-image-notes" style="margin-block:auto"><div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p3 sequence-square" role="img"></div><p class="sd">01 / CONTEXTO</p></div><div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 sequence-square" role="img"></div><p class="sd">02 / DETALHE</p></div><div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p2 sequence-square" role="img"></div><p class="sd">03 / SUPERFÍCIE</p></div></div><div class="sp-footer"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Sequência</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Três enquadramentos quadrados de mesma escala e intervalos constantes. O corte deve preservar o assunto; usar outra proporção quando a sequência exigir mais contexto.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen"><div class="spec-inner"><div class="photo-split"><div class="sp-stack"><div class="sp-textgroup"><p class="ss">A MATÉRIA E SEUS DETALHES</p><p class="sb">O texto acompanha o conjunto e explica a relação entre as imagens, sem interromper a sua leitura.</p></div></div><div class="sp-collage"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 fill" role="img"></div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p3 fill" role="img"></div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p2 fill" role="img"></div></div></div><div class="sp-footer"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Conjunto hierarquizado</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Uma imagem principal e duas complementares permitem contextualizar, aproximar e detalhar sem criar uma colagem arbitrária.</span></figcaption></figure></div><p class="study-note">Estudos de relação entre imagens. Os recortes são detalhes provisórios extraídos da captura de referência de Cada Corpo Abre um Mundo; não constituem uma seleção final de fotografias ou novos registros de obra.</p>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Seleção e edição</h3><p>Distinguir imagens de apresentação, registro técnico e detalhe. Evitar repetir fotografias apenas para preencher espaços; preservar autoria, enquadramento intencional e créditos.</p></div><div>
+<h3 class="lm-motion-subtitle">Relação e sequência</h3><p>Uma imagem dominante estabelece contexto. Imagens equivalentes favorecem comparação; séries constroem temporalidade. Uma composição hierarquizada organiza o olhar sem exigir escala igual para todos os registros.</p></div></div>
+</div>
 </section>
-  <section class="chapter lm-m-guide lm-manual-section" id="regras-de-composicao" aria-labelledby="lmCompositionRulesTitle">
-    <p class="eyebrow">02 / REGRAS</p>
-    <h2 id="lmCompositionRulesTitle">O QUE NÃO<br><span class="perpetua">MUDA</span></h2>
-    <p class="lm-m-guide-lead">A composição muda de formato sem perder seus princípios. Os seis elementos abaixo orientam qualquer aplicação.</p>
-    <div class="lm-m-guide-grid lm-composition-rules lm-rules-index">
-      <article>
-        <span class="lm-rule-diagram" data-rule="regua" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h3>Régua</h3>
-        <p>Todo bloco parte da régua da página.</p>
-      </article>
-      <article>
-        <span class="lm-rule-diagram" data-rule="margem" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h3>Margem</h3>
-        <p>A margem define a área útil.</p>
-      </article>
-      <article>
-        <span class="lm-rule-diagram" data-rule="eixo" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h3>Eixo</h3>
-        <p>Título, corpo e detalhe compartilham o mesmo eixo.</p>
-      </article>
-      <article>
-        <span class="lm-rule-diagram" data-rule="alinhamento" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h3>M central</h3>
-        <p>O eixo horizontal permanece central. Em Elemento, a posição vertical é ajustável; em Expandido, a altura total e a sangria são preservadas.</p>
-      </article>
-      <article>
-        <span class="lm-rule-diagram" data-rule="espacamento" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h3>Marcadores</h3>
-        <p>As pontas superior e inferior do M podem marcar mudanças de bloco.</p>
-      </article>
-      <article>
-        <span class="lm-rule-diagram" data-rule="adaptacao" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h3>Adaptação</h3>
-        <p>Ao mudar o formato, a composição é refeita dentro da mesma régua.</p>
-      </article>
-    </div>
-    <p class="lm-m-guide-rule"><strong>Regra central:</strong> o M conserva o eixo horizontal e sua geometria. Em Elemento, a composição é secundária e pode mover-se verticalmente, com legenda em Detalhe alinhada à esquerda abaixo do elemento. Texto e detalhes continuam presos à régua de leitura.</p>
-  </section>
-<section class="chapter lm-manual-section" id="reducao-protecao"><div class="inner"><p class="eyebrow">APLICAÇÕES VALIDADAS / 06.11.2026</p><h2>REDUÇÃO E PROTEÇÃO</h2><p>Referências digitais: M com 24 px de altura, pictogramas com 32 px e assinatura com 120 px de largura. Confira o reconhecimento no suporte final; estas medidas não são mínimos de impressão.</p><p>Reserve ao redor da assinatura isolada um quarto da altura do símbolo. Esta proteção não se aplica ao recorte compositivo do M em modo Expandido.</p><p>A assinatura é escolhida uma vez por documento e acompanha todas as páginas. A exportação com contraste baixo requer confirmação como estudo.</p></div></section><section class="chapter lm-composition-next lm-manual-section">
-  <div class="inner">
-  <p class="eyebrow">APLICAR E CONFERIR</p>
-  <p>Confira escala, reconhecimento e leitura no formato final. Azul editorial e marrom de apoio fazem parte das aplicações validadas. O eixo horizontal é preservado. O tratamento fotográfico é ajustável, com preferência por 40%. A assinatura é uma configuração geral do documento.</p>
-  <div class="lm-composition-next-link"><p class="eyebrow">PRÓXIMA ÁREA / 06</p><a href="/laboratorio.html">ABRIR LABORATÓRIO <span aria-hidden="true">↗</span></a></div>
-  </div>
-</section></main>
+<section class="section lm-manual-section" id="formatos">
+<div class="inner">
+<h2 class="title lm-manual-section-title">ADAPTAÇÃO <span class="perpetua">DE FORMATOS</span></h2>
+<p class="copy">A passagem entre formatos não consiste em reduzir uma composição pronta. Os elementos são reorganizados para preservar a leitura, a integridade das formas e a assinatura escolhida.</p><div class="grid adapt">
+<figure><div class="board lm-v4-specimen landscape"><div class="inside"><p class="mini-detail">LABMATTAR / IDENTIDADE VISUAL</p><div class="reading"><p class="mini-title">FORMA<br/><span class="perpetua">E MATÉRIA</span></p><p class="mini-sub">PRÁTICAS E PROCESSOS</p><p class="mini-body">O LABMATTAR reúne práticas, materiais e processos.</p></div><p class="mini-detail">SÃO PAULO — BRASIL / 2026</p><div class="sign mattar"><svg aria-hidden="true" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption class="caption">Horizontal / 16:9 — distribuição no eixo de leitura.</figcaption></figure>
+<figure><div class="board lm-v4-specimen portrait"><div class="inside"><p class="mini-detail">LABMATTAR / IDENTIDADE VISUAL</p><div class="reading"><p class="mini-title">FORMA<br/><span class="perpetua">E MATÉRIA</span></p><p class="mini-sub">PRÁTICAS E PROCESSOS</p><p class="mini-body">O LABMATTAR reúne práticas, materiais e processos.</p></div><p class="mini-detail">SÃO PAULO — BRASIL / 2026</p><div class="sign mattar"><svg aria-hidden="true" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption class="caption">Vertical / 9:16 — reordenação da composição, com a mesma assinatura.</figcaption></figure></div>
+<div class="family-intro">
+<h3 class="lm-motion-subtitle">Função e suporte</h3><p>O formato deve responder ao modo como a peça será utilizada. Uma apresentação projetada, um PDF enviado para leitura e uma comunicação impressa não têm a mesma distância de leitura nem a mesma quantidade de informação por página.</p></div><div class="choice-strip"><div>
+<h3 class="lm-motion-subtitle">Leitura individual</h3><p>Dossiê, proposta escrita e documento técnico. A4 como referência; títulos, parágrafos e tabelas precisam ser legíveis sem ampliação.</p></div><div>
+<h3 class="lm-motion-subtitle">Apresentação acompanhada</h3><p>Reunião, palestra ou apresentação de projeto. 16:9 como referência; a imagem e a síntese apoiam a fala.</p></div><div>
+<h3 class="lm-motion-subtitle">Apresentação para envio</h3><p>PDF de portfólio ou proposta comercial. Pode ser horizontal, mas deve sustentar uma leitura autônoma, com contexto, créditos e encaminhamento.</p></div><div>
+<h3 class="lm-motion-subtitle">Comunicação pontual</h3><p>Convite, comunicado, correspondência e redes sociais. A informação principal e a ação esperada determinam a proporção e a densidade.</p></div></div>
+</div>
+</section>
+<section class="section lm-manual-section" id="documentos">
+<div class="inner">
+<h2 class="title lm-manual-section-title">DOCUMENTOS <span class="perpetua">INSTITUCIONAIS</span></h2><p class="copy library-lead">Documentos formais e dossiês devem funcionar fora de uma apresentação oral. A leitura contínua, a organização por assuntos e a posição estável de cabeçalhos, créditos e paginação têm prioridade sobre o impacto gráfico.</p>
+<div class="family-intro">
+<h3 class="lm-motion-subtitle">Dossiê e documentação</h3><p>Apresenta a prática e preserva informações de uma obra. Deve funcionar como referência mesmo quando separado da apresentação oral.</p></div>
+<div class="spec-grid three">
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 coverdoc"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / DOSSIÊ DE PROJETO</p></div><div class="sp-vessel signature-pair"><svg aria-hidden="true" class="" viewBox="0 0 435 400"><use href="#v06"></use></svg></div><div class="sp-hero"><div class="accent-line"></div><p class="st">ARTE E<br/><span class="perpetua">EXPERIÊNCIA</span></p><div class="sp-textgroup"><p class="ss">DOSSIÊ DE PROJETO</p><p class="sb">Gastroperformance e food design. Apresentação de conceito, pesquisa e realização.</p></div></div><div class="sp-footer"><p class="sd sp-page-number">01</p><p class="sd">SIMONE MATTAR / LABMATTAR</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">01 / Abertura de dossiê</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Identifica o projeto, sua natureza e a autoria. A capa pode ser expressiva, mas não deve substituir a identificação documental.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 white"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / DOSSIÊ DE PROJETO</p></div><p class="st doc-heading">CONCEITO E DESENVOLVIMENTO</p><div class="sp-section"><div class="sp-textgroup"><p class="ss">CONCEITO</p><p class="sb">A proposta artística parte das relações entre alimento, matéria e experiência. O projeto estabelece um contexto de encontro e organiza a participação de quem o vivencia.</p></div></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">PROCESSOS</p><p class="sb">A pesquisa visual, material e sensorial orienta o desenvolvimento. O percurso deve apresentar o que se pretende investigar, como a experiência é construída e quais decisões definem sua forma.</p></div></div><div class="sp-photo-caption"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 banner" role="img"></div><p class="sd">IMAGEM DE REFERÊNCIA / DETALHE</p></div><div class="sp-footer"><p class="sd sp-page-number">02</p></div></div></div><figcaption><span class="capname">02 / Desenvolvimento conceitual</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Leitura contínua: um título de assunto, dois subtítulos e uma imagem acompanhada de legenda. Reservar páginas adicionais quando o texto crescer.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 white"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / DOSSIÊ DE PROJETO</p></div><p class="st doc-heading">FICHA DE REALIZAÇÃO</p><dl class="sp-meta"><div><dt><p class="sd">Projeto</p></dt><dd><p class="sb">Título da obra</p></dd></div><div><dt><p class="sd">Ano</p></dt><dd><p class="sb">A confirmar</p></dd></div><div><dt><p class="sd">Autoria</p></dt><dd><p class="sb">Créditos aprovados</p></dd></div><div><dt><p class="sd">Contexto</p></dt><dd><p class="sb">Local e ocasião</p></dd></div></dl><div class="sp-section"><div class="sp-textgroup"><p class="ss">CONFIGURAÇÃO</p><p class="sb">Formato da experiência, condições de montagem, duração e capacidade de atendimento ou visitação.</p></div></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">RECURSOS</p><p class="sb">Materiais, equipamentos, condições do espaço e equipe necessária à realização.</p></div></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">DOCUMENTAÇÃO</p><p class="sb">Fotografias, registros audiovisuais, autorização de uso e créditos de imagem.</p></div></div><div class="sp-footer"><p class="sd sp-page-number">03</p></div></div></div><figcaption><span class="capname">03 / Ficha de realização</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Informação técnica precisa de campos claros, não de uma nova linguagem visual. Campos de identificação, créditos, suporte e documentação devem ser preenchidos com dados do projeto.</span></figcaption></figure></div>
+<div class="family-intro">
+<h3 class="lm-motion-subtitle">Proposta escrita</h3><p>Organiza a relação comercial e permite que a outra parte compreenda o objeto, as entregas e as condições. Não é apenas uma apresentação institucional.</p></div>
+<div class="spec-grid">
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 white"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / PROPOSTA COMERCIAL</p></div><p class="st">PROPOSTA<br/><span class="perpetua">DE PROJETO</span></p><dl class="sp-meta"><div><dt><p class="sd">Destinatário</p></dt><dd><p class="sb">Instituição contratante</p></dd></div><div><dt><p class="sd">Referência</p></dt><dd><p class="sb">Projeto / versão / data</p></dd></div></dl><div class="sp-section"><div class="sp-textgroup"><p class="ss">OBJETO</p><p class="sb">Concepção e desenvolvimento de uma experiência artística em diálogo com o contexto apresentado pela instituição.</p></div></div><p class="ss">ESCOPO</p><table class="sp-table tight"><colgroup><col style="width:35%"/><col style="width:65%"/></colgroup><thead><tr><th>Frente</th><th>Entrega</th></tr></thead><tbody><tr><td>Pesquisa e conceito</td><td>Direção artística e proposição da experiência.</td></tr><tr><td>Desenvolvimento</td><td>Projeto, materiais e soluções de realização.</td></tr><tr><td>Produção</td><td>A definir conforme local, equipe e condições.</td></tr></tbody></table><div class="sp-footer"><p class="sd sp-page-number">01</p></div></div></div><figcaption><span class="capname">01 / Proposta e escopo</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Documento de decisão comercial: identifica destinatário, oportunidade, versão e objeto da proposta antes de detalhar entregas.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 white"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / PROPOSTA COMERCIAL</p></div><p class="st doc-heading">CONDIÇÕES COMERCIAIS</p><table class="sp-table tight"><colgroup><col style="width:36%"/><col style="width:64%"/></colgroup><thead><tr><th>Item</th><th>Definição</th></tr></thead><tbody><tr><td>Cronograma</td><td>Etapas e datas acordadas.</td></tr><tr><td>Responsabilidades</td><td>Contratante e equipe de realização.</td></tr><tr><td>Investimento</td><td>Valor e itens incluídos, conforme escopo.</td></tr><tr><td>Pagamento</td><td>Condições e vencimentos.</td></tr><tr><td>Validade</td><td>Prazo de validade da proposta.</td></tr></tbody></table><div class="sp-section"><div class="sp-textgroup"><p class="ss">ALTERAÇÕES DE ESCOPO</p><p class="sb">Mudanças posteriores ao alinhamento devem ser acordadas antes da realização.</p></div></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">ACEITE</p><p class="sb">Nome e função do responsável, data e forma de confirmação.</p></div></div><div class="sp-footer"><p class="sd sp-page-number">02</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">02 / Condições e aceite</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">A proposta escrita precisa permitir uma decisão: etapas, responsabilidades, valores, condições, validade e aceite. Não comprimir tudo em um slide de conceito.</span></figcaption></figure></div>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Hierarquia de leitura</h3><p>Reservar o Título para abertura e grandes mudanças de assunto. Usar Subtítulo nas divisões, Corpo na leitura contínua e Detalhe na identificação e paginação.</p></div><div>
+<h3 class="lm-motion-subtitle">Impressão e distribuição</h3><p>A4 (210 × 297 mm) como referência para documentos de leitura. Testar impressão no tamanho final, margens físicas, contraste e condições de saída antes de definir especificações definitivas.</p></div></div><p class="study-note">Estudos de estrutura em A4. Os textos e campos comerciais são demonstrativos, não correspondem a uma proposta real ou a uma ficha técnica validada.</p><div class="application-criteria">
+<h3 class="lm-motion-subtitle">Referências para A4</h3><p>Área útil de estudo: margens laterais de 16–18 mm. Corpo em torno de 11–12 pt, Detalhe de 8,5–9 pt, Subtítulo de 18–20 pt e Título de 36–42 pt. Aplicar os intervalos relativos à entrelinha. Conferir impressão e leitura física; esses valores ainda não constituem norma de impressão.</p></div>
+</div>
+</section><section class="section lm-manual-section" id="apresentacoes">
+<div class="inner">
+<h2 class="title lm-manual-section-title">APRESENTAÇÕES <span class="perpetua">DE PROJETOS</span></h2><p class="copy library-lead">Uma apresentação organiza um percurso. Na projeção, a escala e a distância de leitura orientam a síntese. No PDF de circulação individual, a contextualização pode ser maior. A prática artística e a oportunidade comercial exigem percursos diferentes, mas compartilham a mesma identidade.</p>
+<div class="family-intro">
+<h3 class="lm-motion-subtitle">Apresentação da prática</h3><p>Portfólio e repertório artístico: situar a atuação, apresentar obras e construir relações entre projetos, imagens e processos.</p></div>
+<div class="spec-grid">
+<figure class="spec-example"><div class="spec lm-v4-specimen portfolio blue"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / SIMONE MATTAR</p></div><div class="sp-hero"><div class="sp-textgroup"><p class="st">GASTROPERFORMANCE<br/><span class="perpetua">E FOOD DESIGN</span></p><p class="sb">Prática artística, matéria e experiência.</p></div></div><div class="sp-footer plain"><p class="sd sp-page-number">01</p><p class="sd">APRESENTAÇÃO DA PRÁTICA</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">01 / Identidade e prática</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Abrir situando quem apresenta e o campo de atuação. Uma capa deve dar contexto, não apenas criar impacto.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen portfolio"><div class="spec-inner"><div class="sp-header"><p class="sd">APRESENTAÇÃO DA PRÁTICA</p></div><div class="sp-narrative"><div class="sp-stack"><div class="sp-textgroup"><p class="ss">CADA CORPO<br/>ABRE UM MUNDO</p><p class="sb">Uma experiência de encontro entre diferentes formas de sentir e perceber o mundo.</p></div><p class="sd">SIMONE MATTAR E MARTINA MATTAR</p></div><div class="sp-photo-card"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 fill source" role="img"></div><p class="sd">REFERÊNCIA VISUAL PROVISÓRIA</p></div></div><div class="sp-footer"><p class="sd sp-page-number">02</p></div></div></div><figcaption><span class="capname">02 / Projeto em contexto</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Uma obra apresentada como caso: identificação, princípio artístico e crédito. Substituir o campo visual por uma fotografia efetivamente vinculada à obra.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen portfolio"><div class="spec-inner"><div class="sp-header"><p class="sd">APRESENTAÇÃO DA PRÁTICA</p></div><p class="ss">MATÉRIA, GESTO E EXPERIÊNCIA</p><div class="sp-image-notes" style="margin-block:auto"><div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 square" role="img"></div><p class="sd">01 / CONTEXTO</p></div><div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p2 square" role="img"></div><p class="sd">02 / MATÉRIA</p></div><div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p3 square" role="img"></div><p class="sd">03 / DETALHE</p></div></div><p class="sb">Selecionar registros complementares, preservando a relação entre contexto e detalhe.</p><div class="sp-footer"><p class="sd sp-page-number">03</p></div></div></div><figcaption><span class="capname">03 / Repertório visual</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Desdobrar um projeto em imagens de contexto, matéria e detalhe. Cada quadro deve acrescentar uma informação distinta e receber crédito adequado.</span></figcaption></figure></div>
+<div class="family-intro">
+<h3 class="lm-motion-subtitle">Apresentação de uma oportunidade</h3><p>Proposta para uma instituição ou parceiro: partir do contexto, explicitar a ideia, demonstrar a experiência, delimitar o escopo e encaminhar a decisão.</p></div>
+<div class="spec-grid">
+<figure class="spec-example"><div class="spec lm-v4-specimen commercial dark"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / PROPOSTA</p></div><div class="sp-hero"><div class="sp-textgroup"><p class="st">UMA EXPERIÊNCIA<br/><span class="perpetua">À MESA</span></p><p class="sb">Proposta de colaboração artística e desenvolvimento de experiência.</p></div></div><div class="sp-footer plain"><p class="sd sp-page-number">01</p><p class="sd">INSTITUIÇÃO DESTINATÁRIA / PROJETO</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">01 / Oportunidade</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Nomear a oportunidade, a instituição destinatária e a proposta. A abertura diferencia uma conversa comercial de um portfólio.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen commercial"><div class="spec-inner"><div class="sp-header"><p class="sd">PROPOSTA DE COLABORAÇÃO</p></div><div class="sp-feature"><div class="sp-stack"><div class="sp-textgroup"><p class="ss">CONTEXTO E INTENÇÃO</p><p class="sb">A experiência propõe um encontro a partir de relações entre alimento, materialidade e participação.</p></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">OBJETIVO DA COLABORAÇÃO</p><p class="sb">Situar o público, o espaço e o propósito do encontro antes de definir o formato.</p></div></div></div><div class="sp-photo-card"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 fill source" role="img"></div><p class="sd">REFERÊNCIA VISUAL / ESTUDO</p></div></div><div class="sp-footer"><p class="sd sp-page-number">02</p></div></div></div><figcaption><span class="capname">02 / Contexto e intenção</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Relacionar o objetivo de quem contrata ao princípio artístico da proposta, em vez de apresentar um conceito genérico.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen commercial"><div class="spec-inner"><div class="sp-header"><p class="sd">PROPOSTA DE COLABORAÇÃO</p></div><p class="ss">DESENHO DA EXPERIÊNCIA</p><div class="sp-rules-inline" style="margin-block:auto"><div class="sp-stack"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p2 wide" role="img"></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">ENCONTRO</p><p class="sb">Contexto, chegada e introdução.</p></div></div></div><div class="sp-stack"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 wide" role="img"></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">EXPERIÊNCIA</p><p class="sb">Relação entre matéria, gesto e participação.</p></div></div></div><div class="sp-stack"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p3 wide" role="img"></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">DESDOBRAMENTO</p><p class="sb">Encerramento, registro e continuidade.</p></div></div></div></div><div class="sp-footer"><p class="sd sp-page-number">03</p></div></div></div><figcaption><span class="capname">03 / Desenho da experiência</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Demonstração de percurso, articulando a ação artística à experiência do público. O número e a natureza das etapas dependem de cada proposta.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen commercial beige"><div class="spec-inner"><div class="sp-header"><p class="sd">PROPOSTA DE COLABORAÇÃO</p></div><p class="ss">DESENVOLVIMENTO E ESCOPO</p><table class="sp-table tight"><colgroup><col style="width:27%"/><col style="width:47%"/><col style="width:26%"/></colgroup><thead><tr><th>Frente</th><th>Entrega</th><th>Condição</th></tr></thead><tbody><tr><td>Direção artística</td><td>Conceito e desenho da experiência.</td><td>Alinhamento</td></tr><tr><td>Desenvolvimento</td><td>Projeto e definição de materiais.</td><td>Validação</td></tr><tr><td>Realização</td><td>Produção, montagem e registro.</td><td>Escopo acordado</td></tr></tbody></table><div class="sp-note-strong"><p class="sb">Investimento, prazo e responsabilidades: detalhados na proposta escrita.</p></div><div class="sp-footer"><p class="sd sp-page-number">04</p></div></div></div><figcaption><span class="capname">04 / Desenvolvimento e escopo</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Organizar o que será desenvolvido, por quem e em que condição. Em uma apresentação falada, manter a síntese e remeter o detalhamento à proposta escrita.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen commercial blue"><div class="spec-inner"><div class="sp-header"><p class="sd">PROPOSTA DE COLABORAÇÃO</p></div><div class="sp-hero"><div class="sp-textgroup"><p class="st">PRÓXIMOS<br/><span class="perpetua">PASSOS</span></p><p class="sb">Alinhar contexto, público, formato e condições de realização.</p></div></div><div class="sp-footer plain"><p class="sd sp-page-number">05</p><p class="sd">CONTATO INSTITUCIONAL / A INSERIR</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">05 / Encaminhamento</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Concluir com uma ação concreta: reunião, definição de escopo ou aprovação. Os dados de contato devem ser os oficiais.</span></figcaption></figure></div>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Ritmo e distância</h3><p>Em projeção, reduzir a quantidade de ideias por página; o slide apoia a fala. Para envio como PDF, acrescentar o contexto necessário para leitura autônoma, sem transformar cada página em um bloco longo.</p></div><div>
+<h3 class="lm-motion-subtitle">Continuidade</h3><p>Manter o eixo, as margens, a assinatura escolhida e o tratamento dos créditos. Alternar campos de cor, imagem dominante, conjuntos e páginas informativas por função, não por obrigação estética.</p></div></div><p class="study-note">Estudos em 16:9. A apresentação de colaboração é um cenário demonstrativo, não uma oferta existente; os campos e textos devem ser substituídos pelas informações aprovadas do projeto.</p><div class="application-criteria">
+<h3 class="lm-motion-subtitle">Leitura à distância</h3><p>Uma ideia por slide de projeção, corpo legível e legendas próximas das imagens. Quando houver tabela extensa ou condições comerciais, dividir em páginas ou encaminhar ao documento escrito. Preservar o mesmo eixo e assinatura em toda a sequência.</p></div>
+</div>
+</section><section class="section lm-manual-section" id="comunicacoes">
+<div class="inner">
+<h2 class="title lm-manual-section-title">COMUNICAÇÕES <span class="perpetua">INSTITUCIONAIS</span></h2><p class="copy library-lead">Há peças que funcionam fora do ritmo de uma narrativa longa. Elas devem deixar evidente quem comunica, qual é o assunto e o que se espera de quem lê.</p>
+<div class="spec-grid three">
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 onepage"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR</p><p class="sd">APRESENTAÇÃO</p></div><p class="ss">SIMONE MATTAR</p><p class="st">ARTE E<br/><span class="perpetua">EXPERIÊNCIA</span></p><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 banner source" role="img"></div><p class="sb">Gastroperformance e food design. Relações entre alimento, matéria, espaço e experiência.</p><div class="sp-section"><div class="sp-textgroup"><p class="ss">COLABORAÇÕES</p><p class="sb">Projetos artísticos, apresentações e experiências desenvolvidas em diálogo com seus contextos.</p></div></div><div class="sp-section"><div class="sp-textgroup"><p class="ss">CONTATO</p><p class="sb">Inserir canais institucionais aprovados e o encaminhamento desejado.</p></div></div><div class="sp-footer"><p class="sd">LABMATTAR / INSTITUCIONAL</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Apresentação sintética / A4</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">One-page para primeiro contato: prática, campos de atuação, imagem de referência e encaminhamento. Deve ser compreensível fora de uma apresentação.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 invite beige"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR</p><p class="sd">CONVITE</p></div><div class="sp-vessel signature-pair"><svg aria-hidden="true" class="" viewBox="0 0 435 400"><use href="#v06"></use></svg></div><div class="sp-hero"><div class="accent-line"></div><div class="sp-textgroup"><p class="st">UM ENCONTRO<br/><span class="perpetua">À MESA</span></p><p class="sb">Apresentação e conversa sobre matéria, práticas e experiência.</p></div></div><dl class="sp-meta"><div><dt><p class="sd">Data e horário</p></dt><dd><p class="sb">A confirmar</p></dd></div><div><dt><p class="sd">Local</p></dt><dd><p class="sb">A confirmar</p></dd></div><div><dt><p class="sd">Participação</p></dt><dd><p class="sb">Informações do evento</p></dd></div><div><dt><p class="sd">Contato</p></dt><dd><p class="sb">Canal oficial</p></dd></div></dl><div class="sp-footer"><p class="sd">LABMATTAR / CONVITE</p><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Convite / comunicação de evento</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Organizar primeiro o acontecimento, depois a informação de serviço. Data, horário, local e modo de participação devem ser encontrados rapidamente.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen a4 letter white"><div class="spec-inner"><div class="sp-header"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg><p class="sd">SÃO PAULO / BRASIL</p></div><dl class="sp-meta"><div><dt><p class="sd">Data</p></dt><dd><p class="sb">Dia / mês / ano</p></dd></div><div><dt><p class="sd">Destinatário</p></dt><dd><p class="sb">Nome / instituição</p></dd></div></dl><p class="ss">ALINHAMENTO DE PROJETO</p><div class="sp-paper-dense sp-long"><p class="sb">À equipe responsável pelo projeto,</p><p class="sb">Agradecemos o encontro e a apresentação do contexto da proposta. Esta comunicação reúne os encaminhamentos necessários à continuidade do desenvolvimento.</p><p class="sb">A próxima etapa será a organização das referências, das condições de realização e das responsabilidades envolvidas. O escopo e o cronograma serão formalizados após o alinhamento entre as partes.</p><p class="sb">Permanecemos à disposição para dar continuidade ao processo.</p><p class="sb">Atenciosamente,</p></div><p class="sd">RESPONSÁVEL PELA COMUNICAÇÃO</p><div class="sp-footer"><p class="sd">CANAIS INSTITUCIONAIS / A INSERIR</p><p class="sd">01</p></div></div></div><figcaption><span class="capname">Correspondência formal / A4</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Papel timbrado: assinatura, destinatário, assunto, texto, encerramento e responsável. O Título monumental não é necessário.</span></figcaption></figure></div>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Informação de serviço</h3><p>Em convites e comunicados, tornar data, horário, local, condições de acesso e contato facilmente identificáveis. Não sacrificar informações essenciais por um efeito visual.</p></div><div>
+<h3 class="lm-motion-subtitle">Formalidade</h3><p>Correspondências e avisos operacionais podem utilizar somente Subtítulo, Corpo, Detalhe e a assinatura. A identidade não exige uma capa ou uma máscara para se manifestar.</p></div></div><p class="study-note">Textos de exemplo; contatos, datas e dados de evento devem ser preenchidos com informações oficiais.</p>
+</div>
+</section><section class="section lm-manual-section" id="conteudos">
+<div class="inner">
+<h2 class="title lm-manual-section-title">FORMATOS DE <span class="perpetua">CONTEÚDO</span></h2><p class="copy library-lead">O conteúdo define a composição antes da proporção. Um anúncio, uma imagem de obra, uma explicação ou uma sequência narrativa exigem organizações distintas. Ao adaptar para outra superfície, preservar o que é essencial, não a posição de cada elemento.</p>
+<div class="spec-grid three">
+<figure class="spec-example"><div class="spec lm-v4-specimen sq blue"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR</p></div><div class="sp-hero"><p class="st">FORMA<br/><span class="perpetua">E MATÉRIA</span></p><p class="ss">PRÁTICAS E PROCESSOS</p></div><div class="sp-footer plain"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Quadrado / 1:1</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Síntese ou chamada: um assunto, identificação e leitura imediata. Não transportar todos os parágrafos de um documento.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen feed"><div class="spec-inner"><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 square" role="img"></div><div class="sp-textgroup"><p class="ss">DA MATÉRIA À LINGUAGEM</p><p class="sb">Uma relação entre imagem, experiência e processo.</p></div><div class="sp-footer"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Vertical / 4:5</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Publicação editorial: relacionar imagem, título e contexto, preservando um campo claro de leitura.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen story beige"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR</p></div><div class="sp-hero"><p class="st">FORMA<br/><span class="perpetua">E MATÉRIA</span></p><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 portrait" role="img"></div><p class="sb">Práticas e processos.</p></div><div class="sp-footer plain"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">Story / 9:16</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Comunicação breve e vertical: assunto, informação essencial e ação desejada. Conferir a interface de publicação no suporte real.</span></figcaption></figure></div><div class="sample-group">
+<h3 class="lm-motion-subtitle">Sequência editorial</h3>
+<p class="copy" style="margin:12px 0 24px">Uma sequência pode distribuir o conteúdo em páginas de abertura, desenvolvimento e conclusão. As decisões específicas de publicação serão aprofundadas no capítulo Redes sociais.</p>
+<div class="spec-grid three">
+<figure class="spec-example"><div class="spec lm-v4-specimen feed dark"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / SÉRIE</p><p class="sd">01 / 03</p></div><div class="sp-hero"><p class="st">O QUE A<br/><span class="perpetua">MATÉRIA</span> REVELA</p></div><div class="sp-footer plain"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">01 / Introdução</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Introduzir o assunto.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen feed"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / SÉRIE</p><p class="sd">02 / 03</p></div><div aria-label="Recorte visual provisório para estudo de composição" class="sp-picture p1 square" role="img"></div><div class="sp-textgroup"><p class="ss">UM OLHAR SOBRE O PROCESSO</p><p class="sb">O detalhe introduz outras relações com a forma e o material.</p></div><div class="sp-footer"><p class="sd">02</p></div></div></div><figcaption><span class="capname">02 / Desenvolvimento</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Desenvolver uma ideia por página.</span></figcaption></figure>
+<figure class="spec-example"><div class="spec lm-v4-specimen feed blue"><div class="spec-inner"><div class="sp-header"><p class="sd">LABMATTAR / SÉRIE</p><p class="sd">03 / 03</p></div><div class="sp-hero"><div class="sp-textgroup"><p class="st">DA FORMA<br/><span class="perpetua">À EXPERIÊNCIA</span></p><p class="sb">Uma sequência de imagens e ideias constrói o contexto.</p></div></div><div class="sp-footer plain"><svg aria-hidden="true" class="wide" viewBox="0 0 822 199"><use href="#mattar"></use></svg></div></div></div><figcaption><span class="capname">03 / Síntese</span><button class="expand-example" type="button">Ampliar ↗</button><span class="captext">Encerrar o percurso e orientar a continuidade.</span></figcaption></figure></div></div><p class="study-note">Estudos preparatórios, não templates finais de redes sociais. As áreas seguras reais e as especificações de plataforma serão verificadas no capítulo correspondente.</p>
+<div class="family-guide"><div>
+<h3 class="lm-motion-subtitle">Unidade de conteúdo</h3><p>Para uma publicação única, escolher o elemento principal e reduzir a mensagem ao que pode ser compreendido na peça. Informações complementares podem seguir na legenda.</p></div><div>
+<h3 class="lm-motion-subtitle">Continuidade editorial</h3><p>Uma sequência distribui contexto, desenvolvimento e desfecho por páginas. Manter margens, ritmo, tipografia e assinatura coerentes; a proporção não obriga a repetir a mesma diagramação.</p></div></div><div class="application-criteria">
+<h3 class="lm-motion-subtitle">Formato não é enquadramento</h3><p>Uma peça vertical pode conter uma imagem quadrada, retangular ou uma máscara. A proporção da publicação não obriga a mesma proporção da fotografia. Definir áreas seguras conforme a plataforma no capítulo Redes sociais.</p></div>
+</div>
+</section><section class="section lm-manual-section" id="regras-de-composicao">
+<div class="inner">
+<span id="regras" class="lm-v4-anchor"></span>
+<h2 class="title lm-manual-section-title">REGRAS DE <span class="perpetua">COMPOSIÇÃO</span></h2>
+<p class="copy">A composição muda de formato sem perder seus princípios. Estas relações orientam a organização dos elementos em diferentes superfícies.</p>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Régua</h3><p>Todos os blocos de leitura partem da régua da página. A origem do texto permanece comum ao longo do documento.</p></div>
+<figure><svg aria-hidden="true" class="diagram" viewBox="0 0 600 176" xmlns="http://www.w3.org/2000/svg"><rect fill="#F7F6F2" height="148" stroke="#bcb9b1" width="564" x="18" y="14"></rect><rect fill="none" height="110" stroke="#7d7971" stroke-dasharray="5 4" width="508" x="46" y="33"></rect><path d="M46 18V158" stroke="#E22E24" stroke-dasharray="5 4" stroke-width="1.4"></path><g fill="#181818"><rect height="5" width="152" x="46" y="44"></rect><rect height="13" width="220" x="46" y="64"></rect><rect height="13" width="180" x="46" y="84"></rect><rect height="5" width="134" x="46" y="111"></rect><rect height="3" width="156" x="46" y="121"></rect></g><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="61" y="152">ORIGEM COMUM</text></svg></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Margem</h3><p>A margem define a área útil. Textos e assinaturas permanecem dentro dela; o M expandido é uma exceção compositiva prevista.</p></div>
+<figure><svg aria-hidden="true" class="diagram" viewBox="0 0 600 176" xmlns="http://www.w3.org/2000/svg"><rect fill="#F7F6F2" height="148" stroke="#bcb9b1" width="564" x="18" y="14"></rect><rect fill="none" height="110" stroke="#7d7971" stroke-dasharray="5 4" width="508" x="46" y="33"></rect><path d="M18 23H46 M18 19V27 M46 19V27 M572 14V33 M568 14H576 M568 33H576" fill="none" stroke="#181818"></path><g fill="#181818"><rect height="5" width="152" x="46" y="44"></rect><rect height="13" width="220" x="46" y="64"></rect><rect height="13" width="180" x="46" y="84"></rect><rect height="5" width="134" x="46" y="111"></rect><rect height="3" width="156" x="46" y="121"></rect></g><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="399" y="53">ÁREA ÚTIL</text></svg></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Eixo de leitura</h3><p>Título, Subtítulo, Corpo e Detalhe compartilham o mesmo alinhamento dentro de seus blocos.</p></div>
+<figure><svg aria-hidden="true" class="diagram" viewBox="0 0 600 176" xmlns="http://www.w3.org/2000/svg"><rect fill="#F7F6F2" height="148" stroke="#bcb9b1" width="564" x="18" y="14"></rect><path d="M46 18V158" stroke="#E22E24" stroke-dasharray="5 4" stroke-width="1.4"></path><g fill="#181818"><rect height="4" width="118" x="46" y="40"></rect><rect height="15" width="220" x="46" y="58"></rect><rect height="9" width="160" x="46" y="83"></rect><rect height="5" width="151" x="46" y="109"></rect><rect height="3" width="170" x="46" y="119"></rect></g><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="177" y="45">DETALHE</text><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="280" y="70">TÍTULO</text><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="219" y="92">SUBTÍTULO</text><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="230" y="118">CORPO</text></svg></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">M central</h3><p>O eixo horizontal do M permanece central. Em modo Elemento, sua posição vertical pode variar sem alterar a geometria.</p></div>
+<figure><svg aria-hidden="true" class="diagram" viewBox="0 0 600 176" xmlns="http://www.w3.org/2000/svg"><rect fill="#F7F6F2" height="148" stroke="#bcb9b1" width="564" x="18" y="14"></rect><path d="M300 14V162" stroke="#E22E24" stroke-dasharray="5 4" stroke-width="1.4"></path><svg height="91" viewBox="0 0 822 627" width="120" x="240" y="29"><use fill="#181818" href="#m"></use></svg><path d="M383 27V136 M378 33L383 27 388 33 M378 130L383 136 388 130" fill="none" stroke="#181818"></path><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="392" y="87">POSIÇÃO VERTICAL</text></svg></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Marcadores</h3><p>As reentrâncias superior e inferior do M podem orientar mudanças de bloco, sem obrigar o texto a ocupar uma posição fixa em toda peça.</p></div>
+<figure><svg aria-hidden="true" class="diagram" viewBox="0 0 600 176" xmlns="http://www.w3.org/2000/svg"><rect fill="#F7F6F2" height="148" stroke="#bcb9b1" width="564" x="18" y="14"></rect><svg height="148" viewBox="0 0 2389.37838 627" width="564" x="18" y="14"><path d="M0 627H1019.61519C1032.84919 627 1052.55019 620.689 1063.39319 612.978L1174.97519 533.606C1185.81819 525.894 1203.56019 525.894 1214.40319 533.606L1325.98519 612.978C1336.82819 620.689 1356.52919 627 1369.76319 627H2389.37838V0H1314.41219C1301.17819 0 1284.72319 9.40694 1277.84919 20.8978L1207.18819 139.054C1200.31419 150.545 1189.06419 150.545 1182.19019 139.054L1111.52919 20.8978C1104.65519 9.40694 1088.20019 0 1074.96619 0H0V627Z" fill="#181818"></path></svg><path d="M18 48H582 M18 138H582" stroke="#E22E24" stroke-dasharray="6 4" stroke-width="1.5"></path><text fill="#FFFFFF" font-family="Arial" font-size="10" x="34" y="43">MUDANÇA DE BLOCO</text><text fill="#FFFFFF" font-family="Arial" font-size="10" x="34" y="132">MUDANÇA DE BLOCO</text></svg></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Adaptação</h3><p>Ao mudar de formato, a composição é refeita dentro da mesma lógica de leitura, sem deformar os elementos.</p></div>
+<figure><svg aria-hidden="true" class="diagram" viewBox="0 0 600 176" xmlns="http://www.w3.org/2000/svg"><g fill="#F7F6F2" stroke="#bcb9b1"><rect height="136" width="318" x="20" y="20"></rect><rect height="148" width="110" x="405" y="14"></rect></g><g fill="#181818"><rect height="5" width="114" x="38" y="40"></rect><rect height="12" width="160" x="38" y="72"></rect><rect height="9" width="104" x="38" y="90"></rect><rect height="4" width="90" x="38" y="124"></rect><rect height="4" width="60" x="420" y="28"></rect><rect height="8" width="70" x="420" y="67"></rect><rect height="8" width="49" x="420" y="80"></rect><rect height="3" width="61" x="420" y="132"></rect></g><g stroke="#E22E24" stroke-dasharray="4 4"><path d="M38 20V156 M420 14V162"></path></g><text fill="#181818" font-family="Arial,sans-serif" font-size="10" x="347" y="88">→</text></svg></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Densidade</h3><p>A quantidade de informação determina a organização da página. Subtítulos, colunas, listas e tabelas devem favorecer a leitura, sem reduzir o texto para caber.</p></div>
+<figure aria-label="Esquema de Densidade" class="diagram-spec"><div class="mini-diag"><span class="large"></span><span class="small"></span></div><div class="mini-diag"><span class="large"></span><span class="small"></span><span class="small"></span></div><div class="mini-diag"><span class="large"></span><span class="small"></span><span class="small"></span><span class="small"></span></div></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Ritmo do conjunto</h3><p>Documentos e apresentações alternam páginas de abertura, desenvolvimento e síntese. Alinhamentos e assinatura estabelecem continuidade sem exigir que as páginas sejam iguais.</p></div>
+<figure aria-label="Esquema de Ritmo do conjunto" class="diagram-spec"><div class="mini-diag"><span class="large"></span><span class="small"></span></div><div class="mini-diag"><span class="photo"></span><span class="small"></span><span class="small"></span></div><div class="mini-diag"><span class="large"></span><span class="small"></span></div></figure></article>
+<article class="rule-row"><div>
+<h3 class="lm-motion-subtitle">Relação entre imagens</h3><p>O tamanho, o enquadramento e a posição de cada imagem comunicam sua função. Conjuntos de imagens devem compartilhar uma lógica de leitura e manter as proporções originais.</p></div>
+<figure aria-label="Esquema de Relação entre imagens" class="diagram-spec"><div class="mini-diag"><span class="photo"></span></div><div class="mini-diag"><span class="photo alt"></span></div><div class="mini-diag"><span class="photo alt2"></span></div></figure></article>
+</div>
+</section>
+<section class="section lm-manual-section" id="aplicacao"><div class="inner end"><span id="reducao-protecao" class="lm-v4-anchor"></span><div>
+<h2 class="title lm-manual-section-title">APLICAÇÃO</h2>
+<p class="copy">Antes de finalizar uma peça, confira a hierarquia, a leitura, o enquadramento e a integridade dos elementos no suporte final. Utilize a assinatura definida para o documento.</p>
+<p class="copy">As especificações de redução e proteção estão em <a href="/manual.html#uso">Símbolos</a>. As condições de contraste e uso da paleta estão em <a href="/cores.html">Cores</a>.</p></div><a class="end-link" href="/laboratorio.html">Abrir Laboratório ↗</a></div></section>
+<dialog aria-labelledby="dialog-title" class="review5-dialog" id="review5-enlarge"><div class="dialog-top"><span class="detail" id="dialog-title">Estudo de composição</span><button id="dialog-close" type="button">Fechar ×</button></div><div class="dialog-body" id="dialog-body"></div><p class="detail dialog-note">Visualização ampliada do estudo. Em telas menores, deslize horizontalmente dentro desta janela para conferir os detalhes.</p></dialog>
+</div>
+</main>
+<footer class="lm-v4-footer"><span>LABMATTAR / COMPOSIÇÃO</span><span>IDENTIDADE VISUAL / 2026</span></footer>
 
 <script id="lm-case-demonstration">
 (()=>{
@@ -243,6 +872,52 @@
     update();
   }));
   update();
+})();
+</script>
+<script>
+(() => {
+  const guides = document.getElementById('guides');
+  const guideOff = document.getElementById('guide-off');
+  const guideOn = document.getElementById('guide-on');
+
+  function setGuides(show) {
+    guides.hidden = !show;
+    guideOn.setAttribute('aria-pressed', String(show));
+    guideOff.setAttribute('aria-pressed', String(!show));
+  }
+
+  guideOff.addEventListener('click', () => setGuides(false));
+  guideOn.addEventListener('click', () => setGuides(true));
+
+  const dialog = document.getElementById('review5-enlarge');
+  const dialogBody = document.getElementById('dialog-body');
+  const dialogTitle = document.getElementById('dialog-title');
+  let previousFocus;
+
+  for (const button of document.querySelectorAll('.expand-example')) {
+    button.addEventListener('click', () => {
+      const figure = button.closest('figure');
+      const specimen = figure.querySelector('.spec');
+      if (!specimen) return;
+      previousFocus = button;
+      dialogTitle.textContent = figure.querySelector('.capname').textContent;
+      dialogBody.replaceChildren(specimen.cloneNode(true));
+      dialog.showModal();
+      dialog.scrollTop = 0;
+      dialogBody.scrollLeft = 0;
+    });
+  }
+
+  document.getElementById('dialog-close').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => {
+    dialogBody.replaceChildren();
+    previousFocus?.focus();
+  });
+  dialog.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const { left, right, top, bottom } = dialog.getBoundingClientRect();
+    if (event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom) dialog.close();
+  });
 })();
 </script>
 </body></html>

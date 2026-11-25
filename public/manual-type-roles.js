@@ -9,6 +9,12 @@
  const SUBTITLE='.lm-application-subtitle,.motion-card h3,.motion-reading h3,.lm-motion-subtitle';
  const BODY='h3,h4,h5,h6,p,li,dd,blockquote,.copy,.body-sample,.explain,.state-help,.lm-lab-body,.lm-lab-lead,.lm-lab-legend,.notes p,.rule span,.lm-case-intro p,.lm-case-aside p,.lm-case-facts p,.lm-case-validation p,.lm-case-validation ul,.lm-case-reading p,.lm-case-contrast p,.lm-rules-index p,.lm-composition-vocabulary p';
  function roleFor(el){
+  if(el.closest('.lm-composition-v4')){
+   if(el.closest('.mini-title,.minicopy,.st,.crop-type'))return 'title';
+   if(el.closest('.mini-sub,.ss'))return 'subtitle';
+   if(el.closest('.mini-body,.sb,.captext,.sp-table td,.spacing-table td'))return 'body';
+   if(el.closest('.mini-detail,.minidet,.sd,.glabel,.sp-label,.sp-table th,.spacing-table th,.capname,.element-caption,.callout,.ds-measure,.ds-separation,.study-note,.end-link'))return 'detail';
+  }
   if(el.closest('.editorial-caption .lm-motion-subtitle'))return 'subtitle';
   if(el.closest('.editorial-caption .copy'))return 'body';
   if(el.closest(DETAIL))return 'detail';

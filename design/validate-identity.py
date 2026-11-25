@@ -37,7 +37,7 @@ laboratory_index=(Path("public")/"laboratorio.html").read_text(encoding="utf-8")
 composition=(Path("public")/"compor.html").read_text(encoding="utf-8")
 assert 'href="/motion/matriz/index.html"' in laboratory_index and 'href="/montar.html"' in laboratory_index, "Laboratory index must present both official instruments"
 assert 'id="labArtboard"' not in laboratory_index, "The composition editor must not be embedded in the Laboratory index"
-assert 'id="contraste"' in construction and "AJUSTÁVEL" in construction and "40%" in construction, "The contrast demonstration must remain while the instructions move to Laboratory help"
+assert 'id="contraste"' in construction and 'data-case-contrast="40" aria-pressed="true"' in construction and 'data-case-contrast="80"' in construction, "The original photo demonstration must retain the 40% default and expose the V4 range"
 assert ".lm-case-image::after" in construction, "Mask must carry its own text contrast veil"
 assert 'id="construcao"' in construction and 'id="laboratorio"' in composition
 assert re.search(r'href="/composicao-lab\.css(?:\?v=[A-Za-z0-9_-]+)?"', composition)

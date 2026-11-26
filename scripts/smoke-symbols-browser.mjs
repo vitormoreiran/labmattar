@@ -138,6 +138,9 @@ try {
         if(area==='laboratorio.html'){
           assert.equal(await areaPage.locator('#labArtboard, #labStudioToggle').count(),0,
             'The Laboratory index must not embed Compor');
+          assert.deepEqual(await areaPage.locator('main > section').evaluateAll(sections=>sections.map(section=>section.id)),
+            ['inicio','ferramentas','apresentacoes'],'The Laboratory opens with creation tools before presentations');
+          assert.equal(await areaPage.locator('.lm-lab-index-footer').count(),1,'The Laboratory has a chapter footer');
           assert.equal(await areaPage.locator('.lm-lab-tool').count(),3,
             'The Laboratory index must show the Matrix, Compor and Cartão MATTAR');
           assert.equal(await areaPage.locator('a.lm-lab-tool[href="/motion/matriz/index.html"]').count(),1,
@@ -189,7 +192,7 @@ try {
           'tipografia.html':'#hierarquia h2',
           'cores.html':'#paleta h2',
           'composicao.html':'#estrutura h2',
-          'laboratorio.html':'#ferramentas .inner > p.eyebrow'
+          'laboratorio.html':'#ferramentas h2'
         };
         const internal=areaPage.locator(internalSelectors[area]);
         assert.equal(await internal.count(),1,'One representative internal chapter heading: '+area);
@@ -294,7 +297,7 @@ try {
         report.typeAudit??=[];
         report.typeAudit.push({area,viewportWidth,count:audit.count,counts:audit.counts});
         const headings=areaPage.locator('main h1.lm-manual-page-title, main h2.lm-manual-section-title');
-        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':5,'composicao.html':15,'laboratorio.html':1};
+        const expected={'manual.html':5,'motion.html':6,'tipografia.html':5,'cores.html':5,'composicao.html':15,'laboratorio.html':3};
         assert.equal(await headings.count(),expected[area],'All structural headings identified in '+area);
         const styles=await headings.evaluateAll(els=>els.map(el=>{
           const css=getComputedStyle(el),rect=el.getBoundingClientRect();

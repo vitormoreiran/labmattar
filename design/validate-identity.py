@@ -6,7 +6,7 @@ root=Path("design")
 manifest=json.loads((root/"identity-system.json").read_text(encoding="utf-8"))
 assert manifest["schemaVersion"]=="1.0.0"
 assert len(manifest["sections"])==8
-assert [section["id"] for section in manifest["sections"]]==["introduction","symbols","motion","typography","color","composition","laboratory","social"],"Motion follows Symbols; the composition laboratory has its own area"
+assert [section["id"] for section in manifest["sections"]]==["introduction","typography","color","symbols","motion","composition","social","laboratory"],"Identity chapter order must match the shared navigation"
 assert not any(section["id"]=="image" for section in manifest["sections"]),"Imagem is not an independent chapter"
 assert len(manifest["symbols"]["vessels"])==9
 assert manifest["image"]["textContrast"]["veilColor"]=="#000000"

@@ -64,15 +64,16 @@ try {
           index:link.querySelector('.lm-nav-index').textContent.trim(),area:link.dataset.area,href:link.getAttribute('href')
         })));
         assert.deepEqual(navLinks,[
-          {index:'00',area:'introducao',href:'/inicio.html'},
-          {index:'01',area:'simbolos',href:'/manual.html'},
-          {index:'02',area:'motion',href:'/motion.html'},
-          {index:'03',area:'tipografia',href:'/tipografia.html'},
-          {index:'04',area:'cores',href:'/cores.html'},
+          {index:'01',area:'tipografia',href:'/tipografia.html'},
+          {index:'02',area:'cores',href:'/cores.html'},
+          {index:'03',area:'simbolos',href:'/manual.html'},
+          {index:'04',area:'motion',href:'/motion.html'},
           {index:'05',area:'composicao',href:'/composicao.html'},
-          {index:'06',area:'laboratorio',href:'/laboratorio.html'},
-          {index:'07',area:'redes',href:'/redes.html'}
-        ],'Introduction precedes all seven manual chapters: '+area);
+          {index:'06',area:'redes',href:'/redes.html'},
+          {index:'07',area:'laboratorio',href:'/laboratorio.html'}
+        ],'Manual chapters start with Typography and Laboratory follows the editorial sequence: '+area);
+        assert.equal(await areaPage.locator('.lm-site-nav .lm-nav-home').getAttribute('href'),'/inicio.html',
+          'Manual home link opens the Introduction');
         assert.equal(await areaPage.locator('.lm-site-nav a[href="/imagem.html"]').count(),0,
           'Imagem must not reappear as a separate chapter');
         if(area==='composicao.html'){
@@ -334,7 +335,12 @@ try {
       assert.equal(await introPage.locator('.lm-site-nav').count(),1,'One shared chapter menu');
       assert.equal(await introPage.locator('.lm-site-nav [data-area="introducao"][aria-current="page"]').count(),1,'Entire introduction is chapter 00');
       assert.equal(await introPage.locator('.lm-site-nav [aria-current="page"]').count(),1);
-      assert.deepEqual(await introPage.locator('#sistemas .entry>span:first-child').allTextContents(),['01','02','03','04','05','06','07'],'Introduction index follows the chapter menu');
+      assert.deepEqual(await introPage.locator('#sistemas .entry').evaluateAll(entries=>entries.map(entry=>[
+        entry.querySelector(':scope > span').textContent.trim(),entry.getAttribute('href')
+      ])),[
+        ['01','/tipografia.html'],['02','/cores.html'],['03','/manual.html'],['04','/motion.html'],
+        ['05','/composicao.html'],['06','/redes.html'],['07','/laboratorio.html']
+      ],'Introduction index follows the chapter menu');
        const titles=await introPage.locator('main h1, main h2').allTextContents();
        assert.ok(titles.every(t=>t.trim()===t.trim().toLocaleUpperCase('pt-BR')),'REVIEW1: introduction titles are uppercase');
        const titleSize=await introPage.locator('main h1').evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
@@ -352,7 +358,7 @@ try {
       await introPage.evaluate(()=>scrollTo(0,0));await introPage.screenshot({path:'symbols-proof/'+phase+'-introduction-'+width+'.png'});
     }finally{await introPage.close();}
   }
-  // Chapter 07: the feed is a temporal archive of project seasons.
+  // Social chapter: the feed is a temporal archive of project seasons.
   // The dedicated social test also checks the real photographs and mobile layout.
   const socialPage=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
   try {

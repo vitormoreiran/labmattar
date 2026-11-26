@@ -11,12 +11,26 @@
       "number": "00"
     },
     {
+      "id": "typography",
+      "label": "Tipografia",
+      "path": "/tipografia.html",
+      "stage": "existing",
+      "number": "01"
+    },
+    {
+      "id": "color",
+      "label": "Cores",
+      "path": "/cores.html",
+      "stage": "draft",
+      "number": "02"
+    },
+    {
       "id": "symbols",
       "label": "Símbolos",
       "path": "/manual.html",
       "stage": "existing",
       "editor": "/motion/matriz/index.html",
-      "number": "01"
+      "number": "03"
     },
     {
       "id": "motion",
@@ -24,20 +38,6 @@
       "stage": "existing",
       "path": "/motion.html",
       "editor": "/motion/matriz/index.html",
-      "number": "02"
-    },
-    {
-      "id": "typography",
-      "label": "Tipografia",
-      "path": "/tipografia.html",
-      "stage": "existing",
-      "number": "03"
-    },
-    {
-      "id": "color",
-      "label": "Cores",
-      "path": "/cores.html",
-      "stage": "draft",
       "number": "04"
     },
     {
@@ -48,21 +48,21 @@
       "number": "05"
     },
     {
+      "id": "social",
+      "label": "Redes Sociais",
+      "path": "/redes.html",
+      "stage": "experimental",
+      "number": "06"
+    },
+    {
       "id": "laboratory",
       "label": "Laboratório",
       "path": "/laboratorio.html",
       "stage": "experimental",
       "editor": "/compor.html?studio=1#laboratorio",
       "matrixEditor": "/motion/matriz/index.html",
-      "number": "06",
+      "number": "07",
       "legacyEditor": "/editor/"
-    },
-    {
-      "id": "social",
-      "label": "Redes Sociais",
-      "path": "/redes.html",
-      "stage": "experimental",
-      "number": "07"
     }
   ],
   "typography": {
@@ -176,13 +176,13 @@
     "stylesheet": "/manual-layout.css",
     "chapters": [
       "introduction",
-      "symbols",
-      "motion",
       "typography",
       "color",
+      "symbols",
+      "motion",
       "composition",
-      "laboratory",
-      "social"
+      "social",
+      "laboratory"
     ],
     "typography": "/manual-headings.css",
     "policy": "All chapter covers and internal sections share one editorial ruler; no page-specific positional overrides.",

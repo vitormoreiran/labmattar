@@ -6,8 +6,8 @@ import json
 manifest=json.loads(Path("design/identity-system.json").read_text(encoding="utf-8"))
 FAVICON='<link rel="icon" href="/favicon.svg?v=m-preto-20261112" type="image/svg+xml">'
 area_ids={"introduction":"introducao","symbols":"simbolos","motion":"motion","typography":"tipografia","color":"cores","composition":"composicao","laboratory":"laboratorio","social":"redes"}
-NAV='<nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR" data-lm-text-role="detail"><a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — introdução"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a><div class="lm-nav-list" role="group" aria-label="Capítulos">'
-for chapter in manifest["sections"]:
+NAV='<nav class="lm-site-nav" aria-label="Capítulos do manual LABMATTAR" data-lm-text-role="detail"><a class="lm-nav-home" href="/inicio.html" aria-label="LABMATTAR — introdução" data-area="introducao"><span class="lm-nav-monogram">M</span><span class="lm-nav-home-label">MANUAL DE IDENTIDADE</span></a><div class="lm-nav-list" role="group" aria-label="Capítulos">'
+for chapter in (section for section in manifest["sections"] if section["id"]!="introduction"):
  NAV+=f'<a href="{chapter["path"]}" data-area="{area_ids[chapter["id"]]}"><span class="lm-nav-index">{chapter["number"]}</span><span>{chapter["label"]}</span></a>'
 NAV+='</div></nav>'
 STYLE='''<style id="lm-site-navigation-style">
@@ -21,7 +21,7 @@ html body > nav.lm-site-nav {
 }
 html body > nav.lm-site-nav a { color:inherit; text-decoration:none; }
 html body > nav.lm-site-nav .lm-nav-home {
-  display:flex; align-items:center; gap:12px; flex:none; padding:0;
+  display:flex; position:relative; align-items:center; gap:12px; flex:none; padding:0;
   height:100%; white-space:nowrap; border:0;
 }
 html body > nav.lm-site-nav .lm-nav-monogram {
@@ -41,7 +41,7 @@ html body > nav.lm-site-nav .lm-nav-list a {
 }
 html body > nav.lm-site-nav .lm-nav-list a:hover,
 html body > nav.lm-site-nav .lm-nav-list a[aria-current="page"] { opacity:1; }
-html body > nav.lm-site-nav .lm-nav-list a[aria-current="page"]::after {
+html body > nav.lm-site-nav a[aria-current="page"]::after {
   content:""; position:absolute; bottom:0; left:0; right:0;
   height:2px; background:currentColor;
 }

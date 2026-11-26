@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f7f6f2">
+  <title>Mesa Unificada · LABMATTAR</title>
+  <link rel="stylesheet" href="/mesa-unificada/mesa.css">
+  <script type="module" src="/mesa-unificada/mesa.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+  <header class="masthead">
+    <a class="brand" href="#inicio" aria-label="LABMATTAR, início da Mesa"><span aria-hidden="true">M</span> LABMATTAR</a>
+    <span class="environment">Prévia <span aria-hidden="true">/</span> Dados de teste</span>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <nav aria-label="Navegação principal">
+        <a href="#inicio" data-nav="inicio">Início</a>
+        <a href="#site" data-nav="site">Site</a>
+        <a href="#obras" data-nav="obras">Obras</a>
+        <a href="#criacoes" data-nav="criacoes">Criações</a>
+        <a href="#acervo" data-nav="acervo">Acervo</a>
+      </nav>
+      <p class="sidebar-note">Espaço de teste. As edições ficam neste navegador.</p>
+    </aside>
+    <main id="conteudo" tabindex="-1"></main>
+  </div>
+  <dialog id="visualizador" class="viewer" aria-labelledby="viewer-title">
+    <div class="viewer-head">
+      <div><p class="eyebrow" id="viewer-version"></p><h2 id="viewer-title"></h2></div>
+      <button class="button" type="button" data-close autofocus>Fechar</button>
+    </div>
+    <div class="viewer-tools">
+      <div class="switch" role="group" aria-label="Tamanho da prévia">
+        <button type="button" data-width="desktop" aria-pressed="true">Desktop</button>
+        <button type="button" data-width="mobile" aria-pressed="false">Celular</button>
+      </div>
+      <span id="viewer-language"></span>
+    </div>
+    <div class="viewer-stage" id="viewer-stage"></div>
+    <div class="viewer-foot">
+      <button class="button" type="button" data-step="-1">Anterior</button>
+      <span id="viewer-position" aria-live="polite"></span>
+      <button class="button" type="button" data-step="1">Próxima</button>
+    </div>
+  </dialog>
+</body>
+</html>

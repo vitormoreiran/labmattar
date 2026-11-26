@@ -63,7 +63,7 @@ on:
       - 'scripts/prepare-motion.mjs'
       - 'scripts/smoke-symbols-browser.mjs'
   push:
-    branches: [main, fix/manual-symbols-verified, review/simbolos-motion-20261123]
+    branches: [main, fix/manual-symbols-verified, review/simbolos-motion-20261123, preview/mesa-unificada]
     paths:
       - '.github/workflows/preview-cloudflare.yml'
       - 'site-oficial/**'
@@ -176,7 +176,7 @@ jobs:
         if: steps.scope.outputs.editorial_only != 'true'
         run: node --test scripts/test-lab-gallery.mjs scripts/test-lab-photo-effects.mjs scripts/test-lab-proportions.mjs scripts/test-lab-render-fidelity.mjs scripts/test-lab-project-lifecycle.mjs scripts/test-identity-consistency.mjs scripts/test-lab-sequence.mjs scripts/test-composicao-document.mjs scripts/test-private-video-html.mjs scripts/test-official-publication.mjs scripts/test-lab-section-web.mjs scripts/test-chapter4-publication.mjs
       - name: Preparar Workers preview
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || github.ref == 'refs/heads/preview/mesa-unificada' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         shell: bash
         run: |
           test -f dist/server/index.js
@@ -221,7 +221,7 @@ jobs:
           }
           JSON
       - name: Publicar apenas Worker de previa
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || github.ref == 'refs/heads/preview/mesa-unificada' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -231,6 +231,17 @@ jobs:
           test -n "$CLOUDFLARE_ACCOUNT_ID"
           # Preserve Cloudflare dashboard variables and all provider secrets across deploys.
           npx wrangler deploy --config wrangler.preview.jsonc --keep-vars
+      - name: Confirmar Mesa Unificada no Worker de previa
+        if: github.ref == 'refs/heads/preview/mesa-unificada'
+        shell: bash
+        run: |
+          set -euo pipefail
+          base=https://labmattar-identidade-previa.vitormoreiran.workers.dev
+          for asset in mesa-unificada.html mesa-unificada/mesa.mjs mesa-unificada/mesa.css; do
+            curl --fail --silent --show-error --retry 5 --retry-all-errors --max-time 20 \
+              "$base/$asset?commit=$GITHUB_SHA" -o /tmp/mesa-preview-asset
+            cmp "public/$asset" /tmp/mesa-preview-asset
+          done
       - name: Preparar inspeção do PDF
         if: steps.scope.outputs.editorial_only != 'true'
         run: |
@@ -320,7 +331,7 @@ jobs:
         shell: bash
         run: node scripts/smoke-identity-review.mjs
       - name: Conferir pacote do domínio oficial sem publicar
-        if: steps.scope.outputs.editorial_only != 'true'
+        if: steps.scope.outputs.editorial_only != 'true' && github.ref != 'refs/heads/preview/mesa-unificada'
         run: |
           node scripts/build-official.mjs dist/client dist/oficial-checked
           npx --no-install wrangler deploy --dry-run --config dist/oficial-checked/wrangler.jsonc --outdir dist/oficial-check-bundle

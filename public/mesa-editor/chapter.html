@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Como trabalhamos · Editor LABMATTAR</title>
+<link rel="stylesheet" href="/manual-headings.css">
+<link rel="stylesheet" href="/mesa-editor/chapter.css">
+<script type="module" src="/mesa-editor/chapter.mjs"></script>
+<body>
+<header class="editor-bar">
+  <div><p>Site / Capítulo 03</p><h1>Como trabalhamos</h1></div>
+  <div class="actions">
+    <span id="status" role="status">Abrindo sessão de teste…</span>
+    <a href="/mesa-editor/chapter-preview.html" target="_blank" rel="noopener">Ver versão salva</a>
+    <button form="editor" class="primary" id="save" disabled>Salvar e atualizar prévia</button>
+  </div>
+</header>
+<main>
+  <nav class="sections" aria-label="Seções do capítulo">
+    <button type="button" data-block="0" aria-pressed="true">Abertura</button>
+    <button type="button" data-block="1" aria-pressed="false">Obras comissionadas</button>
+    <button type="button" data-block="2" aria-pressed="false">Processo criativo</button>
+  </nav>
+  <div class="content">
+    <section class="visual" aria-label="Visualização da seção em edição">
+      <div class="viewport-switch" role="group" aria-label="Tamanho da visualização">
+        <button type="button" data-size="wide" aria-pressed="true">Desktop</button>
+        <button type="button" data-size="narrow" aria-pressed="false">Celular</button>
+      </div>
+      <div id="stage"></div>
+    </section>
+    <form id="editor">
+      <fieldset disabled>
+        <legend>Conteúdo da seção</legend>
+        <label for="lang">Idioma</label>
+        <select id="lang"><option value="pt">Português</option><option value="en">English</option><option value="es">Español</option></select>
+        <label for="title">Título</label>
+        <input id="title" required maxlength="140">
+        <label for="body">Texto</label>
+        <textarea id="body" rows="10" required maxlength="12000"></textarea>
+        <p class="help">Separe os parágrafos com uma linha em branco.</p>
+      </fieldset>
+      <p id="error" role="alert"></p>
+    </form>
+  </div>
+</main>
+</body>
+</html>

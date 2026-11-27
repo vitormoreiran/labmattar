@@ -2,50 +2,64 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
   <meta name="theme-color" content="#f7f6f2">
   <title>Mesa Unificada · LABMATTAR</title>
+  <link rel="icon" href="/identidade/M.svg">
+  <link rel="stylesheet" href="/manual-headings.css">
   <link rel="stylesheet" href="/mesa-unificada/mesa.css">
   <script type="module" src="/mesa-unificada/mesa.mjs"></script>
 </head>
 <body>
-  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
-  <header class="masthead">
-    <a class="brand" href="#inicio" aria-label="LABMATTAR, início da Mesa"><span aria-hidden="true">M</span> LABMATTAR</a>
-    <span class="environment">Prévia <span aria-hidden="true">/</span> Dados de teste</span>
-  </header>
-  <div class="layout">
-    <aside class="sidebar">
-      <nav aria-label="Navegação principal">
-        <a href="#inicio" data-nav="inicio">Início</a>
-        <a href="#site" data-nav="site">Site</a>
-        <a href="#obras" data-nav="obras">Obras</a>
-        <a href="#criacoes" data-nav="criacoes">Criações</a>
-        <a href="#acervo" data-nav="acervo">Acervo</a>
+  <header class="mesa-top">
+    <div class="mesa-toolbar">
+      <a class="mesa-brand" href="#inicio" aria-label="Início da Mesa LABMATTAR"><img src="/identidade/mattar.svg" alt="Mattar" width="121" height="29"></a>
+      <nav class="mesa-nav" aria-label="Área de trabalho">
+        <a href="#inicio">Mesa</a>
+        <a href="#aleteia">Portfólio</a>
+        <a href="#apresentacao">Composição</a>
+        <a href="#como-trabalhamos">Site</a>
       </nav>
-      <p class="sidebar-note">Espaço de teste. As edições ficam neste navegador.</p>
-    </aside>
-    <main id="conteudo" tabindex="-1"></main>
-  </div>
-  <dialog id="visualizador" class="viewer" aria-labelledby="viewer-title">
-    <div class="viewer-head">
-      <div><p class="eyebrow" id="viewer-version"></p><h2 id="viewer-title"></h2></div>
-      <button class="button" type="button" data-close autofocus>Fechar</button>
+      <span class="mesa-env">Prévia</span>
     </div>
-    <div class="viewer-tools">
-      <div class="switch" role="group" aria-label="Tamanho da prévia">
-        <button type="button" data-width="desktop" aria-pressed="true">Desktop</button>
-        <button type="button" data-width="mobile" aria-pressed="false">Celular</button>
+  </header>
+  <main>
+    <section id="mesa-inicio" class="mesa-home" aria-labelledby="mesa-title">
+      <div class="mesa-intro">
+        <p class="mesa-detail">LABMATTAR / Ambiente de trabalho</p>
+        <h1 id="mesa-title">Mesa <span>Unificada</span></h1>
+        <p>Do portfólio à composição. Organize as obras, trabalhe suas apresentações e revise os conteúdos do site.</p>
       </div>
-      <span id="viewer-language"></span>
-    </div>
-    <div class="viewer-stage" id="viewer-stage"></div>
-    <div class="viewer-foot">
-      <button class="button" type="button" data-step="-1">Anterior</button>
-      <span id="viewer-position" aria-live="polite"></span>
-      <button class="button" type="button" data-step="1">Próxima</button>
-    </div>
-  </dialog>
+      <div class="mesa-workgrid">
+        <article class="mesa-feature">
+          <img src="/presentation-models/covers/aleteia.webp" alt="Mesa de Aleteia sob projeções" fetchpriority="high">
+          <div class="mesa-feature-body">
+            <p class="mesa-detail">Portfólio / Jantares imersivos</p>
+            <h2 data-lm-text-role="subtitle">Aleteia</h2>
+            <div class="mesa-actions">
+              <a class="mesa-action primary" href="#aleteia">Editar obra</a>
+              <a class="mesa-action" href="#apresentacao">Montar apresentação</a>
+            </div>
+          </div>
+        </article>
+        <aside class="mesa-site">
+          <p class="mesa-detail">Site / Capítulo 03</p>
+          <h2 data-lm-text-role="subtitle">Como <span>trabalhamos</span></h2>
+          <ul>
+            <li>Abertura</li>
+            <li>Obras comissionadas</li>
+            <li>Processo criativo</li>
+          </ul>
+          <a class="mesa-action" href="#como-trabalhamos">Editar capítulo</a>
+        </aside>
+      </div>
+      <footer class="mesa-foot">
+        <p>Portfólio e Site usam uma sessão de teste. O Laboratório salva apresentações neste navegador.</p>
+        <a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">Ferramentas do Laboratório</a>
+      </footer>
+    </section>
+    <div id="mesa-workspaces"></div>
+  </main>
 </body>
 </html>

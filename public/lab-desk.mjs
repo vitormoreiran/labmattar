@@ -97,6 +97,51 @@ read();const previous=records.find(p=>p.id===localStorage.getItem('labmattar-des
 const requested=new URLSearchParams(location.search).get('modelo'),requestedKey='reference:'+requested;
 if(requested&&STORY_PRESETS.some(p=>p.id===requested)){if(hadDraft||previous)await saveCurrent();const saved=records.find(p=>p.id===requestedKey),next=saved?.document||await loadStoryPreset(requested);await api.load(next,{currentIndex:Math.max(0,next.pages.findIndex(p=>p.id===saved?.currentPageId))});currentKey=requestedKey;read();}
 attachEvents();loading=false;render();await saveCurrent();window.LabDesk={ready:true,flush:flushText,snapshot:()=>({document:documentValue,currentPageId:selectedId,mode,loading}),select:id=>run(()=>select(id)),configure:target=>run(()=>configure(target)),back:()=>run(backToPages)};document.body.dataset.ready='true';
+if(new URLSearchParams(location.search).get('mesa')==='1'&&window.parent!==window)connectMesaPortfolio();
 if(requested&&STORY_PRESETS.some(p=>p.id===requested)){const url=new URL(location.href);url.searchParams.delete('modelo');window.history.replaceState(null,'',url);}
+}
+function connectMesaPortfolio(){
+  const button=document.createElement('button');
+  button.type='button';button.textContent='Aplicar imagem do Portfólio';button.hidden=true;
+  document.querySelector('.top-actions').prepend(button);
+  let importedImage;
+  window.addEventListener('message',event=>{
+    if(event.origin!==location.origin||event.source!==window.parent||event.data?.type!=='mesa:compose-image')return;
+    const url=new URL(event.data.url,location.origin);
+    if(url.origin!==location.origin||!url.pathname.startsWith('/mesa-media/'))return;
+    importedImage={url,label:String(event.data.label||'Imagem do Portfólio').slice(0,100)};
+    button.hidden=false;
+    toast('Imagem do Portfólio disponível. Selecione uma página e aplique a imagem.');
+  });
+  button.onclick=()=>run(async()=>{
+    if(!importedImage||button.disabled)return;
+    button.disabled=true;
+    const item=importedImage;
+    try{
+      const response=await fetch(item.url,{credentials:'same-origin'});
+      if(!response.ok)throw Error('Não foi possível abrir a imagem do Portfólio.');
+      const source=await response.blob();
+      const bitmap=await createImageBitmap(source);
+      const canvas=document.createElement('canvas');
+      const scale=Math.min(1,2560/Math.max(bitmap.width,bitmap.height));
+      canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+      canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();
+      const image=canvas.toDataURL('image/webp',.86);
+      await flushText();
+      await native(async()=>{
+        await api.selectPage(selectedId);
+        const detail={provider:'local',photoKey:'loc-'+crypto.randomUUID().replaceAll('-','').slice(0,22),original:image,name:item.label};
+        host.dispatchEvent(new host.CustomEvent('labmattar:acervo-select',{detail}));
+        const background=host.document.getElementById('labBackground');
+        if(background&&[...background.options].some(option=>option.value==='photo')){
+          background.value='photo';background.dispatchEvent(new host.Event('change',{bubbles:true}));
+        }
+        api.persist();read();render();await saveCurrent();
+      });
+      if(importedImage===item){importedImage=null;button.hidden=true;}
+      toast('Imagem aplicada à página selecionada no Compor.');
+    }finally{button.disabled=false;}
+  });
+  window.parent.postMessage({type:'mesa:composition-ready'},location.origin);
 }
 boot().catch(error=>{$('operationStatus').textContent=error.message;toast(error.message,true);document.body.dataset.error='true';});

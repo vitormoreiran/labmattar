@@ -1,0 +1,10 @@
+#gallery-preview { margin-inline:auto; width:min(1350px,calc(100% - 2 * clamp(16px,4vw,64px))); padding-block:32px; }
+#gallery-preview article { border-bottom:1px solid var(--line); margin-bottom:32px; padding:24px 0; }
+#gallery-preview h1, #gallery-preview h2 { margin:.2rem 0 1rem; }
+#gallery-preview h2 { font-size:var(--lm-type-subtitle-size); }
+#gallery-preview ul { list-style:none; padding:0; display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr)); }
+#gallery-preview figure { margin:0; }
+#gallery-preview figure img, #gallery-preview iframe { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; border:0; background:#272321; }
+#gallery-preview figcaption { margin-top:.45rem; }
+.portfolio-cover { width:min(100%,55rem); height:auto; }
+.portfolio-intro { max-width:45rem; }

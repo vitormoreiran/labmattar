@@ -220,6 +220,9 @@ jobs:
             }
           }
           JSON
+          if [ "$GITHUB_REF" = refs/heads/preview/mesa-unificada ]; then
+            node scripts/configure-mesa-preview.mjs
+          fi
       - name: Publicar apenas Worker de previa
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/review/simbolos-motion-20261123' || github.ref == 'refs/heads/preview/mesa-unificada' || (github.event_name == 'pull_request' && github.head_ref == 'review/simbolos-motion-20261123')
         env:
@@ -236,12 +239,14 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base=https://labmattar-identidade-previa.vitormoreiran.workers.dev
-          for asset in mesa-unificada.html mesa-unificada/mesa.mjs mesa-unificada/mesa.css; do
+          base=https://labmattar-mesa-previa.vitormoreiran.workers.dev
+          for asset in mesa-unificada.html mesa-unificada/mesa.mjs mesa-unificada/mesa.css mesa-editor/portfolio.html mesa-editor/chapter.html; do
             curl --fail --silent --show-error --location --max-redirs 3 --retry 5 --retry-all-errors --max-time 20 \
               "$base/$asset?commit=$GITHUB_SHA" -o /tmp/mesa-preview-asset
             cmp "public/$asset" /tmp/mesa-preview-asset
           done
+          curl --fail --silent --show-error --retry 5 --retry-all-errors --max-time 20 \
+            "$base/mesa-api/portfolio/state" | node -e 'let s="";process.stdin.on("data",v=>s+=v).on("end",()=>{if(JSON.parse(s).state.projects[0].id!=="aleteia")process.exit(1)})'
       - name: Preparar inspeção do PDF
         if: steps.scope.outputs.editorial_only != 'true'
         run: |

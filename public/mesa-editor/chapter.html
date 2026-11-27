@@ -5,28 +5,35 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Como trabalhamos · Editor LABMATTAR</title>
 <link rel="stylesheet" href="/manual-headings.css">
-<link rel="stylesheet" href="/mesa-editor/chapter.css">
-<script type="module" src="/mesa-editor/chapter.mjs"></script>
-<body>
+<link rel="stylesheet" href="/mesa-editor/chapter-editor.css">
+<script type="module" src="/mesa-editor/chapter-editor.mjs"></script>
+<body class="chapter-editor" data-mobile-view="edit">
 <header class="editor-bar">
-  <div><p>Site / Capítulo 03</p><h1>Como trabalhamos</h1></div>
+  <div class="editor-context"><p>Site / Capítulo 03</p><h1 data-lm-text-role="subtitle">Como trabalhamos</h1></div>
   <div class="actions">
     <span id="status" role="status">Abrindo sessão de teste…</span>
     <a href="/mesa-editor/chapter-preview.html" target="_blank" rel="noopener">Ver versão salva</a>
     <button form="editor" class="primary" id="save" disabled>Salvar e atualizar prévia</button>
   </div>
 </header>
-<main>
+<main class="chapter-workspace">
   <nav class="sections" aria-label="Seções do capítulo">
+    <p>Seções</p>
     <button type="button" data-block="0" aria-pressed="true">Abertura</button>
     <button type="button" data-block="1" aria-pressed="false">Obras comissionadas</button>
     <button type="button" data-block="2" aria-pressed="false">Processo criativo</button>
   </nav>
-  <div class="content">
+    <div class="mobile-mode" role="group" aria-label="Área de trabalho no celular">
+      <button type="button" data-mobile-view="edit" aria-pressed="true">Conteúdo</button>
+      <button type="button" data-mobile-view="visual" aria-pressed="false">Visualização</button>
+    </div>
     <section class="visual" aria-label="Visualização da seção em edição">
-      <div class="viewport-switch" role="group" aria-label="Tamanho da visualização">
-        <button type="button" data-size="wide" aria-pressed="true">Desktop</button>
-        <button type="button" data-size="narrow" aria-pressed="false">Celular</button>
+      <div class="visual-bar">
+        <span>Visualização</span>
+        <div class="viewport-switch" role="group" aria-label="Tamanho da visualização">
+          <button type="button" data-size="wide" aria-pressed="true">Desktop</button>
+          <button type="button" data-size="narrow" aria-pressed="false">Celular</button>
+        </div>
       </div>
       <div id="stage"></div>
     </section>
@@ -43,7 +50,6 @@
       </fieldset>
       <p id="error" role="alert"></p>
     </form>
-  </div>
 </main>
 </body>
 </html>

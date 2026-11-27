@@ -1,0 +1,38 @@
+/* These tokens affect the editor only when it is hosted inside the Mesa. */
+body[data-mesa-tool] {
+  --line:#d3d0c7; --muted:#625d53; --panel:#eeece5; --radius:0;
+  --tool-paper:#f7f6f2; --tool-ink:#181818; --tool-red:#e22e24;
+  color:var(--tool-ink); background:var(--tool-paper);
+}
+body[data-mesa-tool] > header {
+  background:var(--tool-paper); border-bottom:1px solid var(--line);
+}
+body[data-mesa-tool] > header .brand {
+  color:var(--tool-ink); text-transform:uppercase; letter-spacing:.04em; font-size:13px;
+}
+body[data-mesa-tool] > header .brand span { display:inline; font-weight:300; }
+body[data-mesa-tool] > header .study-tag { display:none; }
+body[data-mesa-tool] > :is(aside, .project-sidebar) { background:var(--panel); }
+body[data-mesa-tool] > :is(.inspector, #inspector) { background:var(--tool-paper); }
+body[data-mesa-tool] :is(button:not(.icon), input, textarea, select, .card, .page-card, .project, .project-item, .project-button) { border-radius:0; }
+body[data-mesa-tool] :is(.primary, .configure-action) { background:var(--tool-ink); border-color:var(--tool-ink); color:white; }
+body[data-mesa-tool] :is(.card.selected, .page-card[aria-pressed="true"]) { border-color:var(--tool-ink); }
+body[data-mesa-tool] :is(.project.active, .project-item.active, .project-button[aria-current]) { border-left:2px solid var(--tool-red); }
+body[data-mesa-tool] :focus-visible { outline:2px solid var(--tool-red); outline-offset:2px; }
+body[data-mesa-tool] :is(.projectHeading, .project-heading) h1 { font-weight:300; letter-spacing:-.025em; }
+body[data-mesa-tool] :is(.page-card img, .card img, .selected-preview, #selectedMedia) { border-radius:0; }
+@media (min-width:801px) {
+  body[data-mesa-tool] > header { padding-inline:24px; }
+  body[data-mesa-tool="aleteia"], body[data-mesa-tool="apresentacao"][data-mode="desk"] {
+    grid-template-columns:220px minmax(0,1fr) 312px; grid-template-rows:72px minmax(0,1fr);
+  }
+}
+@media (801px <= width <= 1120px) {
+  body[data-mesa-tool="aleteia"], body[data-mesa-tool="apresentacao"][data-mode="desk"] {
+    grid-template-columns:180px minmax(0,1fr) 267px;
+  }
+}
+@media (max-width:600px) {
+  body[data-mesa-tool] > header .brand { display:none; }
+  body[data-mesa-tool] > header :is(.actions,.top-actions) { width:100%; justify-content:flex-end; }
+}

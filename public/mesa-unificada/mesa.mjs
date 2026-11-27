@@ -1,13 +1,36 @@
 const home = document.querySelector('#mesa-inicio');
 const workspaces = document.querySelector('#mesa-workspaces');
 const views = {
-  aleteia: { src: '/mesa-editor/portfolio.html', title: 'Editor do Portfólio' },
-  apresentacao: { src: '/montar.html?modelo=aleteia&mesa=1#laboratorio', title: 'Laboratório de Composição' },
+  aleteia: { src: '/mesa-editor/portfolio.html', title: 'Editor do Portfólio', tool: 'Editor do Portfólio' },
+  apresentacao: { src: '/montar.html?modelo=aleteia&mesa=1#laboratorio', title: 'Laboratório de Composição', tool: 'Páginas e apresentações' },
   'como-trabalhamos': { src: '/mesa-editor/chapter.html', title: 'Editor de Como trabalhamos' },
 };
 const frames = new Map();
 let compositionReady = false;
 let pendingImage;
+
+function styleTool(frame, view) {
+  const tool = views[view].tool;
+  if (!tool || !frame.contentDocument?.body) return;
+  const doc = frame.contentDocument;
+  if (new URL(doc.URL).origin !== location.origin || doc.body.dataset.mesaTool) return;
+  const header = doc.querySelector('body > header .brand');
+  if (header) {
+    const label = doc.createElement('span');
+    label.textContent = tool;
+    header.replaceChildren(label);
+  }
+  if (view === 'apresentacao') {
+    doc.getElementById('import').textContent = 'Abrir arquivo';
+    doc.getElementById('save').textContent = 'Baixar projeto';
+    doc.getElementById('configure').textContent = 'Editar no Compor';
+  }
+  doc.body.dataset.mesaTool = view;
+  const sheet = doc.createElement('link');
+  sheet.rel = 'stylesheet';
+  sheet.href = '/mesa-unificada/mesa-tools.css';
+  doc.head.append(sheet);
+}
 
 function frameFor(view) {
   if (frames.has(view)) return frames.get(view);
@@ -15,6 +38,7 @@ function frameFor(view) {
   frame.title = views[view].title;
   frame.src = views[view].src;
   frame.allow = 'fullscreen';
+  frame.addEventListener('load', () => styleTool(frame, view));
   frames.set(view, frame);
   workspaces.append(frame);
   return frame;
@@ -25,6 +49,8 @@ function render() {
   const aliases = { obras: 'aleteia', criacoes: 'apresentacao', site: 'como-trabalhamos' };
   const view = Object.hasOwn(aliases, hash) ? aliases[hash] : Object.hasOwn(views, hash) ? hash : 'inicio';
   if (view !== 'inicio') frameFor(view);
+  if (view === 'inicio') delete document.body.dataset.workspace;
+  else document.body.dataset.workspace = view;
   for (const [key, frame] of frames) frame.hidden = key !== view;
   home.hidden = view !== 'inicio';
   for (const link of document.querySelectorAll('.mesa-nav a')) {
@@ -56,4 +82,6 @@ window.addEventListener('message', event => {
 });
 
 window.addEventListener('hashchange', render);
+const top = document.querySelector('.mesa-top');
+new ResizeObserver(() => document.documentElement.style.setProperty('--mesa-top-height', top.offsetHeight + 'px')).observe(top);
 render();

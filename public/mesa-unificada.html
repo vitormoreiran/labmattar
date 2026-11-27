@@ -18,7 +18,7 @@
       <nav class="mesa-nav" aria-label="Área de trabalho">
         <a href="#inicio">Mesa</a>
         <a href="#aleteia">Portfólio</a>
-        <a href="#apresentacao">Composição</a>
+        <a href="#apresentacao">Montar</a>
         <a href="#como-trabalhamos">Site</a>
       </nav>
       <span class="mesa-env">Prévia</span>
@@ -26,24 +26,28 @@
   </header>
   <main>
     <section id="mesa-inicio" class="mesa-home" aria-labelledby="mesa-title">
-      <div class="mesa-intro">
-        <p class="mesa-detail">LABMATTAR / Ambiente de trabalho</p>
-        <h1 id="mesa-title">Mesa <span>Unificada</span></h1>
-        <p>Do portfólio à composição. Organize as obras, trabalhe suas apresentações e revise os conteúdos do site.</p>
-      </div>
+      <header class="mesa-intro">
+        <div><p class="mesa-detail">LABMATTAR / Ambiente de trabalho</p><h1 id="mesa-title" data-lm-text-role="title">Mesa <span>Unificada</span></h1></div>
+        <a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">Ferramentas do Laboratório</a>
+      </header>
+      <h2 class="mesa-index-title" data-lm-text-role="subtitle">Em trabalho</h2>
       <div class="mesa-workgrid">
         <article class="mesa-feature">
-          <img src="/presentation-models/covers/aleteia.webp" alt="Mesa de Aleteia sob projeções" fetchpriority="high">
+          <div class="mesa-image"><img src="/presentation-models/covers/aleteia.webp" alt="Mesa de Aleteia sob projeções" fetchpriority="high"></div>
           <div class="mesa-feature-body">
             <p class="mesa-detail">Portfólio / Jantares imersivos</p>
             <h2 data-lm-text-role="subtitle">Aleteia</h2>
-            <div class="mesa-actions">
-              <a class="mesa-action primary" href="#aleteia">Editar obra</a>
-              <a class="mesa-action" href="#apresentacao">Montar apresentação</a>
-            </div>
+            <ul class="mesa-entry-list">
+              <li><span>Informações, capa e galeria</span><a class="mesa-action primary" href="#aleteia">Editar obra</a></li>
+              <li><span>Sequência e composição</span><a class="mesa-action" href="#apresentacao">Montar apresentação</a></li>
+            </ul>
           </div>
         </article>
         <aside class="mesa-site">
+          <div class="mesa-site-image">
+            <img src="https://labmattar.com/assets/casa-das-palmeiras.jpg" alt="">
+          </div>
+          <div class="mesa-site-body">
           <p class="mesa-detail">Site / Capítulo 03</p>
           <h2 data-lm-text-role="subtitle">Como <span>trabalhamos</span></h2>
           <ul>
@@ -52,11 +56,11 @@
             <li>Processo criativo</li>
           </ul>
           <a class="mesa-action" href="#como-trabalhamos">Editar capítulo</a>
+          </div>
         </aside>
       </div>
       <footer class="mesa-foot">
         <p>Portfólio e Site usam uma sessão de teste. O Laboratório salva apresentações neste navegador.</p>
-        <a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">Ferramentas do Laboratório</a>
       </footer>
     </section>
     <div id="mesa-workspaces"></div>

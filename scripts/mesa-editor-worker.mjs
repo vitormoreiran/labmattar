@@ -112,11 +112,26 @@ export class MesaEditorSession extends DurableObject {
   }
 
   validateChapter(state) {
-    if (!Array.isArray(state) || state.length !== examples.chapter.length || state.some((section, index) =>
-      section?.id !== examples.chapter[index].id || ['pt', 'en', 'es'].some(lang => {
+    const original = examples.chapter.map(section => section.id);
+    if (!Array.isArray(state) || state.length < original.length || state.length > 12 || state[0]?.id !== original[0]) throw error('Sequência do capítulo inválida.');
+    const ids = new Set(), kept = [];
+    for (const section of state) {
+      const id = section?.id;
+      const fixed = original.includes(id);
+      if ((!fixed && !/^trecho-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(id)) || ids.has(id)) throw error('Seção inválida.');
+      ids.add(id);
+      if (fixed) kept.push(id);
+      let filled = false;
+      for (const lang of ['pt', 'en', 'es']) {
         const entry = section[lang];
-        return !text(entry?.title, 140) || !entry.title.trim() || !Array.isArray(entry.body) || entry.body.length < 1 || entry.body.length > 12 || entry.body.some(p => !text(p, 4000));
-      }))) throw error('Preencha títulos e parágrafos válidos para as três seções.');
+        if (!text(entry?.title, 140) || !Array.isArray(entry.body) || entry.body.length < 1 || entry.body.length > 12 || entry.body.some(p => !text(p, 4000))) throw error('Título ou parágrafo inválido.');
+        if (!fixed && !entry.title.trim() && entry.body.every(p => !p.trim())) continue;
+        if (!entry.title.trim() || entry.body.some(p => !p.trim())) throw error('Preencha o título e os parágrafos da seção.');
+        filled = true;
+      }
+      if (!filled) throw error('Preencha uma versão da nova seção antes de salvar.');
+    }
+    if (original.some((id,index) => id !== kept[index])) throw error('Sequência do capítulo inválida.');
   }
 
   commit(scope, state, etag, removedId) {

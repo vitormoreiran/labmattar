@@ -8,27 +8,176 @@ const sectionIds = new Map([
   ['obras-comissionadas', { page:'cap3-obras-comissionadas', anchor:'obras-comissionadas' }],
   ['processo-criativo', { page:'cap3-processo-criativo', anchor:'processo-criativo' }],
 ]);
+const editorIds = new Map([...sectionIds].map(([id,{anchor}]) => [anchor,id]));
 const languages = new Set(['pt','en','es']);
+const extraId = /^trecho-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const origin = location.origin;
 const isEditorFrame = window.parent !== window && new URLSearchParams(location.search).get('mesa') === '1';
 
 function chapterContent(sections,lang) {
-  const pages = {};
+  const pages = {}, order = [], extra = {};
   for (const section of sections) {
-    const key = sectionIds.get(section.id)?.page, copy = section[lang];
-    if (!key || typeof copy?.title !== 'string' || !Array.isArray(copy.body) || !copy.body.every(p => typeof p === 'string')) continue;
-    pages[key] = { title:copy.title, summary:copy.body[0] || '', body:copy.body.slice(1) };
+    const original = sectionIds.get(section.id), copy = section[lang];
+    if (typeof copy?.title !== 'string' || !Array.isArray(copy.body) || !copy.body.every(p => typeof p === 'string')) continue;
+    if (original) {
+      pages[original.page] = { title:copy.title, summary:copy.body[0] ?? '', body:copy.body.slice(1) };
+      order.push(original.anchor);
+    } else if (extraId.test(section.id) && (isEditorFrame || (copy.title.trim() && copy.body.some(p => p.trim())))) {
+      extra[section.id] = { title:copy.title.trim() || 'Nova seção', body:copy.body };
+      order.push(section.id);
+    }
   }
-  return { pages };
+  return { pages, order, extra };
+}
+
+export function withChapterSections(content, originals) {
+  if (!content?.order?.length) return originals;
+  const original = new Map(originals.map(el => [el.props.id,el]));
+  return content.order.map(id => {
+    if (original.has(id)) return original.get(id);
+    const { title, body } = content.extra[id];
+    return React.createElement('section',{ id, key:id, className:'story-panel chapter5-process', 'data-nav-title':title },
+      React.createElement('div',{ className:'chapter5-copy chapter5-reading chapter3-scramble', key:JSON.stringify([title,body]) },
+        React.createElement('h2',null,title),
+        ...body.map((text,index) => React.createElement('p',{key:index},text))));
+  });
+}
+
+function linkEditor(apply) {
+  const story = document.querySelector('.chapter3-shell .story');
+  if (!story) return () => {};
+  const editable = '.chapter5-copy > :is(h1,h2,p)';
+  const report = (type,data) => window.parent.postMessage({type,...data},origin);
+  const style = document.createElement('style');
+  style.textContent = `
+    .chapter3-shell ${editable} { cursor:text; outline-offset:5px; }
+    .chapter3-shell ${editable}:is(:hover,:focus-visible) { outline:1px dashed #fff9; }
+  `;
+  document.head.append(style);
+  let visible, pendingSeek, pendingReveal, scheduled, settingLanguage = 0;
+
+  function applyDraft(sections,language) {
+    settingLanguage++;
+    const settled = () => { settingLanguage--; };
+    apply(sections,language).then(settled,settled);
+  }
+
+  function languageChanged(event) {
+    if (!settingLanguage) report('mesa:chapter-language',{language:event.detail?.language});
+  }
+
+  function checkPosition() {
+    scheduled = undefined;
+    if (pendingSeek) {
+      const section = document.getElementById(pendingSeek);
+      const copy = section?.querySelector('.chapter5-copy');
+      if (!copy) return;
+      pendingSeek = undefined;
+      const top = scrollY + section.getBoundingClientRect().top + copy.offsetTop - innerHeight * .26;
+      window.scrollTo({top,behavior:'instant'});
+    }
+    const line = innerHeight * .42;
+    const section = [...story.children].find(panel => {
+      const rect = panel.getBoundingClientRect();
+      return rect.top <= line && rect.bottom > line;
+    });
+    const id = editorIds.get(section?.id) ?? section?.id;
+    if (id && id !== visible) {
+      visible = id;
+      report('mesa:chapter-visible',{section:id});
+    }
+  }
+
+  function schedule() {
+    if (scheduled === undefined) scheduled = requestAnimationFrame(checkPosition);
+  }
+
+  function refreshTargets() {
+    for (const el of story.querySelectorAll(editable)) {
+      if (!el.hasAttribute('tabindex')) {
+        el.tabIndex = 0;
+        el.title = el.matches('p') ? 'Editar parágrafo' : 'Editar título';
+      }
+    }
+    if (pendingReveal) {
+      const { anchor, field } = pendingReveal;
+      const paragraph = document.getElementById(anchor)?.querySelectorAll('.chapter5-copy > p')[field];
+      if (paragraph?.textContent.trim()) {
+        pendingReveal = undefined;
+        const rect = paragraph.getBoundingClientRect();
+        if (rect.top < innerHeight * .14 || rect.top > innerHeight * .63) {
+          window.scrollTo({top:scrollY+rect.top-innerHeight*.29,behavior:'instant'});
+        }
+      }
+    }
+    schedule();
+  }
+
+  function receive(event) {
+    if (event.origin !== origin || event.source !== window.parent || !event.data) return;
+    if (event.data.type === 'mesa:chapter-draft') applyDraft(event.data.sections,event.data.language);
+    if (['mesa:chapter-seek','mesa:chapter-reveal'].includes(event.data.type)) {
+      const id = event.data.section;
+      const anchor = sectionIds.get(id)?.anchor ?? (extraId.test(id) ? id : null);
+      if (!anchor) return;
+      if (event.data.type === 'mesa:chapter-reveal') pendingReveal = {anchor,field:event.data.field};
+      else { pendingReveal = undefined; pendingSeek = anchor; schedule(); }
+    }
+  }
+
+  function activate(event) {
+    if (event.key === 'Escape') report('mesa:chapter-dismiss');
+    const keyboard = event.type === 'keydown';
+    if (keyboard && !['Enter',' '].includes(event.key)) return;
+    const target = event.target instanceof Element ? event.target : null;
+    const copy = target?.closest(editable);
+    if (copy && story.contains(copy) && (keyboard || !getSelection()?.toString())) {
+      event.preventDefault();
+      const anchor = copy.closest('.story-panel').id;
+      const section = editorIds.get(anchor) ?? anchor;
+      const field = copy.matches('p') ? [...copy.parentElement.children].filter(el => el.matches('p')).indexOf(copy) : 'title';
+      report('mesa:chapter-edit',{section,field});
+      return;
+    }
+    const link = target?.closest('a[href]');
+    if (!link) return;
+    const url = new URL(link.href,location.href);
+    if (url.origin !== origin || !['/capitulo-3','/capitulo-3/'].includes(url.pathname)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  window.addEventListener('message',receive);
+  window.addEventListener('scroll',schedule,{passive:true});
+  window.addEventListener('resize',schedule);
+  window.addEventListener('mattar:language-changed',languageChanged);
+  document.addEventListener('click',activate,true);
+  document.addEventListener('keydown',activate,true);
+  const changes = new MutationObserver(refreshTargets);
+  changes.observe(story,{childList:true,subtree:true});
+  refreshTargets();
+  report('mesa:chapter-ready');
+  return () => {
+    window.removeEventListener('message',receive);
+    window.removeEventListener('scroll',schedule);
+    window.removeEventListener('resize',schedule);
+    window.removeEventListener('mattar:language-changed',languageChanged);
+    document.removeEventListener('click',activate,true);
+    document.removeEventListener('keydown',activate,true);
+    changes.disconnect();
+    cancelAnimationFrame(scheduled);
+    style.remove();
+  };
 }
 
 export function useChapterDraft() {
   const [content,setContent] = React.useState(null);
-  React.useEffect(()=>{
+  React.useEffect(() => {
     let active = true, last = '', pending = Promise.resolve();
     function apply(sections,lang) {
-      if (!languages.has(lang) || !Array.isArray(sections)) return;
-      pending = pending.catch(()=>{}).then(async()=>{
+      if (!languages.has(lang) || !Array.isArray(sections)) return Promise.resolve();
+      pending = pending.catch(() => {}).then(async () => {
         if (!active) return;
         if (getLanguage() !== lang) await setLanguage(lang);
         if (!active) return;
@@ -39,44 +188,21 @@ export function useChapterDraft() {
           setContent(next);
         }
       });
-    }
-    function message(event) {
-      if (event.origin !== origin || event.source !== window.parent || !event.data) return;
-      if (event.data.type === 'mesa:chapter-draft') apply(event.data.sections,event.data.language);
-      if (event.data.type === 'mesa:chapter-seek') {
-        const id = sectionIds.get(event.data.section)?.anchor;
-        if (id) document.getElementById(id)?.scrollIntoView({block:'start',behavior:'instant'});
-      }
-    }
-    function keepChapter(event) {
-      const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
-      if (!anchor) return;
-      const target = new URL(anchor.href,location.href);
-      if (target.origin !== origin || !['/capitulo-3','/capitulo-3/'].includes(target.pathname)) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
+      return pending;
     }
     if (isEditorFrame) {
-      window.addEventListener('message',message);
-      document.addEventListener('click',keepChapter,true);
-      window.parent.postMessage({type:'mesa:chapter-ready'},origin);
-    } else {
-      let saved;
-      const syncLanguage = () => { if (saved) apply(saved,getLanguage()); };
-      window.addEventListener('mattar:language-changed',syncLanguage);
-      fetch('/mesa-api/chapter',{cache:'no-store'}).then(res => res.ok ? res.json() : null).then(value=>{
-        if (!active || !value) return;
-        saved = value.state;
-        apply(saved,getLanguage());
-      }).catch(()=>{});
-      return ()=>{ active=false; window.removeEventListener('mattar:language-changed',syncLanguage); };
+      const cleanup = linkEditor(apply);
+      return () => { active = false; cleanup(); };
     }
-    return ()=>{
-      active=false;
-      window.removeEventListener('message',message);
-      document.removeEventListener('click',keepChapter,true);
-    };
+    let saved;
+    const syncLanguage = () => { if (saved) apply(saved,getLanguage()); };
+    window.addEventListener('mattar:language-changed',syncLanguage);
+    fetch('/mesa-api/chapter',{cache:'no-store'}).then(res => res.ok ? res.json() : null).then(value => {
+      if (!active || !value) return;
+      saved = value.state;
+      apply(saved,getLanguage());
+    }).catch(() => {});
+    return () => { active = false; window.removeEventListener('mattar:language-changed',syncLanguage); };
   },[]);
   return content;
 }

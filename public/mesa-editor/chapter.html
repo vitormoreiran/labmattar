@@ -7,52 +7,57 @@
 <link rel="stylesheet" href="/manual-headings.css">
 <link rel="stylesheet" href="/mesa-editor/chapter-editor.css">
 <script type="module" src="/mesa-editor/chapter-editor.mjs"></script>
-<body class="chapter-editor" data-mobile-view="edit">
+<body class="chapter-editor">
 <header class="editor-bar">
-  <div class="editor-context"><p>Site / Capítulo 03</p><h1 data-lm-text-role="subtitle">Como trabalhamos</h1></div>
-  <div class="actions">
+  <div class="editor-context"><p>Site / Capítulo 03</p><h1 id="chapter-name">Como <span>trabalhamos</span></h1></div>
+  <div class="save-actions">
     <span id="status" role="status">Abrindo sessão de teste…</span>
-    <a href="/capitulo-3" target="_blank" rel="noopener">Ver versão salva</a>
-    <button form="editor" class="primary" id="save" disabled>Salvar e atualizar prévia</button>
+    <a href="/capitulo-3" target="_blank" rel="noopener">Ver versão salva ↗</a>
+    <button type="submit" form="editor" class="primary" id="save" disabled>Salvar na prévia</button>
   </div>
 </header>
 <main class="chapter-workspace">
-  <nav class="sections" aria-label="Seções do capítulo">
-    <p>Seções</p>
-    <button type="button" data-block="0" aria-pressed="true">Abertura</button>
-    <button type="button" data-block="1" aria-pressed="false">Obras comissionadas</button>
-    <button type="button" data-block="2" aria-pressed="false">Processo criativo</button>
-  </nav>
-    <div class="mobile-mode" role="group" aria-label="Área de trabalho no celular">
-      <button type="button" data-mobile-view="edit" aria-pressed="true">Conteúdo</button>
-      <button type="button" data-mobile-view="visual" aria-pressed="false">Visualização</button>
-    </div>
-    <section class="visual" aria-label="Capítulo completo em edição">
-      <div class="visual-bar">
-        <span>Capítulo completo</span>
-        <div class="viewport-switch" role="group" aria-label="Tamanho da visualização">
-          <button type="button" data-size="wide" aria-pressed="true">Desktop</button>
-          <button type="button" data-size="narrow" aria-pressed="false">Celular</button>
+  <div class="chapter-toolbar">
+    <div class="chapter-tools">
+      <label class="section-control"><span>Seção</span><select id="section" aria-label="Seção do capítulo" disabled></select></label>
+      <details class="insertion" id="insert-menu">
+        <summary>＋ Adicionar</summary>
+        <div class="insert-options">
+          <button type="button" id="add-paragraph">Parágrafo nesta seção</button>
+          <button type="button" id="add-section">Nova seção depois desta</button>
         </div>
+      </details>
+    </div>
+    <div class="view-tools">
+      <div class="viewport-switch" role="group" aria-label="Tamanho da prévia">
+        <button type="button" data-size="wide" aria-pressed="true">Desktop</button>
+        <button type="button" data-size="narrow" aria-pressed="false">Celular</button>
       </div>
-      <div id="stage">
-        <iframe id="chapter-frame" src="/capitulo-3?mesa=1" title="Como trabalhamos · capítulo completo" sandbox="allow-scripts allow-same-origin" allow="autoplay"></iframe>
-      </div>
-      <p class="chapter-preview-status" id="frame-status" role="status">Carregando a página do site…</p>
+      <button type="button" id="toggle-editor" aria-controls="editor" aria-expanded="false" disabled>Editar seção</button>
+    </div>
+  </div>
+  <div class="chapter-area">
+    <section id="stage" aria-label="Prévia do capítulo" data-size="wide">
+      <iframe id="chapter-frame" src="/capitulo-3?mesa=1" title="Como trabalhamos · capítulo completo" sandbox="allow-scripts allow-same-origin" allow="autoplay"></iframe>
+      <p id="frame-status" role="status">Carregando o capítulo…</p>
     </section>
-    <form id="editor">
+    <form id="editor" aria-labelledby="editing-section" novalidate hidden>
+      <header class="pane-bar">
+        <div><p>Editando</p><h2 id="editing-section"></h2></div>
+        <button type="button" id="close-editor" aria-label="Fechar edição">×</button>
+      </header>
       <fieldset disabled>
-        <legend>Conteúdo da seção</legend>
         <label for="lang">Idioma</label>
         <select id="lang"><option value="pt">Português</option><option value="en">English</option><option value="es">Español</option></select>
         <label for="title">Título</label>
-        <input id="title" required maxlength="140">
-        <label for="body">Texto</label>
-        <textarea id="body" rows="10" required maxlength="12000"></textarea>
-        <p class="help" id="paragraph-help">Separe os parágrafos com uma linha em branco.</p>
+        <input id="title" maxlength="140">
+        <div class="paragraph-list" id="paragraphs"></div>
+        <button type="button" class="append" id="append-paragraph">＋ Adicionar parágrafo</button>
+        <button type="button" id="remove-section" hidden>Remover seção</button>
       </fieldset>
-      <p id="error" role="alert"></p>
     </form>
+  </div>
+  <p id="error" role="alert" hidden></p>
 </main>
 </body>
 </html>

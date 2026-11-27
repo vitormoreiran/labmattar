@@ -31,16 +31,28 @@ export async function prepareChapterRuntime(directory = 'dist/client') {
       let code = await readFile('site-oficial/public'+path,'utf8');
       // The original animation cleans up the text nodes it previously owned.
       // A content key lets React renew only the changed copy, leaving video and layout mounted.
-      code = replaceOnce(code,'children:l.summary})]})','children:l.summary})]},JSON.stringify([l.title,l.summary]))');
-      code = replaceOnce(code,'(d.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]})','(d.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]},JSON.stringify([d.title,d.summary,d.body]))');
-      code = replaceOnce(code,'(f.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]})','(f.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]},JSON.stringify([f.title,f.summary,f.body]))');
+      code = replaceOnce(code,'children:l.summary})]})})','children:l.summary}),(l.body??[]).map((e,i)=>(0,c.jsx)(`p`,{children:e},i))]},JSON.stringify([l.title,l.summary,l.body]))},`proposta`)');
+      code = replaceOnce(code,'(d.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]})})','(d.body??[]).map((e,i)=>(0,c.jsx)(`p`,{children:e},i))]},JSON.stringify([d.title,d.summary,d.body]))},`obras-comissionadas`)');
+      code = replaceOnce(code,'(f.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]})})]})]})','(f.body??[]).map((e,i)=>(0,c.jsx)(`p`,{children:e},i))]},JSON.stringify([f.title,f.summary,f.body]))},`processo-criativo`)])})]})');
+      code = replaceOnce(code,'`Capítulo 3: como trabalhamos`,children:[','`Capítulo 3: como trabalhamos`,children:withChapterSections(e,[');
+      code = "import { withChapterSections } from '/mesa-editor/chapter-runtime-data.mjs';\n" + code;
+      await writeFile(target,code);
+    } else if (path === '/assets/navigation-shared.js') {
+      let code = await readFile('site-oficial/public'+path,'utf8');
+      // The editor opens ready for work. The separate saved page keeps the site's guide.
+      code = replaceOnce(code,'if(!guideSeen){',"if(!guideSeen && !(chapter===3 && window.parent!==window && new URLSearchParams(location.search).get('mesa')==='1')){");
+      code = replaceOnce(code,'    return (chapterTopics[chapter]?.items||[])',
+        '    if(chapter===3)return sectionNodes.map(node=>({id:node.id,label:node.dataset.navTitle||chapterTopics[3].items.find(([id])=>id===node.id)?.[1]})).filter(x=>x.label);\n    return (chapterTopics[chapter]?.items||[])');
       await writeFile(target,code);
     } else if (published.has(path)) {
       const source = await fetch(new URL(path,'https://labmattar.com'),{redirect:'error',signal:AbortSignal.timeout(20_000)});
       if (!source.ok) throw Error('Não foi possível obter o asset público '+path);
       const bytes = Buffer.from(await source.arrayBuffer());
       if (createHash('sha256').update(bytes).digest('hex') !== published.get(path)) throw Error('A versão publicada de '+path+' mudou. Confira a paridade antes de publicar a prévia.');
-      await writeFile(target,bytes);
+      // A abertura mantém o estilo publicado quando recebe mais de um parágrafo.
+      if (path.endsWith('.css')) {
+        await writeFile(target,bytes.toString('utf8').replaceAll('.chapter5-hero .chapter5-copy>p:last-child','.chapter5-hero .chapter5-copy>p'));
+      } else await writeFile(target,bytes);
     } else {
       await copyFile('site-oficial/public'+path,target);
     }

@@ -247,6 +247,9 @@ jobs:
           done
           curl --fail --silent --show-error --retry 5 --retry-all-errors --max-time 20 \
             "$base/mesa-api/portfolio/state" | node -e 'let s="";process.stdin.on("data",v=>s+=v).on("end",()=>{if(JSON.parse(s).state.projects[0].id!=="aleteia")process.exit(1)})'
+          curl --fail --silent --show-error --retry 5 --retry-all-errors --max-time 20 \
+            "$base/capitulo-3?commit=$GITHUB_SHA" -o /tmp/mesa-capitulo-3-published
+          cmp scripts/mesa-capitulo-3-publicado.html /tmp/mesa-capitulo-3-published
       - name: Preparar inspeção do PDF
         if: steps.scope.outputs.editorial_only != 'true'
         run: |

@@ -12,7 +12,7 @@
   <div class="editor-context"><p>Site / Capítulo 03</p><h1 data-lm-text-role="subtitle">Como trabalhamos</h1></div>
   <div class="actions">
     <span id="status" role="status">Abrindo sessão de teste…</span>
-    <a href="/mesa-editor/chapter-preview.html" target="_blank" rel="noopener">Ver versão salva</a>
+    <a href="/capitulo-3" target="_blank" rel="noopener">Ver versão salva</a>
     <button form="editor" class="primary" id="save" disabled>Salvar e atualizar prévia</button>
   </div>
 </header>
@@ -27,15 +27,18 @@
       <button type="button" data-mobile-view="edit" aria-pressed="true">Conteúdo</button>
       <button type="button" data-mobile-view="visual" aria-pressed="false">Visualização</button>
     </div>
-    <section class="visual" aria-label="Visualização da seção em edição">
+    <section class="visual" aria-label="Capítulo completo em edição">
       <div class="visual-bar">
-        <span>Visualização</span>
+        <span>Capítulo completo</span>
         <div class="viewport-switch" role="group" aria-label="Tamanho da visualização">
           <button type="button" data-size="wide" aria-pressed="true">Desktop</button>
           <button type="button" data-size="narrow" aria-pressed="false">Celular</button>
         </div>
       </div>
-      <div id="stage"></div>
+      <div id="stage">
+        <iframe id="chapter-frame" src="/capitulo-3?mesa=1" title="Como trabalhamos · capítulo completo" sandbox="allow-scripts allow-same-origin" allow="autoplay"></iframe>
+      </div>
+      <p class="chapter-preview-status" id="frame-status" role="status">Carregando a página do site…</p>
     </section>
     <form id="editor">
       <fieldset disabled>
@@ -46,7 +49,7 @@
         <input id="title" required maxlength="140">
         <label for="body">Texto</label>
         <textarea id="body" rows="10" required maxlength="12000"></textarea>
-        <p class="help">Separe os parágrafos com uma linha em branco.</p>
+        <p class="help" id="paragraph-help">Separe os parágrafos com uma linha em branco.</p>
       </fieldset>
       <p id="error" role="alert"></p>
     </form>

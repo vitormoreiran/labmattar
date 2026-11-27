@@ -24,6 +24,9 @@
         <summary>＋ Adicionar</summary>
         <div class="insert-options">
           <button type="button" id="add-paragraph">Parágrafo nesta seção</button>
+          <button type="button" data-add-block="text" hidden>Bloco de texto</button>
+          <button type="button" data-add-block="image" hidden>Imagem</button>
+          <button type="button" data-add-block="video" hidden>Vídeo</button>
           <button type="button" id="add-section">Nova seção depois desta</button>
         </div>
       </details>
@@ -53,6 +56,19 @@
         <input id="title" maxlength="140">
         <div class="paragraph-list" id="paragraphs"></div>
         <button type="button" class="append" id="append-paragraph">＋ Adicionar parágrafo</button>
+        <section id="composer" aria-label="Composição da seção" hidden>
+          <details class="section-spacing">
+            <summary>Espaços da seção</summary>
+            <div id="section-spacing"></div>
+          </details>
+          <div class="block-heading"><h3>Blocos</h3><span id="block-count"></span></div>
+          <div id="blocks"></div>
+          <div class="append-blocks" role="group" aria-label="Adicionar bloco">
+            <button type="button" data-add-block="text">＋ Texto</button>
+            <button type="button" data-add-block="image">＋ Imagem</button>
+            <button type="button" data-add-block="video">＋ Vídeo</button>
+          </div>
+        </section>
         <button type="button" id="remove-section" hidden>Remover seção</button>
       </fieldset>
     </form>

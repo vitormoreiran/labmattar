@@ -1,6 +1,7 @@
 import { r as interop } from '/assets/rolldown-runtime-S-ySWqyJ.js';
 import { i as loadReact } from '/assets/framework-CXnKph_e.js';
 import { getLanguage, setLanguage } from '/assets/i18n.js';
+import { languages, upgradeChapter } from './chapter-blocks.mjs';
 
 const React = interop(loadReact(),1);
 const sectionIds = new Map([
@@ -9,7 +10,6 @@ const sectionIds = new Map([
   ['processo-criativo', { page:'cap3-processo-criativo', anchor:'processo-criativo' }],
 ]);
 const editorIds = new Map([...sectionIds].map(([id,{anchor}]) => [anchor,id]));
-const languages = new Set(['pt','en','es']);
 const extraId = /^trecho-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const origin = location.origin;
 const isEditorFrame = window.parent !== window && new URLSearchParams(location.search).get('mesa') === '1';
@@ -22,12 +22,33 @@ function chapterContent(sections,lang) {
     if (original) {
       pages[original.page] = { title:copy.title, summary:copy.body[0] ?? '', body:copy.body.slice(1) };
       order.push(original.anchor);
-    } else if (extraId.test(section.id) && (isEditorFrame || (copy.title.trim() && copy.body.some(p => p.trim())))) {
-      extra[section.id] = { title:copy.title.trim() || 'Nova seção', body:copy.body };
-      order.push(section.id);
+    } else if (extraId.test(section.id) && Array.isArray(section.blocks)) {
+      const blocks = section.blocks.filter(block => isEditorFrame || (block.type === 'text' ? block.copy[lang].trim() : block.media)).map(block => ({
+        id:block.id, type:block.type, space:block.space, media:block.media,
+        text:block.copy[lang].trim() || (block.type === 'text' ? '' : Object.values(block.copy).find(value => value.trim())),
+      }));
+      if (isEditorFrame || (copy.title.trim() && blocks.length)) {
+        extra[section.id] = { title:copy.title.trim() || 'Nova seção', spacing:section.spacing, blocks };
+        order.push(section.id);
+      }
     }
   }
   return { pages, order, extra };
+}
+
+function renderBlock(block) {
+  const shared = { className:'chapter3-block', 'data-block-id':block.id, key:block.id, style:{'--block-gap':block.space+'px'} };
+  if (block.type === 'text') return React.createElement('div',shared,
+    React.createElement('p',{ key:block.text, className:block.text ? undefined : 'chapter3-text-empty' },block.text));
+  const isImage = block.type === 'image';
+  const name = isImage ? 'Editar imagem' : 'Editar vídeo';
+  const src = block.media && '/mesa-media/'+block.media.key;
+  const media = src && (isImage
+    ? React.createElement('img',{src,alt:block.text || '',decoding:'async','data-edit-block':isEditorFrame ? name : undefined})
+    : React.createElement('video',{src,controls:true,playsInline:true,preload:'metadata','aria-label':block.text || block.media.name}));
+  return React.createElement('figure',{ ...shared, className:shared.className+' chapter3-media' },
+    media || React.createElement('div',{ className:'chapter3-media-empty', 'data-placeholder':isImage ? 'Envie uma imagem' : 'Envie um vídeo' }),
+    isEditorFrame && React.createElement('button',{ type:'button', className:'chapter3-edit-media', 'data-edit-block':name, 'aria-label':name, title:name }));
 }
 
 export function withChapterSections(content, originals) {
@@ -35,23 +56,24 @@ export function withChapterSections(content, originals) {
   const original = new Map(originals.map(el => [el.props.id,el]));
   return content.order.map(id => {
     if (original.has(id)) return original.get(id);
-    const { title, body } = content.extra[id];
-    return React.createElement('section',{ id, key:id, className:'story-panel chapter5-process', 'data-nav-title':title },
-      React.createElement('div',{ className:'chapter5-copy chapter5-reading chapter3-scramble', key:JSON.stringify([title,body]) },
-        React.createElement('h2',null,title),
-        ...body.map((text,index) => React.createElement('p',{key:index},text))));
+    const { title, spacing, blocks } = content.extra[id];
+    const style = {'--section-leading':spacing.before+'px','--section-trailing':spacing.after+'px'};
+    return React.createElement('section',{ id, key:id, className:'story-panel chapter5-process chapter3-section', 'data-nav-title':title, style },
+      React.createElement('div',{ className:'chapter5-copy chapter5-reading chapter3-scramble chapter3-composed' },
+        React.createElement('h2',{key:title},title),blocks.map(renderBlock)));
   });
 }
 
 function linkEditor(apply) {
   const story = document.querySelector('.chapter3-shell .story');
   if (!story) return () => {};
-  const editable = '.chapter5-copy > :is(h1,h2,p)';
+  const editable = '.chapter5-copy > :is(h1,h2,p), .chapter3-block > p, [data-edit-block]';
   const report = (type,data) => window.parent.postMessage({type,...data},origin);
   const style = document.createElement('style');
   style.textContent = `
-    .chapter3-shell ${editable} { cursor:text; outline-offset:5px; }
-    .chapter3-shell ${editable}:is(:hover,:focus-visible) { outline:1px dashed #fff9; }
+    .chapter3-shell :is(${editable}) { cursor:text; outline-offset:5px; }
+    .chapter3-shell [data-edit-block] { cursor:pointer; }
+    .chapter3-shell :is(${editable}):is(:hover,:focus-visible) { outline:1px dashed #fff9; }
   `;
   document.head.append(style);
   let visible, pendingSeek, pendingReveal, scheduled, settingLanguage = 0;
@@ -69,12 +91,14 @@ function linkEditor(apply) {
   function checkPosition() {
     scheduled = undefined;
     if (pendingSeek) {
-      const section = document.getElementById(pendingSeek);
+      const { anchor, request } = pendingSeek;
+      const section = document.getElementById(anchor);
       const copy = section?.querySelector('.chapter5-copy');
       if (!copy) return;
       pendingSeek = undefined;
       const top = scrollY + section.getBoundingClientRect().top + copy.offsetTop - innerHeight * .26;
       window.scrollTo({top,behavior:'instant'});
+      report('mesa:chapter-positioned',{request});
     }
     const line = innerHeight * .42;
     const section = [...story.children].find(panel => {
@@ -94,17 +118,18 @@ function linkEditor(apply) {
 
   function refreshTargets() {
     for (const el of story.querySelectorAll(editable)) {
-      if (!el.hasAttribute('tabindex')) {
+      if (!el.hasAttribute('tabindex') && !el.matches('button')) {
         el.tabIndex = 0;
-        el.title = el.matches('p') ? 'Editar parágrafo' : 'Editar título';
+        el.title = el.dataset.editBlock ?? (el.matches('p') ? 'Editar parágrafo' : 'Editar título');
       }
     }
     if (pendingReveal) {
       const { anchor, field } = pendingReveal;
-      const paragraph = document.getElementById(anchor)?.querySelectorAll('.chapter5-copy > p')[field];
-      if (paragraph?.textContent.trim()) {
+      const panel = document.getElementById(anchor);
+      const block = typeof field === 'string' ? [...(panel?.querySelectorAll('[data-block-id]') ?? [])].find(item => item.dataset.blockId === field) : panel?.querySelectorAll('.chapter5-copy > p')[field];
+      if (block && (typeof field === 'string' || block.textContent.trim())) {
         pendingReveal = undefined;
-        const rect = paragraph.getBoundingClientRect();
+        const rect = block.getBoundingClientRect();
         if (rect.top < innerHeight * .14 || rect.top > innerHeight * .63) {
           window.scrollTo({top:scrollY+rect.top-innerHeight*.29,behavior:'instant'});
         }
@@ -120,8 +145,8 @@ function linkEditor(apply) {
       const id = event.data.section;
       const anchor = sectionIds.get(id)?.anchor ?? (extraId.test(id) ? id : null);
       if (!anchor) return;
-      if (event.data.type === 'mesa:chapter-reveal') pendingReveal = {anchor,field:event.data.field};
-      else { pendingReveal = undefined; pendingSeek = anchor; schedule(); }
+      if (event.data.type === 'mesa:chapter-reveal') { pendingReveal = {anchor,field:event.data.field}; refreshTargets(); }
+      else { pendingReveal = undefined; pendingSeek = {anchor,request:event.data.request}; schedule(); }
     }
   }
 
@@ -135,7 +160,8 @@ function linkEditor(apply) {
       event.preventDefault();
       const anchor = copy.closest('.story-panel').id;
       const section = editorIds.get(anchor) ?? anchor;
-      const field = copy.matches('p') ? [...copy.parentElement.children].filter(el => el.matches('p')).indexOf(copy) : 'title';
+      const block = copy.closest('[data-block-id]');
+      const field = block?.dataset.blockId ?? (copy.matches('p') ? [...copy.parentElement.children].filter(el => el.matches('p')).indexOf(copy) : 'title');
       report('mesa:chapter-edit',{section,field});
       return;
     }
@@ -175,13 +201,18 @@ export function useChapterDraft() {
   const [content,setContent] = React.useState(null);
   React.useEffect(() => {
     let active = true, last = '', pending = Promise.resolve();
+    const styles = document.createElement('link');
+    styles.rel = 'stylesheet';
+    styles.href = '/mesa-editor/chapter-content.css';
+    document.head.append(styles);
+    const stop = () => { active = false; styles.remove(); };
     function apply(sections,lang) {
-      if (!languages.has(lang) || !Array.isArray(sections)) return Promise.resolve();
+      if (!languages.includes(lang) || !Array.isArray(sections)) return Promise.resolve();
       pending = pending.catch(() => {}).then(async () => {
         if (!active) return;
         if (getLanguage() !== lang) await setLanguage(lang);
         if (!active) return;
-        const next = chapterContent(sections,lang);
+        const next = chapterContent(upgradeChapter(sections),lang);
         const snapshot = JSON.stringify(next);
         if (snapshot !== last) {
           last = snapshot;
@@ -192,7 +223,7 @@ export function useChapterDraft() {
     }
     if (isEditorFrame) {
       const cleanup = linkEditor(apply);
-      return () => { active = false; cleanup(); };
+      return () => { stop(); cleanup(); };
     }
     let saved;
     const syncLanguage = () => { if (saved) apply(saved,getLanguage()); };
@@ -202,7 +233,7 @@ export function useChapterDraft() {
       saved = value.state;
       apply(saved,getLanguage());
     }).catch(() => {});
-    return () => { active = false; window.removeEventListener('mattar:language-changed',syncLanguage); };
+    return () => { stop(); window.removeEventListener('mattar:language-changed',syncLanguage); };
   },[]);
   return content;
 }

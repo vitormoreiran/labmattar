@@ -35,6 +35,10 @@ export async function prepareChapterRuntime(directory = 'dist/client') {
       code = replaceOnce(code,'(d.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]})})','(d.body??[]).map((e,i)=>(0,c.jsx)(`p`,{children:e},i))]},JSON.stringify([d.title,d.summary,d.body]))},`obras-comissionadas`)');
       code = replaceOnce(code,'(f.body??[]).map(e=>(0,c.jsx)(`p`,{children:e},e))]})})]})]})','(f.body??[]).map((e,i)=>(0,c.jsx)(`p`,{children:e},i))]},JSON.stringify([f.title,f.summary,f.body]))},`processo-criativo`)])})]})');
       code = replaceOnce(code,'`Capítulo 3: como trabalhamos`,children:[','`Capítulo 3: como trabalhamos`,children:withChapterSections(e,[');
+      // Media metadata and image decoding can change the chapter height after a draft is rendered.
+      code = replaceOnce(code,'let e=!1,t,n=[];return(async()=>','let e=!1,t,n=[],observer,refreshFrame;return(async()=>');
+      code = replaceOnce(code,'a.refresh()}))})(),()=>{e=!0,t?.revert()',
+        'a.refresh();let story=document.querySelector(`.chapter3-shell .story`);if(story){observer=new ResizeObserver(()=>{cancelAnimationFrame(refreshFrame);refreshFrame=requestAnimationFrame(()=>a.refresh())});observer.observe(story)}}))})(),()=>{e=!0,observer?.disconnect(),cancelAnimationFrame(refreshFrame),t?.revert()');
       code = "import { withChapterSections } from '/mesa-editor/chapter-runtime-data.mjs';\n" + code;
       await writeFile(target,code);
     } else if (path === '/assets/navigation-shared.js') {

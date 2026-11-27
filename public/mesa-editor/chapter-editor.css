@@ -110,3 +110,34 @@ fieldset .append { border-color:var(--line); justify-content:flex-start; }
   .insert-options { left:auto; right:0; }
   #editor { inset:auto 0 0; max-height:64%; width:auto; border:0; border-top:1px solid var(--line); box-shadow:0 -12px 36px #1113; }
 }
+
+.section-spacing { border-block:1px solid var(--line); margin:9px 0 12px; }
+.section-spacing summary { justify-content:flex-start; cursor:pointer; width:100%; padding-inline:0; }
+.section-spacing summary::before { content:'＋'; margin-inline:1px 6px; }
+.section-spacing[open] summary::before { content:'−'; }
+#section-spacing { padding:3px 0 10px; display:grid; gap:5px; }
+.block-heading { display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding-block:5px 8px; }
+.block-heading h3 { font-size:.9rem; letter-spacing:.03em; margin:0; }
+#block-count { font-size:.8rem; color:var(--muted); }
+#blocks { display:grid; gap:5px; }
+.block-card { background:#fff; border:1px solid var(--line); min-width:0; }
+.block-card[open] { border-color:#a9a59b; }
+.block-card > summary { list-style:none; display:flex; min-width:0; width:100%; justify-content:flex-start; gap:8px; }
+.block-card > summary::-webkit-details-marker { display:none; }
+.block-card > summary::after { content:'＋'; margin-left:auto; }
+.block-card[open] > summary::after { content:'−'; }
+.block-name { color:var(--ink); }
+.block-caption { color:var(--muted); overflow:hidden; text-overflow:ellipsis; letter-spacing:normal; text-transform:none; }
+.block-controls { display:grid; gap:8px; padding:3px 10px 10px; }
+.block-controls label { margin-top:0; }
+.block-controls textarea { resize:vertical; min-height:68px; }
+.block-order { display:flex; gap:3px; border-top:1px solid var(--line); padding-top:4px; }
+.block-order button { font-size:.75rem; min-block-size:34px; padding-inline:5px; }
+.block-order button:last-child { margin-left:auto; color:#902319; }
+.append-blocks { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin-block:8px 5px; }
+.append-blocks button { padding-inline:4px; border-color:var(--line); }
+.gap-control { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:0 8px; }
+.gap-control output { color:var(--muted); font-size:.78rem; white-space:nowrap; }
+html body #editor .gap-control input { grid-column:1/-1; border:0; padding:2px 0; min-block-size:22px; accent-color:var(--ink); background:transparent; }
+.upload-name, .upload-hint { color:var(--muted); overflow-wrap:anywhere; font-size:.8rem; margin:0; }
+html body #editor input[type="file"] { padding:5px; font-size:.82rem; }

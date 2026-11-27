@@ -5,6 +5,9 @@ const COOKIE = '__Host-labmattar-mesa';
 const MAX_JSON = 900_000;
 const MEDIA_LIMIT = 12 * 1024 * 1024;
 const SESSION_LIMIT = 36 * 1024 * 1024;
+const CHAPTER_SESSION_LIMIT = 72 * 1024 * 1024;
+const chapterLimits = { image:8 * 1024 * 1024, video:24 * 1024 * 1024 };
+const videoTypes = new Map([['video/mp4','mp4'],['video/webm','webm']]);
 const DAY = 86_400;
 const imageTypes = new Map([['image/jpeg', 'jpg'], ['image/png', 'png'], ['image/webp', 'webp'], ['image/avif', 'avif']]);
 const seedMedia = new Map(examples.project.gallery.map(img => [`01-aleteia/${img.file}`, img.path]));
@@ -12,6 +15,30 @@ const error = (message, status = 400) => Object.assign(new Error(message), { sta
 const json = (value, status = 200) => Response.json(value, { status, headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
 const safeKey = key => typeof key === 'string' && /^[\w.-]+(?:\/[\w.-]+)*$/.test(key) && !key.split('/').some(part => part === '.' || part === '..');
 const text = (value, max) => typeof value === 'string' && value.length <= max;
+const chapterMediaKey = /^chapter\/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.(?:jpg|png|webp|avif|mp4|webm)$/;
+const blockId = /^bloco-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
+const chapterLanguages = ['pt','en','es'];
+const gap = value => Number.isInteger(value) && value >= 0 && value <= 192;
+
+function matchesMedia(bytes,mime) {
+  const start = (...signature) => signature.every((value,index) => bytes[index] === value);
+  const tag = (at,name) => [...name].every((char,index) => bytes[at+index] === char.charCodeAt(0));
+  if (mime === 'image/jpeg') return start(255,216,255);
+  if (mime === 'image/png') return start(137,80,78,71,13,10,26,10);
+  if (mime === 'image/webp') return tag(0,'RIFF') && tag(8,'WEBP');
+  if (mime === 'image/avif') return tag(4,'ftyp') && Array.from({length:12},(_,index)=>8+index*4).some(at=>tag(at,'avif') || tag(at,'avis'));
+  if (mime === 'video/mp4') return tag(4,'ftyp');
+  return mime === 'video/webm' && start(26,69,223,163);
+}
+
+function byteRange(range,size) {
+  if (!range) return { start:0,end:size-1 };
+  const parts = /^bytes=(\d*)-(\d*)$/.exec(range);
+  if (!parts || (!parts[1] && !parts[2])) return null;
+  if (!parts[1]) return Number(parts[2]) > 0 ? {start:Math.max(0,size-Number(parts[2])),end:size-1} : null;
+  const start = Number(parts[1]), end = parts[2] ? Math.min(size-1,Number(parts[2])) : size-1;
+  return start <= end ? {start,end} : null;
+}
 
 function seed(scope) {
   if (scope === 'chapter') return structuredClone(examples.chapter);
@@ -121,8 +148,13 @@ export class MesaEditorSession extends DurableObject {
       if ((!fixed && !/^trecho-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(id)) || ids.has(id)) throw error('Seção inválida.');
       ids.add(id);
       if (fixed) kept.push(id);
+      if (fixed && section.blocks !== undefined) throw error('A seção original usa a edição de parágrafos.');
+      if (!fixed && section.blocks !== undefined) {
+        this.validateComposedSection(section);
+        continue;
+      }
       let filled = false;
-      for (const lang of ['pt', 'en', 'es']) {
+      for (const lang of chapterLanguages) {
         const entry = section[lang];
         if (!text(entry?.title, 140) || !Array.isArray(entry.body) || entry.body.length < 1 || entry.body.length > 12 || entry.body.some(p => !text(p, 4000))) throw error('Título ou parágrafo inválido.');
         if (!fixed && !entry.title.trim() && entry.body.every(p => !p.trim())) continue;
@@ -132,6 +164,33 @@ export class MesaEditorSession extends DurableObject {
       if (!filled) throw error('Preencha uma versão da nova seção antes de salvar.');
     }
     if (original.some((id,index) => id !== kept[index])) throw error('Sequência do capítulo inválida.');
+  }
+
+  validateComposedSection(section) {
+    const { blocks, spacing } = section;
+    if (!gap(spacing?.before) || !gap(spacing.after) || !Array.isArray(blocks) || !blocks.length || blocks.length > 12 ||
+        chapterLanguages.some(code => !text(section[code]?.title,140) || !Array.isArray(section[code].body) || section[code].body.length !== 1 || section[code].body[0] !== '')) {
+      throw error('Composição da seção inválida.');
+    }
+    const ids = new Set();
+    for (const block of blocks) {
+      if (!blockId.test(block?.id) || ids.has(block.id) || !gap(block.space) || !['text','image','video'].includes(block.type) ||
+          chapterLanguages.some(code => !text(block.copy?.[code],block.type === 'text' ? 4000 : 240))) throw error('Bloco de conteúdo inválido.');
+      ids.add(block.id);
+      if (block.type !== 'video' && !chapterLanguages.some(code => block.copy[code].trim())) throw error('Preencha o texto do bloco.');
+      if (block.type === 'text') {
+        if (block.media !== undefined) throw error('Bloco de texto inválido.');
+        continue;
+      }
+      const { key, name } = block.media ?? {};
+      if (!chapterMediaKey.test(key) || !text(name,180) || !name.trim()) throw error('Envie o arquivo do bloco.');
+      const mime = this.sql.exec('SELECT mime FROM uploads WHERE key=?',key).toArray()[0]?.mime;
+      const allowed = block.type === 'image' ? imageTypes : videoTypes;
+      if (!allowed.has(mime)) throw error('Arquivo do bloco indisponível nesta sessão.');
+    }
+    if (!chapterLanguages.some(code => section[code].title.trim() && blocks.some(block => block.type !== 'text' || block.copy[code].trim()))) {
+      throw error('Preencha o título e o conteúdo em pelo menos um idioma.');
+    }
   }
 
   commit(scope, state, etag, removedId) {
@@ -181,18 +240,48 @@ export class MesaEditorSession extends DurableObject {
     const file = `adicionadas/${id}.webp`, mini = `adicionadas/${id}-mini.webp`, source = `adicionadas/${id}.${imageTypes.get(original.type)}`;
     const files = [[file, optimized], [mini, thumbnail], [`originais/${source}`, original]];
     const buffers = await Promise.all(files.map(async ([path, blob]) => ({ path, mime: blob.type, bytes: await blob.arrayBuffer() })));
-    this.ctx.storage.transactionSync(() => {
-      const used = this.sql.exec('SELECT coalesce(SUM(bytes),0) AS total FROM uploads').toArray()[0].total;
-      if (used + buffers.reduce((sum, item) => sum + item.bytes.byteLength, 0) > SESSION_LIMIT) throw error('Esta sessão atingiu o limite de imagens.', 413);
-      for (const item of buffers) {
-        const key = `${p.folder}/${item.path}`, chunk = 400_000;
-        this.sql.exec('INSERT INTO uploads VALUES (?,?,?)', key, item.mime, item.bytes.byteLength);
-        for (let offset = 0; offset < item.bytes.byteLength; offset += chunk) this.sql.exec('INSERT INTO media_chunks VALUES (?,?,?)', key, offset, item.bytes.slice(offset, offset + chunk));
-      }
-    });
+    this.storeMedia(buffers.map(item => ({...item,key:`${p.folder}/${item.path}`})),false);
     return json({ slide: { id: `${p.id}/${file}`, type: 'image', file, thumbnail: mini, original_file: `originais/${source}`,
       original_name: original.name, width: Number(data.get('width')), height: Number(data.get('height')), bytes_original: original.size, bytes_optimized: optimized.size,
       caption_official: '', caption_initialized: true, included: true, alt: '' }, duplicate: false });
+  }
+
+  storeMedia(files,chapter) {
+    this.ctx.storage.transactionSync(() => {
+      const limit = chapter ? CHAPTER_SESSION_LIMIT : SESSION_LIMIT;
+      const used = this.sql.exec('SELECT coalesce(SUM(bytes),0) AS total FROM uploads WHERE (key LIKE ?) = ?', 'chapter/%', Number(chapter)).toArray()[0].total;
+      if (used + files.reduce((sum, file) => sum + file.bytes.byteLength,0) > limit) throw error(chapter ? 'Esta sessão atingiu o limite de mídia do capítulo (72 MB).' : 'Esta sessão atingiu o limite de imagens.',413);
+      for (const { key, mime, bytes } of files) {
+        this.sql.exec('INSERT INTO uploads VALUES (?,?,?)',key,mime,bytes.byteLength);
+        for (let offset = 0; offset < bytes.byteLength; offset += 400_000) this.sql.exec('INSERT INTO media_chunks VALUES (?,?,?)',key,offset,bytes.slice(offset,offset+400_000));
+      }
+    });
+  }
+
+  async uploadChapter(request,type) {
+    const mime = request.headers.get('content-type');
+    const extension = type === 'image' ? imageTypes.get(mime) : type === 'video' ? videoTypes.get(mime) : null;
+    if (!extension) throw error('Formato de mídia inválido.',415);
+    const limit = chapterLimits[type], size = Number(request.headers.get('content-length'));
+    if (!Number.isSafeInteger(size) || size < 1 || size > limit) throw error('O arquivo está vazio ou excede o limite do bloco.',413);
+    const reader = request.body?.getReader();
+    if (!reader) throw error('Arquivo ausente.');
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      if (offset + value.byteLength > bytes.length) {
+        await reader.cancel();
+        throw error('Tamanho do arquivo inválido.',413);
+      }
+      bytes.set(value,offset);
+      offset += value.byteLength;
+    }
+    if (offset !== bytes.length || !matchesMedia(bytes,mime)) throw error('O arquivo não corresponde ao formato selecionado.',415);
+    const key = 'chapter/'+crypto.randomUUID()+'.'+extension;
+    this.storeMedia([{key,mime,bytes:bytes.buffer}],true);
+    return json({key},201);
   }
 
   async media(request, key) {
@@ -206,18 +295,29 @@ export class MesaEditorSession extends DurableObject {
       return new Response(response.body, { headers });
     }
     const item = this.sql.exec('SELECT mime, bytes FROM uploads WHERE key=?', key).toArray()[0];
-    if (!item) throw error('Imagem não encontrada.', 404);
+    if (!item) throw error('Arquivo não encontrado.', 404);
     headers.set('Content-Type', item.mime);
-    headers.set('Content-Length', String(item.bytes));
+    const seekable = chapterMediaKey.test(key);
+    const range = seekable ? request.headers.get('range') : null;
+    const position = byteRange(range,item.bytes);
+    if (seekable) headers.set('Accept-Ranges','bytes');
+    if (!position) {
+      headers.set('Content-Range',`bytes */${item.bytes}`);
+      return new Response(null,{status:416,headers});
+    }
+    if (range) headers.set('Content-Range',`bytes ${position.start}-${position.end}/${item.bytes}`);
+    headers.set('Content-Length',String(position.end-position.start+1));
     const sql = this.sql;
-    let offset = 0;
+    let offset = position.start;
     const body = request.method === 'HEAD' ? null : new ReadableStream({ pull(controller) {
-      const chunk = sql.exec('SELECT part, data FROM media_chunks WHERE key=? AND part>=? ORDER BY part LIMIT 1', key, offset).toArray()[0];
+      if (offset > position.end) { controller.close(); return; }
+      const chunk = sql.exec('SELECT part, data FROM media_chunks WHERE key=? AND part<=? ORDER BY part DESC LIMIT 1',key,offset).toArray()[0];
       if (!chunk) { controller.close(); return; }
-      controller.enqueue(new Uint8Array(chunk.data));
-      offset = chunk.part + 1;
+      const bytes = new Uint8Array(chunk.data).subarray(offset-chunk.part,position.end-chunk.part+1);
+      controller.enqueue(bytes);
+      offset += bytes.length;
     } });
-    return new Response(body, { headers });
+    return new Response(body,{status:range ? 206 : 200,headers});
   }
 
   async fetch(request) {
@@ -225,6 +325,7 @@ export class MesaEditorSession extends DurableObject {
     try {
       if (path.startsWith('/mesa-media/') && ['GET', 'HEAD'].includes(method)) return await this.media(request, decodeURIComponent(path.slice('/mesa-media/'.length)));
       if (path === '/mesa-api/chapter' && method === 'GET') return json(this.latest('chapter'));
+      if (path === '/mesa-api/chapter/upload' && method === 'POST') return await this.uploadChapter(request,url.searchParams.get('type'));
       if (path === '/mesa-api/chapter' && method === 'POST') {
         const { state, etag } = await readJSON(request);
         return json(this.commit('chapter', state, etag));

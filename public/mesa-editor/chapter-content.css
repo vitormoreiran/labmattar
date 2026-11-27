@@ -1,0 +1,62 @@
+.chapter5-story .story-panel.chapter3-section {
+  --section-leading:0px;
+  --section-trailing:0px;
+  min-block-size:calc(130svh + var(--section-leading) + var(--section-trailing));
+}
+@media (max-width:760px) {
+  .chapter5-story .story-panel.chapter3-section {
+    min-block-size:calc(138svh + var(--section-leading) + var(--section-trailing));
+  }
+}
+.chapter3-section .chapter3-composed {
+  margin-block:var(--section-leading) var(--section-trailing);
+}
+.chapter3-composed .chapter3-block {
+  margin-block-start:var(--block-gap,28px);
+  max-width:100%;
+  text-align:left;
+  overflow-wrap:anywhere;
+}
+.chapter3-composed .chapter3-block > p { margin:0; }
+.chapter3-composed .chapter3-media {
+  position:relative;
+  margin-inline:0;
+  margin-block-end:0;
+  overflow:hidden;
+  background:#121710;
+}
+.chapter3-composed .chapter3-media :is(img,video) {
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:min(76svh,48rem);
+  object-fit:contain;
+}
+.chapter3-composed .chapter3-media:has(img) { background:transparent; }
+.chapter3-composed .chapter3-edit-media {
+  position:absolute;
+  z-index:1;
+  inset:8px 8px auto auto;
+  min-width:44px;
+  min-height:44px;
+  background:#151813e8;
+  border:1px solid #fff8;
+  color:#fff;
+  cursor:pointer;
+}
+.chapter3-edit-media::before { content:'✎'; font-size:1.2rem; }
+.chapter3-composed .chapter3-media-empty {
+  display:grid;
+  min-height:clamp(90px,24vw,192px);
+  place-items:center;
+  border:1px dashed #fff9;
+  color:#fff;
+}
+.chapter3-media-empty::before { content:attr(data-placeholder); }
+.chapter3-composed .chapter3-text-empty {
+  display:block;
+  opacity:.75;
+  font-style:italic;
+  min-height:1.4em;
+}
+.chapter3-text-empty::before { content:'Escreva o texto do bloco'; }

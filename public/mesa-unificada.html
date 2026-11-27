@@ -27,38 +27,39 @@
   <main>
     <section id="mesa-inicio" class="mesa-home" aria-labelledby="mesa-title">
       <header class="mesa-intro">
-        <div><p class="mesa-detail">LABMATTAR / Ambiente de trabalho</p><h1 id="mesa-title" data-lm-text-role="title">Mesa <span>Unificada</span></h1></div>
+        <h1 id="mesa-title" data-lm-text-role="title">Mesa <span>Unificada</span></h1>
         <a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">Ferramentas do Laboratório</a>
       </header>
-      <h2 class="mesa-index-title" data-lm-text-role="subtitle">Em trabalho</h2>
-      <div class="mesa-workgrid">
-        <article class="mesa-feature">
-          <div class="mesa-image"><img src="/presentation-models/covers/aleteia.webp" alt="Mesa de Aleteia sob projeções" fetchpriority="high"></div>
-          <div class="mesa-feature-body">
-            <p class="mesa-detail">Portfólio / Jantares imersivos</p>
-            <h2 data-lm-text-role="subtitle">Aleteia</h2>
-            <ul class="mesa-entry-list">
-              <li><span>Informações, capa e galeria</span><a class="mesa-action primary" href="#aleteia">Editar obra</a></li>
-              <li><span>Sequência e composição</span><a class="mesa-action" href="#apresentacao">Montar apresentação</a></li>
-            </ul>
-          </div>
-        </article>
-        <aside class="mesa-site">
-          <div class="mesa-site-image">
-            <img src="https://labmattar.com/assets/casa-das-palmeiras.jpg" alt="">
-          </div>
-          <div class="mesa-site-body">
-          <p class="mesa-detail">Site / Capítulo 03</p>
-          <h2 data-lm-text-role="subtitle">Como <span>trabalhamos</span></h2>
-          <ul>
-            <li>Abertura</li>
-            <li>Obras comissionadas</li>
-            <li>Processo criativo</li>
-          </ul>
-          <a class="mesa-action" href="#como-trabalhamos">Editar capítulo</a>
-          </div>
-        </aside>
-      </div>
+      <section class="mesa-index" aria-labelledby="mesa-index-label">
+        <h2 id="mesa-index-label" class="mesa-detail" data-lm-text-role="detail">Em trabalho</h2>
+        <div class="mesa-worklist">
+          <article class="mesa-work" aria-labelledby="work-aleteia">
+            <div class="mesa-work-image mesa-aleteia-image"><img src="/presentation-models/covers/aleteia.webp" alt="Projeções sobre a mesa de Aleteia" fetchpriority="high"></div>
+            <div class="mesa-work-copy">
+              <p class="mesa-detail">Portfólio / Jantares imersivos</p>
+              <h3 id="work-aleteia" data-lm-text-role="subtitle">Aleteia</h3>
+              <p>Capa, galeria e sequência da apresentação.</p>
+            </div>
+            <div class="mesa-work-actions">
+              <a class="mesa-action primary" href="#aleteia">Editar obra</a>
+              <a class="mesa-action" href="#apresentacao">Montar apresentação</a>
+            </div>
+          </article>
+          <article class="mesa-work" aria-labelledby="work-chapter">
+            <div class="mesa-work-image mesa-chapter-image">
+              <img src="https://labmattar.com/assets/casa-das-palmeiras.jpg" alt="">
+            </div>
+            <div class="mesa-work-copy">
+              <p class="mesa-detail">Site / Capítulo 03</p>
+              <h3 id="work-chapter" data-lm-text-role="subtitle">Como <span>trabalhamos</span></h3>
+              <p>Abertura, obras comissionadas e processo criativo.</p>
+            </div>
+            <div class="mesa-work-actions">
+              <a class="mesa-action primary" href="#como-trabalhamos">Editar capítulo</a>
+            </div>
+          </article>
+        </div>
+      </section>
       <footer class="mesa-foot">
         <p>Portfólio e Site usam uma sessão de teste. O Laboratório salva apresentações neste navegador.</p>
       </footer>

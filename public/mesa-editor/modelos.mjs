@@ -1,13 +1,17 @@
 import { models } from './modelos-data.mjs';
 
-const collection = document.getElementById('model-collection');
-const dialog = document.getElementById('model-dialog');
+const get = id => document.getElementById(id);
+const collection = get('model-collection');
+const dialog = get('model-dialog');
 const form = dialog.querySelector('form');
-const projectName = document.getElementById('project-name');
-const status = document.getElementById('model-status');
-const cancel = document.getElementById('cancel-model');
+const projectName = get('project-name');
+const status = get('model-status');
+const cancel = get('cancel-model');
 const submit = form.querySelector('[type="submit"]');
-let selected, pending;
+const sheet = document.querySelector('.model-sheet');
+const previous = get('model-prev'), next = get('model-next');
+const options = new Map();
+let selected = models[0], pageIndex = 0, pending;
 
 function element(tag,text,className) {
   const node = document.createElement(tag);
@@ -16,45 +20,38 @@ function element(tag,text,className) {
   return node;
 }
 
-function openModel(model) {
+function showPage(index) {
+  pageIndex = index;
+  const page = selected.pages[index];
+  sheet.dataset.format = selected.format;
+  sheet.dataset.paper = page.color || 'neutral';
+  sheet.style.setProperty('--title-scale',(page.scale || 70) / 100);
+  get('sheet-title').textContent = page.title;
+  const body = get('sheet-body');
+  body.textContent = page.body || '';
+  body.hidden = !page.body;
+  get('model-page').textContent = page.name;
+  get('model-page-count').textContent = (index+1)+' / '+selected.pages.length;
+  previous.disabled = index === 0;
+  next.disabled = index === selected.pages.length - 1;
+}
+
+function select(model) {
   selected = model;
-  document.getElementById('model-dialog-title').textContent = model.name;
-  projectName.value = model.name;
+  for (const [id,button] of options) button.setAttribute('aria-pressed',id === model.id);
+  get('model-name').textContent = model.name;
+  const length = model.pages.length;
+  get('model-meta').textContent = model.formatLabel+' · '+(length === 1 ? '1 página' : length+' páginas');
+  get('model-pager').hidden = length === 1;
+  showPage(0);
+}
+
+function openModel() {
+  get('model-dialog-title').textContent = selected.name;
+  projectName.value = selected.name;
   status.textContent = '';
   dialog.showModal();
   projectName.select();
-}
-
-function modelCard(model) {
-  const card = element('article','','model-card');
-  const preview = element('div','','model-preview');
-  const cover = model.pages[0];
-  preview.setAttribute('aria-hidden','true');
-  preview.dataset.format = model.format;
-  if (model.pages.length > 1) preview.dataset.document = '';
-  const sheet = element('div','','model-sheet');
-  sheet.dataset.paper = cover.color;
-  sheet.append(
-    element('span','LABMATTAR','model-sheet-signature'),
-    element('strong',cover.title,'model-sheet-title')
-  );
-  if (cover.body) sheet.append(element('p',cover.body,'model-sheet-body'));
-  preview.append(sheet);
-  const detail = element('div','','model-copy');
-  const name = element('h3',model.name);
-  const description = element('p',model.description);
-  const meta = element('p',model.formatLabel+' · '+(model.pages.length === 1 ? '1 página' : model.pages.length+' páginas'),'model-meta');
-  const action = element('button','Usar modelo');
-  action.type = 'button';
-  action.setAttribute('aria-label','Usar modelo '+model.name);
-  action.onclick = () => openModel(model);
-  detail.append(name,meta,description);
-  if (model.pages.length > 1) {
-    const outline = element('p',model.pages.map(page => page.name).join(' / '),'model-outline');
-    detail.append(outline);
-  }
-  card.append(preview,detail,action);
-  return card;
 }
 
 function busy(value) {
@@ -64,18 +61,28 @@ function busy(value) {
 if (window.top === window) {
   location.replace('/mesa-unificada#acervo');
 } else {
-  for (const group of ['Páginas','Documentos']) {
+  for (const [group,id] of [['Páginas','model-pages'],['Documentos','model-documents']]) {
     const section = element('section','','model-group');
     const heading = element('h2',group);
-    heading.id = group === 'Páginas' ? 'model-pages' : 'model-documents';
-    section.setAttribute('aria-labelledby',heading.id);
-    const grid = element('div','','model-grid');
-    grid.append(...models.filter(model => model.group === group).map(modelCard));
-    section.append(heading,grid);
+    heading.id = id;
+    section.setAttribute('aria-labelledby',id);
+    section.append(heading);
+    for (const model of models.filter(model => model.group === group)) {
+      const button = element('button',model.name);
+      button.type = 'button';
+      button.setAttribute('aria-controls','model-detail');
+      button.onclick = () => { if (selected !== model) select(model); };
+      options.set(model.id,button);
+      section.append(button);
+    }
     collection.append(section);
   }
+  select(selected);
 }
 
+previous.onclick = () => showPage(pageIndex-1);
+next.onclick = () => showPage(pageIndex+1);
+get('use-model').onclick = openModel;
 cancel.onclick = () => dialog.close();
 dialog.addEventListener('cancel',event => { if (pending) event.preventDefault(); });
 form.addEventListener('submit',event => {

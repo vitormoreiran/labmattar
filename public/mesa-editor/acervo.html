@@ -13,9 +13,34 @@
   <main>
     <header class="model-intro">
       <h1 id="acervo-title">Acervo de <span>modelos</span></h1>
-      <p>Escolha um ponto de partida para abrir um novo projeto em Montar.</p>
     </header>
-    <div id="model-collection"></div>
+    <div class="model-workspace">
+      <nav id="model-collection" aria-label="Modelos disponíveis"></nav>
+      <section id="model-detail" aria-labelledby="model-name">
+        <div class="model-toolbar">
+          <div>
+            <h2 id="model-name"></h2>
+            <p id="model-meta"></p>
+          </div>
+          <button class="model-primary" id="use-model" type="button">Criar em Montar</button>
+        </div>
+        <div class="model-stage">
+          <div class="model-sheet" aria-hidden="true">
+            <span class="model-sheet-signature">LABMATTAR</span>
+            <strong id="sheet-title"></strong>
+            <p id="sheet-body"></p>
+          </div>
+        </div>
+        <div id="model-pager" hidden>
+          <p id="model-page" aria-live="polite"></p>
+          <div role="group" aria-label="Páginas do modelo">
+            <button id="model-prev" type="button" aria-label="Página anterior">←</button>
+            <span id="model-page-count"></span>
+            <button id="model-next" type="button" aria-label="Próxima página">→</button>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
   <dialog id="model-dialog" aria-labelledby="model-dialog-title">
     <form>

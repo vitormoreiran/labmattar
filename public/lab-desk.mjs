@@ -33,9 +33,17 @@ function renderGallery(){
   const sectionCount=documentValue.story?.topics.length||documentValue.sections?.length;
   $('projectCount').textContent=rows.length+(rows.length===1?' página':' páginas')+(sectionCount?' · '+sectionCount+(sectionCount===1?' seção':' seções'):'');
   if(inMesa){
+    const hasSections=sectionCount>1;
     $('project-kind').textContent=currentKey.startsWith('reference:')?'Apresentação de referência':documentValue.story?'Rascunho de apresentação':rows.length===1?'Rascunho de página':'Rascunho de documento';
     $('newSection').hidden=!documentValue.story;
     $('newPage').textContent=documentValue.story?'Editar seção':'Adicionar página';
+    $('sectionFilter').hidden=!hasSections;
+    document.querySelector('.view-switch').hidden=!hasSections;
+    document.querySelector('.sequence-caption > span').textContent=documentValue.story?'Sequência da apresentação':'Páginas do projeto';
+    if(!hasSections){
+      view='all';
+      for(const control of document.querySelectorAll('.view-switch [data-view]'))control.setAttribute('aria-pressed',control.dataset.view===view);
+    }
   }
   const gallery=$('gallery'),visible=rows.filter(p=>!filter||p.topicId===filter);
   const positions=new Map([...gallery.querySelectorAll('[data-page-strip]')].map(el=>[el.dataset.pageStrip,el.scrollLeft]));

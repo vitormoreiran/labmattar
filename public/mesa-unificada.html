@@ -16,55 +16,79 @@
     <div class="mesa-toolbar">
       <a class="mesa-brand" href="#inicio" aria-label="Início da Mesa LABMATTAR"><img src="/identidade/mattar.svg" alt="Mattar" width="121" height="29"></a>
       <nav class="mesa-nav" aria-label="Área de trabalho">
-        <a href="#inicio">Mesa</a>
+        <a href="#inicio">Início</a>
         <a href="#acervo">Acervo</a>
-        <a href="#aleteia">Portfólio</a>
-        <a href="#apresentacao">Montar</a>
-        <a href="#como-trabalhamos">Site</a>
+        <a href="#montar">Montar</a>
+        <a href="#site">Site</a>
+        <a href="#portfolio">Portfólio</a>
       </nav>
       <span class="mesa-env">Prévia</span>
     </div>
+    <div class="mesa-detailbar" id="mesa-detailbar" hidden>
+      <a id="mesa-back" href="#inicio">← Início</a>
+      <span id="mesa-destination"></span>
+    </div>
   </header>
   <main>
-    <section id="mesa-inicio" class="mesa-home" aria-labelledby="mesa-title">
-      <header class="mesa-intro">
-        <h1 id="mesa-title" data-lm-text-role="title">Mesa <span>Unificada</span></h1>
-        <a href="/laboratorio.html#ferramentas" target="_blank" rel="noopener">Ferramentas do Laboratório</a>
+    <section id="mesa-inicio" class="mesa-screen" aria-labelledby="mesa-title">
+      <header class="screen-heading">
+        <h1 id="mesa-title" class="screen-title">Mesa <span>Unificada</span></h1>
       </header>
-      <section class="mesa-index" aria-labelledby="mesa-index-label">
-        <h2 id="mesa-index-label" class="mesa-detail" data-lm-text-role="detail">Em trabalho</h2>
-        <div class="mesa-worklist">
-          <article class="mesa-work" aria-labelledby="work-aleteia">
-            <div class="mesa-work-image mesa-aleteia-image"><img src="/presentation-models/covers/aleteia.webp" alt="Projeções sobre a mesa de Aleteia" fetchpriority="high"></div>
-            <div class="mesa-work-copy">
-              <p class="mesa-detail">Portfólio / Jantares imersivos</p>
-              <h3 id="work-aleteia" data-lm-text-role="subtitle">Aleteia</h3>
-              <p>Capa, galeria e sequência da apresentação.</p>
-            </div>
-            <div class="mesa-work-actions">
-              <a class="mesa-action primary" href="#aleteia">Editar obra</a>
-              <a class="mesa-action" href="#apresentacao">Montar apresentação</a>
-            </div>
-          </article>
-          <article class="mesa-work" aria-labelledby="work-chapter">
-            <div class="mesa-work-image mesa-chapter-image">
-              <img src="https://labmattar.com/assets/casa-das-palmeiras.jpg" alt="">
-            </div>
-            <div class="mesa-work-copy">
-              <p class="mesa-detail">Site / Capítulo 03</p>
-              <h3 id="work-chapter" data-lm-text-role="subtitle">Como <span>trabalhamos</span></h3>
-              <p>Abertura, obras comissionadas e processo criativo.</p>
-            </div>
-            <div class="mesa-work-actions">
-              <a class="mesa-action primary" href="#como-trabalhamos">Editar capítulo</a>
-            </div>
-          </article>
-        </div>
-      </section>
-      <footer class="mesa-foot">
-        <p>Portfólio e Site usam uma sessão de teste. O Laboratório salva apresentações neste navegador.</p>
-      </footer>
+      <div class="mesa-overview">
+        <section class="mesa-resume" aria-labelledby="resume-title">
+          <h2 class="screen-section-title" id="resume-title">Retomar trabalho</h2>
+          <a class="resume-row" href="#portfolio/aleteia">
+            <img src="/presentation-models/covers/aleteia.webp" alt="" width="120" height="70">
+            <div><strong>Aleteia</strong><small>Portfólio · Ficha e galeria da obra</small></div>
+            <span class="resume-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="resume-row" href="#site/como-trabalhamos">
+            <img src="/assets/casa-das-palmeiras.jpg" alt="" width="120" height="70">
+            <div><strong>Como trabalhamos</strong><small>Site · Capítulo 03</small></div>
+            <span class="resume-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="resume-row" id="resume-montar" href="#montar">
+            <span class="resume-mark" aria-hidden="true">M</span>
+            <div><strong id="resume-project-name">Apresentações de referência</strong><small id="resume-project-meta">Montar · Laboratório de Composição</small></div>
+            <span class="resume-arrow" aria-hidden="true">↗</span>
+          </a>
+        </section>
+        <section class="mesa-start" aria-labelledby="start-title">
+          <h2 class="screen-section-title" id="start-title">Começar uma criação</h2>
+          <a class="start-action start-primary" href="#montar/nova">
+            <div><strong>Nova criação</strong><small>Página ou apresentação</small></div><span aria-hidden="true">＋</span>
+          </a>
+          <a class="start-action" href="#acervo">
+            <div><strong>Explorar modelos</strong><small>Páginas e documentos prontos para editar</small></div><span aria-hidden="true">↗</span>
+          </a>
+        </section>
+      </div>
     </section>
+
+    <section id="mesa-site" class="mesa-screen mesa-index-screen" aria-labelledby="site-title" hidden>
+      <header class="screen-heading"><h1 id="site-title" class="screen-title">Capítulos do <span>site</span></h1></header>
+      <ol class="chapters-list">
+        <li><span class="chapter-number" aria-hidden="true">01</span><div><strong>Gastroperformance</strong><small>Manifesto, conceito e biografia</small></div><span class="index-state">Em preparação</span></li>
+        <li><span class="chapter-number" aria-hidden="true">02</span><div><strong>Portfólio</strong><small>Obras, capas e galerias</small></div><a class="index-action" href="#portfolio">Abrir Portfólio ↗</a></li>
+        <li><span class="chapter-number" aria-hidden="true">03</span><div><strong>Como trabalhamos</strong><small>Abertura, obras comissionadas e processo criativo</small></div><a class="index-action primary" href="#site/como-trabalhamos">Editar capítulo</a></li>
+        <li><span class="chapter-number" aria-hidden="true">04</span><div><strong>Apresentação</strong><small>Entrada e apresentações por convite</small></div><span class="index-state">Em preparação</span></li>
+        <li><span class="chapter-number" aria-hidden="true">05</span><div><strong>Contato</strong><small>Texto, canais e assinatura</small></div><span class="index-state">Em preparação</span></li>
+      </ol>
+    </section>
+
+    <section id="mesa-portfolio" class="mesa-screen mesa-index-screen" aria-labelledby="portfolio-title" hidden>
+      <header class="screen-heading">
+        <h1 id="portfolio-title" class="screen-title">Obras do <span>Portfólio</span></h1>
+        <a class="index-action" href="#portfolio/nova">＋ Nova obra</a>
+      </header>
+      <div class="portfolio-tools">
+        <label class="visually-hidden" for="mesa-project-search">Buscar obra ou categoria</label>
+        <input id="mesa-project-search" type="search" placeholder="Buscar obra ou categoria">
+        <p id="mesa-portfolio-status" role="status"></p>
+      </div>
+      <div id="mesa-projects" class="portfolio-index" aria-label="Obras na prévia"></div>
+    </section>
+
     <div id="mesa-workspaces"></div>
   </main>
 </body>

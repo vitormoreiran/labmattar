@@ -34,12 +34,20 @@ function renderProjects(){
  out+='<button class="project '+(p.id===projectId?'active':'')+'" draggable="true" data-project="'+esc(p.id)+'">'+(p.cover?(p.slides.find(s=>s.file===p.cover)?.type==='video'?'<video src="'+mediaUrl(p,p.cover)+'" muted playsinline preload="metadata"></video>':'<img src="'+mediaUrl(p,p.cover)+'" alt="">'):'<span class="emptyCover">＋</span>')+'<span>'+esc(p.title)+'<small>'+p.slides.filter(s=>s.included&&!s.missing&&!s.sync_error).length+' slides · '+(p.active===false?'Inativo':'Ativo')+'</small></span></button>';
  }$('projects').innerHTML=out||'<p class="muted">Nenhum projeto encontrado.</p>';
 }
-function renderGallery(){const p=project();$('category').textContent=p.category;$('title').textContent=p.title;$('progress').textContent=(p.active===false?'Inativo · ':'Ativo · ')+p.slides.filter(s=>s.included&&!s.missing&&!s.sync_error).length+' de '+p.slides.length+' slides incluídos';
+function renderGallery(){const p=project();$('category').textContent=p.category;$('title').textContent=p.title;$('progress').textContent=(p.active===false?'Oculta na prévia':'Visível na prévia')+' · '+p.slides.filter(s=>s.included&&!s.missing&&!s.sync_error).length+' itens na galeria';
  $('gallery').innerHTML=p.slides.map((s,i)=>'<button draggable="true" class="card '+(s.id===slideId?'selected ':'')+(!s.included?'excluded':'')+'" data-slide="'+esc(s.id)+'">'+media(p,s)+(p.cover===s.file?'<span class="badge">CAPA</span>':'')+'<div class="meta"><span class="num">'+String(i+1).padStart(2,'0')+' / '+(s.type==='youtube'?'YOUTUBE':s.type==='video'?'VÍDEO':'IMAGEM')+'</span><span class="caption">'+esc(s.caption_official.slice(0,90)||'Escrever legenda')+'</span><span class="state">'+''+(s.missing?' · ARQUIVO AUSENTE':'')+(s.sync_error?' · ERRO NO ARQUIVO':'')+(!s.included?' · fora da apresentação':'')+'</span></div></button>').join('');
 }
 function inspector(){const p=project(),s=slide(),i=p.slides.indexOf(s);$('inspector').hidden=!s;$('sendToComposition').hidden=window.parent===window||s?.type!=='image';if(!s)return;$('slideTitle').textContent='Imagem '+String(i+1).padStart(2,'0');$('selectedMedia').innerHTML=media(p,s,true);$('identity').textContent=s.original_name ? s.original_name+' · '+s.width+' × '+s.height+' · '+Math.round(s.bytes_optimized/1024)+' KB' : s.id;$('caption').value=s.caption_official;$('included').checked=s.included;$('cover').disabled=p.cover===s.file;$('cover').textContent=p.cover===s.file?'Capa atual do projeto':'Usar como capa do projeto';$('back').disabled=i===0;$('forward').disabled=i===p.slides.length-1;}
 function render(){renderProjects();renderGallery();if(!project().slides.length)$('gallery').innerHTML='<div class="emptyProject">Seu projeto está pronto.<br>Adicione imagens pelo botão acima.</div>';inspector();$('undo').disabled=!undo.length;}
-$('projects').onclick=e=>{const b=e.target.closest('[data-project]');if(!b)return;projectId=b.dataset.project;slideId=project().slides[0]?.id;render();};
+function selectProject(id){
+ if(id===projectId||!state?.projects.some(item=>item.id===id))return;
+ projectId=id;slideId=project().slides[0]?.id;render();
+ announceProject();
+}
+function announceProject(){
+ if(window.parent!==window)window.parent.postMessage({type:'mesa:portfolio-opened',id:projectId},location.origin);
+}
+$('projects').onclick=e=>{const button=e.target.closest('[data-project]');if(button)selectProject(button.dataset.project);};
 $('gallery').onclick=e=>{const b=e.target.closest('[data-slide]');if(b){slideId=b.dataset.slide;renderGallery();inspector();if(innerWidth<=800)$("inspector").scrollIntoView({behavior:"smooth",block:"start"});}};
 $('caption').onfocus=()=>remember();$('caption').oninput=()=>{slide().caption_official=$('caption').value;slide().caption_initialized=true;changed();renderGallery();};
 $('included').onchange=()=>mutate(()=>slide().included=$('included').checked);
@@ -72,7 +80,13 @@ $('previewDialog').onclose=()=>$('previewMedia').innerHTML='';
 $('prevSlide').onclick=()=>{previewIndex--;showPreview();};$('nextSlide').onclick=()=>{previewIndex++;showPreview();};
 document.onkeydown=e=>{if($('previewDialog').open){if(e.key==='ArrowRight')$('nextSlide').click();if(e.key==='ArrowLeft')$('prevSlide').click();}else if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();$('save').click();}};
 window.onbeforeunload=e=>{if(dirty){e.preventDefault();e.returnValue='';}};
-(async()=>{try{const r=await fetch('/mesa-api/portfolio/state');if(!r.ok)throw Error('Falha ao carregar catálogo');({state,etag}=await r.json());state.projects.forEach(p=>p.slides.forEach(singleCaption));projectId=state.projects[0].id;slideId=project().slides[0]?.id;render();$('pickSharedMedia').disabled=false;$('saveState').textContent=state.updated_at?'Todas as alterações salvas':'Pronto para começar';fetch('/mesa-api/portfolio/me').then(r=>r.json()).then(u=>$('syncStatus').textContent=u.email+' · Alterações salvas na prévia');}catch(e){$('saveState').textContent=e.message;}})();
+(async()=>{try{const r=await fetch('/mesa-api/portfolio/state');if(!r.ok)throw Error('Falha ao carregar catálogo');({state,etag}=await r.json());state.projects.forEach(p=>p.slides.forEach(singleCaption));projectId=state.projects[0].id;slideId=project().slides[0]?.id;render();$('pickSharedMedia').disabled=false;$('saveState').textContent=state.updated_at?'Todas as alterações salvas':'Pronto para começar';fetch('/mesa-api/portfolio/me').then(r=>r.json()).then(u=>$('syncStatus').textContent=u.email+' · Alterações salvas na prévia');if(window.parent!==window)window.parent.postMessage({type:'mesa:portfolio-ready'},location.origin);}catch(e){$('saveState').textContent=e.message;}})();
+window.addEventListener('message',event=>{
+ if(event.origin!==location.origin||event.source!==window.parent||event.data?.type!=='mesa:select-portfolio'||!state)return;
+ if(event.data.create)$('newProject').click();
+ else if(state.projects.some(item=>item.id===event.data.id))selectProject(event.data.id);
+ else toast('Esta obra não está disponível na sessão de prévia.');
+});
 let uploading=false;
 $('addImages').onclick=()=>{if(!uploading)$('imageFiles').click();};
 $('dropImages').onclick=()=>{if(!uploading)$('imageFiles').click();};
@@ -127,7 +141,7 @@ $('newProjectForm').onsubmit=async e=>{
  try{
  const r=await fetch('/mesa-api/portfolio/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state,etag,title:$('newProjectName').value,category:$('newProjectCategory').value})});
  const data=await r.json();if(!r.ok)throw Error(data.error);
- state=data.state;etag=data.etag;projectId=data.project.id;slideId=undefined;dirty=false;undo=[];
+ state=data.state;etag=data.etag;projectId=data.project.id;slideId=undefined;dirty=false;undo=[];announceProject();
  $('saveState').textContent='Projeto criado e alterações salvas';$('newProjectDialog').close();render();toast('Projeto criado. Adicione as primeiras imagens.');
  }catch(e){$('newProjectError').textContent=e.message;}
  finally{creatingProject=false;saving=false;$('createProject').disabled=false;$('cancelProject').disabled=false;document.querySelectorAll('main,aside,#inspector,header').forEach(el=>el.inert=false);}

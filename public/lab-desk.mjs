@@ -23,22 +23,49 @@ function read(){if(api.isBusy())return false;const snapshot=api.snapshot();docum
 function scheduleRead(){clearTimeout(readTimer);readTimer=setTimeout(()=>{if(loading)return;if(!read()){scheduleRead();return;}render();scheduleSave();},120);}
 async function saveCurrent(){if(!currentKey||!documentValue||pendingText)return;const record={id:currentKey,name:documentValue.name,document:documentValue,currentPageId:selectedId,updatedAt:Date.now()};await librarySave(record);records=records.filter(p=>p.id!==currentKey);records.push(record);localStorage.setItem('labmattar-desk-active-v1',currentKey);$('saveState').textContent='Rascunho salvo neste navegador';renderProjects();}
 function scheduleSave(){clearTimeout(saveTimer);$('saveState').textContent='Salvando rascunho local…';saveTimer=setTimeout(()=>run(saveCurrent),400);}
-function renderProjects(){const search=$('search').value.toLocaleLowerCase('pt-BR'),working=records.filter(p=>!p.id.startsWith('reference:'));let html=working.length?'<p class="list-label">MEUS PROJETOS</p>':'';for(const item of working)if(item.name.toLocaleLowerCase('pt-BR').includes(search))html+=projectButton(item.id,item.name,item.document.pages.length,item.document.story?.topics.length||item.document.sections?.length||0);html+='<p class="list-label">PROJETOS DE REFERÊNCIA</p>';for(const ref of STORY_PRESETS){const saved=records.find(p=>p.id==='reference:'+ref.id),name=saved?.name||ref.name;if(name.toLocaleLowerCase('pt-BR').includes(search))html+=projectButton('reference:'+ref.id,name,saved?.document.pages.length||({aleteia:32,poiesis:27,'cada-corpo-abre-um-mundo':27})[ref.id],saved?.document.story?.topics.length||10,ref.id);} $('projects').innerHTML=html;}
+function renderProjects(){const search=$('search').value.toLocaleLowerCase('pt-BR'),working=records.filter(p=>!p.id.startsWith('reference:'));let html=working.length?'<p class="list-label">'+(inMesa?'RASCUNHOS':'MEUS PROJETOS')+'</p>':'';for(const item of working)if(item.name.toLocaleLowerCase('pt-BR').includes(search))html+=projectButton(item.id,item.name,item.document.pages.length,item.document.story?.topics.length||item.document.sections?.length||0);html+='<p class="list-label">'+(inMesa?'REFERÊNCIAS':'PROJETOS DE REFERÊNCIA')+'</p>';for(const ref of STORY_PRESETS){const saved=records.find(p=>p.id==='reference:'+ref.id),name=saved?.name||ref.name;if(name.toLocaleLowerCase('pt-BR').includes(search))html+=projectButton('reference:'+ref.id,name,saved?.document.pages.length||({aleteia:32,poiesis:27,'cada-corpo-abre-um-mundo':27})[ref.id],saved?.document.story?.topics.length||10,ref.id);} $('projects').innerHTML=html;}
 function projectButton(id,name,count,sections,slug){const item=records.find(x=>x.id===id),first=item?.document.pages[0],preview=first?thumbs.get(first.id+':'+pageFingerprint(first)):'',src=preview|| (slug?'/presentation-models/covers/'+slug+'.webp':'/identidade/M.svg');return '<button class="project" data-project="'+esc(id)+'" aria-pressed="'+(id===currentKey)+'"><img src="'+esc(src)+'" alt=""><span><strong>'+esc(name)+'</strong><small>'+count+' páginas'+(sections?' · '+sections+' seções':'')+'</small></span></button>';}
 function thumbnail(item){const key=item.id+':'+item.fingerprint;if(!thumbs.has(key))thumbPending.set(key,item);return thumbs.get(key)||knownThumbs.get(item.id)||placeholder;}
 function card(item){const known=thumbs.has(item.id+':'+item.fingerprint),label=documentValue.pages[item.index].composition.pages[0].text.title.value||item.caption||'Imagem '+String(rows.filter(p=>p.topicId===item.topicId).indexOf(item)+1).padStart(2,'0');return '<button class="page-card '+(!known?'updating':'')+'" draggable="'+String(!documentValue.story||item.isPhoto)+'" data-page="'+esc(item.id)+'" aria-pressed="'+(item.id===selectedId)+'"><img src="'+esc(thumbnail(item))+'" alt="'+esc(item.name)+'" loading="lazy"><div class="page-meta"><small>'+String(item.index+1).padStart(2,'0')+' / '+esc(item.section)+'</small><span>'+esc(label.replace(/\s+/g,' '))+'</span></div></button>';}
-function renderGallery(){if(!documentValue)return;$('projectTitle').textContent=documentValue.name;$('projectCount').textContent=rows.length+' páginas · '+(documentValue.story?.topics.length||documentValue.sections?.length||1)+' seções';const visible=rows.filter(p=>!filter||p.topicId===filter);if(view==='all')$('gallery').innerHTML='<div class="page-grid">'+visible.map(card).join('')+'</div>';else{const groups=[...new Set(visible.map(p=>p.topicId))];$('gallery').innerHTML=groups.map(id=>{const group=visible.filter(p=>p.topicId===id);return '<section class="section-group"><h2 class="section-title">'+esc(group[0].section)+'<small>'+group.length+' páginas</small></h2><div class="page-grid">'+group.map(card).join('')+'</div></section>';}).join('');}$('undo').disabled=!history.length;clearTimeout(thumbTimer);thumbTimer=setTimeout(renderThumb,350);}
+function renderGallery(){
+  if(!documentValue)return;
+  $('projectTitle').textContent=documentValue.name;
+  const sectionCount=documentValue.story?.topics.length||documentValue.sections?.length;
+  $('projectCount').textContent=rows.length+(rows.length===1?' página':' páginas')+(sectionCount?' · '+sectionCount+(sectionCount===1?' seção':' seções'):'');
+  if(inMesa){
+    $('project-kind').textContent=currentKey.startsWith('reference:')?'Apresentação de referência':documentValue.story?'Rascunho de apresentação':rows.length===1?'Rascunho de página':'Rascunho de documento';
+    $('newSection').hidden=!documentValue.story;
+    $('newPage').textContent=documentValue.story?'Editar seção':'Adicionar página';
+  }
+  const gallery=$('gallery'),visible=rows.filter(p=>!filter||p.topicId===filter);
+  const positions=new Map([...gallery.querySelectorAll('[data-page-strip]')].map(el=>[el.dataset.pageStrip,el.scrollLeft]));
+  if(view==='all')gallery.innerHTML='<div class="page-grid" data-page-strip="'+esc(currentKey+':'+filter)+'">'+visible.map(card).join('')+'</div>';
+  else{
+    const groups=[...new Set(visible.map(p=>p.topicId))];
+    gallery.innerHTML=groups.map(id=>{
+      const group=visible.filter(p=>p.topicId===id);
+      return '<section class="section-group"><h2 class="section-title">'+esc(group[0].section)+'<small>'+group.length+' páginas</small></h2><div class="page-grid" data-page-strip="'+esc(currentKey+':'+id)+'">'+group.map(card).join('')+'</div></section>';
+    }).join('');
+  }
+  for(const element of gallery.querySelectorAll('[data-page-strip]'))element.scrollLeft=positions.get(element.dataset.pageStrip)||0;
+  $('undo').disabled=!history.length;clearTimeout(thumbTimer);thumbTimer=setTimeout(renderThumb,350);
+}
 function refreshFilter(){const value=filter,groups=[...new Map(rows.map(p=>[p.topicId,p.section])).entries()];$('sectionFilter').innerHTML='<option value="">Todas as seções</option>'+groups.filter(([id])=>id).map(([id,label])=>'<option value="'+esc(id)+'">'+esc(label)+'</option>').join('');if(!groups.some(([id])=>id===value))filter='';$('sectionFilter').value=filter;}
-function renderInspector(){const item=row();if(!item)return;$('pageTitle').textContent='Página '+String(item.index+1).padStart(2,'0');$('pageSection').textContent=item.section+' · '+(formatName[item.format]||item.format);$('selectedImage').src=thumbnail(item);
+function showPageImage(src){
+  $('selectedImage').src=src;
+  if(inMesa)$('montar-stage-image').src=src;
+}
+function renderInspector(){const item=row();if(!item)return;$('pageTitle').textContent='Página '+String(item.index+1).padStart(2,'0');$('pageSection').textContent=item.section+' · '+(formatName[item.format]||item.format);showPageImage(thumbnail(item));
+if(inMesa)$('montar-stage-page').textContent='Página '+(item.index+1)+' de '+rows.length;
 const key=item.id+':'+panel;if(fieldKey!==key){fieldKey=key;if(panel==='content')$('inspectorFields').innerHTML='<label for="deskTitle">Título'+(documentValue.story?' da seção':'')+'<textarea id="deskTitle" rows="2" maxlength="120"></textarea></label><label for="deskBody">Texto'+(documentValue.story?' da seção':' da página')+'<textarea id="deskBody" rows="7" maxlength="24000"></textarea></label>'+(documentValue.story&&item.isPhoto?'<label for="deskCaption">Legenda desta imagem<textarea id="deskCaption" rows="2" maxlength="380"></textarea></label>':'');if(panel==='layout')$('inspectorFields').innerHTML='<div class="property"><span>Formato</span><span>'+esc(formatName[item.format])+'</span></div><div class="property"><span>Fundo</span><span>'+esc(item.background==='photo'?'Fotografia / vídeo':'Cor')+'</span></div><div class="property"><span>M</span><span>'+esc(item.m==='off'?'Sem M':item.m==='photo'?'Imagem no M':'M sólido')+'</span></div><button class="configure-action" data-config="edit">Configurar composição</button>';if(panel==='motion')$('inspectorFields').innerHTML='<div class="property"><span>Motions da página</span><span>'+item.motions+'</span></div><button class="configure-action" data-config="motion">Configurar motion</button>';}
 if(panel==='content'&&!pendingText){for(const [id,value]of [['deskTitle',item.title],['deskBody',item.body],['deskCaption',item.caption]])if($(id)&&document.activeElement!==$(id))$(id).value=value;}
 $('back').disabled=item.index===0;$('forward').disabled=item.index===rows.length-1;$('duplicate').disabled=documentValue.story&&!item.isPhoto;$('remove').disabled=rows.length===1;}
 function render(){if(!documentValue)return;$('presentationSettings').hidden=!documentValue.story;$('imageScroll').value=documentValue.story?.imageScroll||'horizontal';renderProjects();refreshFilter();renderGallery();renderInspector();}
 async function renderThumb(){if(mode!=='desk'||loading||pendingText||previewBusy||$('presentationPreview').open){thumbTimer=setTimeout(renderThumb,650);return;}const visible=[...$('gallery').querySelectorAll('[data-page]')].filter(el=>{const r=el.getBoundingClientRect();return r.bottom>72&&r.top<innerHeight+400;}).map(el=>el.dataset.page),selected=row(),candidates=[selected,...visible.map(id=>rows.find(p=>p.id===id))].filter(Boolean);const item=candidates.find(p=>!thumbs.has(p.id+':'+p.fingerprint));if(!item)return;
-try{await native(async()=>{if(mode!=='desk'||loading||pendingText||previewBusy||$('presentationPreview').open)return;const actual=pageRows(api.snapshot().document).find(p=>p.id===item.id);if(!actual||actual.fingerprint!==item.fingerprint)return;const data=await api.thumbnail(item.id);thumbs.set(item.id+':'+item.fingerprint,data);for(const img of $('gallery').querySelectorAll('[data-page="'+CSS.escape(item.id)+'"] img')){img.src=data;img.closest('.page-card').classList.remove('updating');}if(item.id===selectedId)$('selectedImage').src=data;});}catch(error){thumbs.set(item.id+':'+item.fingerprint,knownThumbs.get(item.id)||placeholder);toast('Prévia: '+error.message,true);}finally{thumbTimer=setTimeout(renderThumb,100);}}
+try{await native(async()=>{if(mode!=='desk'||loading||pendingText||previewBusy||$('presentationPreview').open)return;const actual=pageRows(api.snapshot().document).find(p=>p.id===item.id);if(!actual||actual.fingerprint!==item.fingerprint)return;const data=await api.thumbnail(item.id);thumbs.set(item.id+':'+item.fingerprint,data);for(const img of $('gallery').querySelectorAll('[data-page="'+CSS.escape(item.id)+'"] img')){img.src=data;img.closest('.page-card').classList.remove('updating');}if(item.id===selectedId)showPageImage(data);});}catch(error){thumbs.set(item.id+':'+item.fingerprint,knownThumbs.get(item.id)||placeholder);toast('Prévia: '+error.message,true);}finally{thumbTimer=setTimeout(renderThumb,100);}}
 async function apply(next,id=selectedId){history.push({document:documentValue,id:selectedId});if(history.length>8)history.shift();await api.load(next,{currentIndex:Math.max(0,next.pages.findIndex(p=>p.id===id))});api.persist();read();render();await saveCurrent();}
 async function flushText(){clearTimeout(inputTimer);if(!pendingText||panel!=='content')return;const id=selectedId,value={title:$('deskTitle').value,body:$('deskBody').value,...($('deskCaption')?{caption:$('deskCaption').value}:{})};pendingText=false;try{await native(()=>apply(changeContent(api.snapshot().document,id,value,context().photoCatalog),id));}catch(error){pendingText=true;throw error;}}
-async function select(id){await flushText();await native(()=>api.selectPage(id));read();fieldKey='';render();if(innerWidth<=800)document.body.dataset.inspectorOpen='true';}
+async function select(id){await flushText();await native(()=>api.selectPage(id));read();fieldKey='';render();if(!inMesa&&innerWidth<=800)document.body.dataset.inspectorOpen='true';}
 function setMode(value){mode=value;document.body.dataset.mode=value;$('returnToPages').hidden=value==='desk';$('configurationName').textContent=documentValue.name+' / '+row()?.section+' / Página '+String((row()?.index||0)+1).padStart(2,'0');}
 async function configure(target='edit'){await flushText();await native(async()=>{await api.selectPage(selectedId);api.workspace(target);setMode('configure');});}
 async function backToPages(){if(api.isBusy()){toast('Aguarde a operação atual terminar.');return;}const dialog=host.document.getElementById('labDeliveryDialog');if(dialog.open)host.document.getElementById('labDeliveryBack').click();setMode('desk');read();fieldKey='';render();await saveCurrent();}
@@ -57,7 +84,7 @@ async function createDraft(build){
       api.persist();
       currentKey='project-'+crypto.randomUUID();
       history=[];filter='';fieldKey='';read();setMode('desk');render();
-      delete document.body.dataset.inspectorOpen;
+      setPageInspector(false);
       await saveCurrent();
     }catch(error){
       currentKey=oldKey;
@@ -70,7 +97,8 @@ async function createDraft(build){
 async function newProject(){
   const name=$('newProjectName').value.trim();
   if(!name)return;
-  await createDraft(()=>createStoryTemplate({...context(),name,minimal:true}));
+  if(inMesa&&$('creationKind').value==='page')await newModel(findModel('abertura'),name);
+  else await createDraft(()=>createStoryTemplate({...context(),name,minimal:true}));
   $('newProjectDialog').close();
 }
 function newModel(model,name){
@@ -139,7 +167,16 @@ $('newPage').onclick=()=>run(async()=>{await flushText();if(documentValue.story)
 $('newSection').onclick=()=>run(async()=>{await flushText();if(!documentValue.story){toast('Crie uma apresentação por seções em Nova apresentação.');return;}await native(async()=>{const topic=documentValue.story.topics.find(t=>t.pageIds.includes(selectedId)),next=addStoryTopic(api.snapshot().document,topic.id,'section',context().photoCatalog),created=next.story.topics[next.story.topics.findIndex(t=>t.id===topic.id)+1];await apply(next,created.photoPageIds[0]);});});
 $('newProject').onclick=()=>{$('newProjectName').value='';$('newProjectDialog').showModal();$('newProjectName').focus();};$('newProjectForm').onsubmit=e=>{e.preventDefault();run(newProject);};$('cancelNew').onclick=()=>$('newProjectDialog').close();
 $('import').onclick=()=>$('projectFile').click();$('projectFile').onchange=()=>run(async()=>{const file=$('projectFile').files[0];if(!file)return;loading=true;try{await flushText();await saveCurrent();$('saveState').textContent='Abrindo projeto…';checkProjectBytes(file.size);const value=JSON.parse(await file.text());await native(()=>value.kind==='labmattar.composition'?api.loadComposition(value):api.load(value));currentKey='project-'+crypto.randomUUID();read();fieldKey='';filter='';render();await saveCurrent();$('projectFile').value='';}finally{loading=false;scheduleRead();}});
-$('closeInspector').onclick=$('inspectorBackdrop').onclick=()=>delete document.body.dataset.inspectorOpen;window.addEventListener('beforeunload',event=>{if(pendingText){event.preventDefault();event.returnValue='';}});
+$('closeInspector').onclick=$('inspectorBackdrop').onclick=()=>{
+  setPageInspector(false);
+  if(inMesa&&innerWidth<=800)$('montar-stage-content').focus();
+};
+window.addEventListener('beforeunload',event=>{if(pendingText){event.preventDefault();event.returnValue='';}});
+}
+function setPageInspector(open){
+  if(open)document.body.dataset.inspectorOpen='true';
+  else delete document.body.dataset.inspectorOpen;
+  $('montar-stage-content')?.setAttribute('aria-expanded',open);
 }
 async function boot(){
 const manifest=await fetch('/presentation-models/thumbs/manifest.json').then(r=>{if(!r.ok)throw Error('Não foi possível carregar as miniaturas.');return r.json();});for(const p of manifest.projects)for(const page of p.pages){thumbs.set(page.id+':'+page.fingerprint,page.image);knownThumbs.set(page.id,page.image);}
@@ -156,11 +193,42 @@ if(requested&&STORY_PRESETS.some(p=>p.id===requested)){const url=new URL(locatio
 }
 function connectMesaLibrary(){
   document.querySelector('.sidebar-note').textContent='Rascunhos salvos neste navegador. As mídias vinculadas ficam na sessão de prévia.';
+  document.querySelector('.topbar .brand > div').textContent='Montar';
+  $('import').textContent='Abrir arquivo';
+  $('save').textContent='Baixar projeto';
+  $('configure').textContent='Editar no Compor';
+  $('mount-project-heading').textContent='Criações';
+  $('newProject').textContent='＋ Nova criação';
+  $('newProjectTitle').textContent='Nova criação';
+  $('new-project-submit').textContent='Criar rascunho';
+  $('mesa-creation-kind').hidden=false;
+  const kind=$('creationKind');
+  kind.onchange=()=>{
+    $('new-project-help').textContent=kind.value==='page'?'Uma página que você pode editar no Compor.':'Uma apresentação com capa e introdução, pronta para receber novas páginas.';
+  };
+  kind.onchange();
+  $('montar-stage').hidden=false;
+  $('montar-stage-edit').onclick=()=>run(()=>configure());
+  $('inspectorBackdrop').setAttribute('aria-hidden','true');
+  $('inspectorBackdrop').tabIndex=-1;
+  $('montar-stage-content').onclick=()=>{setPageInspector(true);$('closeInspector').focus();};
+  const projectActions=document.createElement('div');
+  projectActions.className='montar-project-actions';
+  const projectToggle=document.createElement('button');
+  projectToggle.type='button';projectToggle.id='montar-show-projects';projectToggle.textContent='Ver criações';
+  projectToggle.setAttribute('aria-controls','projects');projectToggle.setAttribute('aria-expanded','false');
+  projectToggle.onclick=()=>{
+    const open=!document.body.hasAttribute('data-mesa-projects-open');
+    document.body.toggleAttribute('data-mesa-projects-open',open);
+    projectToggle.setAttribute('aria-expanded',open);
+  };
+  $('newProject').before(projectActions);
+  projectActions.append($('newProject'),projectToggle);
   const choose=document.createElement('button');
-  choose.type='button';choose.textContent='Selecionar imagem';
+  choose.type='button';choose.textContent='Imagem de fundo';
   const button=document.createElement('button');
   button.type='button';button.textContent='Aplicar imagem do Portfólio';button.hidden=true;
-  document.querySelector('.top-actions').prepend(choose,button);
+  document.querySelector('.montar-page-actions').prepend(choose,button);
   const templates=document.createElement('button');
   templates.type='button';templates.textContent='Ver modelos do Acervo';
   templates.onclick=()=>{
@@ -197,6 +265,16 @@ function connectMesaLibrary(){
   });
   window.addEventListener('message',async event=>{
     if(event.origin!==location.origin||event.source!==window.parent)return;
+    if(event.data?.type==='mesa:new-composition'){
+      $('newProject').click();
+      return;
+    }
+    if(event.data?.type==='mesa:open-draft'){
+      const {id}=event.data;
+      if(!records.some(item=>item.id===id))toast('Este rascunho não está disponível neste navegador.',true);
+      else run(async()=>{if(mode!=='desk')await backToPages();await openProject(id);});
+      return;
+    }
     if(event.data?.type==='mesa:create-from-model'){
       const {id,name,request}=event.data;
       const model=findModel(id);

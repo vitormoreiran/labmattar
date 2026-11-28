@@ -1,5 +1,7 @@
 import {assetURL,mesaPhotoKey} from './mesa-editor/acervo-reference.mjs';
 import {pickMesaMedia} from './mesa-editor/acervo.mjs';
+import {findModel} from './mesa-editor/modelos-data.mjs';
+import {createPage,sequenceDocument} from './lab-sequence.mjs';
 import {checkProjectBytes} from './lab-project-lifecycle.mjs';
 import {STORY_PRESETS,loadStoryPreset} from './lab-story-presets.mjs';
 import {storyTopic} from './lab-story-model.mjs';
@@ -8,6 +10,7 @@ import {pageRows,pageFingerprint,fullCatalog,changeContent,duplicatePage,moveSel
 import {libraryList,librarySave} from './lab-project-library.mjs';
 const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const frame=$('engine'),hadDraft=Boolean(localStorage.getItem('labmattar-pages-v1'));
+const inMesa=new URLSearchParams(location.search).get('mesa')==='1'&&window.parent!==window;
 let api,host,documentValue,rows=[],selectedId='',currentKey='',records=[],view='all',filter='',panel='content',mode='desk',loading=true,inputTimer,saveTimer,readTimer,pendingText=false,fieldKey='',history=[],queue=Promise.resolve(),thumbTimer,thumbPending=new Map(),previewBusy=false,previewURL='';
 const placeholder='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><rect width="640" height="360" fill="%23eeefeb"/><text x="320" y="184" text-anchor="middle" fill="%23767873" font-family="Arial,sans-serif" font-size="18">Preparando prévia…</text></svg>'.replaceAll('%23','#'));
 const thumbs=new Map(),knownThumbs=new Map(),formatName={horizontal:'Horizontal / 16:9',vertical:'Vertical / 9:16',quadrado:'Quadrado / 1:1',editorial:'Editorial'};
@@ -40,7 +43,56 @@ function setMode(value){mode=value;document.body.dataset.mode=value;$('returnToP
 async function configure(target='edit'){await flushText();await native(async()=>{await api.selectPage(selectedId);api.workspace(target);setMode('configure');});}
 async function backToPages(){if(api.isBusy()){toast('Aguarde a operação atual terminar.');return;}const dialog=host.document.getElementById('labDeliveryDialog');if(dialog.open)host.document.getElementById('labDeliveryBack').click();setMode('desk');read();fieldKey='';render();await saveCurrent();}
 async function openProject(key){if(loading||key===currentKey)return;await flushText();await saveCurrent();loading=true;$('saveState').textContent='Abrindo projeto…';const old=api.snapshot(),oldKey=currentKey;try{const saved=records.find(p=>p.id===key),next=saved?.document||await loadStoryPreset(key.replace('reference:',''));await native(()=>api.load(next,{currentIndex:Math.max(0,next.pages.findIndex(p=>p.id===saved?.currentPageId))}));currentKey=key;history=[];filter='';read();fieldKey='';render();await saveCurrent();}catch(error){currentKey=oldKey;await api.load(old.document,{currentIndex:old.document.pages.findIndex(p=>p.id===old.currentPageId)});throw error;}finally{loading=false;scheduleRead();}}
-async function newProject(){await flushText();await saveCurrent();const name=$('newProjectName').value.trim();if(!name)return;loading=true;try{const next=createStoryTemplate({...context(),name,minimal:true});await native(()=>api.load(next));currentKey='project-'+crypto.randomUUID();history=[];filter='';read();fieldKey='';render();await saveCurrent();$('newProjectDialog').close();}finally{loading=false;}}
+async function createDraft(build){
+  if(loading || previewBusy)throw Error('Conclua a operação atual antes de criar um projeto.');
+  loading=true;
+  try{
+    await flushText();
+    await native(read);
+    await saveCurrent();
+    const before=api.snapshot(), oldKey=currentKey;
+    const next=build();
+    try{
+      await native(()=>api.load(next));
+      api.persist();
+      currentKey='project-'+crypto.randomUUID();
+      history=[];filter='';fieldKey='';read();setMode('desk');render();
+      delete document.body.dataset.inspectorOpen;
+      await saveCurrent();
+    }catch(error){
+      currentKey=oldKey;
+      await native(()=>api.load(before.document,{currentIndex:before.document.pages.findIndex(page=>page.id===before.currentPageId)}));
+      api.persist();read();fieldKey='';render();
+      throw error;
+    }
+  }finally{loading=false;}
+}
+async function newProject(){
+  const name=$('newProjectName').value.trim();
+  if(!name)return;
+  await createDraft(()=>createStoryTemplate({...context(),name,minimal:true}));
+  $('newProjectDialog').close();
+}
+function newModel(model,name){
+  return createDraft(()=>{
+    const {state,photoCatalog}=context();
+    const signature={preset:'custom',scale:100,slots:{
+      tl:{kind:'text',symbol:'M.svg',text:'LABMATTAR'},
+      tr:{kind:'none',symbol:'M.svg',text:''},bl:{kind:'none',symbol:'M.svg',text:''},br:{kind:'none',symbol:'M.svg',text:''},
+    }};
+    const style={...state,format:model.format,background:'color',photo:'64',photoEffect:'auto',photoContrast:20,photoBlur:0,photoGlass:0,
+      focusX:50,focusY:50,mContent:'off',mCaption:'',marker:'none',symbol:'none',guides:'nenhuma',margin:9,textWidth:100,textPositionY:50,
+      type:'perpetua',titleFonts:[],signature,kicker:'',footerLeft:'',footerRight:''};
+    const pages=model.pages.map((page,index)=>{
+      const body=page.body || '';
+      return createPage({id:'page-'+crypto.randomUUID(),name:page.name,photoCatalog,maxEdge:1920,state:{...style,
+        color:page.color||'neutral',inkColor:page.ink||'black',titleScale:page.scale||70,
+        title:index===0?name:page.title,body,bodyMode:body?'visivel':'oculto',
+      }});
+    });
+    return sequenceDocument(name,pages,null,signature);
+  });
+}
 async function exportProject(){await flushText();await saveCurrent();const json=JSON.stringify(api.snapshot().document,null,2),url=URL.createObjectURL(new Blob([json],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=(documentValue.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').toLowerCase()||'apresentacao')+'.labmattar.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);toast('Projeto editável salvo em JSON.');}
 async function present(){
  if(loading)return;
@@ -95,26 +147,33 @@ records=await libraryList();frame.src='/compor.html?studio=1&workspace=edit&embe
 const style=host.document.createElement('style');style.textContent='#labStudioToggle{display:none!important}';host.document.head.append(style);host.document.querySelector('[data-workspace-view=pages]').addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();run(backToPages);},true);
 for(const id of ['labDeliveryDialog','labStoryDialog'])host.document.getElementById(id).addEventListener('close',()=>{if(mode==='export'||mode==='section'){setMode('desk');scheduleRead();}});
 host.addEventListener('labmattar:pages-commit',scheduleRead);new MutationObserver(()=>{const status=host.document.getElementById('labExportStatus');if(status.textContent)$('operationStatus').textContent=status.textContent;if(previewBusy&&status.textContent)$('presentationStatus').textContent=status.textContent;if(status.dataset.state==='error')toast(status.textContent,true);}).observe(host.document.getElementById('labExportStatus'),{childList:true,subtree:true,attributes:true,attributeFilter:['data-state']});
-read();const previous=records.find(p=>p.id===localStorage.getItem('labmattar-desk-active-v1'));if(!hadDraft&&previous){await api.load(previous.document,{currentIndex:previous.document.pages.findIndex(p=>p.id===previous.currentPageId)});currentKey=previous.id;read();}else{const preset=STORY_PRESETS.find(p=>documentValue.pages.some(page=>page.id.startsWith(p.id+'-page-')));currentKey=previous?.document.pages.some(p=>p.id===selectedId)?previous.id:preset?'reference:'+preset.id:'project-'+crypto.randomUUID();}
+read();const previous=records.find(p=>p.id===localStorage.getItem('labmattar-desk-active-v1'));if(previous&&(!hadDraft||inMesa)){await api.load(previous.document,{currentIndex:previous.document.pages.findIndex(p=>p.id===previous.currentPageId)});currentKey=previous.id;read();}else{const preset=STORY_PRESETS.find(p=>documentValue.pages.some(page=>page.id.startsWith(p.id+'-page-')));currentKey=previous?.document.pages.some(p=>p.id===selectedId)?previous.id:preset?'reference:'+preset.id:'project-'+crypto.randomUUID();}
 const requested=new URLSearchParams(location.search).get('modelo'),requestedKey='reference:'+requested;
-if(requested&&STORY_PRESETS.some(p=>p.id===requested)){if(hadDraft||previous)await saveCurrent();const saved=records.find(p=>p.id===requestedKey),next=saved?.document||await loadStoryPreset(requested);await api.load(next,{currentIndex:Math.max(0,next.pages.findIndex(p=>p.id===saved?.currentPageId))});currentKey=requestedKey;read();}
+if((!inMesa||!previous)&&requested&&STORY_PRESETS.some(p=>p.id===requested)){if(hadDraft||previous)await saveCurrent();const saved=records.find(p=>p.id===requestedKey),next=saved?.document||await loadStoryPreset(requested);await api.load(next,{currentIndex:Math.max(0,next.pages.findIndex(p=>p.id===saved?.currentPageId))});currentKey=requestedKey;read();}
 attachEvents();loading=false;render();await saveCurrent();window.LabDesk={ready:true,flush:flushText,snapshot:()=>({document:documentValue,currentPageId:selectedId,mode,loading}),select:id=>run(()=>select(id)),configure:target=>run(()=>configure(target)),back:()=>run(backToPages)};document.body.dataset.ready='true';
-if(new URLSearchParams(location.search).get('mesa')==='1'&&window.parent!==window)connectMesaLibrary();
+if(inMesa)connectMesaLibrary();
 if(requested&&STORY_PRESETS.some(p=>p.id===requested)){const url=new URL(location.href);url.searchParams.delete('modelo');window.history.replaceState(null,'',url);}
 }
 function connectMesaLibrary(){
-  document.querySelector('.sidebar-note').textContent='Rascunhos salvos neste navegador. As imagens do acervo ficam vinculadas à sessão de prévia.';
+  document.querySelector('.sidebar-note').textContent='Rascunhos salvos neste navegador. As mídias vinculadas ficam na sessão de prévia.';
   const choose=document.createElement('button');
-  choose.type='button';choose.textContent='Escolher do acervo';
+  choose.type='button';choose.textContent='Selecionar imagem';
   const button=document.createElement('button');
   button.type='button';button.textContent='Aplicar imagem do Portfólio';button.hidden=true;
   document.querySelector('.top-actions').prepend(choose,button);
+  const templates=document.createElement('button');
+  templates.type='button';templates.textContent='Ver modelos do Acervo';
+  templates.onclick=()=>{
+    $('newProjectDialog').close();
+    window.parent.postMessage({type:'mesa:open-models'},location.origin);
+  };
+  $('cancelNew').before(templates);
   let importedImage;
   async function applyToPage(uri,name){
     const photoKey=mesaPhotoKey(uri);
-    if(!photoKey)throw Error('Referência inválida no acervo da Mesa.');
+    if(!photoKey)throw Error('Referência de imagem inválida.');
     const response=await fetch(uri,{method:'HEAD'});
-    if(!response.ok||!response.headers.get('content-type')?.startsWith('image/'))throw Error('Não foi possível abrir esta imagem no acervo.');
+    if(!response.ok||!response.headers.get('content-type')?.startsWith('image/'))throw Error('Não foi possível abrir esta imagem na sessão.');
     await flushText();
     await native(async()=>{
       await api.selectPage(selectedId);
@@ -126,7 +185,7 @@ function connectMesaLibrary(){
       }
       api.persist();read();render();await saveCurrent();
     });
-    toast('Imagem do acervo aplicada à página selecionada.');
+    toast('Imagem aplicada à página selecionada.');
   }
   choose.onclick=()=>run(async()=>{
     if(choose.disabled)return;
@@ -136,8 +195,20 @@ function connectMesaLibrary(){
       if(item)await applyToPage(assetURL(item.key),item.name);
     }finally{choose.disabled=false;}
   });
-  window.addEventListener('message',event=>{
-    if(event.origin!==location.origin||event.source!==window.parent||event.data?.type!=='mesa:compose-image')return;
+  window.addEventListener('message',async event=>{
+    if(event.origin!==location.origin||event.source!==window.parent)return;
+    if(event.data?.type==='mesa:create-from-model'){
+      const {id,name,request}=event.data;
+      const model=findModel(id);
+      let error;
+      try{
+        if(!model||typeof name!=='string'||!name.trim()||name.length>120)throw Error('Modelo ou nome de projeto inválido.');
+        await newModel(model,name.trim());
+      }catch(exception){error=exception.message;}
+      window.parent.postMessage({type:'mesa:model-result',request,error},location.origin);
+      return;
+    }
+    if(event.data?.type!=='mesa:compose-image')return;
     if(!mesaPhotoKey(event.data.url))return;
     importedImage={url:event.data.url,label:String(event.data.label||'Imagem do Portfólio').slice(0,100)};
     button.hidden=false;

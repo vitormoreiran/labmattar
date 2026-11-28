@@ -49,26 +49,13 @@ async function request(path,init) {
   return value;
 }
 
-function inspect(item) {
-  const dialog = createDialog(item.name);
-  const media = element(item.type === 'video' ? 'video' : 'img','','asset-library-inspect');
-  media.src = assetURL(item.key);
-  if (item.type === 'video') {
-    media.controls = true;
-    media.playsInline = true;
-    media.setAttribute('aria-label',item.name);
-  } else media.alt = item.alt || item.name;
-  dialog.append(media);
-  dialog.showModal();
-}
-
-function mount(root,{type,select = inspect}) {
+function mount(root,{type,select}) {
   root.classList.add('asset-library');
   const tools = element('div','','asset-library-tools');
   const search = element('input');
   search.type = 'search';
   search.placeholder = 'Buscar por arquivo ou projeto';
-  search.setAttribute('aria-label','Buscar no acervo');
+  search.setAttribute('aria-label','Buscar mídias');
   const file = element('input');
   file.type = 'file';
   file.accept = (type === 'image' ? imageTypes : type === 'video' ? videoTypes : supported).join(',');
@@ -89,7 +76,7 @@ function mount(root,{type,select = inspect}) {
     grid.replaceChildren(...matches.map(item => {
       const card = button('',() => select(item));
       card.className = 'asset-library-item';
-      card.setAttribute('aria-label',(select === inspect ? 'Ver ' : 'Usar ')+item.name);
+      card.setAttribute('aria-label','Usar '+item.name);
       const visual = element('span','','asset-library-thumb');
       if (item.type === 'image') {
         const img = element('img');
@@ -144,7 +131,7 @@ function mount(root,{type,select = inspect}) {
 
 export function pickMesaMedia(type) {
   return new Promise(resolve => {
-    const dialog = createDialog(type === 'video' ? 'Escolher vídeo do acervo' : 'Escolher imagem do acervo');
+    const dialog = createDialog(type === 'video' ? 'Selecionar vídeo' : 'Selecionar imagem');
     const content = element('div');
     dialog.append(content);
     let selected;
@@ -154,5 +141,3 @@ export function pickMesaMedia(type) {
   });
 }
 
-const library = document.getElementById('mesa-library');
-if (library) mount(library,{});

@@ -1,7 +1,9 @@
+import { findModel } from '/mesa-editor/modelos-data.mjs';
+
 const home = document.querySelector('#mesa-inicio');
 const workspaces = document.querySelector('#mesa-workspaces');
 const views = {
-  acervo: { src: '/mesa-editor/acervo.html', title: 'Acervo compartilhado' },
+  acervo: { src: '/mesa-editor/acervo.html', title: 'Acervo de modelos' },
   aleteia: { src: '/mesa-editor/portfolio.html', title: 'Editor do Portfólio', tool: 'Editor do Portfólio' },
   apresentacao: { src: '/montar.html?modelo=aleteia&mesa=1#laboratorio', title: 'Laboratório de Composição', tool: 'Páginas e apresentações' },
   'como-trabalhamos': { src: '/mesa-editor/chapter.html', title: 'Editor de Como trabalhamos' },
@@ -9,6 +11,7 @@ const views = {
 const frames = new Map();
 let compositionReady = false;
 let pendingImage;
+let pendingModel;
 
 function styleTool(frame, view) {
   const tool = views[view].tool;
@@ -68,8 +71,32 @@ function forwardImage() {
   pendingImage = null;
 }
 
+function finishModel(error) {
+  if (!pendingModel) return;
+  const { request, timer } = pendingModel;
+  pendingModel = undefined;
+  clearTimeout(timer);
+  frames.get('acervo')?.contentWindow.postMessage({type:'mesa:model-result',request,error},location.origin);
+  if (error && location.hash === '#apresentacao') location.hash = 'acervo';
+}
+
+function forwardModel() {
+  if (!pendingModel || !compositionReady || pendingModel.sent) return;
+  const { id, name, request } = pendingModel;
+  clearTimeout(pendingModel.timer);
+  pendingModel.sent = true;
+  frames.get('apresentacao').contentWindow.postMessage({type:'mesa:create-from-model',id,name,request},location.origin);
+}
+
 window.addEventListener('message', event => {
   if (event.origin !== location.origin) return;
+  if (event.source === frames.get('acervo')?.contentWindow && event.data?.type === 'mesa:create-from-model') {
+    const { id, name, request } = event.data;
+    if (pendingModel || !findModel(id) || typeof name !== 'string' || !name.trim() || name.length > 120 || typeof request !== 'string') return;
+    pendingModel = {id,name:name.trim(),request,timer:setTimeout(()=>finishModel('Montar demorou para abrir. Tente novamente.'),45_000)};
+    location.hash = 'apresentacao';
+    forwardModel();
+  }
   if (event.source === frames.get('aleteia')?.contentWindow && event.data?.type === 'mesa:compose-image') {
     if (typeof event.data.url !== 'string' || !event.data.url.startsWith('/mesa-media/')) return;
     pendingImage = event.data;
@@ -79,6 +106,14 @@ window.addEventListener('message', event => {
   if (event.source === frames.get('apresentacao')?.contentWindow && event.data?.type === 'mesa:composition-ready') {
     compositionReady = true;
     forwardImage();
+    forwardModel();
+  }
+  if (event.source === frames.get('apresentacao')?.contentWindow && event.data?.type === 'mesa:open-models') {
+    location.hash = 'acervo';
+  }
+  if (event.source === frames.get('apresentacao')?.contentWindow && event.data?.type === 'mesa:model-result' &&
+      pendingModel?.request === event.data.request) {
+    finishModel(event.data.error);
   }
 });
 

@@ -110,7 +110,7 @@ export function createComposer(callbacks) {
     file.onchange = () => upload(block,file.files[0]);
     const limit = block.type === 'image' ? 'PNG, JPEG, WebP ou AVIF · até 8 MB' : 'MP4 ou WebM · até 24 MB';
     const name = uploading.has(block.id) ? 'Enviando arquivo…' : block.media?.name;
-    const choose = button('Escolher do acervo','Escolher '+label.toLowerCase()+' do acervo',file.disabled,() => chooseAsset(block,language));
+    const choose = button('Selecionar '+label.toLowerCase(),'Selecionar '+label.toLowerCase(),file.disabled,() => chooseAsset(block,language));
     choose.className = 'choose-shared-asset';
     group.append(choose,labelFor(file.id,name && !file.disabled ? 'Substituir '+label.toLowerCase() : 'Arquivo de '+label.toLowerCase()),file);
     if (name) group.append(element('p','upload-name',name));

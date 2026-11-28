@@ -1,12 +1,7 @@
-.asset-library-page, dialog.asset-library-dialog {
+dialog.asset-library-dialog {
   --acervo-paper:#f7f6f2; --acervo-ink:#191814; --acervo-rule:#cdc9c0; --acervo-dim:#615b51;
   background:var(--acervo-paper); color:var(--acervo-ink);
 }
-.asset-library-page { margin:0; }
-.asset-library-page main { max-width:1200px; margin:0 auto; padding:clamp(18px,4.5vw,54px) clamp(14px,3vw,34px); }
-#acervo-title { margin:.1em 0 .28em; font-size:clamp(26px,4.6vw,56px); }
-.asset-library-page h1 span { font-family:var(--lm-type-perpetua,Georgia,serif); }
-.asset-library-page main > p { margin:0 0 1.4rem; color:var(--acervo-dim); font-size:.95rem; }
 dialog.asset-library-dialog {
   box-sizing:border-box; width:min(820px,96vw); max-height:90dvh; padding:0;
   border:1px solid var(--acervo-rule); border-radius:0; box-shadow:0 14px 50px #0004;
@@ -41,4 +36,3 @@ dialog.asset-library-dialog::backdrop { background:#19181485; backdrop-filter:no
 .asset-library-item :is(strong,small) { display:block; padding-inline:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.2; }
 .asset-library-item strong { font-size:.88rem; }
 .asset-library-item small { font-size:.76rem; color:var(--acervo-dim); }
-.asset-library-inspect { display:block; width:100%; max-height:72dvh; object-fit:contain; background:#191814; }

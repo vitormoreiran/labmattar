@@ -1,6 +1,7 @@
 const home = document.querySelector('#mesa-inicio');
 const workspaces = document.querySelector('#mesa-workspaces');
 const views = {
+  acervo: { src: '/mesa-editor/acervo.html', title: 'Acervo compartilhado' },
   aleteia: { src: '/mesa-editor/portfolio.html', title: 'Editor do Portfólio', tool: 'Editor do Portfólio' },
   apresentacao: { src: '/montar.html?modelo=aleteia&mesa=1#laboratorio', title: 'Laboratório de Composição', tool: 'Páginas e apresentações' },
   'como-trabalhamos': { src: '/mesa-editor/chapter.html', title: 'Editor de Como trabalhamos' },

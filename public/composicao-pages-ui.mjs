@@ -254,7 +254,7 @@ function registerPhotos(photoCatalog){
     if(known[photoKey]||!(/^(ext|loc)-/.test(photoKey)))continue;
     const isLocal=photoKey.startsWith('loc-');
     const url=isLocal?null:new URL(original,location.origin);
-    const provider=isLocal?'local':url.pathname==='/api/acervo/public-media'?'public':url.searchParams.get('provider');
+    const provider=isLocal?'local':url.pathname.startsWith('/mesa-media/')?'mesa':url.pathname==='/api/acervo/public-media'?'public':url.searchParams.get('provider');
     window.dispatchEvent(new CustomEvent('labmattar:acervo-select',{detail:{photoKey,original,provider,
       id:isLocal?photoKey:url.searchParams.get('id'),projectId:url?.searchParams.get('project')||undefined,
       name:isLocal?'Fotografia local do projeto':'Fotografia do projeto',restore:true}}));

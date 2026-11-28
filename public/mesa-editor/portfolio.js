@@ -1,3 +1,6 @@
+import { pickMesaMedia } from './acervo.mjs';
+import { assetURL, portfolioAssetKey } from './acervo-reference.mjs';
+
 function singleCaption(s){
  if(!s.caption_initialized){
   // Keep an existing custom edit; otherwise use the displayed-text baseline.
@@ -12,7 +15,13 @@ let state,etag,projectId,slideId,dirty=false,undo=[],drag=null,previewIndex=0,sa
 const categories=()=>[...new Set([...(state.project_categories||[]),...state.projects.map(p=>p.category)])];
 const project=()=>state.projects.find(p=>p.id===projectId);
 const slide=()=>project().slides.find(s=>s.id===slideId);
-const mediaUrl=(p,file)=>file.startsWith('youtube/')?'https://i.ytimg.com/vi/'+file.slice(8)+'/hqdefault.jpg':'/mesa-media/'+[p.folder,...file.split('/')].map(encodeURIComponent).join('/')+'?v='+encodeURIComponent(p.slides.find(s=>s.file===file||s.thumbnail===file||s.display_file===file)?.media_version||0);
+function mediaUrl(project,file) {
+  if (file.startsWith('youtube/')) return 'https://i.ytimg.com/vi/'+file.slice(8)+'/hqdefault.jpg';
+  const slide = project.slides.find(item => [item.file,item.thumbnail,item.display_file].includes(file));
+  if (slide?.asset_key) return assetURL(slide.asset_key);
+  const url = '/mesa-media/'+[project.folder,...file.split('/')].map(encodeURIComponent).join('/');
+  return slide?.media_version ? url+'?v='+encodeURIComponent(slide.media_version) : url;
+}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const media=(p,s,controls=false)=>s.type==='youtube'?(controls?'<iframe src="https://www.youtube-nocookie.com/embed/'+s.youtube_id+'" title="Vídeo do YouTube" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>':'<img src="'+mediaUrl(p,s.file)+'" alt="Vídeo do YouTube">'):(s.missing||s.sync_error)?'<div class="missingMedia">'+(s.missing?'Arquivo ausente na pasta':'Não foi possível ler a imagem')+'</div>':s.type==='video'?'<video src="'+mediaUrl(p,s.file)+'" preload="metadata" '+(controls?'controls':'muted')+'></video>':'<img src="'+mediaUrl(p,(!controls&&s.thumbnail)?s.thumbnail:(s.display_file||s.file))+'" alt="'+esc(s.alt||p.title)+'" loading="lazy">';
 function toast(message){$('toast').textContent=message;$('toast').style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').style.display='none',5000);}
@@ -153,5 +162,26 @@ $('projectSearch').addEventListener('input',()=>{if(state)renderProjects()});doc
 $('sendToComposition').onclick=()=>{
   const activeProject=project(), item=slide();
   if(window.parent===window||item?.type!=='image')return;
-  window.parent.postMessage({ type:'mesa:compose-image', url:mediaUrl(activeProject,item.display_file||item.file), caption:item.caption_official, label:item.alt||activeProject.title },location.origin);
+  window.parent.postMessage({ type:'mesa:compose-image', url:assetURL(portfolioAssetKey(activeProject,item)), label:item.alt||activeProject.title },location.origin);
+};
+
+$('pickSharedMedia').onclick=async()=>{
+  if (!state || saving || uploading) return;
+  const item = await pickMesaMedia('image');
+  if (!item) return;
+  const target = project();
+  const existing = target.slides.find(entry => entry.type === 'image' && portfolioAssetKey(target,entry) === item.key);
+  if (existing) {
+    slideId = existing.id;
+    render();
+    toast('Esta imagem já está na galeria de '+target.title+'.');
+    return;
+  }
+  const file = 'acervo/'+item.key;
+  mutate(()=>{
+    slideId = target.id+'/'+file;
+    target.slides.push({id:slideId,file,asset_key:item.key,type:'image',alt:item.alt || item.name,
+      included:true,caption_official:'',caption_initialized:true});
+  });
+  toast('Imagem do acervo adicionada à galeria. Salve para atualizar a prévia.');
 };

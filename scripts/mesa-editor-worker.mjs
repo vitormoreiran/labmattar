@@ -16,6 +16,7 @@ const json = (value, status = 200) => Response.json(value, { status, headers: { 
 const safeKey = key => typeof key === 'string' && /^[\w.-]+(?:\/[\w.-]+)*$/.test(key) && !key.split('/').some(part => part === '.' || part === '..');
 const text = (value, max) => typeof value === 'string' && value.length <= max;
 const chapterMediaKey = /^chapter\/[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}\.(?:jpg|png|webp|avif|mp4|webm)$/;
+const libraryMediaKey = /^acervo\/[a-f0-9]{64}\.(?:jpg|png|webp|avif|mp4|webm)$/;
 const blockId = /^bloco-[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 const chapterLanguages = ['pt','en','es'];
 const gap = value => Number.isInteger(value) && value >= 0 && value <= 192;
@@ -80,7 +81,7 @@ export async function routeMesa(request, env) {
   if (!readOnly && request.headers.get('origin') !== url.origin) return json({ error: 'Origem inválida.' }, 403);
   let id = request.headers.get('cookie')?.match(/(?:^|;\s*)__Host-labmattar-mesa=([0-9a-f-]{36})(?:;|$)/)?.[1];
   const fresh = !id;
-  if (fresh && (!readOnly || !['/mesa-api/chapter', '/mesa-api/portfolio/state'].includes(url.pathname))) {
+  if (fresh && (!readOnly || !['/mesa-api/chapter', '/mesa-api/portfolio/state', '/mesa-api/acervo'].includes(url.pathname))) {
     return json({ error: 'Abra o Editor para iniciar a sessão de prévia.' }, 403);
   }
   if (fresh) id = crypto.randomUUID();
@@ -97,7 +98,8 @@ export class MesaEditorSession extends DurableObject {
     this.sql = ctx.storage.sql;
     this.sql.exec(`CREATE TABLE IF NOT EXISTS revisions (scope TEXT, rev INTEGER, body TEXT NOT NULL, saved_at TEXT NOT NULL, PRIMARY KEY(scope, rev));
       CREATE TABLE IF NOT EXISTS uploads (key TEXT PRIMARY KEY, mime TEXT, bytes INTEGER);
-      CREATE TABLE IF NOT EXISTS media_chunks (key TEXT, part INTEGER, data BLOB, PRIMARY KEY(key, part));`);
+      CREATE TABLE IF NOT EXISTS media_chunks (key TEXT, part INTEGER, data BLOB, PRIMARY KEY(key, part));
+      CREATE TABLE IF NOT EXISTS library_items (key TEXT PRIMARY KEY, name TEXT NOT NULL, source TEXT NOT NULL);`);
   }
 
   latest(scope) {
@@ -107,6 +109,36 @@ export class MesaEditorSession extends DurableObject {
 
   knownMedia(folder, path) {
     return safeKey(path) && (seedMedia.has(`${folder}/${path}`) || this.sql.exec('SELECT 1 FROM uploads WHERE key=?', `${folder}/${path}`).toArray().length > 0);
+  }
+
+  mediaMime(key) {
+    if (!safeKey(key)) return null;
+    return seedMedia.has(key) ? 'image/webp' : this.sql.exec('SELECT mime FROM uploads WHERE key=?',key).toArray()[0]?.mime;
+  }
+
+  listLibrary() {
+    const items = new Map();
+    const files = new Map(this.sql.exec('SELECT key, mime FROM uploads').toArray().map(row => [row.key,row.mime]));
+    function item(key,name,source,alt = '') {
+      const mime = seedMedia.has(key) ? 'image/webp' : files.get(key);
+      if (!mime) return;
+      items.set(key,{key,name,source,alt,type:imageTypes.has(mime) ? 'image' : 'video'});
+    }
+    for (const row of this.sql.exec('SELECT key, name, source FROM library_items ORDER BY rowid DESC LIMIT 500').toArray()) item(row.key,row.name,row.source);
+    for (const img of examples.project.gallery) item('01-aleteia/'+img.file,img.file,'Aleteia',img.alt);
+    for (const project of this.latest('portfolio').state.projects) {
+      for (const slide of project.slides) {
+        if (slide.type !== 'image' || slide.asset_key) continue;
+        const key = project.folder+'/'+(slide.display_file || slide.file);
+        item(key,slide.original_name || slide.file.split('/').at(-1),project.id === 'aleteia' ? 'Aleteia' : project.title,slide.alt || items.get(key)?.alt || '');
+      }
+    }
+    for (const section of this.latest('chapter').state) {
+      for (const block of section.blocks ?? []) {
+        if (block.media && !items.has(block.media.key)) item(block.media.key,block.media.name,'Como trabalhamos',block.copy?.pt || '');
+      }
+    }
+    return [...items.values()].sort((a,b) => (a.source === 'Aleteia' ? 0 : 1) - (b.source === 'Aleteia' ? 0 : 1));
   }
 
   validatePortfolio(state, previous, removedId) {
@@ -124,7 +156,12 @@ export class MesaEditorSession extends DurableObject {
             !text(slide.caption_official, 20_000) || typeof slide.included !== 'boolean') throw error('Slide inválido.');
         slides.add(slide.id);
         const prior = old?.slides.find(x => x.id === slide.id);
-        if (prior && (prior.file !== slide.file || prior.type !== slide.type)) throw error('Referência do slide foi alterada.');
+        if (prior && (prior.file !== slide.file || prior.type !== slide.type || prior.asset_key !== slide.asset_key)) throw error('Referência do slide foi alterada.');
+        if (slide.asset_key !== undefined) {
+          if (slide.type !== 'image' || slide.file !== 'acervo/'+slide.asset_key || !imageTypes.has(this.mediaMime(slide.asset_key)) ||
+              slide.thumbnail || slide.display_file || slide.original_file) throw error('Imagem do acervo indisponível.');
+          continue;
+        }
         if (slide.type === 'youtube') {
           if (!/^[\w-]{11}$/.test(slide.youtube_id || '') || slide.file !== `youtube/${slide.youtube_id}` || slide.thumbnail || slide.display_file || slide.original_file) throw error('Vídeo inválido.');
         } else if (['file', 'thumbnail', 'display_file', 'original_file'].some(k => slide[k] && !this.knownMedia(p.folder, slide[k]))) {
@@ -183,8 +220,8 @@ export class MesaEditorSession extends DurableObject {
         continue;
       }
       const { key, name } = block.media ?? {};
-      if (!chapterMediaKey.test(key) || !text(name,180) || !name.trim()) throw error('Envie o arquivo do bloco.');
-      const mime = this.sql.exec('SELECT mime FROM uploads WHERE key=?',key).toArray()[0]?.mime;
+      if (!safeKey(key) || !text(name,180) || !name.trim()) throw error('Envie ou selecione o arquivo do bloco.');
+      const mime = this.mediaMime(key);
       const allowed = block.type === 'image' ? imageTypes : videoTypes;
       if (!allowed.has(mime)) throw error('Arquivo do bloco indisponível nesta sessão.');
     }
@@ -240,25 +277,29 @@ export class MesaEditorSession extends DurableObject {
     const file = `adicionadas/${id}.webp`, mini = `adicionadas/${id}-mini.webp`, source = `adicionadas/${id}.${imageTypes.get(original.type)}`;
     const files = [[file, optimized], [mini, thumbnail], [`originais/${source}`, original]];
     const buffers = await Promise.all(files.map(async ([path, blob]) => ({ path, mime: blob.type, bytes: await blob.arrayBuffer() })));
-    this.storeMedia(buffers.map(item => ({...item,key:`${p.folder}/${item.path}`})),false);
+    this.storeMedia(buffers.map(item => ({...item,key:`${p.folder}/${item.path}`})),false,
+      {key:p.folder+'/'+file,name:original.name.slice(0,180),source:p.title});
     return json({ slide: { id: `${p.id}/${file}`, type: 'image', file, thumbnail: mini, original_file: `originais/${source}`,
       original_name: original.name, width: Number(data.get('width')), height: Number(data.get('height')), bytes_original: original.size, bytes_optimized: optimized.size,
       caption_official: '', caption_initialized: true, included: true, alt: '' }, duplicate: false });
   }
 
-  storeMedia(files,chapter) {
-    this.ctx.storage.transactionSync(() => {
+  storeMedia(files,chapter,libraryItem) {
+    return this.ctx.storage.transactionSync(() => {
       const limit = chapter ? CHAPTER_SESSION_LIMIT : SESSION_LIMIT;
-      const used = this.sql.exec('SELECT coalesce(SUM(bytes),0) AS total FROM uploads WHERE (key LIKE ?) = ?', 'chapter/%', Number(chapter)).toArray()[0].total;
+      if (libraryItem && chapter && this.mediaMime(libraryItem.key)) return false;
+      const used = this.sql.exec('SELECT coalesce(SUM(bytes),0) AS total FROM uploads WHERE (key LIKE ? OR key LIKE ?) = ?', 'chapter/%','acervo/%',Number(chapter)).toArray()[0].total;
       if (used + files.reduce((sum, file) => sum + file.bytes.byteLength,0) > limit) throw error(chapter ? 'Esta sessão atingiu o limite de mídia do capítulo (72 MB).' : 'Esta sessão atingiu o limite de imagens.',413);
       for (const { key, mime, bytes } of files) {
         this.sql.exec('INSERT INTO uploads VALUES (?,?,?)',key,mime,bytes.byteLength);
         for (let offset = 0; offset < bytes.byteLength; offset += 400_000) this.sql.exec('INSERT INTO media_chunks VALUES (?,?,?)',key,offset,bytes.slice(offset,offset+400_000));
       }
+      if (libraryItem) this.sql.exec('INSERT INTO library_items VALUES (?,?,?)',libraryItem.key,libraryItem.name,libraryItem.source);
+      return true;
     });
   }
 
-  async uploadChapter(request,type) {
+  async uploadLibrary(request,type,source) {
     const mime = request.headers.get('content-type');
     const extension = type === 'image' ? imageTypes.get(mime) : type === 'video' ? videoTypes.get(mime) : null;
     if (!extension) throw error('Formato de mídia inválido.',415);
@@ -279,9 +320,13 @@ export class MesaEditorSession extends DurableObject {
       offset += value.byteLength;
     }
     if (offset !== bytes.length || !matchesMedia(bytes,mime)) throw error('O arquivo não corresponde ao formato selecionado.',415);
-    const key = 'chapter/'+crypto.randomUUID()+'.'+extension;
-    this.storeMedia([{key,mime,bytes:bytes.buffer}],true);
-    return json({key},201);
+    const hash = new Uint8Array(await crypto.subtle.digest('SHA-256',bytes));
+    const key = 'acervo/'+Array.from(hash,byte => byte.toString(16).padStart(2,'0')).join('')+'.'+extension;
+    let name = 'Arquivo.'+extension;
+    try { name = decodeURIComponent(request.headers.get('x-mesa-file-name') || '').trim().slice(0,180) || name; }
+    catch { throw error('Nome do arquivo inválido.'); }
+    const added = this.storeMedia([{key,mime,bytes:bytes.buffer}],true,{key,name,source});
+    return json({key,duplicate:!added},added ? 201 : 200);
   }
 
   async media(request, key) {
@@ -297,7 +342,7 @@ export class MesaEditorSession extends DurableObject {
     const item = this.sql.exec('SELECT mime, bytes FROM uploads WHERE key=?', key).toArray()[0];
     if (!item) throw error('Arquivo não encontrado.', 404);
     headers.set('Content-Type', item.mime);
-    const seekable = chapterMediaKey.test(key);
+    const seekable = chapterMediaKey.test(key) || libraryMediaKey.test(key);
     const range = seekable ? request.headers.get('range') : null;
     const position = byteRange(range,item.bytes);
     if (seekable) headers.set('Accept-Ranges','bytes');
@@ -325,7 +370,9 @@ export class MesaEditorSession extends DurableObject {
     try {
       if (path.startsWith('/mesa-media/') && ['GET', 'HEAD'].includes(method)) return await this.media(request, decodeURIComponent(path.slice('/mesa-media/'.length)));
       if (path === '/mesa-api/chapter' && method === 'GET') return json(this.latest('chapter'));
-      if (path === '/mesa-api/chapter/upload' && method === 'POST') return await this.uploadChapter(request,url.searchParams.get('type'));
+      if (path === '/mesa-api/acervo' && method === 'GET') return json({items:this.listLibrary()});
+      if (path === '/mesa-api/acervo/upload' && method === 'POST') return await this.uploadLibrary(request,url.searchParams.get('type'),'Enviado ao acervo');
+      if (path === '/mesa-api/chapter/upload' && method === 'POST') return await this.uploadLibrary(request,url.searchParams.get('type'),'Como trabalhamos');
       if (path === '/mesa-api/chapter' && method === 'POST') {
         const { state, etag } = await readJSON(request);
         return json(this.commit('chapter', state, etag));

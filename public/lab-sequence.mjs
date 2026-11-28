@@ -1,6 +1,7 @@
 import {createProductionDocument,verifyRoundTrip,signatureOf} from './composicao-document.mjs';
 import {normalizeImageAssets,normalizeGallery} from './lab-gallery-model.mjs';
 import {normalizeStory} from './lab-story-model.mjs';
+import {mesaPhotoKey} from './mesa-editor/acervo-reference.mjs';
 export const SEQUENCE_KIND='labmattar.presentation';
 export const SEQUENCE_VERSION=1;
 const clone=value=>JSON.parse(JSON.stringify(value));
@@ -18,6 +19,10 @@ export function privatePhotoCatalog(document,base){
       check(/^loc-[a-z0-9]{10,25}$/.test(key)&&uri.length<=5_000_000&&
         /^data:image\/(?:webp|png|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/.test(uri),
         'arquivo local da fotografia');
+      catalog[key]=uri;continue;
+    }
+    if(uri.startsWith('/mesa-media/')){
+      check(mesaPhotoKey(uri)===key,'referência da fotografia do acervo da Mesa');
       catalog[key]=uri;continue;
     }
     check(/^ext-[a-z0-9]+$/.test(key),'fotografia de catálogo');

@@ -1,3 +1,5 @@
+import { assetURL } from './acervo-reference.mjs';
+
 const target = document.getElementById('gallery-preview');
 const element = (tag, text) => {
   const node = document.createElement(tag);
@@ -8,7 +10,7 @@ const mediaURL = (folder, file) => '/mesa-media/' + [folder, ...file.split('/')]
 
 function image(project, slide) {
   const img = element('img');
-  img.src = mediaURL(project.folder, slide.display_file || slide.file);
+  img.src = slide.asset_key ? assetURL(slide.asset_key) : mediaURL(project.folder, slide.display_file || slide.file);
   img.alt = slide.alt || project.title;
   img.loading = 'lazy';
   return img;

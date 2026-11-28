@@ -140,4 +140,5 @@ fieldset .append { border-color:var(--line); justify-content:flex-start; }
 .gap-control output { color:var(--muted); font-size:.78rem; white-space:nowrap; }
 html body #editor .gap-control input { grid-column:1/-1; border:0; padding:2px 0; min-block-size:22px; accent-color:var(--ink); background:transparent; }
 .upload-name, .upload-hint { color:var(--muted); overflow-wrap:anywhere; font-size:.8rem; margin:0; }
+.block-controls .choose-shared-asset { justify-content:flex-start; border-color:var(--line); background:var(--paper); }
 html body #editor input[type="file"] { padding:5px; font-size:.82rem; }

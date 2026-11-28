@@ -1,4 +1,5 @@
 import { maximumGap } from './chapter-blocks.mjs';
+import { pickMesaMedia } from './acervo.mjs';
 
 const blockLabels = {text:'Texto',image:'Imagem',video:'Vídeo'};
 const accepted = {image:'image/png,image/jpeg,image/webp,image/avif',video:'video/mp4,video/webm'};
@@ -59,7 +60,7 @@ export function createComposer(callbacks) {
     callbacks.error('');
     callbacks.refresh(block.id);
     try {
-      const res = await fetch('/mesa-api/chapter/upload?type='+block.type,{method:'POST',headers:{'Content-Type':file.type},body:file});
+      const res = await fetch('/mesa-api/chapter/upload?type='+block.type,{method:'POST',headers:{'Content-Type':file.type,'X-Mesa-File-Name':encodeURIComponent(file.name)},body:file});
       const value = await res.json();
       if (!res.ok) throw Error(value.error || 'Não foi possível enviar o arquivo.');
       block.media = {key:value.key,name:file.name.slice(0,180)};
@@ -72,6 +73,16 @@ export function createComposer(callbacks) {
       callbacks.busy(-1);
       callbacks.refresh(block.id);
     }
+  }
+
+  async function chooseAsset(block,language) {
+    const item = await pickMesaMedia(block.type);
+    if (!item) return;
+    block.media = {key:item.key,name:item.name};
+    if (!block.copy[language].trim() && item.alt) block.copy[language] = item.alt.slice(0,240);
+    callbacks.change(true);
+    callbacks.refresh(block.id);
+    callbacks.reveal(block.id);
   }
 
   function editorFor(block, language, updateCaption) {
@@ -99,7 +110,9 @@ export function createComposer(callbacks) {
     file.onchange = () => upload(block,file.files[0]);
     const limit = block.type === 'image' ? 'PNG, JPEG, WebP ou AVIF · até 8 MB' : 'MP4 ou WebM · até 24 MB';
     const name = uploading.has(block.id) ? 'Enviando arquivo…' : block.media?.name;
-    group.append(labelFor(file.id,name && !file.disabled ? 'Substituir '+label.toLowerCase() : 'Arquivo de '+label.toLowerCase()),file);
+    const choose = button('Escolher do acervo','Escolher '+label.toLowerCase()+' do acervo',file.disabled,() => chooseAsset(block,language));
+    choose.className = 'choose-shared-asset';
+    group.append(choose,labelFor(file.id,name && !file.disabled ? 'Substituir '+label.toLowerCase() : 'Arquivo de '+label.toLowerCase()),file);
     if (name) group.append(element('p','upload-name',name));
     group.append(element('p','upload-hint',limit),labelFor(id,block.type === 'image' ? 'Texto alternativo' : 'Descrição do vídeo'),input);
     return group;

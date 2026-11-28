@@ -506,9 +506,10 @@
   // and local-draft persistence rather than rewriting the canvas DOM.
   window.addEventListener("labmattar:acervo-select",event=>{
     const data=event.detail;
-    if(!data || !/^(google|dropbox|public|local)$/.test(data.provider) ||
+    if(!data || !/^(google|dropbox|public|local|mesa)$/.test(data.provider) ||
       !/^(ext|loc)-[a-z0-9]+$/.test(data.photoKey) ||
       !(data.provider==="local"?/^data:image\/(?:webp|png|jpeg);base64,/.test(data.original||""):
+        data.provider==="mesa"?/^ext-mesa[a-z0-9]+$/.test(data.photoKey)&&/^\/mesa-media\/(?:[\w.-]+\/)+[\w.-]+\.(?:jpe?g|png|webp|avif)$/i.test(data.original||"")&&!data.original.includes("..")&&!data.original.includes("/./"):
         data.provider==="public"?(data.original||"").startsWith("/api/acervo/public-media?"):
         (data.original||"").startsWith("/api/acervo/media?")))return;
     photos[data.photoKey]=data.original;
@@ -529,7 +530,7 @@
       });
       buttons.append(button);
     }
-    if(data.provider!=="local")try{sessionStorage.setItem("lm-acervo-selected",JSON.stringify({
+    if(data.provider!=="local"&&data.provider!=="mesa")try{sessionStorage.setItem("lm-acervo-selected",JSON.stringify({
       provider:data.provider,id:data.id,name:data.name,photoKey:data.photoKey,
       ...(data.projectId?{projectId:data.projectId}:{})
     }))}catch{}

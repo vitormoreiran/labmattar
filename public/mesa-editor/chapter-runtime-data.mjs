@@ -2,6 +2,7 @@ import { r as interop } from '/assets/rolldown-runtime-S-ySWqyJ.js';
 import { i as loadReact } from '/assets/framework-CXnKph_e.js';
 import { getLanguage, setLanguage } from '/assets/i18n.js';
 import { languages, upgradeChapter } from './chapter-blocks.mjs';
+import { assetURL } from './acervo-reference.mjs';
 
 const React = interop(loadReact(),1);
 const sectionIds = new Map([
@@ -42,7 +43,7 @@ function renderBlock(block) {
     React.createElement('p',{ key:block.text, className:block.text ? undefined : 'chapter3-text-empty' },block.text));
   const isImage = block.type === 'image';
   const name = isImage ? 'Editar imagem' : 'Editar vídeo';
-  const src = block.media && '/mesa-media/'+block.media.key;
+  const src = block.media && assetURL(block.media.key);
   const media = src && (isImage
     ? React.createElement('img',{src,alt:block.text || '',decoding:'async','data-edit-block':isEditorFrame ? name : undefined})
     : React.createElement('video',{src,controls:true,playsInline:true,preload:'metadata','aria-label':block.text || block.media.name}));
